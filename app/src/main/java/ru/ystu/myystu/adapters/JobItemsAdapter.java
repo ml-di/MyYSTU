@@ -44,7 +44,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         private AppCompatTextView date;
         private ConstraintLayout itemJob;
         private ContentFrameLayout itemJobDateLayout;
-        private String[] mAlertItems = null;
+        private String[] mAlertItems;
 
 
         JobItemsViewHolder(View itemView, final List<JobItemsData> mList, final Context context) {
@@ -93,7 +93,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                                                 String fileType = FileInformation.getFileType(url);
                                                                 String fileExtenstion = FileInformation.getExt(fileType);
 
-                                                                String fileName = null;
+                                                                String fileName;
                                                                 fileName = FileInformation.getFileName(fileType);
 
                                                                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -208,7 +208,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         switch (requestCode) {
             case 0:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    //TODO
+                    //TODO toast что права даны и повторите попытку
                 }
                 break;
 

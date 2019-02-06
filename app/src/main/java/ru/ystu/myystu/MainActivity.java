@@ -43,63 +43,57 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         // Работа с цветами иконок бара при переключении
-        mBottomBar.setTabSelectionInterceptor(new TabSelectionInterceptor() {
-            @Override
-            public boolean shouldInterceptTabSelection(int oldTabId, int newTabId) {
+        mBottomBar.setTabSelectionInterceptor((oldTabId, newTabId) -> {
 
-                if (newTabId == R.id.tab_menu) {
-                    mBottomBar.setInActiveTabColor(Color.parseColor("#ffffff"));
-                    colorInActiveTab = Color.parseColor("#ffffff");
-                    return false;
-                } else
-                if(newTabId == R.id.tab_news){
-                    mBottomBar.setInActiveTabColor(Color.parseColor("#000000"));
-                    colorInActiveTab = Color.parseColor("#000000");
-                    return false;
-                } else
-                if (newTabId == R.id.tab_bell){
-                    mBottomBar.setInActiveTabColor(Color.parseColor("#000000"));
-                    colorInActiveTab = Color.parseColor("#000000");
-                    return false;
-                }
-
-                return true;
+            if (newTabId == R.id.tab_menu) {
+                mBottomBar.setInActiveTabColor(Color.parseColor("#ffffff"));
+                colorInActiveTab = Color.parseColor("#ffffff");
+                return false;
+            } else
+            if(newTabId == R.id.tab_news){
+                mBottomBar.setInActiveTabColor(Color.parseColor("#000000"));
+                colorInActiveTab = Color.parseColor("#000000");
+                return false;
+            } else
+            if (newTabId == R.id.tab_bell){
+                mBottomBar.setInActiveTabColor(Color.parseColor("#000000"));
+                colorInActiveTab = Color.parseColor("#000000");
+                return false;
             }
+
+            return true;
         });
 
-        mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelected(int tabId) {
+        mBottomBar.setOnTabSelectListener(tabId -> {
 
-                // Новости
-                if(tabId == R.id.tab_news){
+            // Новости
+            if(tabId == R.id.tab_news){
 
 
-                    mFragmentManager.beginTransaction()
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                            .replace(R.id.contentConteiner, mNewsFragment)
-                            .commit();
+                mFragmentManager.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.contentConteiner, mNewsFragment)
+                        .commit();
 
-                } else
-                // Уведомления
-                if (tabId == R.id.tab_bell){
+            } else
+            // Уведомления
+            if (tabId == R.id.tab_bell){
 
-                    mFragmentManager.beginTransaction()
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                            .replace(R.id.contentConteiner, mBellFragment)
-                            .commit();
+                mFragmentManager.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.contentConteiner, mBellFragment)
+                        .commit();
 
-                } else
-                // Меню
-                if (tabId == R.id.tab_menu){
+            } else
+            // Меню
+            if (tabId == R.id.tab_menu){
 
-                    mFragmentManager.beginTransaction()
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                            .replace(R.id.contentConteiner, mMenuFragment)
-                            .commit();
+                mFragmentManager.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.contentConteiner, mMenuFragment)
+                        .commit();
 
 
-                }
             }
         });
     }

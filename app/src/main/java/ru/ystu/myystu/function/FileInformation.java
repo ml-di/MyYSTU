@@ -41,7 +41,7 @@ public class FileInformation {
             switch (id){
                 // Получить расширение
                 case 0:
-                    result = result.substring(startIndex, result.length());
+                    result = result.substring(startIndex);
                     break;
                 // Поулчить имя файла
                 case 1:
@@ -59,7 +59,7 @@ public class FileInformation {
         protected String doInBackground(final String... url) {
 
             final String url_s = url[0];
-            String fileInfo = null;
+            String fileInfo;
 
             URL url_file = null;
             try {

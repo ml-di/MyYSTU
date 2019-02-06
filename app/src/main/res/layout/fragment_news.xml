@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".NewsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
