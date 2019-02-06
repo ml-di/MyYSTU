@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0A4188</color>
+    <color name="colorPrimaryDark">#001c5a</color>
+    <color name="colorPrimaryLight">#4c6bb8</color>
+    <color name="colorAccent">#ec7200</color>
+
+    <color name="colorMenuItem">#fff</color>
+    <color name="colorToolBarTitle">#fff</color>
+
+    <color name="colorTextPrimary">#424242</color>
+    <color name="colorTextSecondary">#616161</color>
+    <color name="colorTextTertiary">#a5a5a5</color>
+</resources>

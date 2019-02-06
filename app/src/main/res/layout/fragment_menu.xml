@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_menu_gradient"
+    tools:context=".MenuFragment"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/menu_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingStart="56dp"
+        android:paddingEnd="56dp"
+        android:paddingTop="32dp"
+        app:srcCompat="@drawable/ic_logo_white"
+        android:layout_weight="1"/>
+
+    <androidx.appcompat.widget.ContentFrameLayout
+        android:id="@+id/menu_frame_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:layout_marginBottom="32dp">
+
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:alpha="0.9"
+            android:background="@drawable/shape_rectangle_rounded" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_menu_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </androidx.appcompat.widget.ContentFrameLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

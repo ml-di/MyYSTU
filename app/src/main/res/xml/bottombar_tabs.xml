@@ -1,0 +1,25 @@
+<resources>
+    <tabs>
+        <tab
+            id="@+id/tab_news"
+            icon="@drawable/ic_news"
+            title="@string/tab_news_text"
+            barColorWhenSelected="#fffffe"
+            activeColor="@color/colorPrimary"
+            inActiveColor="#000000"/>
+        <tab
+            id="@+id/tab_bell"
+            icon="@drawable/ic_bell"
+            title="@string/tab_bell_text"
+            barColorWhenSelected="#fffffe"
+            activeColor="@color/colorPrimary"
+            inActiveColor="#000000"/>
+        <tab
+            id="@+id/tab_menu"
+            icon="@drawable/ic_menu"
+            title="@string/tab_menu_text"
+            barColorWhenSelected="@color/colorPrimary"
+            activeColor="#ffffff"
+            inActiveColor="#000000"/>
+    </tabs>
+</resources>

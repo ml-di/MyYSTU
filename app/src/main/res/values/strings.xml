@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">MyYSTU</string>
+
+    <!-- Названия вкладок нижнего бара -->
+    <string name="tab_news_text">Новости</string>
+    <string name="tab_bell_text">Уведомления</string>
+    <string name="tab_menu_text">Меню</string>
+
+    <!-- Названия кнопок в меню -->
+    <string name="menu_text_schedule">Расписание</string>
+    <string name="menu_text_map">Карта корпусов</string>
+    <string name="menu_text_olymp">Олимпиады</string>
+    <string name="menu_text_job">Трудоустройство</string>
+    <string name="menu_text_chat">Обратная связь</string>
+    <string name="menu_text_settings">Настройки</string>
+
+    <!-- Activity вакансии -->
+    <string name="activity_job_title">Вакансии</string>
+    <string name="menu_job_openInBrowser">Открыть в браузере</string>
+    <string name="alert_job_download">Скачать файл</string>
+    <string name="alert_job_openLink">Открыть ссылку</string>
+    <string name="alert_job_share">Поделиться ссылкой</string>
+    <string name="alert_job_close">Закрыть</string>
+
+    <!-- Activity олимпиады -->
+    <string name="activity_olymp_title">Олимпиады</string>
+    <string name="menu_olymp_openInBrowser">Открыть в браузере</string>
+
+    <!-- Toasts -->
+    <string name="toast_dont_network">Отсутствует подключение к интернету</string>
+</resources>
