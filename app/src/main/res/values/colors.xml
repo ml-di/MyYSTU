@@ -11,4 +11,6 @@
     <color name="colorTextPrimary">#424242</color>
     <color name="colorTextSecondary">#616161</color>
     <color name="colorTextTertiary">#a5a5a5</color>
+
+    <color name="colorDivider">#B4B4B4</color>
 </resources>

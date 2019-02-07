@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".NewsFragment">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_news_items"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/tab_news_text" />
+        android:layout_height="match_parent"/>
 
 </androidx.appcompat.widget.ContentFrameLayout>
