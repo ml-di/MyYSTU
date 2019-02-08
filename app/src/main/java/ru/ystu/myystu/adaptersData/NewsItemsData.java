@@ -23,22 +23,6 @@ public class NewsItemsData implements Parcelable {
         this.urlsPhoto = urlsPhoto;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
-        parcel.writeInt(countPhoto);
-        parcel.writeInt(isPinned);
-        parcel.writeString(urlPost);
-        parcel.writeString(date);
-        parcel.writeString(text);
-        parcel.writeStringArray(urlsPhoto);
-    }
-
     private NewsItemsData(Parcel in) {
         id = in.readInt();
         countPhoto = in.readInt();
@@ -60,6 +44,23 @@ public class NewsItemsData implements Parcelable {
             return new NewsItemsData[size];
         }
     };
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(countPhoto);
+        parcel.writeInt(isPinned);
+        parcel.writeString(urlPost);
+        parcel.writeString(date);
+        parcel.writeString(text);
+        parcel.writeStringArray(urlsPhoto);
+    }
 
     public int getId() {
         return id;

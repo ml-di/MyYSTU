@@ -2,8 +2,8 @@ package ru.ystu.myystu;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,12 +47,10 @@ public class NewsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
-    private List<NewsItemsData> mList;
-
-    public NewsFragment() {
-
-    }
+    private ArrayList<NewsItemsData> mList;
+    private Parcelable mRecyclerState;
 
     public static NewsFragment newInstance(String param1, String param2) {
 
@@ -62,7 +60,7 @@ public class NewsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        setRetainInstance(false);
 
         urlBuilder
                 .append("https://api.vk.com/method/wall.get?owner_id=")
@@ -76,25 +74,40 @@ public class NewsFragment extends Fragment {
                 .append(VK_API_VERSION);
 
         url = urlBuilder.toString();
-
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        // Загрузка только при первом запуске, дальше только по ручному обновлению
-        new Thread(new Runnable() {
-            public void run() {
+        if(savedInstanceState == null){
+            new Thread(new Runnable() {
+                public void run() {
 
-                try {
-                    doGetJsonRequest(url);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    try {
+                        doGetJsonRequest(url);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
+            }).start();
+        } else {
+            mList = savedInstanceState.getParcelableArrayList("mList");
+            mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
+            mLayoutManager.onRestoreInstanceState(mRecyclerState);
+            mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        }
+    }
 
-            }
-        }).start();
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mRecyclerState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelable("recyclerViewState", mRecyclerState);
+        outState.putParcelableArrayList("mList", mList);
     }
 
     @Override
@@ -103,21 +116,17 @@ public class NewsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_news, container, false);
 
-        //region инициализация объектов
-
         if(view != null){
             mRecyclerView = view.findViewById(R.id.recycler_news_items);
         }
 
-        //endregion
-
+        mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         mList = new ArrayList<>();
         return view;
     }
-
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -136,8 +145,12 @@ public class NewsFragment extends Fragment {
         mListener = null;
     }
 
-    public interface OnFragmentInteractionListener {
+    void scrollTopRecyclerView() {
+        if(mRecyclerView != null && ((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0)
+            mRecyclerView.smoothScrollToPosition(0);
+    }
 
+    public interface OnFragmentInteractionListener {
 
         void onFragmentInteraction(Uri uri);
     }
@@ -153,7 +166,12 @@ public class NewsFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull final Call call, @NonNull IOException e) {
                         // Ошибка
-                        Toast.makeText(getContext(), "Ошибка загрузки: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), "Ошибка загрузки: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override

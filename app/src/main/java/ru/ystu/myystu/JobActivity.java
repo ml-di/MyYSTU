@@ -15,6 +15,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.adapters.JobItemsAdapter;
 import ru.ystu.myystu.adaptersData.JobItemsData;
+import ru.ystu.myystu.adaptersData.NewsItemsData;
 
 public class JobActivity extends AppCompatActivity {
 
