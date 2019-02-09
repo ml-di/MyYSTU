@@ -3,7 +3,7 @@ package ru.ystu.myystu.adaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class NewsItemsData implements Parcelable {
+public class NewsItemsData_DontAttach implements Parcelable {
 
     private int id;
     private int countPhoto;
@@ -13,7 +13,7 @@ public class NewsItemsData implements Parcelable {
     private String text;
     private String[] urlsPhoto;
 
-    public NewsItemsData(int id, int countPhoto, int isPinned, String urlPost, String date, String text, String[] urlsPhoto) {
+    public NewsItemsData_DontAttach(int id, int countPhoto, int isPinned, String urlPost, String date, String text, String[] urlsPhoto) {
         this.id = id;
         this.countPhoto = countPhoto;
         this.isPinned = isPinned;
@@ -23,7 +23,7 @@ public class NewsItemsData implements Parcelable {
         this.urlsPhoto = urlsPhoto;
     }
 
-    private NewsItemsData(Parcel in) {
+    private NewsItemsData_DontAttach(Parcel in) {
         id = in.readInt();
         countPhoto = in.readInt();
         isPinned = in.readInt();
@@ -33,15 +33,15 @@ public class NewsItemsData implements Parcelable {
         urlsPhoto = in.createStringArray();
     }
 
-    public static final Creator<NewsItemsData> CREATOR = new Creator<NewsItemsData>() {
+    public static final Creator<NewsItemsData_DontAttach> CREATOR = new Creator<NewsItemsData_DontAttach>() {
         @Override
-        public NewsItemsData createFromParcel(Parcel in) {
-            return new NewsItemsData(in);
+        public NewsItemsData_DontAttach createFromParcel(Parcel in) {
+            return new NewsItemsData_DontAttach(in);
         }
 
         @Override
-        public NewsItemsData[] newArray(int size) {
-            return new NewsItemsData[size];
+        public NewsItemsData_DontAttach[] newArray(int size) {
+            return new NewsItemsData_DontAttach[size];
         }
     };
 

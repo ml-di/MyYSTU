@@ -1,10 +1,12 @@
 package ru.ystu.myystu.adapters;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,14 +14,36 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.R;
-import ru.ystu.myystu.adaptersData.NewsItemsData;
+import ru.ystu.myystu.adaptersData.NewsItemsData_DontAttach;
+import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
 
-public class NewsItemsAdapter extends RecyclerView.Adapter<NewsItemsAdapter.NewsItemsViewHolder> {
+public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<NewsItemsData> mList;
+    private static final int ITEM_HEADER = 0;
+    private static final int ITEM_DONT_ATTACH = 1;
+
+    private ArrayList<Parcelable> mList;
     private Context context;
 
-    static class NewsItemsViewHolder extends RecyclerView.ViewHolder{
+    static class HeaderViewHolder extends RecyclerView.ViewHolder{
+
+        private int id;
+        private AppCompatTextView headerText;
+
+        HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            headerText = itemView.findViewById(R.id.news_item_header_text);
+        }
+
+        void setHeader(NewsItemsData_Header header){
+
+            headerText.setText(header.getText());
+
+        }
+    }
+
+    static class DontAttachViewHolder extends RecyclerView.ViewHolder{
 
         private int id;
         private int isPinned;
@@ -27,16 +51,27 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<NewsItemsAdapter.News
         private AppCompatTextView postText;
         private AppCompatTextView postPinned;
 
-        public NewsItemsViewHolder(@NonNull View itemView, final List<NewsItemsData> mList, final Context context) {
+        DontAttachViewHolder(@NonNull View itemView) {
             super(itemView);
 
             postDate = itemView.findViewById(R.id.post_date);
             postPinned = itemView.findViewById(R.id.post_pinned);
             postText = itemView.findViewById(R.id.post_text);
         }
+
+        void setDontAttach(NewsItemsData_DontAttach dontAttach){
+
+            postText.setText(dontAttach.getText());
+            postDate.setText(dontAttach.getDate());
+
+            if(Objects.equals(dontAttach.getIsPinned(), 1))
+                postPinned.setText("Запись закреплена");
+            else
+                postPinned.setText("");
+        }
     }
 
-    public NewsItemsAdapter(List<NewsItemsData> mList, Context context) {
+    public NewsItemsAdapter(ArrayList<Parcelable> mList, Context context) {
         this.mList = mList;
         this.context = context;
     }
@@ -50,25 +85,59 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<NewsItemsAdapter.News
 
     @NonNull
     @Override
-    public NewsItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item, parent, false);
-        return new NewsItemsViewHolder(v, mList, context);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        RecyclerView.ViewHolder viewHolder;
+
+        switch (viewType) {
+            case ITEM_HEADER:
+                View viewHeader = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_header, parent, false);
+                viewHolder = new HeaderViewHolder(viewHeader);
+            break;
+
+            case ITEM_DONT_ATTACH:
+                View viewDontAttach = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_dont_attach, parent, false);
+                viewHolder = new DontAttachViewHolder(viewDontAttach);
+            break;
+
+            default:
+                viewHolder = null;
+                break;
+        }
+
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NewsItemsViewHolder holder, int position) {
-        holder.postText.setText(mList.get(position).getText());
-        holder.postDate.setText(mList.get(position).getDate());
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        if(Objects.equals(mList.get(position).getIsPinned(), 1))
-            holder.postPinned.setText("Запись закреплена");
-        else
-            holder.postPinned.setText("");
+        int viewType = holder.getItemViewType();
+        switch (viewType) {
+            case ITEM_HEADER:
+                NewsItemsData_Header header = (NewsItemsData_Header)mList.get(position);
+                ((HeaderViewHolder) holder).setHeader(header);
+                break;
+            case ITEM_DONT_ATTACH:
+                NewsItemsData_DontAttach dontAttach = (NewsItemsData_DontAttach) mList.get(position);
+                ((DontAttachViewHolder) holder).setDontAttach(dontAttach);
+                break;
+        }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+
+        int viewType;
+
+        if (mList.get(position) instanceof NewsItemsData_Header) {
+            viewType = ITEM_HEADER;
+        } else if (mList.get(position) instanceof NewsItemsData_DontAttach) {
+            viewType = ITEM_DONT_ATTACH;
+        } else{
+            viewType = -1;
+        }
+
+        return viewType;
     }
 
     @Override

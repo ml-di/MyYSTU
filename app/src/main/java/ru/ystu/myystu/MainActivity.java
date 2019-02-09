@@ -2,13 +2,9 @@ package ru.ystu.myystu;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabReselectListener;
-import com.roughike.bottombar.OnTabSelectListener;
-import com.roughike.bottombar.TabSelectionInterceptor;
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -26,8 +22,6 @@ public class MainActivity extends FragmentActivity {
     private Fragment mMenuFragment;
 
     private int colorInActiveTab;
-
-    private Bundle mBundleNews;
     //endregion
 
     @Override
@@ -44,14 +38,11 @@ public class MainActivity extends FragmentActivity {
         mNewsFragment = new NewsFragment();
         mBellFragment = new BellFragment();
         mMenuFragment = new MenuFragment();
-
-        mBundleNews = new Bundle();
-
-        mNewsFragment.setArguments(mBundleNews);
         //endregion
 
         if (savedInstanceState != null) {
-            mNewsFragment = getSupportFragmentManager().getFragment(savedInstanceState, "state_news_fragment");
+            if(mBottomBar.getCurrentTabPosition() == 0)
+                mNewsFragment = getSupportFragmentManager().getFragment(savedInstanceState, "state_news_fragment");
         }
 
         // Работа с цветами иконок бара при переключении
@@ -78,39 +69,43 @@ public class MainActivity extends FragmentActivity {
 
         mBottomBar.setOnTabSelectListener(tabId -> {
 
-            // Новости
-            if(tabId == R.id.tab_news){
+            try{
+                // Новости
+                if(tabId == R.id.tab_news){
 
-                mFragmentManager.beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
-                        .commit();
-            } else
-            // Уведомления
-            if (tabId == R.id.tab_bell){
+                    mFragmentManager.beginTransaction()
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
+                            .commit();
+                } else
+                    // Уведомления
+                    if (tabId == R.id.tab_bell){
 
-                mFragmentManager.beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.contentConteiner, mBellFragment, "BELL_FRAGMENT")
-                        .commit();
+                        mFragmentManager.beginTransaction()
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .replace(R.id.contentConteiner, mBellFragment, "BELL_FRAGMENT")
+                                .commit();
 
-            } else
-            // Меню
-            if (tabId == R.id.tab_menu){
+                    } else
+                        // Меню
+                        if (tabId == R.id.tab_menu){
 
-                mFragmentManager.beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.contentConteiner, mMenuFragment, "MENU_FRAGMENT")
-                        .commit();
+                            mFragmentManager.beginTransaction()
+                                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                    .replace(R.id.contentConteiner, mMenuFragment, "MENU_FRAGMENT")
+                                    .commit();
 
+                        }
+            } catch (Exception e){
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
+
+
         });
 
         mBottomBar.setOnTabReselectListener(tabId -> {
             switch (tabId){
                 case R.id.tab_news:
                     ((NewsFragment) mNewsFragment).scrollTopRecyclerView();
-                    //mNewsFragment.scrollTopRecyclerView();
                     break;
             }
         });
@@ -121,7 +116,8 @@ public class MainActivity extends FragmentActivity {
 
         // Сохранение состояния цветов bottomBar
         outState.putInt("activeTabPosition", mBottomBar.getCurrentTabPosition());
-        getSupportFragmentManager().putFragment(outState, "state_news_fragment", mNewsFragment);
+        if(mBottomBar.getCurrentTabPosition() == 0)
+            getSupportFragmentManager().putFragment(outState, "state_news_fragment", mNewsFragment);
 
         super.onSaveInstanceState(outState);
     }

@@ -3,6 +3,7 @@ package ru.ystu.myystu;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -24,21 +24,26 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import ru.ystu.myystu.adapters.NewsItemsAdapter;
-import ru.ystu.myystu.adaptersData.NewsItemsData;
+import ru.ystu.myystu.adaptersData.NewsItemsData_DontAttach;
+import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
 
 public class NewsFragment extends Fragment {
 
     private int PHOTO_SIZE = 100;           // Качество загружаемых картинок (50, 100, 200)
-    private int POST_COUNT_LOAD = 50;       // Количество загружаемых постов за раз
+    private int OFFSET = 0;                 // Смещение для следующей порции новостей (не менять)
+    private int POST_COUNT_LOAD = 20;       // Количество загружаемых постов за раз
     private String OWNER_ID = "-28414014";  // id группы вуза через дефис
     private String VK_API_VERSION = "5.92"; // Версия API
     private String SERVICE_KEY = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9"; // Сервисный ключ доступа
+
+    private boolean isLoad = false;
 
     private StringBuilder urlBuilder = new StringBuilder();
     private String url;
@@ -49,8 +54,9 @@ public class NewsFragment extends Fragment {
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private ArrayList<NewsItemsData> mList;
+    private ArrayList<Parcelable> mList;
     private Parcelable mRecyclerState;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static NewsFragment newInstance(String param1, String param2) {
 
@@ -62,36 +68,29 @@ public class NewsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
 
-        urlBuilder
-                .append("https://api.vk.com/method/wall.get?owner_id=")
-                .append(OWNER_ID)
-                .append("&count=")
-                .append(POST_COUNT_LOAD)
-                .append("&filter=owner")
-                .append("&access_token=")
-                .append(SERVICE_KEY)
-                .append("&version=")
-                .append(VK_API_VERSION);
-
-        url = urlBuilder.toString();
+        url = getUrl(false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(savedInstanceState == null){
-            new Thread(new Runnable() {
-                public void run() {
+        mList.add(new NewsItemsData_Header(0, "Тестирую header"));
 
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary);
+
+        if(savedInstanceState == null){
+            if(!isLoad){
+                mSwipeRefreshLayout.setRefreshing(true);
+                new Thread(() -> {
                     try {
-                        doGetJsonRequest(url);
+                        doGetJsonRequest(url, false);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                }
-            }).start();
+                }).start();
+            }
         } else {
             mList = savedInstanceState.getParcelableArrayList("mList");
             mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
@@ -99,6 +98,39 @@ public class NewsFragment extends Fragment {
             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+
+            if(!isLoad){
+                new Thread(() -> {
+                    try {
+                        doGetJsonRequest(url, false);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+            }
+        });
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                // Прокрутили список до конца (5 элемент с конца)
+                if( ((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() >= mLayoutManager.getItemCount() - 5 && mLayoutManager.getItemCount() > 0 && !isLoad){
+
+                    url = getUrl(true);
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    new Thread(() -> {
+                        try {
+                            doGetJsonRequest(url, true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                }
+            }
+        });
     }
 
     @Override
@@ -118,6 +150,7 @@ public class NewsFragment extends Fragment {
 
         if(view != null){
             mRecyclerView = view.findViewById(R.id.recycler_news_items);
+            mSwipeRefreshLayout = view.findViewById(R.id.refresh_news);
         }
 
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -155,8 +188,38 @@ public class NewsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private String getUrl(boolean isOffset){
+
+        if(isOffset)
+            OFFSET += POST_COUNT_LOAD;
+        else
+            OFFSET = 0;
+
+        if(urlBuilder.length() > 0)
+            urlBuilder.setLength(0);
+
+        urlBuilder
+                .append("https://api.vk.com/method/wall.get?owner_id=")
+                .append(OWNER_ID)
+                .append("&count=")
+                .append(POST_COUNT_LOAD)
+                .append("&filter=owner")
+                .append("&offset=")
+                .append(OFFSET)
+                .append("&access_token=")
+                .append(SERVICE_KEY)
+                .append("&version=")
+                .append(VK_API_VERSION);
+
+        return urlBuilder.toString();
+
+    }
+
     private final OkHttpClient client = new OkHttpClient();
-    private void doGetJsonRequest(String url) throws IOException {
+    private void doGetJsonRequest(String url, boolean isOffset) throws IOException {
+
+        isLoad = true;
+
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -166,11 +229,13 @@ public class NewsFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull final Call call, @NonNull IOException e) {
                         // Ошибка
-                        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getContext(), "Ошибка загрузки: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                        isLoad = false;
+
+                        getActivity().runOnUiThread(() -> {
+                            if(mSwipeRefreshLayout.isRefreshing())
+                                mSwipeRefreshLayout.setRefreshing(false);
+
+                            Toast.makeText(getContext(), "Ошибка загрузки: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         });
                     }
 
@@ -199,7 +264,7 @@ public class NewsFragment extends Fragment {
 
                         if (response_json != null) {
 
-                            if(mList.size() > 0)
+                            if(mList.size() > 1 && !isOffset)
                                 mList.clear();
 
                             int id = 0;
@@ -234,22 +299,29 @@ public class NewsFragment extends Fragment {
                                             String urlPost = "https://vk.com/ystu?w=wall" + fromIdPost + "_" + idPost;
 
                                             id++;
-                                            mList.add(new NewsItemsData(id, 0, isPinnedPost, urlPost, String.valueOf(datePost), textPost, null));
+                                            mList.add(new NewsItemsData_DontAttach(id, 0, isPinnedPost, urlPost, String.valueOf(datePost), textPost, null));
                                         }
                                     }
                                 }
                             }
 
-                            Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                            getActivity().runOnUiThread(() -> {
+
+                                if(isOffset){
+                                    mRecyclerViewAdapter.notifyDataSetChanged();
+                                }else{
                                     mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
                                     mRecyclerView.setAdapter(mRecyclerViewAdapter);
                                 }
+
+                                if(mSwipeRefreshLayout.isRefreshing())
+                                    mSwipeRefreshLayout.setRefreshing(false);
                             });
                         }
 
                     }
                 });
+
+        isLoad = false;
     }
 }
