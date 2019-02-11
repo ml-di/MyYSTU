@@ -1,5 +1,6 @@
 package ru.ystu.myystu;
 
+import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -18,10 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import ru.ystu.myystu.adapters.NewsItemsAdapter;
 import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.network.GetListNewsFromURL;
@@ -51,6 +57,7 @@ public class NewsFragment extends Fragment {
 
     private CompositeDisposable disposables;
     private GetListNewsFromURL getListNewsFromURL;
+    private Observable<ArrayList<Parcelable>> observableNews;
 
     public static NewsFragment newInstance(String param1, String param2) {
 
@@ -171,8 +178,9 @@ public class NewsFragment extends Fragment {
         if(!isLoad){
             isLoad = true;
             mSwipeRefreshLayout.setRefreshing(true);
-            Observable<ArrayList<Parcelable>> testObservable = Observable.just(getListNewsFromURL.testRequest(url, isOffset, mList));
-            disposables.add(testObservable
+
+            observableNews = getListNewsFromURL.getObservableNews(url, isOffset, mList);
+            disposables.add(observableNews
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new DisposableObserver<ArrayList<Parcelable>>(){
@@ -207,8 +215,8 @@ public class NewsFragment extends Fragment {
 
                             if (mSwipeRefreshLayout.isRefreshing())
                                 mSwipeRefreshLayout.setRefreshing(false);
-                        }
 
+                        }
                     }));
         }
 
