@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.adaptersData.NewsItemsData_DontAttach;
 import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
+import ru.ystu.myystu.utils.UnixToString;
 
 public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -51,6 +52,9 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private AppCompatTextView postText;
         private AppCompatTextView postPinned;
 
+
+        private UnixToString unixToString = new UnixToString();
+
         DontAttachViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -62,7 +66,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void setDontAttach(NewsItemsData_DontAttach dontAttach){
 
             postText.setText(dontAttach.getText());
-            postDate.setText(dontAttach.getDate());
+            postDate.setText(unixToString.setUnixToString(dontAttach.getDate()));
 
             if(Objects.equals(dontAttach.getIsPinned(), 1))
                 postPinned.setText("Запись закреплена");

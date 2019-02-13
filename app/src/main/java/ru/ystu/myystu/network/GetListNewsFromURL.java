@@ -24,14 +24,11 @@ import ru.ystu.myystu.adaptersData.NewsItemsData_DontAttach;
 
 public class GetListNewsFromURL {
 
-    public Observable<ArrayList<Parcelable>> getObservableNews (String url, boolean isOffset, ArrayList<Parcelable> mList){
+    public Observable<ArrayList<Parcelable>> getObservableNewsList (String url, boolean isOffset, ArrayList<Parcelable> mList){
 
         Observable<ArrayList<Parcelable>> observableNews = Observable.create(emitter -> {
 
             OkHttpClient client = new OkHttpClient();
-
-            Scheduler.Worker worker = Schedulers.io().createWorker();
-            emitter.setDisposable(worker);
 
             Request request = new Request.Builder()
                     .url(url)
@@ -42,39 +39,39 @@ public class GetListNewsFromURL {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             emitter.onError(e);
+
+                            client.dispatcher().executorService().shutdown();
+                            client.connectionPool().evictAll();
                         }
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
 
-                            String news_list_json = null;
-
-                            if (response.body() != null) {
-                                news_list_json = response.body().string();
-                            }
-
-                            JSONParser pars = new JSONParser();
-                            Object obj = null;
                             try {
-                                obj = pars.parse(news_list_json);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                                String news_list_json = null;
 
-                            JSONObject response_object = (JSONObject) obj;
-                            JSONArray response_json = null;
-                            if (response_object != null) {
+                                if (response.body() != null)
+                                    news_list_json = response.body().string();
+
+                                JSONParser pars = new JSONParser();
+                                Object obj = null;
+                                try {
+                                    obj = pars.parse(news_list_json);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                JSONObject response_object = (JSONObject) obj;
+                                JSONArray response_json = null;
+
                                 response_json = (JSONArray) response_object.get("response");
-                            }
 
-                            if (response_json != null) {
-
-                                if(mList.size() > 1 && !isOffset)
+                                if (mList.size() > 1 && !isOffset)
                                     mList.clear();
 
                                 int id = 0;
 
-                                for (int i=1; i<response_json.size(); i++){
+                                for (int i = 1; i < response_json.size(); i++) {
 
                                     /*
                                      *   Выбор только главных новостей:
@@ -87,15 +84,15 @@ public class GetListNewsFromURL {
 
                                     int isAdsPost = ((Long) Objects.requireNonNull(item.get("marked_as_ads"))).intValue();  // 1 если запись рекламная
                                     // Запись не является рекламной
-                                    if(!Objects.equals(isAdsPost, 1)){
+                                    if (!Objects.equals(isAdsPost, 1)) {
                                         String typePost = (String) Objects.requireNonNull(item.get("post_type"));           // Тип поста
                                         // Запись не является репостом
-                                        if(Objects.equals(typePost, "post")){
+                                        if (Objects.equals(typePost, "post")) {
                                             String textPost = (String) Objects.requireNonNull(item.get("text"));            // Текст поста
                                             // Текст записи не является пустым
-                                            if(!Objects.equals(textPost, "")){
+                                            if (!Objects.equals(textPost, "")) {
                                                 int isPinnedPost = 0;
-                                                if(item.get("is_pinned") != null)
+                                                if (item.get("is_pinned") != null)
                                                     isPinnedPost = ((Long) Objects.requireNonNull(item.get("is_pinned"))).intValue();   // 1 если запись закреплена
 
                                                 int idPost = ((Long) Objects.requireNonNull(item.get("id"))).intValue();                // Id поста
@@ -109,19 +106,22 @@ public class GetListNewsFromURL {
                                         }
                                     }
                                 }
+
+                                emitter.onNext(mList);
+                                emitter.onComplete();
+
+                            } catch (Exception e){
+                                emitter.onError(e);
+
+                                client.dispatcher().executorService().shutdown();
+                                client.connectionPool().evictAll();
                             }
-
-                            worker.schedule(() -> emitter.onNext(mList));
-                            //emitter.onNext(mList);
-                            emitter.onComplete();
-
                         }
                     });
 
         });
 
         return observableNews;
-
     }
 
 }

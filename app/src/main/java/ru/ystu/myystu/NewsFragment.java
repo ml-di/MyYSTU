@@ -10,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.reactivestreams.Subscription;
+
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
@@ -57,7 +61,6 @@ public class NewsFragment extends Fragment {
 
     private CompositeDisposable disposables;
     private GetListNewsFromURL getListNewsFromURL;
-    private Observable<ArrayList<Parcelable>> observableNews;
 
     public static NewsFragment newInstance(String param1, String param2) {
 
@@ -171,56 +174,8 @@ public class NewsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void getNews(boolean isOffset){
 
-        String url = getUrl(isOffset);
-
-        if(!isLoad){
-            isLoad = true;
-            mSwipeRefreshLayout.setRefreshing(true);
-
-            observableNews = getListNewsFromURL.getObservableNews(url, isOffset, mList);
-            disposables.add(observableNews
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableObserver<ArrayList<Parcelable>>(){
-                        @Override
-                        public void onNext(ArrayList<Parcelable> parcelables) {
-                            mList = parcelables;
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                            isLoad = false;
-
-                            if(mSwipeRefreshLayout.isRefreshing())
-                                mSwipeRefreshLayout.setRefreshing(false);
-
-                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                            isLoad = false;
-
-                            if (isOffset) {
-                                mRecyclerViewAdapter.notifyDataSetChanged();
-                            } else {
-                                mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
-                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                            }
-
-                            if (mSwipeRefreshLayout.isRefreshing())
-                                mSwipeRefreshLayout.setRefreshing(false);
-
-                        }
-                    }));
-        }
-
-    }
+    // Запрос к API
     private String getUrl(boolean isOffset){
 
         if(isOffset)
@@ -246,5 +201,71 @@ public class NewsFragment extends Fragment {
 
         return urlBuilder.toString();
 
+    }
+
+    private void getNews(boolean isOffset){
+
+        String url = getUrl(isOffset);
+
+        if(!isLoad) {
+            isLoad = true;
+            mSwipeRefreshLayout.setRefreshing(true);
+
+            Observable<ArrayList<Parcelable>> observableNewsList = getListNewsFromURL.getObservableNewsList(url, isOffset, mList);
+            disposables.add(observableNewsList
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableObserver<ArrayList<Parcelable>>(){
+                @Override
+                public void onNext(ArrayList<Parcelable> parcelables) {
+                    mList = parcelables;
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                    try {
+
+                        if(mRecyclerViewAdapter == null){
+                            mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        }
+
+                        isLoad = false;
+
+                        if (mSwipeRefreshLayout.isRefreshing())
+                            mSwipeRefreshLayout.setRefreshing(false);
+
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    } finally {
+                        dispose();
+                    }
+
+                }
+
+                @Override
+                public void onComplete() {
+                    try {
+
+                        isLoad = false;
+
+                        if (isOffset) {
+                            mRecyclerViewAdapter.notifyDataSetChanged();
+                        } else {
+                            mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        }
+
+                        if (mSwipeRefreshLayout.isRefreshing())
+                            mSwipeRefreshLayout.setRefreshing(false);
+
+                    } finally {
+                        dispose();
+                    }
+                }
+            }));
+
+        }
     }
 }

@@ -1,4 +1,4 @@
-package ru.ystu.myystu.function;
+package ru.ystu.myystu.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

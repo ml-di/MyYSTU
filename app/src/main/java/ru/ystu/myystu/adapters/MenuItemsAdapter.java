@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import org.jsoup.select.Evaluator;
-
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -20,7 +18,7 @@ import ru.ystu.myystu.JobActivity;
 import ru.ystu.myystu.OlympActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.adaptersData.MenuItemsData;
-import ru.ystu.myystu.function.NetworkInformation;
+import ru.ystu.myystu.utils.NetworkInformation;
 
 public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.MenuItemsViewHolder> {
 

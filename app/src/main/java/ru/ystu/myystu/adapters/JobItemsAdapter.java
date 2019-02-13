@@ -27,8 +27,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.adaptersData.JobItemsData;
-import ru.ystu.myystu.function.FileInformation;
-import ru.ystu.myystu.function.NetworkInformation;
+import ru.ystu.myystu.utils.FileInformation;
+import ru.ystu.myystu.utils.NetworkInformation;
 
 public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobItemsViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
