@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -147,28 +148,48 @@ public class JobActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(final String... urls) {
-            try {
-                Document doc = Jsoup.connect(urls[0]).get();
-                Elements els = doc.select("table").get(1).select("tbody").select("tr");
 
-                String organization;
+            Document doc = null;
+            try {
+                doc = Jsoup.connect(urls[0]).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Elements els = null;
+            if (doc != null) {
+                els = doc.getElementsByClass("Tabs").select("table").get(1).select("tbody").select("tr");
+            }
+
+            String organization;
                 String post;
                 String url;
                 String date;
 
+                int id = 0;
+
+            if (els != null) {
                 for (int i = 1; i < els.size(); i++) {
-                    organization = els.get(i).select("td").get(1).text();
-                    post = els.get(i).select("td").get(2).text();
-                    url = els.get(i).select("td").get(2).select("a").attr("href");
+                    // Если вакансии заполнены по правильному шаблону
+                    if(els.get(i).select("td").get(0).text().equals("")){
+                        if(els.get(i).select("td").get(1) != null && els.get(i).select("td").get(2) != null){
+                            // Отлавливал такое что название организации было в дополнительной таблице, по этому проверку на всякий ¯\_(ツ)_/¯
+                            if(els.get(i).select("td").get(1).childNodeSize() < 2){ //els.get(i).select("table") == null
 
-                    if(url.startsWith("/files"))
-                        url = "https://www.ystu.ru" + url;
+                                organization = els.get(i).select("td").get(1).text();
+                                post = els.get(i).select("td").get(2).text();
+                                url = els.get(i).select("td").get(2).select("a").attr("href");
 
-                    date = els.get(i).select("td").get(3).text();
+                                if(url.startsWith("/files"))
+                                    url = "https://www.ystu.ru" + url;
 
-                    mList.add(new JobItemsData(i - 1, organization, post, url, date));
+                                date = els.get(i).select("td").get(3).text();
+                                mList.add(new JobItemsData(id, organization, post, url, date));
+                                id++;
+                            }
+                        }
+                    }
                 }
-            } catch (Exception ignored) { }
+            }
 
             return null;
         }
