@@ -41,18 +41,11 @@ public class JobActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job);
 
-        //region настройка ToolBar
         Toolbar toolbar = findViewById(R.id.toolBar_job);
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-        //endregion
+        toolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         mLayoutManager = new LinearLayoutManager(getApplicationContext());
 
@@ -65,14 +58,12 @@ public class JobActivity extends AppCompatActivity {
                 DividerItemDecoration.VERTICAL));
 
         if(savedInstanceState == null){
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        mList = new ArrayList<>();
-                        new GetHtmlTask().execute(url).get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
+            new Thread(() -> {
+                try {
+                    mList = new ArrayList<>();
+                    new GetHtmlTask().execute(url).get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             }).start();
         } else{
@@ -157,23 +148,25 @@ public class JobActivity extends AppCompatActivity {
             }
             Elements els = null;
             if (doc != null) {
-                els = doc.getElementsByClass("Tabs").select("table").get(1).select("tbody").select("tr");
+                els = doc.getElementsByClass("Tabs").select("table")
+                        .get(1).select("tbody").select("tr");
             }
 
             String organization;
-                String post;
-                String url;
-                String date;
+            String post;
+            String url;
+            String date;
 
-                int id = 0;
+            int id = 0;
 
             if (els != null) {
                 for (int i = 1; i < els.size(); i++) {
                     // Если вакансии заполнены по правильному шаблону
                     if(els.get(i).select("td").get(0).text().equals("")){
-                        if(els.get(i).select("td").get(1) != null && els.get(i).select("td").get(2) != null){
+                        if(els.get(i).select("td").get(1) != null
+                                && els.get(i).select("td").get(2) != null){
                             // Отлавливал такое что название организации было в дополнительной таблице, по этому проверку на всякий ¯\_(ツ)_/¯
-                            if(els.get(i).select("td").get(1).childNodeSize() < 2){ //els.get(i).select("table") == null
+                            if(els.get(i).select("td").get(1).childNodeSize() < 2){
 
                                 organization = els.get(i).select("td").get(1).text();
                                 post = els.get(i).select("td").get(2).text();

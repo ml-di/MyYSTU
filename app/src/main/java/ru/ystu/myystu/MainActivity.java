@@ -1,7 +1,9 @@
 package ru.ystu.myystu;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
@@ -56,6 +58,14 @@ public class MainActivity extends FragmentActivity {
             if(newTabId == R.id.tab_news){
                 mBottomBar.setInActiveTabColor(Color.parseColor("#000000"));
                 colorInActiveTab = Color.parseColor("#000000");
+
+
+                // Значки статус бара в черный цвет
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    View view = this.getWindow().getDecorView();
+                    view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                }
+
                 return false;
             } else
             if (newTabId == R.id.tab_bell){

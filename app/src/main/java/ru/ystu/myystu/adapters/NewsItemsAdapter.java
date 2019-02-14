@@ -2,6 +2,7 @@ package ru.ystu.myystu.adapters;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.adaptersData.NewsItemsData_DontAttach;
 import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
+import ru.ystu.myystu.utils.StringFormatter;
 import ru.ystu.myystu.utils.UnixToString;
 
 public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,6 +27,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private ArrayList<Parcelable> mList;
     private Context context;
+    private StringFormatter stringFormatter = new StringFormatter();
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder{
 
@@ -63,9 +66,10 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             postText = itemView.findViewById(R.id.post_text);
         }
 
-        void setDontAttach(NewsItemsData_DontAttach dontAttach){
+        void setDontAttach(NewsItemsData_DontAttach dontAttach, StringFormatter stringFormatter){
 
-            postText.setText(dontAttach.getText());
+            postText.setText(stringFormatter.getFormattedString(dontAttach.getText()));
+            postText.setMovementMethod(LinkMovementMethod.getInstance());
             postDate.setText(unixToString.setUnixToString(dontAttach.getDate()));
 
             if(Objects.equals(dontAttach.getIsPinned(), 1))
@@ -123,7 +127,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
             case ITEM_DONT_ATTACH:
                 NewsItemsData_DontAttach dontAttach = (NewsItemsData_DontAttach) mList.get(position);
-                ((DontAttachViewHolder) holder).setDontAttach(dontAttach);
+                ((DontAttachViewHolder) holder).setDontAttach(dontAttach, stringFormatter);
                 break;
         }
     }

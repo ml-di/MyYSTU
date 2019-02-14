@@ -1,6 +1,5 @@
 package ru.ystu.myystu;
 
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,10 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.reactivestreams.Subscription;
-
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -23,15 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 import ru.ystu.myystu.adapters.NewsItemsAdapter;
 import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.network.GetListNewsFromURL;
@@ -86,7 +76,6 @@ public class NewsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         mList.add(new NewsItemsData_Header(0, "Тестирую header"));
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
