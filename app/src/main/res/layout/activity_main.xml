@@ -7,23 +7,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.roughike.bottombar.BottomBar
-        android:id="@+id/bottomBar"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        app:bb_behavior="underNavbar|shifting"
-        app:bb_inActiveTabAlpha="0.2"
-        app:bb_showShadow="true"
-        app:bb_tabXmlResource="@xml/bottombar_tabs"
-        app:layout_constraintBottom_toBottomOf="@id/constraint_main" />
+        android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.ContentFrameLayout
-        android:id="@+id/contentConteiner"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomBar"
-        android:layout_marginBottom="60dp">
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:id="@+id/contentConteiner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/bottomBar"
+            android:fitsSystemWindows="true" />
 
-    </androidx.appcompat.widget.ContentFrameLayout>
+        <com.roughike.bottombar.BottomBar
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            app:bb_behavior="underNavbar|shifting"
+            app:bb_inActiveTabAlpha="0.2"
+            app:bb_showShadow="true"
+            app:bb_tabXmlResource="@xml/bottombar_tabs"
+            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior" />
 
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

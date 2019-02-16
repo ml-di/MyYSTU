@@ -35,6 +35,7 @@ public class NewsFragment extends Fragment {
     private String VK_API_VERSION = "5.92"; // Версия API
     private String SERVICE_KEY = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9"; // Сервисный ключ доступа
 
+    private int postionScroll = 0;
     private boolean isLoad = false;
 
     private StringBuilder urlBuilder = new StringBuilder();
@@ -90,6 +91,7 @@ public class NewsFragment extends Fragment {
             mLayoutManager.onRestoreInstanceState(mRecyclerState);
             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
+            postionScroll = savedInstanceState.getInt("postionScroll");
         }
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
@@ -115,6 +117,7 @@ public class NewsFragment extends Fragment {
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
         outState.putParcelableArrayList("mList", mList);
+        outState.putInt("postionScroll", postionScroll);
     }
 
     @Override
@@ -154,8 +157,23 @@ public class NewsFragment extends Fragment {
     }
 
     void scrollTopRecyclerView() {
-        if(mRecyclerView != null && ((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0)
-            mRecyclerView.smoothScrollToPosition(0);
+
+        if(mRecyclerView != null){
+            if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0){
+                postionScroll = ((LinearLayoutManager)mLayoutManager).findFirstCompletelyVisibleItemPosition();
+                if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 10)
+                    mRecyclerView.smoothScrollToPosition(0);
+                else{
+                    mRecyclerView.scrollToPosition(5);
+                    mRecyclerView.smoothScrollToPosition(0);
+                }
+            } else{
+                if(postionScroll > 0){
+                    mRecyclerView.scrollToPosition(postionScroll - 1);
+                    mRecyclerView.smoothScrollToPosition(postionScroll);
+                }
+            }
+        }
     }
 
     public interface OnFragmentInteractionListener {

@@ -47,6 +47,14 @@ public class MainActivity extends FragmentActivity {
                 mNewsFragment = getSupportFragmentManager().getFragment(savedInstanceState, "state_news_fragment");
         }
 
+        if(mBottomBar.getCurrentTabPosition() == 0){
+            // Значки статус бара в черный цвет
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                View view = this.getWindow().getDecorView();
+                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
+
         // Работа с цветами иконок бара при переключении
         mBottomBar.setTabSelectionInterceptor((oldTabId, newTabId) -> {
 
@@ -58,7 +66,6 @@ public class MainActivity extends FragmentActivity {
             if(newTabId == R.id.tab_news){
                 mBottomBar.setInActiveTabColor(Color.parseColor("#000000"));
                 colorInActiveTab = Color.parseColor("#000000");
-
 
                 // Значки статус бара в черный цвет
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
