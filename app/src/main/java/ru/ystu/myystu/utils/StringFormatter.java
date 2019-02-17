@@ -8,11 +8,14 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 
@@ -48,8 +51,13 @@ public class StringFormatter {
         // Сслыки вконтакте
         if(text.contains("[club") || text.contains("[id"))
             formattedText = getVkLink(formattedText);
-
+        // Url ссылки
         formattedText = getUrlLink(formattedText);
+        // Телефонные номера
+        formattedText = getPhoneNumber(formattedText);
+        // Электронные почты
+        if(text.contains("@"))
+            formattedText = getEmail(formattedText);
 
         return formattedText;
     }
@@ -57,217 +65,93 @@ public class StringFormatter {
     private SpannableStringBuilder getHashtag (SpannableStringBuilder textSpannable){
 
         String text = textSpannable.toString();
-        SpannableStringBuilder hashText = textSpannable;
-        String hash;
 
-        int index_s = 0;    // Начальный индекс
-        int index_e = 0;    // Конечный индекс
-        int index_c = 0;    // Индекс для количества
+        Pattern pattern = Pattern.compile("#[а-яА-Яa-zA-Z0-9\\-_!@%$&*()=+\"№;:?{}]{3,}");
+        Matcher matcher = pattern.matcher(text);
 
-        // Используются для отслеживания завершения хештега
-        int isN;            // Если перенос строки
-        int isSpace;        // Если пробел
-        int isHash;         // Если хештег
+        while (matcher.find()){
+            int index_s = matcher.start();
+            int index_e = matcher.end();
+            String hash = text.substring(index_s, index_e);
 
-        while (index_s >= 0){
-
-            index_s = text.indexOf("#", index_c);
-            index_c = index_s + 1;
-
-            // Если хештег действительно существует
-            if(index_s >= 0){
-
-                // Ищем первый пробел, хештег или новую строку
-                isN = text.indexOf("\n", index_c);
-                isSpace = text.indexOf(" ", index_c);
-                isHash = text.indexOf("#", index_c);
-
-                // Если ничего не найдено, то конец строки
-                if(isN == -1 && isSpace == -1 && isHash == -1)
-                    index_e = text.length();
-                else
-                {
-                    if(isN == -1)
-                        isN = Integer.MAX_VALUE;
-                    if(isSpace == -1)
-                        isSpace = Integer.MAX_VALUE;
-                    if(isHash == -1)
-                        isHash = Integer.MAX_VALUE;
-
-                    // Сортировка на меньший индекс
-                    index_e = Math.min(Math.min(isN, isSpace), isHash);
-                }
-
-                hash = text.substring(index_s, index_e);
-
-                // Если последний символ хештега перенос строки, пробел, точка или запятая удаляем его
-                if(Objects.equals(hash.substring(hash.length() -1), " ")
-                        || Objects.equals(hash.substring(hash.length() -1), "\n")
-                        || Objects.equals(hash.substring(hash.length() -1), ".")
-                        || Objects.equals(hash.substring(hash.length() -1), ",")) {
-                    hash = hash.substring(0, hash.length()-1);
-                    index_e--;
-                }
-
-                if(hash.length() > 2)
-                    hashText.setSpan(new LinkClickableSpan(hash, 0), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                index_c++;
-            }
+            textSpannable.setSpan(new LinkClickableSpan(hash, 0), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        return hashText;
+        return textSpannable;
     }
     private SpannableStringBuilder getVkLink (SpannableStringBuilder textSpannable){
 
         SpannableStringBuilder linkText = textSpannable;
         String text = textSpannable.toString();
-        String linkType;
-        String link;
 
-        int index_s = 0;    // Начальный индекс
-        int index_e = 0;    // Конечный индекс
-        int index_c = 0;    // Индекс для количества
+        Pattern pattern = Pattern.compile("\\[(id|club)\\d+\\|[^]]+]");
+        Matcher matcher = pattern.matcher(text);
 
-        int position_id;    // Позиция ссылки на профиль
-        int position_club;  // Позиция ссылки на группу / паблик
+        while (matcher.find()){
 
-        while (index_s >= 0){
+            int index_s = matcher.start();
+            int index_e = matcher.end();
+            String link = text.substring(index_s, index_e);
 
-            position_id = text.indexOf("[id", index_c);
-            position_club = text.indexOf("[club", index_c);
+            String linkName = link.substring(link.indexOf("|") + 1, link.indexOf("]"));         // Текст в записи
+            String linkUrl = link.substring(link.indexOf("[") + 1, link.indexOf("|"));          // Ссылка
 
-            // Определение первой ссылки
-            if(position_id == -1)
-                linkType = "[club";
-            else
-            if(position_club == -1)
-                linkType = "[id";
-            else {
-                if(position_id < position_club)
-                    linkType = "[id";
-                else
-                    linkType = "[club";
-            }
+            linkText.setSpan(new LinkClickableSpan(linkUrl, 1), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            linkText = linkText.replace(index_s, index_e, linkName);
 
-            // Начальная позиция ссылки
-            index_s = text.indexOf(linkType, index_c);
-            index_c = index_s + 1;
-
-            if(index_s >= 0){
-
-                // Конечная позиция ссылки
-                index_e = text.indexOf("]", index_c) + 1;
-
-                link = text.substring(index_s, index_e);
-                String linkName = link.substring(link.indexOf("|") + 1, link.indexOf("]"));         // Текст в записи
-                String linkUrl = link.substring(link.indexOf("[") + 1, link.indexOf("|"));          // Ссылка
-                linkText.setSpan(new LinkClickableSpan(linkUrl, 1), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                linkText = linkText.replace(index_s, index_e, linkName);
-
-                index_c++;
-            }
         }
 
         return linkText;
     }
     private SpannableStringBuilder getUrlLink (SpannableStringBuilder textSpannable){
 
-        SpannableStringBuilder linkText = textSpannable;
         String text = textSpannable.toString();
-        String url;
-        String[] domains = new String[]{".com", ".ru", ".cc", ".org", ".su", ".net", ".рф", ".info",
-            ".club", ".me", ".biz", ".cz", ".at", ".fm", ".ly", ".be", ".re", ".co", ".gl", ".tv",
-            ".io", ".de", ".in", ".it", ".us", ".cn", ".fr", ".jp"};
 
-        int index_s = 0;    // Начальный индекс
-        int index_e = 0;    // Конечный индекс
-        int index_c = 0;    // Индекс для количества
+        Pattern pattern = Pattern.compile("(https?|ftp|file)://[a-zA-Zа-яА-Я0-9+&#/%?=~_-|!:,.;]+\\.[a-zA-Zа-яА-Я0-9+&@#/%=~_\\-|]+");
+        Matcher matcher = pattern.matcher(text);
 
-        // Используются для отслеживания завершения ссылки
-        int isN;            // Если перенос строки
-        int isSpace;        // Если пробел
+        while (matcher.find()){
+            int index_s = matcher.start();
+            int index_e = matcher.end();
+            String url = text.substring(matcher.start(), matcher.end());
 
-        // Проверка на начиличе ссылок в тексте
-        for(int i = 0; i < domains.length; i++){
-            if(text.contains(domains[i])){
-                while (index_s >= 0){
-
-                    // Начало ссылки
-                    index_s = text.indexOf(domains[i], index_c);
-                    index_c = index_s;
-
-                    if(index_s >= 0){
-
-                        // Ищем конец ссылки
-                        isN = text.indexOf("\n", index_c);
-                        isSpace = text.indexOf(" ", index_c);
-                        index_e = sortIndex(isN, isSpace, text, false);
-
-                        // Ещем начало ссылки
-                        isN = text.lastIndexOf("\n", index_c);
-                        isSpace = text.lastIndexOf(" ", index_c);
-                        index_s = sortIndex(isN, isSpace, text, true);
-
-                        url = text.substring(index_s + 1, index_e);
-
-                        // Если последний символ ссылки перенос строки, пробел, точка или запятая удаляем его
-                        if(Objects.equals(url.substring(url.length() -1), " ")
-                                || Objects.equals(url.substring(url.length() -1), "\n")
-                                || Objects.equals(url.substring(url.length() -1), ".")
-                                || Objects.equals(url.substring(url.length() -1), ",")) {
-                            url = url.substring(0, url.length()-1);
-                            index_e--;
-                        }
-
-                        // Почта
-                        if(url.contains("@"))
-                            linkText.setSpan(new LinkClickableSpan(url, 3), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        // Ссылка
-                        else
-                            linkText.setSpan(new LinkClickableSpan(url, 2), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                        index_c++;
-                    }
-                }
-            }
+            textSpannable.setSpan(new LinkClickableSpan(url, 2), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        return linkText;
+        return textSpannable;
     }
+    private SpannableStringBuilder getEmail (SpannableStringBuilder textSpannable){
 
-    private int sortIndex(int isN, int isSpace, String text, boolean isStart){
+        String text = textSpannable.toString();
 
-        int response;
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9+_\\-.]+@[a-zA-Z0-9+_\\-.]+\\.[a-zA-Z0-9+_\\-]+");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()){
+            int index_s = matcher.start();
+            int index_e = matcher.end();
+            String email = text.substring(index_s, index_e);
 
-        if(isN == -1 && isSpace == -1)
-            response = -1;
-        else
-        {
-            if(isN == -1)
-                response = isSpace;
-            else
-            if(isSpace == -1)
-                response = isN;
-            else {
-                if(isStart){
-                    if(isN > isSpace)
-                        response = isN;
-                    else
-                        response = isSpace;
-                } else {
-                    if(isN < isSpace)
-                        response = isN;
-                    else
-                        response = isSpace;
-                }
-            }
+            textSpannable.setSpan(new LinkClickableSpan(email, 3), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        if(response == -1 && !isStart)
-            response = text.length();
+        return textSpannable;
+    }
+    private SpannableStringBuilder getPhoneNumber (SpannableStringBuilder textSpannable){
 
-        return response;
+        String text = textSpannable.toString();
+
+        Pattern pattern = Pattern
+                .compile("(\\+?([78])(-|\\s)?\\(?([89])\\d{2}\\)?(\\s|-)?\\d{3}(-|\\s)?\\d{2}(-|\\s)?\\d{2})|(\\+?\\s?(([78])?\\s?\\(\\d{3,4}\\))?\\s?\\d{1,3}-\\d{2}-\\d{2})");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()){
+            int index_s = matcher.start();
+            int index_e = matcher.end();
+            String number = text.substring(index_s, index_e);
+
+            textSpannable.setSpan(new LinkClickableSpan(number, 4), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return textSpannable;
     }
 
     class LinkClickableSpan extends ClickableSpan{
@@ -316,7 +200,8 @@ public class StringFormatter {
                     break;
                 // url ссылка
                 case 2:
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                    if(URLUtil.isValidUrl(link))
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
                     break;
                 // Почта
                 case 3:
@@ -324,9 +209,13 @@ public class StringFormatter {
                             .setType("text/plain")
                             .setData(Uri.parse("mailto:" + link));
                     break;
+                case 4:
+                    intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", link, null));
+                    break;
             }
 
-            tv.getContext().startActivity(intent);
+            if(intent != null)
+                tv.getContext().startActivity(intent);
         }
 
         public void updateDrawState(@NonNull TextPaint ds) {
