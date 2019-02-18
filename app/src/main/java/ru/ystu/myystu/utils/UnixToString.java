@@ -89,10 +89,10 @@ public class UnixToString {
 
 
         String stringTime;
-        if(Objects.equals(day, thisDay))
+        if(Objects.equals(day, thisDay) && Objects.equals(month, thisMonth) && Objects.equals(year, thisYear))
             stringTime = "Сегодня | " + hour + ":" + minutes;
         else
-        if(Objects.equals(day, thisDay -1) && Objects.equals(month, thisMonth))
+        if(Objects.equals(day, thisDay -1) && Objects.equals(month, thisMonth) && Objects.equals(year, thisYear))
             stringTime = "Вчера | " + hour + ":" + minutes;
         else
         if(Objects.equals(year, thisYear))
