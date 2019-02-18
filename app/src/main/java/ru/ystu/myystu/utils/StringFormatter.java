@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +22,13 @@ import java.util.regex.Pattern;
 import androidx.annotation.NonNull;
 
 public class StringFormatter {
+
+    private String response;
+    private String text;
+    private int index_s;
+    private int index_e;
+    private Pattern pattern;
+    private Matcher matcher;
 
     public SpannableStringBuilder getFormattedString(String text){
 
@@ -64,17 +73,17 @@ public class StringFormatter {
 
     private SpannableStringBuilder getHashtag (SpannableStringBuilder textSpannable){
 
-        String text = textSpannable.toString();
+        text = textSpannable.toString();
 
-        Pattern pattern = Pattern.compile("#[а-яА-Яa-zA-Z0-9\\-_!@%$&*()=+\"№;:?{}]{3,}");
-        Matcher matcher = pattern.matcher(text);
+        pattern = Pattern.compile("#[а-яА-Яa-zA-Z0-9ё\\-_!@%$&*()=+\"№;:?{}]{2,}");
+        matcher = pattern.matcher(text);
 
         while (matcher.find()){
-            int index_s = matcher.start();
-            int index_e = matcher.end();
-            String hash = text.substring(index_s, index_e);
+            index_s = matcher.start();
+            index_e = matcher.end();
+            response = text.substring(index_s, index_e);
 
-            textSpannable.setSpan(new LinkClickableSpan(hash, 0), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textSpannable.setSpan(new LinkClickableSpan(response, 0), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         return textSpannable;
@@ -82,22 +91,27 @@ public class StringFormatter {
     private SpannableStringBuilder getVkLink (SpannableStringBuilder textSpannable){
 
         SpannableStringBuilder linkText = textSpannable;
-        String text = textSpannable.toString();
+        text = textSpannable.toString();
 
-        Pattern pattern = Pattern.compile("\\[(id|club)\\d+\\|[^]]+]");
-        Matcher matcher = pattern.matcher(text);
+        int temp = 0;
+
+        pattern = Pattern.compile("\\[(id|club)\\d+\\|[^]]+]");
+        matcher = pattern.matcher(text);
 
         while (matcher.find()){
 
-            int index_s = matcher.start();
-            int index_e = matcher.end();
-            String link = text.substring(index_s, index_e);
+            index_s = matcher.start();
+            index_e = matcher.end();
+            response = text.substring(index_s, index_e);
 
-            String linkName = link.substring(link.indexOf("|") + 1, link.indexOf("]"));         // Текст в записи
-            String linkUrl = link.substring(link.indexOf("[") + 1, link.indexOf("|"));          // Ссылка
+            String linkName = response.substring(response.indexOf("|") + 1, response.indexOf("]"));         // Текст в записи
+            String linkUrl = response.substring(response.indexOf("[") + 1, response.indexOf("|"));          // Ссылка
 
-            linkText.setSpan(new LinkClickableSpan(linkUrl, 1), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            linkText = linkText.replace(index_s, index_e, linkName);
+            linkText.setSpan(new LinkClickableSpan(linkUrl, 1), index_s - temp, index_e - temp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            linkText = linkText.replace(index_s - temp, index_e - temp, linkName);
+
+            temp += index_e - index_s - linkName.length();
 
         }
 
@@ -105,50 +119,52 @@ public class StringFormatter {
     }
     private SpannableStringBuilder getUrlLink (SpannableStringBuilder textSpannable){
 
-        String text = textSpannable.toString();
+        text = textSpannable.toString();
 
-        Pattern pattern = Pattern.compile("(https?|ftp|file)://[a-zA-Zа-яА-Я0-9+&#/%?=~_-|!:,.;]+\\.[a-zA-Zа-яА-Я0-9+&@#/%=~_\\-|]+");
-        Matcher matcher = pattern.matcher(text);
+        pattern = Pattern.compile("(https?|ftp|file)://[a-zA-Zа-яА-Я0-9+&#/%?=~_-|!:,.;]+\\.[a-zA-Zа-яА-Я0-9+&@#/%?=~_\\-|]+");
+        matcher = pattern.matcher(text);
 
         while (matcher.find()){
-            int index_s = matcher.start();
-            int index_e = matcher.end();
-            String url = text.substring(matcher.start(), matcher.end());
+            index_s = matcher.start();
+            index_e = matcher.end();
+            response = text.substring(matcher.start(), matcher.end());
 
-            textSpannable.setSpan(new LinkClickableSpan(url, 2), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textSpannable.setSpan(new LinkClickableSpan(response, 2), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         return textSpannable;
     }
     private SpannableStringBuilder getEmail (SpannableStringBuilder textSpannable){
 
-        String text = textSpannable.toString();
+        text = textSpannable.toString();
 
-        Pattern pattern = Pattern.compile("[a-zA-Z0-9+_\\-.]+@[a-zA-Z0-9+_\\-.]+\\.[a-zA-Z0-9+_\\-]+");
-        Matcher matcher = pattern.matcher(text);
+        pattern = Pattern.compile("[a-zA-Z0-9+_\\-.]+@[a-zA-Z0-9+_\\-.]+\\.[a-zA-Z0-9+_\\-]+");
+        matcher = pattern.matcher(text);
+
         while (matcher.find()){
-            int index_s = matcher.start();
-            int index_e = matcher.end();
-            String email = text.substring(index_s, index_e);
+            index_s = matcher.start();
+            index_e = matcher.end();
+            response = text.substring(index_s, index_e);
 
-            textSpannable.setSpan(new LinkClickableSpan(email, 3), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textSpannable.setSpan(new LinkClickableSpan(response, 3), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         return textSpannable;
     }
     private SpannableStringBuilder getPhoneNumber (SpannableStringBuilder textSpannable){
 
-        String text = textSpannable.toString();
+        text = textSpannable.toString();
 
-        Pattern pattern = Pattern
+        pattern = Pattern
                 .compile("(\\+?([78])(-|\\s)?\\(?([89])\\d{2}\\)?(\\s|-)?\\d{3}(-|\\s)?\\d{2}(-|\\s)?\\d{2})|(\\+?\\s?(([78])?\\s?\\(\\d{3,4}\\))?\\s?\\d{1,3}-\\d{2}-\\d{2})");
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()){
-            int index_s = matcher.start();
-            int index_e = matcher.end();
-            String number = text.substring(index_s, index_e);
+        matcher = pattern.matcher(text);
 
-            textSpannable.setSpan(new LinkClickableSpan(number, 4), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        while (matcher.find()){
+            index_s = matcher.start();
+            index_e = matcher.end();
+            response = text.substring(index_s, index_e);
+
+            textSpannable.setSpan(new LinkClickableSpan(response, 4), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         return textSpannable;

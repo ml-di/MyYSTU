@@ -31,7 +31,8 @@ public class NewsFragment extends Fragment {
     private int PHOTO_SIZE = 100;           // Качество загружаемых картинок (50, 100, 200)
     private int OFFSET = 0;                 // Смещение для следующей порции новостей (не менять)
     private int POST_COUNT_LOAD = 20;       // Количество загружаемых постов за раз
-    private String OWNER_ID = "-28414014";  // id группы вуза через дефис
+    //private String OWNER_ID = "-28414014";  // id группы вуза через дефис
+    private String OWNER_ID = "-178529732";  // id группы вуза через дефис
     private String VK_API_VERSION = "5.92"; // Версия API
     private String SERVICE_KEY = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9"; // Сервисный ключ доступа
 
