@@ -5,13 +5,17 @@ import android.os.Parcelable;
 
 public class JobItemsData implements Parcelable {
 
-    private int id;
-    private String organization;
-    private String post;
-    private String url;
-    private String date;
+    private final int id;
+    private final String organization;
+    private final String post;
+    private final String url;
+    private final String date;
 
-    public JobItemsData(int id, String organization, String post, String url, String date) {
+    public JobItemsData(final int id,
+                        final String organization,
+                        final String post,
+                        final String url,
+                        final String date) {
         this.id = id;
         this.organization = organization;
         this.post = post;

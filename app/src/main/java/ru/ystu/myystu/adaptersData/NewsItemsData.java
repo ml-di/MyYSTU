@@ -3,7 +3,9 @@ package ru.ystu.myystu.adaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class NewsItemsData_DontAttach implements Parcelable {
+import java.util.ArrayList;
+
+public class NewsItemsData implements Parcelable {
 
     private final int id;
     private final int isPinned;
@@ -11,35 +13,40 @@ public class NewsItemsData_DontAttach implements Parcelable {
     private final String date;
     private final String text;
 
-    public NewsItemsData_DontAttach(final int id,
-                                    final int isPinned,
-                                    final String urlPost,
-                                    final String date,
-                                    final String text) {
+    private final ArrayList<NewsItemsPhotoData> listPhoto;
+
+    public NewsItemsData(final int id,
+                         final int isPinned,
+                         final String urlPost,
+                         final String date,
+                         final String text,
+                         final ArrayList<NewsItemsPhotoData> listPhoto) {
         this.id = id;
         this.isPinned = isPinned;
         this.urlPost = urlPost;
         this.date = date;
         this.text = text;
+        this.listPhoto = listPhoto;
     }
 
-    private NewsItemsData_DontAttach(Parcel in) {
+    private NewsItemsData(Parcel in){
         id = in.readInt();
         isPinned = in.readInt();
         urlPost = in.readString();
         date = in.readString();
         text = in.readString();
+        listPhoto = in.createTypedArrayList(NewsItemsPhotoData.CREATOR);
     }
 
-    public static final Creator<NewsItemsData_DontAttach> CREATOR = new Creator<NewsItemsData_DontAttach>() {
+    public static final Creator<NewsItemsData> CREATOR = new Creator<NewsItemsData>() {
         @Override
-        public NewsItemsData_DontAttach createFromParcel(Parcel in) {
-            return new NewsItemsData_DontAttach(in);
+        public NewsItemsData createFromParcel(Parcel in) {
+            return new NewsItemsData(in);
         }
 
         @Override
-        public NewsItemsData_DontAttach[] newArray(int size) {
-            return new NewsItemsData_DontAttach[size];
+        public NewsItemsData[] newArray(int size) {
+            return new NewsItemsData[size];
         }
     };
 
@@ -55,6 +62,7 @@ public class NewsItemsData_DontAttach implements Parcelable {
         parcel.writeString(urlPost);
         parcel.writeString(date);
         parcel.writeString(text);
+        parcel.writeTypedList(listPhoto);
     }
 
     public int getId() {
@@ -72,5 +80,7 @@ public class NewsItemsData_DontAttach implements Parcelable {
     public String getText() {
         return text;
     }
-
+    public ArrayList<NewsItemsPhotoData> getListPhoto() {
+        return listPhoto;
+    }
 }

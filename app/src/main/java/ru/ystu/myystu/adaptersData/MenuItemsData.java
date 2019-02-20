@@ -2,11 +2,13 @@ package ru.ystu.myystu.adaptersData;
 
 public class MenuItemsData {
 
-    private int id;
-    private int icon;
-    private String text;
+    private final int id;
+    private final int icon;
+    private final String text;
 
-    public MenuItemsData(int id, int icon, String text) {
+    public MenuItemsData(final int id,
+                         final int icon,
+                         final String text) {
         this.id = id;
         this.icon = icon;
         this.text = text;

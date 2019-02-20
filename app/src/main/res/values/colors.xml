@@ -13,4 +13,5 @@
     <color name="colorTextTertiary">#a5a5a5</color>
 
     <color name="colorDivider">#DCDCDC</color>
+    <color name="colorPlaceHolderImage">#EEEEEE</color>
 </resources>

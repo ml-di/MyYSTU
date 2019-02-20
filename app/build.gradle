@@ -32,8 +32,9 @@ dependencies {
     implementation files('libs/json-simple-1.1.1.jar')
     // okHttp
     implementation 'com.squareup.okhttp3:okhttp:3.13.0'
-    // glide
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    // fresco
+    implementation 'com.facebook.fresco:fresco:1.12.1'
+    implementation "com.facebook.fresco:imagepipeline-okhttp3:1.12.1"
     // photoView
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     // roughike/BottomBar

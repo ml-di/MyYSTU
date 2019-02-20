@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipeline;
+
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -73,6 +76,8 @@ public class NewsFragment extends Fragment {
         super.onDestroy();
 
         disposables.dispose();
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        imagePipeline.clearMemoryCaches();
     }
 
     @Override

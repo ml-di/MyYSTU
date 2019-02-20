@@ -9,6 +9,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -20,7 +21,9 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import ru.ystu.myystu.adaptersData.NewsItemsData;
 import ru.ystu.myystu.adaptersData.NewsItemsData_DontAttach;
+import ru.ystu.myystu.adaptersData.NewsItemsPhotoData;
 
 public class GetListNewsFromURL {
 
@@ -100,8 +103,39 @@ public class GetListNewsFromURL {
                                                 int datePost = ((Long) Objects.requireNonNull(item.get("date"))).intValue();            // Дата поста в формате unixtime
                                                 String urlPost = "https://vk.com/ystu?w=wall" + fromIdPost + "_" + idPost;
 
+                                                // List с фото
+                                                ArrayList<NewsItemsPhotoData> photoList = new ArrayList<>();
+
+                                                // Фото записей
+                                                if(item.get("attachments") != null){
+
+                                                    JSONArray attachmentsPhoto = (JSONArray)item.get("attachments");
+
+                                                    for (int at = 0; at < attachmentsPhoto.size(); at++){
+
+                                                        JSONObject attachment = (JSONObject) attachmentsPhoto.get(at);
+
+                                                        if(Objects.requireNonNull(attachment.get("type")).equals("photo")){
+
+                                                            JSONObject photo = (JSONObject) attachment.get("photo");
+
+                                                            String urlFull;
+                                                            String urlPreview = (String) Objects.requireNonNull(photo).get("src_big");
+                                                            String urlSmall = (String) Objects.requireNonNull(photo).get("src_small");
+                                                            int width = ((Long) Objects.requireNonNull(photo.get("width"))).intValue();
+                                                            int height = ((Long) Objects.requireNonNull(photo.get("height"))).intValue();
+
+                                                            photoList.add(new NewsItemsPhotoData(height, width, urlPreview, null, urlSmall));
+                                                        }
+                                                    }
+                                                }
+
                                                 id++;
-                                                mList.add(new NewsItemsData_DontAttach(id, 0, isPinnedPost, urlPost, String.valueOf(datePost), textPost, null));
+
+                                                if (photoList.size() > 0)
+                                                    mList.add(new NewsItemsData(id, 0, urlPost, String.valueOf(datePost), textPost, photoList));
+                                                else
+                                                    mList.add(new NewsItemsData_DontAttach (id, 0, urlPost, String.valueOf(datePost), textPost));
                                             }
                                         }
                                     }

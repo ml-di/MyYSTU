@@ -5,10 +5,11 @@ import android.os.Parcelable;
 
 public class NewsItemsData_Header implements Parcelable {
 
-    private int id;
-    private String text;
+    private final int id;
+    private final String text;
 
-    public NewsItemsData_Header(int id, String text) {
+    public NewsItemsData_Header(final int id,
+                                final String text) {
         this.id = id;
         this.text = text;
     }

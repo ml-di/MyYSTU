@@ -5,11 +5,13 @@ import android.os.Parcelable;
 
 public class OlympItemsData implements Parcelable {
 
-    private int id;
-    private String title;
-    private String text;
+    private final int id;
+    private final String title;
+    private final String text;
 
-    public OlympItemsData(int id, String title, String text) {
+    public OlympItemsData(final int id,
+                          final String title,
+                          final String text) {
         this.id = id;
         this.title = title;
         this.text = text;
