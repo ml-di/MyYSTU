@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Users/nline/Desktop/android-studio-ide-171.4408382-windows/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_today_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Users/nline/Desktop/android-studio-ide-171.4408382-windows/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_image_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,7 +33,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_date" />
+                            <entry key="outputName" value="ic_image_black_24dp" />
                             <entry key="sourceFile" value="E:\MyYSTU\icons\My icons 26pt 411px\settings.svg" />
                           </map>
                         </option>

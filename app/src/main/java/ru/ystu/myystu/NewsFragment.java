@@ -41,6 +41,7 @@ public class NewsFragment extends Fragment {
 
     private int postionScroll = 0;
     private boolean isLoad = false;
+    private boolean isEnd = false;
 
     private StringBuilder urlBuilder = new StringBuilder();
 
@@ -63,7 +64,7 @@ public class NewsFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
 
@@ -76,12 +77,12 @@ public class NewsFragment extends Fragment {
         super.onDestroy();
 
         disposables.dispose();
-        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        final ImagePipeline imagePipeline = Fresco.getImagePipeline();
         imagePipeline.clearMemoryCaches();
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mList.add(new NewsItemsData_Header(0, "Тестирую header"));
 
@@ -98,6 +99,7 @@ public class NewsFragment extends Fragment {
             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
             postionScroll = savedInstanceState.getInt("postionScroll");
+            OFFSET = savedInstanceState.getInt("offset");
         }
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
@@ -106,10 +108,13 @@ public class NewsFragment extends Fragment {
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull final RecyclerView recyclerView, final int dx, final int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 // Прокрутили список до конца (5 элемент с конца)
-                if( ((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() >= mLayoutManager.getItemCount() - 5 && mLayoutManager.getItemCount() > 0 && !isLoad){
+                if( ((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() >= mLayoutManager.getItemCount() - 5
+                        && mLayoutManager.getItemCount() > 0
+                        && !isLoad
+                        && !isEnd){
                     getNews(true);
                 }
             }
@@ -117,20 +122,21 @@ public class NewsFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
         outState.putParcelableArrayList("mList", mList);
         outState.putInt("postionScroll", postionScroll);
+        outState.putInt("offset", OFFSET);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_news, container, false);
+        final View view = inflater.inflate(R.layout.fragment_news, container, false);
 
         if(view != null){
             mRecyclerView = view.findViewById(R.id.recycler_news_items);
@@ -138,21 +144,15 @@ public class NewsFragment extends Fragment {
         }
 
         mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mList = new ArrayList<>();
         return view;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(final Context context) {
         super.onAttach(context);
     }
 
@@ -183,13 +183,11 @@ public class NewsFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-
         void onFragmentInteraction(Uri uri);
     }
 
-
     // Запрос к API
-    private String getUrl(boolean isOffset){
+    private String getUrl(final boolean isOffset){
 
         if(isOffset)
             OFFSET += POST_COUNT_LOAD;
@@ -216,15 +214,16 @@ public class NewsFragment extends Fragment {
 
     }
 
-    private void getNews(boolean isOffset){
+    private void getNews(final boolean isOffset){
 
-        String url = getUrl(isOffset);
+        final String url = getUrl(isOffset);
+        int listCount = mList.size();
 
         if(!isLoad) {
             isLoad = true;
             mSwipeRefreshLayout.setRefreshing(true);
 
-            Observable<ArrayList<Parcelable>> observableNewsList = getListNewsFromURL.getObservableNewsList(url, isOffset, mList);
+            final Observable<ArrayList<Parcelable>> observableNewsList = getListNewsFromURL.getObservableNewsList(url, isOffset, mList);
             disposables.add(observableNewsList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -272,6 +271,9 @@ public class NewsFragment extends Fragment {
 
                         if (mSwipeRefreshLayout.isRefreshing())
                             mSwipeRefreshLayout.setRefreshing(false);
+
+                        // Конец списка новостей
+                        isEnd = mList.size() <= listCount;
 
                     } finally {
                         dispose();
