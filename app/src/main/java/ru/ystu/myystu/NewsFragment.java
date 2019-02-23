@@ -31,13 +31,14 @@ import ru.ystu.myystu.network.GetListNewsFromURL;
 
 public class NewsFragment extends Fragment {
 
-    private int PHOTO_SIZE = 100;           // Качество загружаемых картинок (50, 100, 200)
-    private int OFFSET = 0;                 // Смещение для следующей порции новостей (не менять)
-    private int POST_COUNT_LOAD = 20;       // Количество загружаемых постов за раз
-    private String OWNER_ID = "-28414014";  // id группы вуза через дефис
-    //private String OWNER_ID = "-178529732";  // id группы тестовой
-    private String VK_API_VERSION = "5.92"; // Версия API
-    private String SERVICE_KEY = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9"; // Сервисный ключ доступа
+    private int PHOTO_SIZE = 100;                                                                   // Качество загружаемых картинок (50, 100, 200)
+    private int OFFSET = 0;                                                                         // Смещение для следующей порции новостей (не менять)
+    private int POST_COUNT_LOAD = 20;                                                               // Количество загружаемых постов за раз
+    private String OWNER_ID = "-28414014";                                                          // id группы вуза через дефис
+    //private String OWNER_ID = "-178529732";                                                       // id группы тестовой
+    private String VK_API_VERSION = "5.92";                                                         // Версия API
+    private String SERVICE_KEY
+            = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9";            // Сервисный ключ доступа
 
     private int postionScroll = 0;
     private boolean isLoad = false;
@@ -59,7 +60,6 @@ public class NewsFragment extends Fragment {
     private GetListNewsFromURL getListNewsFromURL;
 
     public static NewsFragment newInstance(String param1, String param2) {
-
         return new NewsFragment();
     }
 
@@ -111,7 +111,8 @@ public class NewsFragment extends Fragment {
             public void onScrolled(@NonNull final RecyclerView recyclerView, final int dx, final int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 // Прокрутили список до конца (5 элемент с конца)
-                if( ((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() >= mLayoutManager.getItemCount() - 5
+                if( ((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition()
+                        >= mLayoutManager.getItemCount() - 5
                         && mLayoutManager.getItemCount() > 0
                         && !isLoad
                         && !isEnd){
@@ -223,7 +224,8 @@ public class NewsFragment extends Fragment {
             isLoad = true;
             mSwipeRefreshLayout.setRefreshing(true);
 
-            final Observable<ArrayList<Parcelable>> observableNewsList = getListNewsFromURL.getObservableNewsList(url, isOffset, mList);
+            final Observable<ArrayList<Parcelable>> observableNewsList
+                    = getListNewsFromURL.getObservableNewsList(url, isOffset, mList);
             disposables.add(observableNewsList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -264,7 +266,8 @@ public class NewsFragment extends Fragment {
                         isLoad = false;
 
                         if (isOffset) {
-                            mRecyclerViewAdapter.notifyItemRangeInserted(listCount - 1, mList.size() - listCount);
+                            mRecyclerViewAdapter.notifyItemRangeInserted(listCount - 1,
+                                    mList.size() - listCount);
                         } else {
                             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);

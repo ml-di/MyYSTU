@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_image_black_24dp" />
-                            <entry key="sourceFile" value="E:\MyYSTU\icons\My icons 26pt 411px\settings.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_menu_item" />
+                            <entry key="sourceFile" value="E:\MyYSTU\icons\My icons 26pt 411px\menu_item.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -26,6 +26,9 @@
     <string name="activity_olymp_title">Олимпиады</string>
     <string name="menu_olymp_openInBrowser">Открыть в браузере</string>
 
+    <!-- Fragment новости -->
+    <string name="menu_news_item_openOriginal">Открыть оригинал</string>
+
     <!-- Toasts -->
     <string name="toast_dont_network">Отсутствует подключение к интернету</string>
 </resources>

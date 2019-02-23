@@ -1,6 +1,7 @@
 package ru.ystu.myystu.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Parcelable;
@@ -27,6 +28,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.R;
@@ -71,7 +73,8 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private int id;
         private AppCompatTextView postDate;
         private AppCompatTextView postText;
-        private AppCompatTextView postPinned;
+        private AppCompatImageView postPin;
+        private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();
 
@@ -79,20 +82,25 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             postDate = itemView.findViewById(R.id.post_date);
-            postPinned = itemView.findViewById(R.id.post_pinned);
             postText = itemView.findViewById(R.id.post_text);
+            postPin = itemView.findViewById(R.id.post_pin);
+            menuNewsItem = itemView.findViewById(R.id.menu_news_item);
         }
 
-        void setDontAttach(NewsItemsData_DontAttach dontAttach, StringFormatter stringFormatter){
+        void setDontAttach(NewsItemsData_DontAttach dontAttach, StringFormatter stringFormatter, Context context){
 
             postText.setText(stringFormatter.getFormattedString(dontAttach.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
             postDate.setText(unixToString.setUnixToString(dontAttach.getDate()));
 
             if(Objects.equals(dontAttach.getIsPinned(), 1))
-                postPinned.setText("Запись закреплена");
+                postPin.setVisibility(View.VISIBLE);
             else
-                postPinned.setText("");
+                postPin.setVisibility(View.GONE);
+
+            menuNewsItem.setOnClickListener(e -> {
+                new MenuItem().showMenu(menuNewsItem, dontAttach.getUrlPost(), context);
+            });
         }
     }
 
@@ -101,8 +109,9 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private int id;
         private AppCompatTextView postDate;
         private AppCompatTextView postText;
-        private AppCompatTextView postPinned;
         private SimpleDraweeView postPhoto;
+        private AppCompatImageView postPin;
+        private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();
 
@@ -110,21 +119,22 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             postDate = itemView.findViewById(R.id.post_date);
-            postPinned = itemView.findViewById(R.id.post_pinned);
             postText = itemView.findViewById(R.id.post_text);
             postPhoto = itemView.findViewById(R.id.post_photo_1);
+            postPin = itemView.findViewById(R.id.post_pin);
+            menuNewsItem = itemView.findViewById(R.id.menu_news_item);
         }
 
-        void setOnePhoto(NewsItemsData onePhoto, StringFormatter stringFormatter){
+        void setOnePhoto(NewsItemsData onePhoto, StringFormatter stringFormatter, Context context){
 
             postText.setText(stringFormatter.getFormattedString(onePhoto.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
             postDate.setText(unixToString.setUnixToString(onePhoto.getDate()));
 
             if(Objects.equals(onePhoto.getIsPinned(), 1))
-                postPinned.setText("Запись закреплена");
+                postPin.setVisibility(View.VISIBLE);
             else
-                postPinned.setText("");
+                postPin.setVisibility(View.GONE);
 
             final float w = (float)onePhoto.getListPhoto().get(0).getWidth();
             final float h = (float)onePhoto.getListPhoto().get(0).getHeight();
@@ -139,6 +149,10 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             postPhoto.setAspectRatio(aspectRatio);
             postPhoto.setImageRequest(imageRequest);
 
+            menuNewsItem.setOnClickListener(e -> {
+                new MenuItem().showMenu(menuNewsItem, onePhoto.getUrlPost(), context);
+            });
+
         }
 
     }
@@ -148,9 +162,10 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private int id;
         private AppCompatTextView postDate;
         private AppCompatTextView postText;
-        private AppCompatTextView postPinned;
         private SimpleDraweeView postPhoto_1;
         private SimpleDraweeView postPhoto_2;
+        private AppCompatImageView postPin;
+        private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();
 
@@ -158,10 +173,11 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             postDate = itemView.findViewById(R.id.post_date);
-            postPinned = itemView.findViewById(R.id.post_pinned);
             postText = itemView.findViewById(R.id.post_text);
             postPhoto_1 = itemView.findViewById(R.id.post_photo_1);
             postPhoto_2 = itemView.findViewById(R.id.post_photo_2);
+            postPin = itemView.findViewById(R.id.post_pin);
+            menuNewsItem = itemView.findViewById(R.id.menu_news_item);
         }
 
         void setTwoPhoto(NewsItemsData twoPhoto, StringFormatter stringFormatter, Context context){
@@ -174,9 +190,9 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             postDate.setText(unixToString.setUnixToString(twoPhoto.getDate()));
 
             if(Objects.equals(twoPhoto.getIsPinned(), 1))
-                postPinned.setText("Запись закреплена");
+                postPin.setVisibility(View.VISIBLE);
             else
-                postPinned.setText("");
+                postPin.setVisibility(View.GONE);
 
             float generalAspectRatio = 0;
             float[] aspectRatios = new float[2];
@@ -222,6 +238,10 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         break;
                 }
             }
+
+            menuNewsItem.setOnClickListener(e -> {
+                new MenuItem().showMenu(menuNewsItem, twoPhoto.getUrlPost(), context);
+            });
         }
     }
 
@@ -230,12 +250,13 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private int id;
         private AppCompatTextView postDate;
         private AppCompatTextView postText;
-        private AppCompatTextView postPinned;
         private SimpleDraweeView postPhoto_1;
         private SimpleDraweeView postPhoto_2;
         private SimpleDraweeView postPhoto_3;
         private LinearLayoutCompat photoCountFrame;
         private AppCompatTextView photoCountText;
+        private AppCompatImageView postPin;
+        private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();
 
@@ -243,13 +264,15 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             postDate = itemView.findViewById(R.id.post_date);
-            postPinned = itemView.findViewById(R.id.post_pinned);
             postText = itemView.findViewById(R.id.post_text);
             postPhoto_1 = itemView.findViewById(R.id.post_photo_1);
             postPhoto_2 = itemView.findViewById(R.id.post_photo_2);
             postPhoto_3 = itemView.findViewById(R.id.post_photo_3);
             photoCountFrame = itemView.findViewById(R.id.photoCountFrame);
             photoCountText = itemView.findViewById(R.id.photoCountText);
+            postPin = itemView.findViewById(R.id.post_pin);
+            menuNewsItem = itemView.findViewById(R.id.menu_news_item);
+
         }
 
         void setMorePhoto(NewsItemsData morePhoto, StringFormatter stringFormatter, Context context){
@@ -259,9 +282,9 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             postDate.setText(unixToString.setUnixToString(morePhoto.getDate()));
 
             if(Objects.equals(morePhoto.getIsPinned(), 1))
-                postPinned.setText("Запись закреплена");
+                postPin.setVisibility(View.VISIBLE);
             else
-                postPinned.setText("");
+                postPin.setVisibility(View.GONE);
 
             for(int i = 0; i < 3; i++){
 
@@ -303,6 +326,10 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     photoCountText.setText("");
                 }
             }
+
+            menuNewsItem.setOnClickListener(e -> {
+                new MenuItem().showMenu(menuNewsItem, morePhoto.getUrlPost(), context);
+            });
         }
     }
 
@@ -369,11 +396,11 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
             case ITEM_DONT_ATTACH:
                 final NewsItemsData_DontAttach dontAttach = (NewsItemsData_DontAttach) mList.get(position);
-                ((DontAttachViewHolder) holder).setDontAttach(dontAttach, stringFormatter);
+                ((DontAttachViewHolder) holder).setDontAttach(dontAttach, stringFormatter, context);
                 break;
             case ITEM_1_PHOTO:
                 final NewsItemsData onePhoto = (NewsItemsData) mList.get(position);
-                ((OnePhotoViewHodler) holder).setOnePhoto(onePhoto, stringFormatter);
+                ((OnePhotoViewHodler) holder).setOnePhoto(onePhoto, stringFormatter, context);
                 break;
             case ITEM_2_PHOTO:
                 final NewsItemsData twoPhoto = (NewsItemsData) mList.get(position);
@@ -419,5 +446,24 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    // Меню итема списка
+    private static class MenuItem {
+        private void showMenu(View view, String urlPost, Context context){
+            final PopupMenu itemMenu = new PopupMenu(view.getContext(), view);
+            itemMenu.inflate(R.menu.menu_news_item);
+            itemMenu.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.menu_news_item_openOriginal:
+                        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlPost));
+                        context.startActivity(intent);
+                        return true;
+                }
+                return false;
+            });
+
+            itemMenu.show();
+        }
     }
 }

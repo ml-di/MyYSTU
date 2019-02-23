@@ -107,7 +107,7 @@ public class GetListNewsFromURL {
                                                 final int idPost = ((Long) Objects.requireNonNull(item.get("id"))).intValue();                // Id поста
                                                 final int fromIdPost = ((Long) Objects.requireNonNull(item.get("from_id"))).intValue();       // Id отправителя
                                                 final int datePost = ((Long) Objects.requireNonNull(item.get("date"))).intValue();            // Дата поста в формате unixtime
-                                                final String urlPost = "https://vk.com/ystu?w=wall" + fromIdPost + "_" + idPost;
+                                                final String urlPost = "https://vk.com/wall" + fromIdPost + "_" + idPost;
 
                                                 // List с фото
                                                 final ArrayList<NewsItemsPhotoData> photoList = new ArrayList<>();
@@ -139,9 +139,9 @@ public class GetListNewsFromURL {
                                                 id++;
 
                                                 if (photoList.size() > 0)
-                                                    mList.add(new NewsItemsData(id, 0, urlPost, String.valueOf(datePost), textPost, photoList));
+                                                    mList.add(new NewsItemsData(id, isPinnedPost, urlPost, String.valueOf(datePost), textPost, photoList));
                                                 else
-                                                    mList.add(new NewsItemsData_DontAttach (id, 0, urlPost, String.valueOf(datePost), textPost));
+                                                    mList.add(new NewsItemsData_DontAttach (id, isPinnedPost, urlPost, String.valueOf(datePost), textPost));
                                             }
                                         }
                                     }
