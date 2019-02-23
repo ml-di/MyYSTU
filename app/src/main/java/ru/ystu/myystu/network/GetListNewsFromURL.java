@@ -66,10 +66,16 @@ public class GetListNewsFromURL {
                                 final JSONObject response_object = (JSONObject) obj;
                                 final JSONArray response_json = (JSONArray) response_object.get("response");
 
-                                if (mList.size() > 1 && !isOffset)
-                                    mList.clear();
-
                                 int id = 0;
+
+                                if (mList.size() > 1){
+                                    id = ((NewsItemsData) mList.get(mList.size() - 1)).getId();
+
+                                    if(!isOffset){
+                                        mList.clear();
+                                        id = 0;
+                                    }
+                                }
 
                                 for (int i = 1; i < response_json.size(); i++) {
 

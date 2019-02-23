@@ -144,7 +144,7 @@ public class NewsFragment extends Fragment {
         }
 
         mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mList = new ArrayList<>();
@@ -190,7 +190,7 @@ public class NewsFragment extends Fragment {
     private String getUrl(final boolean isOffset){
 
         if(isOffset)
-            OFFSET += POST_COUNT_LOAD;
+            OFFSET += POST_COUNT_LOAD + 1;
         else
             OFFSET = 0;
 
@@ -240,6 +240,7 @@ public class NewsFragment extends Fragment {
 
                         if(mRecyclerViewAdapter == null){
                             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                         }
 
@@ -263,7 +264,7 @@ public class NewsFragment extends Fragment {
                         isLoad = false;
 
                         if (isOffset) {
-                            mRecyclerViewAdapter.notifyDataSetChanged();
+                            mRecyclerViewAdapter.notifyItemRangeInserted(listCount - 1, mList.size() - listCount);
                         } else {
                             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);

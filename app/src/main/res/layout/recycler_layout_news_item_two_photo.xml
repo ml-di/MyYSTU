@@ -1,107 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/post_constaint"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:paddingTop="8dp"
+    android:paddingBottom="16dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/post_constaint"
+    <androidx.appcompat.widget.ContentFrameLayout
+        android:layout_width="8dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="3dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintTop_toTopOf="@id/post_constaint" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/post_date"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="@color/colorTextTertiary"
+        android:textSize="21sp"
+        tools:text="28 декабря | 15:38" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/post_pinned"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="@color/colorTextTertiary"
+        android:visibility="gone"
+        tools:text="Запись закреплена" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/post_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="16dp"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/post_date"
+        tools:text="Текст записи" />
 
-        <androidx.appcompat.widget.ContentFrameLayout
-            android:layout_width="8dp"
-            android:layout_height="34dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/colorAccent"
-            app:layout_constraintTop_toTopOf="@id/post_constaint" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/post_photos_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/post_text">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/post_date"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:textColor="@color/colorTextTertiary"
-            android:textSize="21sp"
-            tools:text="28 декабря | 15:38" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/post_pinned"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:textColor="@color/colorTextTertiary"
-            android:visibility="gone"
-            tools:text="Запись закреплена" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/post_text"
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/post_photo_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:paddingTop="16dp"
-            android:textColor="@color/colorTextSecondary"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/post_date"
-            tools:text="Текст записи" />
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            app:placeholderImage="@color/colorPlaceHolderImage"
+            app:roundBottomRight="false"
+            app:roundTopRight="false"
+            app:roundedCornerRadius="15dp" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/post_photos_layout"
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/post_photo_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/post_text">
+            android:layout_marginStart="2dp"
+            android:layout_weight="1"
+            app:placeholderImage="@color/colorPlaceHolderImage"
+            app:roundBottomLeft="false"
+            app:roundTopLeft="false"
+            app:roundedCornerRadius="15dp" />
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/post_photo_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:layout_weight="1"
-                app:placeholderImage="@color/colorPlaceHolderImage"
-                app:roundBottomRight="false"
-                app:roundTopRight="false"
-                app:roundedCornerRadius="15dp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/post_photo_2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_weight="1"
-                app:placeholderImage="@color/colorPlaceHolderImage"
-                app:roundBottomLeft="false"
-                app:roundTopLeft="false"
-                app:roundedCornerRadius="15dp" />
+    <androidx.appcompat.widget.ContentFrameLayout
+        android:id="@+id/news_item_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="60dp"
+        android:background="@color/colorDivider"
+        app:layout_constraintTop_toBottomOf="@id/post_photos_layout" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.ContentFrameLayout
-            android:id="@+id/news_item_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="60dp"
-            android:background="@color/colorDivider"
-            app:layout_constraintTop_toBottomOf="@id/post_photos_layout" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>
