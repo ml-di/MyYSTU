@@ -53,17 +53,13 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     static class HeaderViewHolder extends RecyclerView.ViewHolder{
 
         private int id;
-        private AppCompatTextView headerText;
 
         HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            headerText = itemView.findViewById(R.id.news_item_header_text);
         }
 
         void setHeader(NewsItemsData_Header header){
-
-            headerText.setText(header.getText());
 
         }
     }

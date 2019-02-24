@@ -54,6 +54,12 @@ public class MainActivity extends FragmentActivity {
                 View view = this.getWindow().getDecorView();
                 view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
+        } else if (mBottomBar.getCurrentTabPosition() == 2){
+            // Значки статус бара в белый цвет
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                View view = this.getWindow().getDecorView();
+                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
         }
 
         mBottomBar.setOnTabSelectListener(tabId -> {
@@ -65,6 +71,12 @@ public class MainActivity extends FragmentActivity {
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
+
+                    // Значки статус бара в черный цвет
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        View view = this.getWindow().getDecorView();
+                        view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    }
                 } else
                     // Уведомления
                     if (tabId == R.id.tab_bell){
@@ -73,6 +85,12 @@ public class MainActivity extends FragmentActivity {
                                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                                 .replace(R.id.contentConteiner, mBellFragment, "BELL_FRAGMENT")
                                 .commit();
+
+                        // Значки статус бара в черный цвет
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            View view = this.getWindow().getDecorView();
+                            view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                        }
                     } else
                         // Меню
                         if (tabId == R.id.tab_menu){
@@ -82,6 +100,12 @@ public class MainActivity extends FragmentActivity {
                                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                                     .replace(R.id.contentConteiner, mMenuFragment, "MENU_FRAGMENT")
                                     .commit();
+
+                            // Значки статус бара в белый цвет
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                View view = this.getWindow().getDecorView();
+                                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                            }
                         }
             } catch (Exception e){
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
