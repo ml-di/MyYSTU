@@ -59,7 +59,7 @@ public class FileInformation {
         protected String doInBackground(final String... url) {
 
             final String url_s = url[0];
-            String fileInfo;
+            final String fileInfo;
 
             URL url_file = null;
             try {

@@ -28,7 +28,7 @@ import ru.ystu.myystu.adaptersData.JobItemsData;
 
 public class JobActivity extends AppCompatActivity {
 
-    private String url = "https://www.ystu.ru/learning/placement/"; // Url страницы трудоустройство сайта ЯГТУ
+    private final String url = "https://www.ystu.ru/learning/placement/"; // Url страницы трудоустройство сайта ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -41,7 +41,7 @@ public class JobActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job);
 
-        Toolbar toolbar = findViewById(R.id.toolBar_job);
+        final Toolbar toolbar = findViewById(R.id.toolBar_job);
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
@@ -92,7 +92,7 @@ public class JobActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if(item.getItemId() == R.id.menu_job_openInBrowser) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);
         }
 

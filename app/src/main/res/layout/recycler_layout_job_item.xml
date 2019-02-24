@@ -17,6 +17,7 @@
         android:layout_marginEnd="16dp"
         android:textColor="@color/colorTextPrimary"
         android:textSize="18sp"
+        app:layout_constraintTop_toTopOf="@id/itemJob"
         tools:text="Название организации" />
 
     <androidx.appcompat.widget.AppCompatTextView

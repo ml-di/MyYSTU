@@ -23,8 +23,8 @@ public class OlympItemsAdapter extends RecyclerView.Adapter<OlympItemsAdapter.Ol
     class  OlympItemsViewHolder extends RecyclerView.ViewHolder{
 
         private int id;
-        private AppCompatTextView title;
-        private AppCompatTextView text;
+        private final AppCompatTextView title;
+        private final AppCompatTextView text;
 
         OlympItemsViewHolder(View itemView, List<OlympItemsData> mList, Context context) {
             super(itemView);
@@ -50,7 +50,7 @@ public class OlympItemsAdapter extends RecyclerView.Adapter<OlympItemsAdapter.Ol
     @NonNull
     @Override
     public OlympItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_olymp_item, parent, false);
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_olymp_item, parent, false);
         return new OlympItemsViewHolder(v, mList, context);
     }
 
@@ -58,7 +58,6 @@ public class OlympItemsAdapter extends RecyclerView.Adapter<OlympItemsAdapter.Ol
     public void onBindViewHolder(@NonNull OlympItemsViewHolder holder, int position) {
         holder.id = mList.get(position).getId();
         holder.title.setText(mList.get(position).getTitle());
-        //holder.text.setText(mList.get(position).getText());
 
         holder.text.setText(Html.fromHtml(mList.get(position).getText()));
         holder.text.setMovementMethod(LinkMovementMethod.getInstance());

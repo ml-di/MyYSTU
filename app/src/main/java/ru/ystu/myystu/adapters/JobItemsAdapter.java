@@ -39,12 +39,12 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
     static class JobItemsViewHolder extends RecyclerView.ViewHolder{
 
         private int id;
-        private AppCompatTextView organization;
-        private AppCompatTextView post;
-        private AppCompatTextView date;
-        private ConstraintLayout itemJob;
-        private ContentFrameLayout itemJobDateLayout;
-        private String[] mAlertItems;
+        final private AppCompatTextView organization;
+        final private AppCompatTextView post;
+        final private AppCompatTextView date;
+        final private ConstraintLayout itemJob;
+        final private ContentFrameLayout itemJobDateLayout;
+        final private String[] mAlertItems;
 
 
         JobItemsViewHolder(View itemView, final List<JobItemsData> mList, final Context context) {
@@ -87,26 +87,26 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                                         ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                                                     } else {
 
-                                                        new Thread(new Runnable() {
-                                                            public void run() {
+                                                        new Thread(() -> {
 
-                                                                String fileType = FileInformation.getFileType(url);
-                                                                String fileExtenstion = FileInformation.getExt(fileType);
+                                                            final String fileType = FileInformation.getFileType(url);
+                                                            String fileExtenstion = FileInformation.getExt(fileType);
 
-                                                                String fileName;
-                                                                fileName = FileInformation.getFileName(fileType);
+                                                            if(!fileExtenstion.startsWith("."))
+                                                                fileExtenstion = "." + fileExtenstion;
 
-                                                                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                                                                request
-                                                                        .setTitle(fileName)
-                                                                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                                                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName + "." + fileExtenstion)
-                                                                        .allowScanningByMediaScanner();
+                                                            final String fileName = FileInformation.getFileName(fileType);
 
-                                                                DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                                                                if (manager != null) {
-                                                                    manager.enqueue(request);
-                                                                }
+                                                            final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                                                            request
+                                                                    .setTitle(fileName)
+                                                                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                                                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName + fileExtenstion)
+                                                                    .allowScanningByMediaScanner();
+
+                                                            final DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                                                            if (manager != null) {
+                                                                manager.enqueue(request);
                                                             }
                                                         }).start();
 
@@ -114,7 +114,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                                 }
                                                 // Ссылка
                                                 else {
-                                                    Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                                    final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                                     context.startActivity(openLink);
                                                 }
                                             } else
@@ -126,7 +126,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                         // Поделиться файлом
                                         case 1:
 
-                                            Intent sharePost = new Intent();
+                                            final Intent sharePost = new Intent();
                                             sharePost
                                                     .setAction(Intent.ACTION_SEND)
                                                     .putExtra(Intent.EXTRA_TEXT, mList.get(id).getOrganization() + "\n" + url)
@@ -167,7 +167,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
     @NonNull
     @Override
     public JobItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_job_item, parent, false);
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_job_item, parent, false);
         return new JobItemsViewHolder(v, mList, context);
     }
 
@@ -176,7 +176,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         holder.organization.setText(mList.get(position).getOrganization());
         holder.post.setText(mList.get(position).getPost());
 
-        String date = mList.get(position).getDate();
+        final String date = mList.get(position).getDate();
         if(Objects.equals(date, ""))
             holder.itemJobDateLayout.setVisibility(View.GONE);
         else{
@@ -208,7 +208,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         switch (requestCode) {
             case 0:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    //TODO toast что права даны и повторите попытку
+                    Toast.makeText(context, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
                 }
                 break;
 

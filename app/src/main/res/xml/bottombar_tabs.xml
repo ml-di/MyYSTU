@@ -19,8 +19,8 @@
         id="@+id/tab_menu"
         icon="@drawable/ic_menu"
         title="@string/tab_menu_text"
-        barColorWhenSelected="@color/colorPrimary"
-        activeColor="#ffffff"
+        barColorWhenSelected="#fffffe"
+        activeColor="@color/colorPrimary"
         inActiveColor="#000000"/>
 
 </tabs>

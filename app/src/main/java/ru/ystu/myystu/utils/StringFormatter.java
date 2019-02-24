@@ -35,7 +35,7 @@ public class StringFormatter {
         SpannableStringBuilder formattedText;
 
         // Добавление спецсимволов
-        String textPost = text
+        final String textPost = text
                 .replaceAll("<br>", "\n")
                 .replaceAll("&nbsp;", " ")
                 .replaceAll("&gt;", ">")

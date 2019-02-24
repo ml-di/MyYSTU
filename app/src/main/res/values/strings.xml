@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyYSTU</string>
+    <string name="app_name">Мой ЯГТУ</string>
 
     <!-- Названия вкладок нижнего бара -->
     <string name="tab_news_text">Новости</string>

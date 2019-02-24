@@ -13,6 +13,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.JobActivity;
 import ru.ystu.myystu.OlympActivity;
@@ -27,9 +28,9 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
 
     static class MenuItemsViewHolder extends RecyclerView.ViewHolder{
 
-        private AppCompatTextView text;
-        private AppCompatImageView icon;
-        private FrameLayout itemMenu;
+        private final AppCompatTextView text;
+        private final AppCompatImageView icon;
+        private final ConstraintLayout itemMenu;
         private int id;
 
 
@@ -42,48 +43,40 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
             itemMenu = itemView.findViewById(R.id.itemMenu);
 
             // Обработчик нажатий пунктов меню
-            itemMenu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            itemMenu.setOnClickListener(view -> {
 
-                    switch (id){
+                switch (id){
 
-                        // Расписание
-                        case 0:
+                    // Расписание
+                    case 0:
 
-                            break;
-                        // Карта корпусов
-                        case 1:
+                        break;
+                    // Карта корпусов
+                    case 1:
 
-                            break;
-                        // Олимпиады
-                        case 2:
+                        break;
+                    // Олимпиады
+                    case 2:
 
-                            if(NetworkInformation.hasConnection(context))
-                                context.startActivity(new Intent(context, OlympActivity.class));
-                            else
-                                Toast.makeText(context, context.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
+                        if(NetworkInformation.hasConnection(context))
+                            context.startActivity(new Intent(context, OlympActivity.class));
+                        else
+                            Toast.makeText(context, context.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
 
-                            break;
-                        // Трудоустройство
-                        case 3:
+                        break;
+                    // Трудоустройство
+                    case 3:
 
-                            if(NetworkInformation.hasConnection(context))
-                                context.startActivity(new Intent(context, JobActivity.class));
-                            else
-                                Toast.makeText(context, context.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
+                        if(NetworkInformation.hasConnection(context))
+                            context.startActivity(new Intent(context, JobActivity.class));
+                        else
+                            Toast.makeText(context, context.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
 
-                            break;
-                        // Обратная связь
-                        case 4:
+                        break;
+                    // Обратная связь
+                    case 4:
 
-                            break;
-                        // Настройки
-                        case 5:
-
-                            break;
-
-                    }
+                        break;
                 }
             });
         }
@@ -104,7 +97,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
     @NonNull
     @Override
     public MenuItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_menu_item, parent, false);
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_menu_item, parent, false);
         return new MenuItemsViewHolder(v, mList, context);
     }
 

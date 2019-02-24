@@ -15,13 +15,13 @@ public class UnixToString {
     public String setUnixToString(String unixTime) {
 
         //Время записи
-        long timeTemp = Long.parseLong(unixTime);
-        long time = timeTemp * 1000L;
+        final long timeTemp = Long.parseLong(unixTime);
+        final long time = timeTemp * 1000L;
 
-        Date date = new Date(time);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
+        final Date date = new Date(time);
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
-        String stringTimeTemp = simpleDateFormat.format(date);
+        final String stringTimeTemp = simpleDateFormat.format(date);
 
         String hour = stringTimeTemp.substring(0, 2);
         String minutes = stringTimeTemp.substring(3, 5);
@@ -30,8 +30,8 @@ public class UnixToString {
         int year = Integer.valueOf(stringTimeTemp.substring(12, 16));
 
         // Время пользователя
-        Calendar now = Calendar.getInstance( TimeZone.getDefault() );
-        long thisMilliseconds = now.getTimeInMillis();
+        final Calendar now = Calendar.getInstance( TimeZone.getDefault() );
+        final long thisMilliseconds = now.getTimeInMillis();
         now.setTimeInMillis(thisMilliseconds);
 
 

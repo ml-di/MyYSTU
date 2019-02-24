@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -70,6 +71,7 @@ public class NewsFragment extends Fragment {
 
         disposables = new CompositeDisposable();
         getListNewsFromURL = new GetListNewsFromURL();
+
     }
 
     @Override
@@ -145,7 +147,7 @@ public class NewsFragment extends Fragment {
         }
 
         mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mList = new ArrayList<>();

@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.ContentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemMenu"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="?android:attr/selectableItemBackground">
 
+    <androidx.appcompat.widget.ContentFrameLayout
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="16dp"
+        android:alpha="0.1"
+        android:background="@drawable/shape_circle"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/itemMenu"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/itemMenu_icon"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="28.5dp"
-        android:tint="@color/colorPrimary" />
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="16dp"
+        android:padding="8dp"
+        android:tint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/itemMenu"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_chat" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/itemMenu_text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="76dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:alpha="0.9"
         android:ellipsize="end"
-        android:gravity="center_vertical"
         android:maxLines="1"
-        android:textColor="@color/colorMenuItem"
+        android:textColor="@color/colorTextSecondary"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/itemMenu_icon"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Название пункта" />
 
-</androidx.appcompat.widget.ContentFrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

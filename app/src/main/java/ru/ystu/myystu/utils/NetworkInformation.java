@@ -8,7 +8,7 @@ public class NetworkInformation {
 
     public static boolean hasConnection(final Context context)
     {
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = null;
         if (cm != null) {
             wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
