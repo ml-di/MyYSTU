@@ -15,4 +15,5 @@
     <color name="colorDivider">#DCDCDC</color>
     <color name="colorPlaceHolderImage">#EEEEEE</color>
     <color name="colorOverleyImage">#A6000000</color>
+    <color name="colorPhotoViewBackground">#000000</color>
 </resources>

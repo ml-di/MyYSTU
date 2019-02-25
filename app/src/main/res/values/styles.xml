@@ -11,6 +11,18 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <!-- Тема для photoView -->
+    <style name="PhotoViewTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@color/colorPhotoViewBackground</item>
+    </style>
+
     <!-- Тема для activity с toolbar -->
     <style name="AppTheme.ToolBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>

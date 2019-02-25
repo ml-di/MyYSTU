@@ -32,9 +32,11 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.ViewPhotoActivity;
 import ru.ystu.myystu.adaptersData.NewsItemsData;
 import ru.ystu.myystu.adaptersData.NewsItemsData_DontAttach;
 import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
+import ru.ystu.myystu.adaptersData.NewsItemsPhotoData;
 import ru.ystu.myystu.utils.StringFormatter;
 import ru.ystu.myystu.utils.UnixToString;
 
@@ -148,6 +150,9 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             menuNewsItem.setOnClickListener(e -> {
                 new MenuItem().showMenu(menuNewsItem, onePhoto.getUrlPost(), context);
             });
+            postPhoto.setOnClickListener(e -> {
+                new PhotoViewSetter().setPhoto(context, onePhoto.getListPhoto(), 0);
+            });
 
         }
 
@@ -238,6 +243,12 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             menuNewsItem.setOnClickListener(e -> {
                 new MenuItem().showMenu(menuNewsItem, twoPhoto.getUrlPost(), context);
             });
+            postPhoto_1.setOnClickListener(e -> {
+                new PhotoViewSetter().setPhoto(context, twoPhoto.getListPhoto(), 0);
+            });
+            postPhoto_2.setOnClickListener(e -> {
+                new PhotoViewSetter().setPhoto(context, twoPhoto.getListPhoto(), 1);
+            });
         }
     }
 
@@ -325,6 +336,15 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             menuNewsItem.setOnClickListener(e -> {
                 new MenuItem().showMenu(menuNewsItem, morePhoto.getUrlPost(), context);
+            });
+            postPhoto_1.setOnClickListener(e -> {
+                new PhotoViewSetter().setPhoto(context, morePhoto.getListPhoto(), 0);
+            });
+            postPhoto_2.setOnClickListener(e -> {
+                new PhotoViewSetter().setPhoto(context, morePhoto.getListPhoto(), 1);
+            });
+            postPhoto_3.setOnClickListener(e -> {
+                new PhotoViewSetter().setPhoto(context, morePhoto.getListPhoto(), 2);
             });
         }
     }
@@ -460,6 +480,21 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             });
 
             itemMenu.show();
+        }
+    }
+    // Установить фото в ViewPager
+    private static class PhotoViewSetter{
+
+        void setPhoto(Context context, ArrayList<NewsItemsPhotoData> mList, int position){
+            Intent intent = new Intent(context, ViewPhotoActivity.class);
+
+            if(mList.size() > 3 && position == 2)
+                intent.putExtra("position", 0);
+            else
+                intent.putExtra("position", position);
+
+            intent.putExtra("list", mList);
+            context.startActivity(intent);
         }
     }
 }

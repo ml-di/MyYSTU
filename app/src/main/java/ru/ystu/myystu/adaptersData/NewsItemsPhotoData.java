@@ -9,18 +9,15 @@ public class NewsItemsPhotoData implements Parcelable {
     private final int width;
     private final String urlPreview;
     private final String urlFull;
-    private final String urlSmall;
 
     public NewsItemsPhotoData(final int height,
                               final int width,
                               final String urlPreview,
-                              final String urlFull,
-                              final String urlSmall) {
+                              final String urlFull) {
         this.height = height;
         this.width = width;
         this.urlPreview = urlPreview;
         this.urlFull = urlFull;
-        this.urlSmall = urlSmall;
     }
 
     private NewsItemsPhotoData(Parcel in){
@@ -28,7 +25,6 @@ public class NewsItemsPhotoData implements Parcelable {
         width = in.readInt();
         urlPreview = in.readString();
         urlFull = in.readString();
-        urlSmall = in.readString();
     }
 
     public static final Parcelable.Creator<NewsItemsPhotoData> CREATOR = new Parcelable.Creator<NewsItemsPhotoData>() {
@@ -54,7 +50,6 @@ public class NewsItemsPhotoData implements Parcelable {
         parcel.writeInt(width);
         parcel.writeString(urlPreview);
         parcel.writeString(urlFull);
-        parcel.writeString(urlSmall);
     }
 
     public int getHeight() {
@@ -68,9 +63,5 @@ public class NewsItemsPhotoData implements Parcelable {
     }
     public String getUrlFull() {
         return urlFull;
-    }
-
-    public String getUrlSmall() {
-        return urlSmall;
     }
 }

@@ -127,11 +127,29 @@ public class GetListNewsFromURL {
 
                                                             final String urlFull;
                                                             final String urlPreview = (String) Objects.requireNonNull(photo).get("src_big");
-                                                            final String urlSmall = (String) Objects.requireNonNull(photo).get("src_small");
                                                             final int width = ((Long) Objects.requireNonNull(photo.get("width"))).intValue();
                                                             final int height = ((Long) Objects.requireNonNull(photo.get("height"))).intValue();
 
-                                                            photoList.add(new NewsItemsPhotoData(height, width, urlPreview, null, urlSmall));
+                                                            // Получение оригинала
+                                                            /*if(width > 1080 || height > 1024)
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxxbig");
+                                                            else if (width > 807 || height > 807)
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxbig");
+                                                            else if (width > 604 || height > 604)
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xbig");
+                                                            else
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_big");*/
+
+                                                            if(photo.get("src_xxxbig") != null)
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxxbig");
+                                                            else if (photo.get("src_xxbig") != null)
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxbig");
+                                                            else if (photo.get("src_xbig") != null)
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xbig");
+                                                            else
+                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_big");
+
+                                                            photoList.add(new NewsItemsPhotoData(height, width, urlPreview, urlFull));
                                                         }
                                                     }
                                                 }
