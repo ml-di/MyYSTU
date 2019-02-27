@@ -7,6 +7,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import ru.ystu.myystu.adapters.NewsPhotoViewPagerAdapter;
 import ru.ystu.myystu.adaptersData.NewsItemsPhotoData;
+import ru.ystu.myystu.utils.MultiTouchViewPager;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -45,7 +46,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
                 for(int i = 0; i < mList.size(); i++)
                     imageUrls[i] = ((NewsItemsPhotoData)mList.get(i)).getUrlFull();
 
-                ViewPager viewPager = findViewById(R.id.view_pager_news_photo);
+                ViewPager viewPager = (MultiTouchViewPager) findViewById(R.id.view_pager_news_photo);
                 NewsPhotoViewPagerAdapter adapter = new NewsPhotoViewPagerAdapter(this, imageUrls);
                 viewPager.setAdapter(adapter);
 

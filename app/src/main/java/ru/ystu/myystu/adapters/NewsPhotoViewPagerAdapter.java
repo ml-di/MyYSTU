@@ -1,13 +1,21 @@
 package ru.ystu.myystu.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.imagepipeline.image.ImageInfo;
+
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import me.relex.photodraweeview.PhotoDraweeView;
+import ru.ystu.myystu.R;
+import ru.ystu.myystu.network.FrescoLoadProgressBar;
 
 public class NewsPhotoViewPagerAdapter extends PagerAdapter {
 
@@ -23,8 +31,28 @@ public class NewsPhotoViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
-        PhotoDraweeView photoDraweeView = new PhotoDraweeView(context);
-        photoDraweeView.setPhotoUri(Uri.parse(imageUrls[position]));
+        // Загрузка фото
+        final PhotoDraweeView photoDraweeView = new PhotoDraweeView(context);
+        PipelineDraweeControllerBuilder controller = Fresco.newDraweeControllerBuilder();
+        controller.setUri(Uri.parse(imageUrls[position]));
+        controller.setOldController(photoDraweeView.getController());
+        controller.setControllerListener(new BaseControllerListener<ImageInfo>() {
+            @Override
+            public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                super.onFinalImageSet(id, imageInfo, animatable);
+                if (imageInfo == null) {
+                    return;
+                }
+                photoDraweeView.update(imageInfo.getWidth(), imageInfo.getHeight());
+            }
+        });
+        photoDraweeView.setController(controller.build());
+
+        // Ставим progressbar
+        final FrescoLoadProgressBar progressBar = new FrescoLoadProgressBar();
+        progressBar.setColor(context.getResources().getColor(R.color.colorAccent));
+        progressBar.setBackgroundColor(context.getResources().getColor(R.color.colorTextPrimary));
+        photoDraweeView.getHierarchy().setProgressBarImage(progressBar);
 
         container.addView(photoDraweeView);
 

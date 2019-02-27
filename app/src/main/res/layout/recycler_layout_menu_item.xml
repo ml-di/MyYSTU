@@ -11,7 +11,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:alpha="0.1"
+        android:alpha="0.05"
         android:background="@drawable/shape_circle"
         android:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/itemMenu"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_chat" />
+        tools:srcCompat="@drawable/ic_chat" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/itemMenu_text"

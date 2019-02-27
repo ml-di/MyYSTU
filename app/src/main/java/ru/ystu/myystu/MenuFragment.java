@@ -22,23 +22,13 @@ import ru.ystu.myystu.adaptersData.MenuItemsData;
 
 public class MenuFragment extends Fragment {
 
-    private View mView;
-    private OnFragmentInteractionListener mListener;
-
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mRecyclerViewAdapter;
-
     private List<MenuItemsData> mList;
-
-    public static MenuFragment newInstance(String param1, String param2) {
-
-        return new MenuFragment();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        setRetainInstance(false);
     }
 
     @Override
@@ -54,7 +44,7 @@ public class MenuFragment extends Fragment {
         mList.add(new MenuItemsData(3, R.drawable.ic_job, getResources().getString(R.string.menu_text_job)));
         mList.add(new MenuItemsData(4, R.drawable.ic_chat, getResources().getString(R.string.menu_text_chat)));
 
-        mRecyclerViewAdapter = new MenuItemsAdapter(mList, getContext());
+        final RecyclerView.Adapter mRecyclerViewAdapter = new MenuItemsAdapter(mList, getContext());
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
 
@@ -62,11 +52,10 @@ public class MenuFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_menu, container, false);
-        this.mView = view;
+        final View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
-        if(mView != null){
-            mRecyclerView = mView.findViewById(R.id.recycler_menu_items);
+        if(view != null){
+            mRecyclerView = view.findViewById(R.id.recycler_menu_items);
         }
 
         mRecyclerView.setHasFixedSize(true);
@@ -79,17 +68,10 @@ public class MenuFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-
-        void onFragmentInteraction(Uri uri);
     }
 }

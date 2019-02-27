@@ -1,18 +1,13 @@
 package ru.ystu.myystu;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowInsets;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
 
-import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -22,7 +17,6 @@ public class MainActivity extends FragmentActivity {
 
     private BottomBar mBottomBar;
     private FragmentManager mFragmentManager;
-
     private Fragment mNewsFragment;
     private Fragment mBellFragment;
     private Fragment mMenuFragment;

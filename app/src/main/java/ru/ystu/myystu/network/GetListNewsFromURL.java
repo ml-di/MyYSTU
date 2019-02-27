@@ -49,7 +49,7 @@ public class GetListNewsFromURL {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
 
-                            try {
+                            //try {
                                 String news_list_json = null;
 
                                 if (response.body() != null)
@@ -69,7 +69,11 @@ public class GetListNewsFromURL {
                                 int id = 0;
 
                                 if (mList.size() > 1){
-                                    id = ((NewsItemsData) mList.get(mList.size() - 1)).getId();
+
+                                    if(mList.get(mList.size() - 1) instanceof NewsItemsData)
+                                        id = ((NewsItemsData) mList.get(mList.size() - 1)).getId();
+                                    else if (mList.get(mList.size() - 1) instanceof NewsItemsData_DontAttach)
+                                        id = ((NewsItemsData_DontAttach) mList.get(mList.size() - 1)).getId();
 
                                     if(!isOffset){
                                         mList.clear();
@@ -131,15 +135,6 @@ public class GetListNewsFromURL {
                                                             final int height = ((Long) Objects.requireNonNull(photo.get("height"))).intValue();
 
                                                             // Получение оригинала
-                                                            /*if(width > 1080 || height > 1024)
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxxbig");
-                                                            else if (width > 807 || height > 807)
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxbig");
-                                                            else if (width > 604 || height > 604)
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xbig");
-                                                            else
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_big");*/
-
                                                             if(photo.get("src_xxxbig") != null)
                                                                 urlFull  = (String) Objects.requireNonNull(photo).get("src_xxxbig");
                                                             else if (photo.get("src_xxbig") != null)
@@ -168,12 +163,12 @@ public class GetListNewsFromURL {
                                 emitter.onNext(mList);
                                 emitter.onComplete();
 
-                            } catch (Exception e){
+                            /*} catch (Exception e){
                                 emitter.onError(e);
 
                                 client.dispatcher().executorService().shutdown();
                                 client.connectionPool().evictAll();
-                            }
+                            }*/
                         }
                     });
 

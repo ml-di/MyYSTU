@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ViewPhotoActivity">
 
-    <androidx.viewpager.widget.ViewPager
+    <ru.ystu.myystu.utils.MultiTouchViewPager
         android:id="@+id/view_pager_news_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

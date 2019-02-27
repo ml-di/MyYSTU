@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -26,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.DataFragments.DataFragment_News_List;
 import ru.ystu.myystu.adapters.NewsItemsAdapter;
 import ru.ystu.myystu.adaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.network.GetListNewsFromURL;
@@ -47,8 +49,6 @@ public class NewsFragment extends Fragment {
 
     private StringBuilder urlBuilder = new StringBuilder();
 
-    private OnFragmentInteractionListener mListener;
-
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -60,9 +60,7 @@ public class NewsFragment extends Fragment {
     private CompositeDisposable disposables;
     private GetListNewsFromURL getListNewsFromURL;
 
-    public static NewsFragment newInstance(String param1, String param2) {
-        return new NewsFragment();
-    }
+    private DataFragment_News_List dataFragment_news_list;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -71,31 +69,40 @@ public class NewsFragment extends Fragment {
 
         disposables = new CompositeDisposable();
         getListNewsFromURL = new GetListNewsFromURL();
+        final FragmentManager fragmentManager = getFragmentManager();
 
+        if (fragmentManager != null) {
+            dataFragment_news_list = (DataFragment_News_List) fragmentManager.findFragmentByTag("news_list");
+
+            if (dataFragment_news_list == null) {
+                dataFragment_news_list = new DataFragment_News_List();
+                fragmentManager.beginTransaction().add(dataFragment_news_list, "news_list").commit();
+            }
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        disposables.dispose();
         final ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        disposables.dispose();
         imagePipeline.clearMemoryCaches();
     }
 
     @Override
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         mList.add(new NewsItemsData_Header(0, "Тестирую header"));
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
 
-
         if(savedInstanceState == null){
             getNews(false);
         } else {
-            mList = savedInstanceState.getParcelableArrayList("mList");
+            mList = dataFragment_news_list.getList();
             mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
             mLayoutManager.onRestoreInstanceState(mRecyclerState);
             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
@@ -130,9 +137,10 @@ public class NewsFragment extends Fragment {
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
-        outState.putParcelableArrayList("mList", mList);
         outState.putInt("postionScroll", postionScroll);
         outState.putInt("offset", OFFSET);
+
+        dataFragment_news_list.setList(mList);
     }
 
     @Override
@@ -151,6 +159,7 @@ public class NewsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mList = new ArrayList<>();
+
         return view;
     }
 
@@ -162,7 +171,6 @@ public class NewsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     void scrollTopRecyclerView() {
@@ -183,10 +191,6 @@ public class NewsFragment extends Fragment {
                 }
             }
         }
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 
     // Запрос к API
