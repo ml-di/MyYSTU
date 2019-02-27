@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ViewPhotoActivity">
+    tools:context=".Activitys.ViewPhotoActivity">
 
-    <ru.ystu.myystu.utils.MultiTouchViewPager
+    <ru.ystu.myystu.Utils.MultiTouchViewPager
         android:id="@+id/view_pager_news_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

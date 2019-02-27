@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ToolBar">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activitys.MainActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,9 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".JobActivity" />
-        <activity android:name=".OlympActivity" />
-        <activity android:name=".ViewPhotoActivity" android:theme="@style/PhotoViewTheme"/>
+        <activity android:name=".Activitys.JobActivity" />
+        <activity android:name=".Activitys.OlympActivity" />
+        <activity android:name=".Activitys.ViewPhotoActivity" android:theme="@style/PhotoViewTheme"/>
     </application>
 
 </manifest>

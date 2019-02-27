@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorDivider"
     android:orientation="vertical"
-    tools:context=".MenuFragment">
+    tools:context=".Fragments.MenuFragment">
 
     <androidx.appcompat.widget.ContentFrameLayout
         android:id="@+id/menu_header"

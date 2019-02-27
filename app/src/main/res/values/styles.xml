@@ -5,8 +5,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
@@ -28,8 +26,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
     <!-- Тема для toolbar -->
@@ -38,6 +34,13 @@
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <!-- Тема для Bottom navigation -->
+    <style name="BottomNavigation">
+        <item name="android:background">#fff</item>
+        <item name="itemIconTint">@color/bottom_navigation_item_icon</item>
+        <item name="itemTextColor">@color/bottom_navigation_item_text</item>
     </style>
 
 </resources>
