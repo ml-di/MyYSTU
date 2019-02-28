@@ -28,6 +28,18 @@
 
     <!-- Fragment новости -->
     <string name="menu_news_item_openOriginal">Открыть оригинал</string>
+    <string name="menu_news_item_shareLink">Поделиться</string>
+    <string name="menu_news_item_copyLink">Скопировать ссылку</string>
+    <string name="menu_news_item_copyText">Скопировать текст</string>
+    <string name="menu_news_item_openAuthor">Открыть автора</string>
+
+    <string name="menu_news_item_isCopyLink">Ссылка скопирована</string>
+    <string name="menu_news_item_isCopyText">Текст скопирован</string>
+
+    <!-- Activity photoView -->
+    <string name="menu_photo_view_save">Скачать</string>
+    <string name="menu_photo_view_share_link">Поделиться</string>
+    <string name="photo_view_image_successfully_save">Изображение сохранено</string>
 
     <!-- Toasts -->
     <string name="toast_dont_network">Отсутствует подключение к интернету</string>

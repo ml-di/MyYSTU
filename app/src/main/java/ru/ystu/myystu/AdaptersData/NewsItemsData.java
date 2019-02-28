@@ -9,6 +9,7 @@ public class NewsItemsData implements Parcelable {
 
     private final int id;
     private final int isPinned;
+    private final int signer;
     private final String urlPost;
     private final String date;
     private final String text;
@@ -17,12 +18,14 @@ public class NewsItemsData implements Parcelable {
 
     public NewsItemsData(final int id,
                          final int isPinned,
+                         final int signer,
                          final String urlPost,
                          final String date,
                          final String text,
                          final ArrayList<NewsItemsPhotoData> listPhoto) {
         this.id = id;
         this.isPinned = isPinned;
+        this.signer = signer;
         this.urlPost = urlPost;
         this.date = date;
         this.text = text;
@@ -32,6 +35,7 @@ public class NewsItemsData implements Parcelable {
     private NewsItemsData(Parcel in){
         id = in.readInt();
         isPinned = in.readInt();
+        signer = in.readInt();
         urlPost = in.readString();
         date = in.readString();
         text = in.readString();
@@ -59,6 +63,7 @@ public class NewsItemsData implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
         parcel.writeInt(isPinned);
+        parcel.writeInt(signer);
         parcel.writeString(urlPost);
         parcel.writeString(date);
         parcel.writeString(text);
@@ -70,6 +75,9 @@ public class NewsItemsData implements Parcelable {
     }
     public int getIsPinned() {
         return isPinned;
+    }
+    public int getSigner() {
+        return signer;
     }
     public String getUrlPost() {
         return urlPost;

@@ -1,5 +1,7 @@
 package ru.ystu.myystu.Adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
@@ -31,6 +34,8 @@ import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 import ru.ystu.myystu.Utils.StringFormatter;
 import ru.ystu.myystu.Utils.UnixToString;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -89,7 +94,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 postPin.setVisibility(View.GONE);
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, dontAttach.getUrlPost(), context);
+                new MenuItem().showMenu(menuNewsItem, dontAttach.getUrlPost(), postText.getText().toString(), dontAttach.getSigner(), context);
             });
         }
     }
@@ -140,7 +145,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             postPhoto.setImageRequest(imageRequest);
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, onePhoto.getUrlPost(), context);
+                new MenuItem().showMenu(menuNewsItem, onePhoto.getUrlPost(), postText.getText().toString(), onePhoto.getSigner(), context);
             });
             postPhoto.setOnClickListener(e -> {
                 new PhotoViewSetter().setPhoto(context, onePhoto.getListPhoto(), 0);
@@ -233,7 +238,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, twoPhoto.getUrlPost(), context);
+                new MenuItem().showMenu(menuNewsItem, twoPhoto.getUrlPost(), postText.getText().toString(), twoPhoto.getSigner(), context);
             });
             postPhoto_1.setOnClickListener(e -> {
                 new PhotoViewSetter().setPhoto(context, twoPhoto.getListPhoto(), 0);
@@ -327,7 +332,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, morePhoto.getUrlPost(), context);
+                new MenuItem().showMenu(menuNewsItem, morePhoto.getUrlPost(), postText.getText().toString(), morePhoto.getSigner(), context);
             });
             postPhoto_1.setOnClickListener(e -> {
                 new PhotoViewSetter().setPhoto(context, morePhoto.getListPhoto(), 0);
@@ -458,14 +463,51 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // Меню итема списка
     private static class MenuItem {
-        private void showMenu(View view, String urlPost, Context context){
+        private void showMenu(View view, String urlPost, String postText, int signer, Context context){
             final PopupMenu itemMenu = new PopupMenu(view.getContext(), view);
             itemMenu.inflate(R.menu.menu_news_item);
+
+            if(signer > 0)
+                itemMenu.getMenu().findItem(R.id.menu_news_item_openAuthor).setEnabled(true);
+            else
+                itemMenu.getMenu().findItem(R.id.menu_news_item_openAuthor).setEnabled(false);
+
             itemMenu.setOnMenuItemClickListener(item -> {
+
+                final ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+                final ClipData clip;
+
                 switch (item.getItemId()) {
+                    // Открыть оригинал
                     case R.id.menu_news_item_openOriginal:
-                        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlPost));
-                        context.startActivity(intent);
+                        final Intent intentOriginal = new Intent(Intent.ACTION_VIEW, Uri.parse(urlPost));
+                        context.startActivity(intentOriginal);
+                        return true;
+                    // Поделиться
+                    case R.id.menu_news_item_shareLink:
+                        final Intent shareLink = new Intent(Intent.ACTION_SEND)
+                                .putExtra(Intent.EXTRA_TEXT, urlPost)
+                                .setType("text/plain");;
+                        context.startActivity(shareLink);
+                        return true;
+                    // Скопировать ссылку
+                    case R.id.menu_news_item_copyLink:
+                        clip = ClipData.newPlainText("post_link", urlPost);
+                        clipboard.setPrimaryClip(clip);
+
+                        Toast.makeText(context, context.getResources().getString(R.string.menu_news_item_isCopyLink), Toast.LENGTH_SHORT).show();
+                        return true;
+                    // Скопировать текст
+                    case R.id.menu_news_item_copyText:
+                        clip = ClipData.newPlainText("post_text", postText);
+                        clipboard.setPrimaryClip(clip);
+
+                        Toast.makeText(context, context.getResources().getString(R.string.menu_news_item_isCopyText), Toast.LENGTH_SHORT).show();
+                        return true;
+                    // Открыть владельца
+                    case R.id.menu_news_item_openAuthor:
+                        final Intent intentAuthor = new Intent(Intent.ACTION_VIEW, Uri.parse("https://vk.com/id" + signer));
+                        context.startActivity(intentAuthor);
                         return true;
                 }
                 return false;

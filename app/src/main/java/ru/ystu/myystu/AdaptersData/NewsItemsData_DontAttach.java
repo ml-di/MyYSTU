@@ -7,17 +7,20 @@ public class NewsItemsData_DontAttach implements Parcelable {
 
     private final int id;
     private final int isPinned;
+    private final int signer;
     private final String urlPost;
     private final String date;
     private final String text;
 
     public NewsItemsData_DontAttach(final int id,
                                     final int isPinned,
+                                    final int signer,
                                     final String urlPost,
                                     final String date,
                                     final String text) {
         this.id = id;
         this.isPinned = isPinned;
+        this.signer = signer;
         this.urlPost = urlPost;
         this.date = date;
         this.text = text;
@@ -26,6 +29,7 @@ public class NewsItemsData_DontAttach implements Parcelable {
     private NewsItemsData_DontAttach(Parcel in) {
         id = in.readInt();
         isPinned = in.readInt();
+        signer = in.readInt();
         urlPost = in.readString();
         date = in.readString();
         text = in.readString();
@@ -52,6 +56,7 @@ public class NewsItemsData_DontAttach implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
         parcel.writeInt(isPinned);
+        parcel.writeInt(signer);
         parcel.writeString(urlPost);
         parcel.writeString(date);
         parcel.writeString(text);
@@ -62,6 +67,9 @@ public class NewsItemsData_DontAttach implements Parcelable {
     }
     public int getIsPinned() {
         return isPinned;
+    }
+    public int getSigner(){
+        return signer;
     }
     public String getUrlPost() {
         return urlPost;

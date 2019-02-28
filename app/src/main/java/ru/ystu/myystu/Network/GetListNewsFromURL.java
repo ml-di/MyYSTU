@@ -45,7 +45,7 @@ public class GetListNewsFromURL {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
 
-                            //try {
+                            try {
                                 String news_list_json = null;
 
                                 if (response.body() != null)
@@ -102,12 +102,16 @@ public class GetListNewsFromURL {
 
                                                 int isPinnedPost = 0;
                                                 if (item.get("is_pinned") != null)
-                                                    isPinnedPost = ((Long) Objects.requireNonNull(item.get("is_pinned"))).intValue();   // 1 если запись закреплена
+                                                    isPinnedPost = ((Long) Objects.requireNonNull(item.get("is_pinned"))).intValue();         // 1 если запись закреплена
 
                                                 final int idPost = ((Long) Objects.requireNonNull(item.get("id"))).intValue();                // Id поста
                                                 final int fromIdPost = ((Long) Objects.requireNonNull(item.get("from_id"))).intValue();       // Id отправителя
                                                 final int datePost = ((Long) Objects.requireNonNull(item.get("date"))).intValue();            // Дата поста в формате unixtime
                                                 final String urlPost = "https://vk.com/wall" + fromIdPost + "_" + idPost;
+
+                                                int signer = -1;
+                                                if(item.get("signer_id") != null)
+                                                    signer = ((Long) Objects.requireNonNull(item.get("signer_id"))).intValue();                // Владелец записи, если есть
 
                                                 // List с фото
                                                 final ArrayList<NewsItemsPhotoData> photoList = new ArrayList<>();
@@ -148,9 +152,9 @@ public class GetListNewsFromURL {
                                                 id++;
 
                                                 if (photoList.size() > 0)
-                                                    mList.add(new NewsItemsData(id, isPinnedPost, urlPost, String.valueOf(datePost), textPost, photoList));
+                                                    mList.add(new NewsItemsData(id, isPinnedPost, signer, urlPost, String.valueOf(datePost), textPost, photoList));
                                                 else
-                                                    mList.add(new NewsItemsData_DontAttach (id, isPinnedPost, urlPost, String.valueOf(datePost), textPost));
+                                                    mList.add(new NewsItemsData_DontAttach (id, isPinnedPost, signer, urlPost, String.valueOf(datePost), textPost));
                                             }
                                         }
                                     }
@@ -159,15 +163,14 @@ public class GetListNewsFromURL {
                                 emitter.onNext(mList);
                                 emitter.onComplete();
 
-                            /*} catch (Exception e){
+                            } catch (Exception e){
                                 emitter.onError(e);
-
+                            } finally {
                                 client.dispatcher().executorService().shutdown();
                                 client.connectionPool().evictAll();
-                            }*/
+                            }
                         }
                     });
-
         });
 
         return observableNews;

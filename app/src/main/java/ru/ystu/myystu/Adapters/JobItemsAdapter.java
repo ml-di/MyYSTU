@@ -58,96 +58,90 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
             mAlertItems = new String[]{context.getResources().getString(R.string.alert_job_download), context.getResources().getString(R.string.alert_job_share)};
 
-            itemJob.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final String url = mList.get(id).getUrl();
+            itemJob.setOnClickListener(view -> {
+                final String url = mList.get(id).getUrl();
 
-                    if(url.startsWith("https://www.ystu.ru/files"))
-                        mAlertItems[0] = context.getResources().getString(R.string.alert_job_download);
-                    else
-                        mAlertItems[0] = context.getResources().getString(R.string.alert_job_openLink);
+                if(url.startsWith("https://www.ystu.ru/files"))
+                    mAlertItems[0] = context.getResources().getString(R.string.alert_job_download);
+                else
+                    mAlertItems[0] = context.getResources().getString(R.string.alert_job_openLink);
 
-                    // Диалоговое окно для вакансий
-                    alertDialog = new AlertDialog.Builder(context);
-                    alertDialog
-                            .setTitle(mList.get(id).getOrganization())
-                            .setItems(mAlertItems, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    switch (i){
-                                        // Скачать или открыть файл
-                                        case 0:
+                // Диалоговое окно для вакансий
+                alertDialog = new AlertDialog.Builder(context);
+                alertDialog
+                        .setTitle(mList.get(id).getOrganization())
+                        .setItems(mAlertItems, (dialogInterface, i) -> {
+                            switch (i){
+                                // Скачать или открыть файл
+                                case 0:
 
-                                            if(NetworkInformation.hasConnection(context)){
-                                                // Файл
-                                                if(url.startsWith("https://www.ystu.ru/files")){
-                                                    // Проверка на разрешение записи и чтения файлов
-                                                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                                        ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                                                    } else {
+                                    if(NetworkInformation.hasConnection(context)){
+                                        // Файл
+                                        if(url.startsWith("https://www.ystu.ru/files")){
+                                            // Проверка на разрешение записи и чтения файлов
+                                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                                            } else {
 
-                                                        new Thread(() -> {
+                                                new Thread(() -> {
 
-                                                            final String fileType = FileInformation.getFileType(url);
-                                                            String fileExtenstion = FileInformation.getExt(fileType);
+                                                    final String fileType = FileInformation.getFileType(url);
+                                                    String fileExtenstion = FileInformation.getExt(fileType);
 
-                                                            if(!fileExtenstion.startsWith("."))
-                                                                fileExtenstion = "." + fileExtenstion;
+                                                    if(!fileExtenstion.startsWith("."))
+                                                        fileExtenstion = "." + fileExtenstion;
 
-                                                            final String fileName = FileInformation.getFileName(fileType);
+                                                    final String fileName = FileInformation.getFileName(fileType);
 
-                                                            final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                                                            request
-                                                                    .setTitle(fileName)
-                                                                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                                                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName + fileExtenstion)
-                                                                    .allowScanningByMediaScanner();
+                                                    final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                                                    request
+                                                            .setTitle(fileName)
+                                                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName + fileExtenstion)
+                                                            .allowScanningByMediaScanner();
 
-                                                            final DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                                                            if (manager != null) {
-                                                                manager.enqueue(request);
-                                                            }
-                                                        }).start();
-
+                                                    final DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                                                    if (manager != null) {
+                                                        manager.enqueue(request);
                                                     }
-                                                }
-                                                // Ссылка
-                                                else {
-                                                    final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                                    context.startActivity(openLink);
-                                                }
-                                            } else
-                                                Toast.makeText(context, context.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
+                                                }).start();
+
+                                            }
+                                        }
+                                        // Ссылка
+                                        else {
+                                            final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                            context.startActivity(openLink);
+                                        }
+                                    } else
+                                        Toast.makeText(context, context.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
 
 
 
-                                            break;
-                                        // Поделиться файлом
-                                        case 1:
+                                    break;
+                                // Поделиться файлом
+                                case 1:
 
-                                            final Intent sharePost = new Intent();
-                                            sharePost
-                                                    .setAction(Intent.ACTION_SEND)
-                                                    .putExtra(Intent.EXTRA_TEXT, mList.get(id).getOrganization() + "\n" + url)
-                                                    .setType("text/plain");
-                                            context.startActivity(sharePost);
+                                    final Intent sharePost = new Intent();
+                                    sharePost
+                                            .setAction(Intent.ACTION_SEND)
+                                            .putExtra(Intent.EXTRA_TEXT, mList.get(id).getOrganization() + "\n" + url)
+                                            .setType("text/plain");
+                                    context.startActivity(sharePost);
 
-                                            break;
-                                    }
+                                    break;
+                            }
 
-                                }
-                            })
-                            .setNegativeButton(context.getResources().getString(R.string.alert_job_close), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.cancel();
-                                }
-                            })
-                            .create()
-                            .show();
+                        })
+                        .setNegativeButton(context.getResources().getString(R.string.alert_job_close), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        })
+                        .create()
+                        .show();
 
-                }
             });
         }
     }
