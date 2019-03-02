@@ -6,7 +6,7 @@
     <color name="colorAccent">#ec7200</color>
 
     <color name="colorMenuItem">#fff</color>
-    <color name="colorToolBarTitle">#fff</color>
+    <color name="colorToolBar">#fff</color>
 
     <color name="colorTextPrimary">#424242</color>
     <color name="colorTextSecondary">#616161</color>

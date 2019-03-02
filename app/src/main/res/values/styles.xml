@@ -24,7 +24,7 @@
     <!-- Тема для activity с toolbar -->
     <style name="AppTheme.ToolBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorTextTertiary</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -32,8 +32,8 @@
     <style name="Toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
-        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="android:background">@color/colorToolBar</item>
     </style>
 
     <!-- Тема для Bottom navigation -->

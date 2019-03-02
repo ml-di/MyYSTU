@@ -8,18 +8,31 @@ import java.net.URLConnection;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class FileInformation {
 
     public static String getFileType(final String url){
-        String result = null;
 
-        try {
-            result = new LoadFileInfo().execute(url).get();
-        } catch (InterruptedException | ExecutionException e) {
+        final OkHttpClient client = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(url)
+                .head()
+                .build();
+
+        String fileInfo = null;
+        try (Response response = client.newCall(request).execute()) {
+            if (response.body() != null) {
+                fileInfo = Objects.requireNonNull(response.body().contentType()).toString();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return result;
+        return fileInfo;
     }
 
     public static String getExt(String fileType) {
@@ -37,7 +50,7 @@ public class FileInformation {
         if(!Objects.equals(fileType, null)){
             int startIndex = fileType.indexOf("name=") + 6;
             result = fileType.substring(startIndex, fileType.length() - 1);
-            startIndex = result.indexOf(".");
+            startIndex = result.lastIndexOf(".");
             switch (id){
                 // Получить расширение
                 case 0:
@@ -52,37 +65,5 @@ public class FileInformation {
 
         return result;
     }
-
-    static class LoadFileInfo extends AsyncTask<String, Void, String>{
-
-        @Override
-        protected String doInBackground(final String... url) {
-
-            final String url_s = url[0];
-            final String fileInfo;
-
-            URL url_file = null;
-            try {
-                url_file = new URL(url_s);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
-            URLConnection conn = null;
-            try {
-                if (url_file != null) {
-                    conn = url_file.openConnection();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            assert conn != null;
-            fileInfo = conn.getContentType();
-
-            return fileInfo;
-        }
-    }
-
 }
 

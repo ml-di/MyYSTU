@@ -10,17 +10,20 @@ public class JobItemsData implements Parcelable {
     private final String post;
     private final String url;
     private final String date;
+    private final String fileType;
 
     public JobItemsData(final int id,
                         final String organization,
                         final String post,
                         final String url,
-                        final String date) {
+                        final String date,
+                        final String fileType) {
         this.id = id;
         this.organization = organization;
         this.post = post;
         this.url = url;
         this.date = date;
+        this.fileType = fileType;
     }
 
     private JobItemsData(Parcel in) {
@@ -29,6 +32,7 @@ public class JobItemsData implements Parcelable {
         post = in.readString();
         url = in.readString();
         date = in.readString();
+        fileType = in.readString();
     }
 
     public static final Creator<JobItemsData> CREATOR = new Creator<JobItemsData>() {
@@ -55,6 +59,7 @@ public class JobItemsData implements Parcelable {
         parcel.writeString(post);
         parcel.writeString(url);
         parcel.writeString(date);
+        parcel.writeString(fileType);
     }
 
     public int getId() {
@@ -71,5 +76,8 @@ public class JobItemsData implements Parcelable {
     }
     public String getDate() {
         return date;
+    }
+    public String getFileType() {
+        return fileType;
     }
 }

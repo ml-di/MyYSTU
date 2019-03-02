@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -35,7 +36,7 @@ public class GetListNewsFromURL {
             client.newCall(request)
                     .enqueue(new Callback() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             emitter.onError(e);
 
                             client.dispatcher().executorService().shutdown();
@@ -43,7 +44,7 @@ public class GetListNewsFromURL {
                         }
 
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
+                        public void onResponse(@NonNull Call call, @NonNull Response response) {
 
                             try {
                                 String news_list_json = null;
@@ -57,6 +58,10 @@ public class GetListNewsFromURL {
                                     obj = pars.parse(news_list_json);
                                 } catch (ParseException e) {
                                     e.printStackTrace();
+
+                                    emitter.onError(e);
+                                    client.dispatcher().executorService().shutdown();
+                                    client.connectionPool().evictAll();
                                 }
 
                                 final JSONObject response_object = (JSONObject) obj;

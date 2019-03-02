@@ -61,7 +61,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
             itemJob.setOnClickListener(view -> {
                 final String url = mList.get(id).getUrl();
 
-                if(url.startsWith("https://www.ystu.ru/files"))
+                if(mList.get(id).getFileType().equals("FILE"))
                     mAlertItems[0] = context.getResources().getString(R.string.alert_job_download);
                 else
                     mAlertItems[0] = context.getResources().getString(R.string.alert_job_openLink);
@@ -77,7 +77,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
                                     if(NetworkInformation.hasConnection(context)){
                                         // Файл
-                                        if(url.startsWith("https://www.ystu.ru/files")){
+                                        if(mList.get(id).getFileType().equals("FILE")){
                                             // Проверка на разрешение записи и чтения файлов
                                             if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                                 ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);

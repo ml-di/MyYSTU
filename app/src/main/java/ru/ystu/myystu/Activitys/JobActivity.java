@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,12 +18,19 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.Network.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
@@ -36,6 +44,9 @@ public class JobActivity extends AppCompatActivity {
     private ProgressBar progressJob;
     private ArrayList<JobItemsData> mList;
     private Parcelable mRecyclerState;
+
+    private CompositeDisposable disposables;
+    private GetListJobFromURL getListJobFromURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +69,16 @@ public class JobActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
 
+        disposables = new CompositeDisposable();
+        getListJobFromURL = new GetListJobFromURL();
+
         if(savedInstanceState == null){
-            new Thread(() -> {
-                try {
-                    mList = new ArrayList<>();
-                    new GetHtmlTask().execute(url).get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            getJob();
         } else{
             mList = savedInstanceState.getParcelableArrayList("mList");
             mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
-
     }
 
     @Override
@@ -81,6 +87,13 @@ public class JobActivity extends AppCompatActivity {
 
         if(mRecyclerState != null)
             mLayoutManager.onRestoreInstanceState(mRecyclerState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        disposables.dispose();
     }
 
     @Override
@@ -117,77 +130,47 @@ public class JobActivity extends AppCompatActivity {
     }
 
     // Загрузка html страницы и ее парсинг
-    class GetHtmlTask extends AsyncTask<String, Void, Void> {
+    private void getJob(){
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        mList = new ArrayList<>();
+        progressJob.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
 
-            progressJob.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
-        }
+        final Observable<ArrayList<JobItemsData>> observableJobList
+                = getListJobFromURL.getObservableJobList(url, mList);
+        disposables.add(observableJobList
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<ArrayList<JobItemsData>>() {
+                    @Override
+                    public void onNext(ArrayList<JobItemsData> jobItemsData) {
+                        mList = jobItemsData;
+                    }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
+                    @Override
+                    public void onError(Throwable e) {
 
-            mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
-            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-
-            progressJob.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Void doInBackground(final String... urls) {
-
-            Document doc = null;
-            try {
-                doc = Jsoup.connect(urls[0]).get();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Elements els = null;
-            if (doc != null) {
-                els = doc.getElementsByClass("Tabs").select("table")
-                        .get(1).select("tbody").select("tr");
-            }
-
-            String organization;
-            String post;
-            String url;
-            String date;
-
-            int id = 0;
-
-            if (els != null) {
-                for (int i = 1; i < els.size(); i++) {
-                    // Если вакансии заполнены по правильному шаблону
-                    if(els.get(i).select("td").get(0).text().equals("")){
-                        if(els.get(i).select("td").get(1) != null
-                                && els.get(i).select("td").get(2) != null){
-                            // Отлавливал такое что название организации было в дополнительной таблице, по этому проверку на всякий ¯\_(ツ)_/¯
-                            if(els.get(i).select("td").get(1).childNodeSize() < 2){
-
-                                organization = els.get(i).select("td").get(1).text();
-                                post = els.get(i).select("td").get(2).text();
-                                url = els.get(i).select("td").get(2).select("a").attr("href");
-
-                                if(url.startsWith("/files"))
-                                    url = "https://www.ystu.ru" + url;
-
-                                date = els.get(i).select("td").get(3).text();
-                                mList.add(new JobItemsData(id, organization, post, url, date));
-                                id++;
-                            }
+                        try{
+                            progressJob.setVisibility(View.GONE);
+                            mRecyclerView.setVisibility(View.VISIBLE);
+                            Toast.makeText(JobActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        } finally {
+                            dispose();
                         }
                     }
-                }
-            }
 
-            return null;
-        }
+                    @Override
+                    public void onComplete() {
+
+                        try {
+                            mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            progressJob.setVisibility(View.GONE);
+                            mRecyclerView.setVisibility(View.VISIBLE);
+                        } finally {
+                            dispose();
+                        }
+                    }
+                }));
     }
-
-
 }
