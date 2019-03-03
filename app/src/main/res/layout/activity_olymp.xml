@@ -20,18 +20,15 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_olymp_items"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_olymp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <ProgressBar
-        android:id="@+id/progress_olymp"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_olymp_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

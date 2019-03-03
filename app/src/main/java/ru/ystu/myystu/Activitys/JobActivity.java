@@ -25,11 +25,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.Adapters.OlympItemsAdapter;
 import ru.ystu.myystu.Network.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
@@ -41,10 +43,9 @@ public class JobActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ProgressBar progressJob;
     private ArrayList<JobItemsData> mList;
     private Parcelable mRecyclerState;
-
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private CompositeDisposable disposables;
     private GetListJobFromURL getListJobFromURL;
 
@@ -58,13 +59,27 @@ public class JobActivity extends AppCompatActivity {
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
+        toolbar.setOnClickListener(e -> {
+            if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0 && mRecyclerView != null){
+                if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 10)
+                    mRecyclerView.smoothScrollToPosition(0);
+                else
+                    mRecyclerView.scrollToPosition(0);
 
-        mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            }
+        });
+
+        mLayoutManager = new LinearLayoutManager(this);
 
         mRecyclerView = findViewById(R.id.recycler_job_items);
-        progressJob = findViewById(R.id.progress_job);
+        mSwipeRefreshLayout = findViewById(R.id.refresh_job);
 
-        mRecyclerView.setHasFixedSize(false);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this::getJob);
+
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
@@ -76,7 +91,7 @@ public class JobActivity extends AppCompatActivity {
             getJob();
         } else{
             mList = savedInstanceState.getParcelableArrayList("mList");
-            mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
+            mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
     }
@@ -133,8 +148,7 @@ public class JobActivity extends AppCompatActivity {
     private void getJob(){
 
         mList = new ArrayList<>();
-        progressJob.setVisibility(View.VISIBLE);
-        mRecyclerView.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setRefreshing(true);
 
         final Observable<ArrayList<JobItemsData>> observableJobList
                 = getListJobFromURL.getObservableJobList(url, mList);
@@ -151,8 +165,15 @@ public class JobActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
 
                         try{
-                            progressJob.setVisibility(View.GONE);
-                            mRecyclerView.setVisibility(View.VISIBLE);
+
+                            if(mRecyclerViewAdapter == null){
+                                mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
+                                mRecyclerViewAdapter.setHasStableIds(true);
+                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            }
+
+                            if(mSwipeRefreshLayout.isRefreshing())
+                                mSwipeRefreshLayout.setRefreshing(false);
                             Toast.makeText(JobActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         } finally {
                             dispose();
@@ -164,9 +185,9 @@ public class JobActivity extends AppCompatActivity {
 
                         try {
                             mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                            progressJob.setVisibility(View.GONE);
-                            mRecyclerView.setVisibility(View.VISIBLE);
+                            mSwipeRefreshLayout.setRefreshing(false);
                         } finally {
                             dispose();
                         }

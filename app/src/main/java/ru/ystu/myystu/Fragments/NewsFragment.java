@@ -271,10 +271,11 @@ public class NewsFragment extends Fragment {
                         isLoad = false;
 
                         if (isOffset) {
-                            mRecyclerViewAdapter.notifyItemRangeInserted(listCount - 1,
+                            mRecyclerViewAdapter.notifyItemRangeInserted(listCount,
                                     mList.size() - listCount);
                         } else {
                             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                         }
 

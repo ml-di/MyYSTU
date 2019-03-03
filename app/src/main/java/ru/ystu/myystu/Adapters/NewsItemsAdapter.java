@@ -452,7 +452,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public long getItemId(int position) { //super.getItemId(position)
+    public long getItemId(int position) {
         return mList.get(position).hashCode();
     }
 

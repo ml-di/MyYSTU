@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:textColor="@color/colorTextTertiary"
+        android:textColor="@color/colorTextSecondary"
+        android:alpha="0.7"
         android:textSize="21sp"
         app:layout_constraintTop_toTopOf="@id/itemJob"
         tools:text="Название организации" />
@@ -33,15 +34,15 @@
         tools:text="Должность" />
 
     <androidx.appcompat.widget.ContentFrameLayout
-        android:id="@+id/itemJob_date_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintTop_toBottomOf="@id/itemJob_post">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/itemJob_date_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -50,7 +51,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:alpha="0.6"
+                android:alpha="0.7"
                 android:tint="@color/colorTextTertiary"
                 app:srcCompat="@drawable/ic_date" />
 
@@ -60,14 +61,38 @@
                 android:layout_height="20dp"
                 android:layout_gravity="end"
                 android:layout_marginStart="6dp"
-                android:alpha="0.6"
+                android:alpha="0.7"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:textColor="@color/colorTextTertiary"
                 android:textSize="12sp"
                 tools:text="01.01.1970" />
-
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="2dp"
+            android:alpha="0.98"
+            android:background="@drawable/shape_rectangle_rounded"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/itemJob_fileType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorToolBar"
+                android:textSize="12sp"
+                tools:text="FILE" />
+
+        </androidx.appcompat.widget.ContentFrameLayout>
+
     </androidx.appcompat.widget.ContentFrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

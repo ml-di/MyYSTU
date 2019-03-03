@@ -75,6 +75,6 @@ public class OlympItemsAdapter extends RecyclerView.Adapter<OlympItemsAdapter.Ol
 
     @Override
     public long getItemId(int position) {
-        return super.getItemId(position);
+        return mList.get(position).hashCode();
     }
 }

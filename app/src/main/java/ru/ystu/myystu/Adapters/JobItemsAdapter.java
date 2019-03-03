@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.ContentFrameLayout;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -42,8 +43,9 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         final private AppCompatTextView organization;
         final private AppCompatTextView post;
         final private AppCompatTextView date;
+        final private AppCompatTextView fileType;
         final private ConstraintLayout itemJob;
-        final private ContentFrameLayout itemJobDateLayout;
+        final private LinearLayoutCompat itemJobDateLayout;
         final private String[] mAlertItems;
 
 
@@ -55,6 +57,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
             date = itemView.findViewById(R.id.itemJob_date);
             itemJob = itemView.findViewById(R.id.itemJob);
             itemJobDateLayout = itemView.findViewById(R.id.itemJob_date_layout);
+            fileType = itemView.findViewById(R.id.itemJob_fileType);
 
             mAlertItems = new String[]{context.getResources().getString(R.string.alert_job_download), context.getResources().getString(R.string.alert_job_share)};
 
@@ -169,6 +172,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
     public void onBindViewHolder(@NonNull JobItemsViewHolder holder, int position) {
         holder.organization.setText(mList.get(position).getOrganization());
         holder.post.setText(mList.get(position).getPost());
+        holder.fileType.setText(mList.get(position).getFileType());
 
         final String date = mList.get(position).getDate();
         if(Objects.equals(date, ""))
@@ -179,7 +183,6 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         }
 
         holder.id = mList.get(position).getId();
-
     }
 
     @Override
@@ -194,7 +197,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
     @Override
     public long getItemId(int position) {
-        return super.getItemId(position);
+        return mList.get(position).hashCode();
     }
 
     @Override

@@ -13,8 +13,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="18sp"
+        android:textColor="@color/colorTextSecondary"
+        android:alpha="0.7"
+        android:textSize="21sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Название олимпиады" />
@@ -27,7 +28,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:textColor="@color/colorTextSecondary"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/itemOlymp_title"
         tools:text="Дополнительная информация" />
 

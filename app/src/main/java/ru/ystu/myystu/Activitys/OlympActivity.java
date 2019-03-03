@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,6 +23,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.Network.GetListOlympFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.OlympItemsAdapter;
 import ru.ystu.myystu.AdaptersData.OlympItemsData;
@@ -32,55 +41,63 @@ public class OlympActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ProgressBar progressJob;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ArrayList<OlympItemsData> mList;
     private Parcelable mRecyclerState;
+    private CompositeDisposable disposables;
+    private GetListOlympFromURL getListOlympFromURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_olymp);
 
-        //region настройка ToolBar
-        Toolbar toolbar = findViewById(R.id.toolBar_olymp);
+        final Toolbar toolbar = findViewById(R.id.toolBar_olymp);
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
+        toolbar.setNavigationOnClickListener(view -> onBackPressed());
+        toolbar.setOnClickListener(e -> {
+            if(mRecyclerView != null){
+                if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 3)
+                    mRecyclerView.smoothScrollToPosition(0);
+                else
+                    mRecyclerView.scrollToPosition(0);
+
             }
         });
-        //endregion
 
-        mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mLayoutManager = new LinearLayoutManager(this);
 
         mRecyclerView = findViewById(R.id.recycler_olymp_items);
-        progressJob = findViewById(R.id.progress_olymp);
+        mSwipeRefreshLayout = findViewById(R.id.refresh_olymp);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary);
+        mSwipeRefreshLayout.setOnRefreshListener(this::getOlymp);
 
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
 
+        disposables = new CompositeDisposable();
+        getListOlympFromURL = new GetListOlympFromURL();
+
         if(savedInstanceState == null){
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        mList = new ArrayList<>();
-                        new GetHtmlTask().execute(url).get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+            getOlymp();
         }
         else{
             mList = savedInstanceState.getParcelableArrayList("mList");
-            mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
+            mRecyclerViewAdapter = new OlympItemsAdapter(mList, this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        disposables.dispose();
     }
 
     @Override
@@ -92,7 +109,7 @@ public class OlympActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_olymp_openInBrowser) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);
         }
 
@@ -115,51 +132,57 @@ public class OlympActivity extends AppCompatActivity {
         mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
     }
 
-    class GetHtmlTask extends AsyncTask<String, Void, Void>{
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+    // Загрузка html страницы и ее парсинг
+    private void getOlymp(){
+        mList = new ArrayList<>();
+        mSwipeRefreshLayout.setRefreshing(true);
 
-            progressJob.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
+        final Observable<ArrayList<OlympItemsData>> observerOlympList
+                = getListOlympFromURL.getObservableOlympList(url, mList);
 
-        }
+        disposables.add(observerOlympList
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<ArrayList<OlympItemsData>>() {
+                    @Override
+                    public void onNext(ArrayList<OlympItemsData> olympItemsData) {
+                        mList = olympItemsData;
+                    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+                    @Override
+                    public void onError(Throwable e) {
 
-            mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
-            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        try {
 
-            progressJob.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+                            if(mRecyclerView == null){
+                                mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
+                                mRecyclerViewAdapter.setHasStableIds(true);
+                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            }
 
-        }
+                            if(mSwipeRefreshLayout.isRefreshing())
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            Toast.makeText(OlympActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
-        @Override
-        protected Void doInBackground(String... urls) {
+                        } finally {
+                            dispose();
+                        }
 
-            try {
-                Document doc = Jsoup.connect(urls[0]).get();
-                Elements els = doc.getElementById("izd").select("table").select("tbody").select("tr");
-                //Elements els = doc.select("table").get(1).select("tbody").select("tr");
-                String title;
-                String textHtml;
+                    }
 
-                for(int i = 1; i < els.size(); i++){
+                    @Override
+                    public void onComplete() {
 
-                    title = els.get(i).select("td").get(0).text();
-                    textHtml = els.get(i).select("td").get(1).html();
+                        try {
+                            mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        } finally {
+                            dispose();
+                        }
 
-                    textHtml = textHtml.replaceAll("href=\"/files", "href=\"https://www.ystu.ru/files");
-
-                    mList.add(new OlympItemsData(i - 1, title, textHtml));
-                }
-
-            }catch (Exception ignored) { }
-
-            return null;
-        }
+                    }
+                }));
     }
 }
