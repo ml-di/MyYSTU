@@ -56,7 +56,7 @@ public class NewsFragment extends Fragment {
     private Parcelable mRecyclerState;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private CompositeDisposable disposables;
+    private CompositeDisposable mDisposables;
     private GetListNewsFromURL getListNewsFromURL;
 
     private DataFragment_News_List dataFragment_news_list;
@@ -66,16 +66,16 @@ public class NewsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
 
-        disposables = new CompositeDisposable();
+        mDisposables = new CompositeDisposable();
         getListNewsFromURL = new GetListNewsFromURL();
-        final FragmentManager fragmentManager = getFragmentManager();
+        final FragmentManager mFragmentManager = getFragmentManager();
 
-        if (fragmentManager != null) {
-            dataFragment_news_list = (DataFragment_News_List) fragmentManager.findFragmentByTag("news_list");
+        if (mFragmentManager != null) {
+            dataFragment_news_list = (DataFragment_News_List) mFragmentManager.findFragmentByTag("news_list");
 
             if (dataFragment_news_list == null) {
                 dataFragment_news_list = new DataFragment_News_List();
-                fragmentManager.beginTransaction().add(dataFragment_news_list, "news_list").commit();
+                mFragmentManager.beginTransaction().add(dataFragment_news_list, "news_list").commit();
             }
         }
     }
@@ -84,9 +84,9 @@ public class NewsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
 
-        final ImagePipeline imagePipeline = Fresco.getImagePipeline();
-        disposables.dispose();
-        imagePipeline.clearMemoryCaches();
+        final ImagePipeline mImagePipeline = Fresco.getImagePipeline();
+        mDisposables.dispose();
+        mImagePipeline.clearMemoryCaches();
     }
 
     @Override
@@ -146,11 +146,11 @@ public class NewsFragment extends Fragment {
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_news, container, false);
+        final View mView = inflater.inflate(R.layout.fragment_news, container, false);
 
-        if(view != null){
-            mRecyclerView = view.findViewById(R.id.recycler_news_items);
-            mSwipeRefreshLayout = view.findViewById(R.id.refresh_news);
+        if(mView != null){
+            mRecyclerView = mView.findViewById(R.id.recycler_news_items);
+            mSwipeRefreshLayout = mView.findViewById(R.id.refresh_news);
         }
 
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -159,7 +159,7 @@ public class NewsFragment extends Fragment {
 
         mList = new ArrayList<>();
 
-        return view;
+        return mView;
     }
 
     @Override
@@ -217,7 +217,6 @@ public class NewsFragment extends Fragment {
                 .append(VK_API_VERSION);
 
         return urlBuilder.toString();
-
     }
 
     private void getNews(final boolean isOffset){
@@ -231,7 +230,7 @@ public class NewsFragment extends Fragment {
 
             final Observable<ArrayList<Parcelable>> observableNewsList
                     = getListNewsFromURL.getObservableNewsList(url, isOffset, mList);
-            disposables.add(observableNewsList
+            mDisposables.add(observableNewsList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new DisposableObserver<ArrayList<Parcelable>>(){

@@ -29,16 +29,16 @@ public class LoadImageFromURL {
                 final String fileExtenstion = url.substring(url.lastIndexOf("."));
                 final String fileName = "YSTU_" + date;
 
-                final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                request
+                final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(url));
+                mRequest
                         .setTitle(fileName)
                         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                         .setDestinationInExternalPublicDir(Environment.DIRECTORY_DCIM, fileName + fileExtenstion)
                         .allowScanningByMediaScanner();
 
-                final DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                if (manager != null)
-                    manager.enqueue(request);
+                final DownloadManager mDownloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                if (mDownloadManager != null)
+                    mDownloadManager.enqueue(mRequest);
 
                 // Завершение загрузки
                 onComplete = new BroadcastReceiver() {
@@ -54,7 +54,8 @@ public class LoadImageFromURL {
 
                 context.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
             } catch (Exception e){
-                emitter.onError(e);
+                if(!emitter.isDisposed())
+                    emitter.onError(e);
                 emitter.onNext(false);
 
                 if(onComplete != null)

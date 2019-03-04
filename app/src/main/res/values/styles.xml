@@ -36,6 +36,14 @@
         <item name="android:background">@color/colorToolBar</item>
     </style>
 
+    <!-- Тема для tabLayout -->
+    <style name="TabLayout">
+        <item name="android:background">@color/colorToolBar</item>
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+        <item name="tabRippleColor">@color/colorPrimary</item>
+        <item name="tabIndicatorFullWidth">false</item>
+    </style>
+
     <!-- Тема для Bottom navigation -->
     <style name="BottomNavigation">
         <item name="android:background">#fff</item>

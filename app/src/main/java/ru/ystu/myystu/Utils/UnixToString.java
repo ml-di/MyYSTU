@@ -18,10 +18,10 @@ public class UnixToString {
         final long timeTemp = Long.parseLong(unixTime);
         final long time = timeTemp * 1000L;
 
-        final Date date = new Date(time);
-        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
-        simpleDateFormat.setTimeZone(TimeZone.getDefault());
-        final String stringTimeTemp = simpleDateFormat.format(date);
+        final Date mDate = new Date(time);
+        final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
+        mSimpleDateFormat.setTimeZone(TimeZone.getDefault());
+        final String stringTimeTemp = mSimpleDateFormat.format(mDate);
 
         String hour = stringTimeTemp.substring(0, 2);
         String minutes = stringTimeTemp.substring(3, 5);

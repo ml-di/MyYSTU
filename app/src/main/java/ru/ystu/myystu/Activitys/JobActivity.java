@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,7 @@ public class JobActivity extends AppCompatActivity {
     private ArrayList<JobItemsData> mList;
     private Parcelable mRecyclerState;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private CompositeDisposable disposables;
+    private CompositeDisposable mDisposables;
     private GetListJobFromURL getListJobFromURL;
 
     @Override
@@ -54,12 +55,12 @@ public class JobActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job);
 
-        final Toolbar toolbar = findViewById(R.id.toolBar_job);
-        setSupportActionBar(toolbar);
+        final Toolbar mToolbar = findViewById(R.id.toolBar_job);
+        setSupportActionBar(mToolbar);
 
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-        toolbar.setNavigationOnClickListener(view -> onBackPressed());
-        toolbar.setOnClickListener(e -> {
+        mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
+        mToolbar.setOnClickListener(e -> {
             if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0 && mRecyclerView != null){
                 if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 10)
                     mRecyclerView.smoothScrollToPosition(0);
@@ -84,7 +85,7 @@ public class JobActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
 
-        disposables = new CompositeDisposable();
+        mDisposables = new CompositeDisposable();
         getListJobFromURL = new GetListJobFromURL();
 
         if(savedInstanceState == null){
@@ -108,7 +109,7 @@ public class JobActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        disposables.dispose();
+        mDisposables.dispose();
     }
 
     @Override
@@ -121,8 +122,8 @@ public class JobActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if(item.getItemId() == R.id.menu_job_openInBrowser) {
-            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
+            final Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(mIntent);
         }
 
         return true;
@@ -150,9 +151,9 @@ public class JobActivity extends AppCompatActivity {
         mList = new ArrayList<>();
         mSwipeRefreshLayout.setRefreshing(true);
 
-        final Observable<ArrayList<JobItemsData>> observableJobList
+        final Observable<ArrayList<JobItemsData>> mObservableJobList
                 = getListJobFromURL.getObservableJobList(url, mList);
-        disposables.add(observableJobList
+        mDisposables.add(mObservableJobList
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<ArrayList<JobItemsData>>() {

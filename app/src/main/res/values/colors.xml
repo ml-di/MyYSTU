@@ -16,4 +16,11 @@
     <color name="colorPlaceHolderImage">#EEEEEE</color>
     <color name="colorOverleyImage">#A6000000</color>
     <color name="colorPhotoViewBackground">#000000</color>
+
+    <!-- Цвета кафедр -->
+    <color name="colorAsf">#710A0E</color>
+    <color name="colorIef">#007100</color>
+    <color name="colorAf">#005D86</color>
+    <color name="colorMf">#820061</color>
+    <color name="colorHtf">#007579</color>
 </resources>

@@ -1,7 +1,6 @@
 package ru.ystu.myystu.Activitys;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -10,56 +9,29 @@ import androidx.viewpager.widget.ViewPager;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import me.relex.photodraweeview.PhotoDraweeView;
 import ru.ystu.myystu.Network.LoadImageFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.NewsPhotoViewPagerAdapter;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
-import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.MultiTouchViewPager;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
-import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.common.Priority;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.listener.RequestListener;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ViewPhotoActivity extends AppCompatActivity {
 
-    private ViewPager viewPager;
+    private ViewPager mViewPager;
     private ArrayList<Parcelable> mList;
     private int position;
     private String[] imageUrls;
@@ -69,10 +41,10 @@ public class ViewPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_photo);
 
-        final Toolbar toolBar = findViewById(R.id.toolBar_photoView);
-        setSupportActionBar(toolBar);
-        toolBar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-        toolBar.setNavigationOnClickListener(view -> onBackPressed());
+        final Toolbar mToolBar = findViewById(R.id.toolBar_photoView);
+        setSupportActionBar(mToolBar);
+        mToolBar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+        mToolBar.setNavigationOnClickListener(view -> onBackPressed());
 
         final Bundle bundle = getIntent().getExtras();
 
@@ -88,14 +60,14 @@ public class ViewPhotoActivity extends AppCompatActivity {
                 for(int i = 0; i < mList.size(); i++)
                     imageUrls[i] = ((NewsItemsPhotoData)mList.get(i)).getUrlFull();
 
-                toolBar.setTitle(position + 1 + " | " + imageUrls.length);
+                mToolBar.setTitle(position + 1 + " | " + imageUrls.length);
 
-                viewPager = (MultiTouchViewPager) findViewById(R.id.view_pager_news_photo);
+                mViewPager = (MultiTouchViewPager) findViewById(R.id.view_pager_news_photo);
                 final NewsPhotoViewPagerAdapter adapter = new NewsPhotoViewPagerAdapter(this, imageUrls);
-                viewPager.setAdapter(adapter);
+                mViewPager.setAdapter(adapter);
 
-                viewPager.setCurrentItem(position);
-                viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                mViewPager.setCurrentItem(position);
+                mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -103,7 +75,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
                     @Override
                     public void onPageSelected(int position) {
-                        toolBar.setTitle(position + 1 + " | " + imageUrls.length);
+                        mToolBar.setTitle(position + 1 + " | " + imageUrls.length);
                     }
 
                     @Override
@@ -124,7 +96,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        String url = imageUrls[viewPager.getCurrentItem()];
+        String url = imageUrls[mViewPager.getCurrentItem()];
 
         switch (item.getItemId()){
             // Сохранить изображение на устройство
@@ -136,8 +108,8 @@ public class ViewPhotoActivity extends AppCompatActivity {
                     } else {
 
                         final LoadImageFromURL loadImageFromURL = new LoadImageFromURL();
-                        final Observable<Boolean> observableLoadImage = loadImageFromURL.getObservableImage(url, this);
-                        final Observer<Boolean> observer = new Observer<Boolean>() {
+                        final Observable<Boolean> mObservableLoadImage = loadImageFromURL.getObservableImage(url, this);
+                        final Observer<Boolean> mObserver = new Observer<Boolean>() {
                             @Override
                             public void onSubscribe(Disposable d) {
 
@@ -159,10 +131,10 @@ public class ViewPhotoActivity extends AppCompatActivity {
                             }
                         };
 
-                        observableLoadImage
+                        mObservableLoadImage
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(observer);
+                                .subscribe(mObserver);
                     }
                 }
 

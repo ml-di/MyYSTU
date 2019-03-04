@@ -18,7 +18,7 @@ import ru.ystu.myystu.AdaptersData.OlympItemsData;
 public class OlympItemsAdapter extends RecyclerView.Adapter<OlympItemsAdapter.OlympItemsViewHolder> {
 
     private List<OlympItemsData> mList;
-    private Context context;
+    private Context mContext;
 
     class  OlympItemsViewHolder extends RecyclerView.ViewHolder{
 
@@ -26,7 +26,7 @@ public class OlympItemsAdapter extends RecyclerView.Adapter<OlympItemsAdapter.Ol
         private final AppCompatTextView title;
         private final AppCompatTextView text;
 
-        OlympItemsViewHolder(View itemView, List<OlympItemsData> mList, Context context) {
+        OlympItemsViewHolder(View itemView, List<OlympItemsData> mList, Context mContext) {
             super(itemView);
 
             title = itemView.findViewById(R.id.itemOlymp_title);
@@ -35,23 +35,23 @@ public class OlympItemsAdapter extends RecyclerView.Adapter<OlympItemsAdapter.Ol
         }
     }
 
-    public OlympItemsAdapter(List<OlympItemsData> mList, Context context) {
+    public OlympItemsAdapter(List<OlympItemsData> mList, Context mContext) {
         this.mList = mList;
-        this.context = context;
+        this.mContext = mContext;
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
 
-        context = recyclerView.getContext();
+        mContext = recyclerView.getContext();
     }
 
     @NonNull
     @Override
     public OlympItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_olymp_item, parent, false);
-        return new OlympItemsViewHolder(v, mList, context);
+        final View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_olymp_item, parent, false);
+        return new OlympItemsViewHolder(mView, mList, mContext);
     }
 
     @Override

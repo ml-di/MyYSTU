@@ -20,7 +20,7 @@ import ru.ystu.myystu.AdaptersData.MenuItemsData;
 public class MenuFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private List<MenuItemsData> mList;
+    private ArrayList<MenuItemsData> mList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,17 +49,17 @@ public class MenuFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_menu, container, false);
+        final View mView = inflater.inflate(R.layout.fragment_menu, container, false);
 
-        if(view != null){
-            mRecyclerView = view.findViewById(R.id.recycler_menu_items);
+        if(mView != null){
+            mRecyclerView = mView.findViewById(R.id.recycler_menu_items);
         }
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mList = new ArrayList<>();
 
-        return view;
+        return mView;
     }
 
     @Override

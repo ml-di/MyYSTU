@@ -18,15 +18,15 @@ public class FileInformation {
     public static String getFileType(final String url){
 
         final OkHttpClient client = new OkHttpClient();
-        final Request request = new Request.Builder()
+        final Request mRequest = new Request.Builder()
                 .url(url)
                 .head()
                 .build();
 
         String fileInfo = null;
-        try (Response response = client.newCall(request).execute()) {
-            if (response.body() != null) {
-                fileInfo = Objects.requireNonNull(response.body().contentType()).toString();
+        try (Response mResponse = client.newCall(mRequest).execute()) {
+            if (mResponse.body() != null) {
+                fileInfo = Objects.requireNonNull(mResponse.body().contentType()).toString();
             }
         } catch (IOException e) {
             e.printStackTrace();

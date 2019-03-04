@@ -2,21 +2,13 @@ package ru.ystu.myystu.Activitys;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -25,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
@@ -44,7 +35,7 @@ public class OlympActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ArrayList<OlympItemsData> mList;
     private Parcelable mRecyclerState;
-    private CompositeDisposable disposables;
+    private CompositeDisposable mDisposables;
     private GetListOlympFromURL getListOlympFromURL;
 
     @Override
@@ -52,12 +43,12 @@ public class OlympActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_olymp);
 
-        final Toolbar toolbar = findViewById(R.id.toolBar_olymp);
-        setSupportActionBar(toolbar);
+        final Toolbar mToolbar = findViewById(R.id.toolBar_olymp);
+        setSupportActionBar(mToolbar);
 
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-        toolbar.setNavigationOnClickListener(view -> onBackPressed());
-        toolbar.setOnClickListener(e -> {
+        mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
+        mToolbar.setOnClickListener(e -> {
             if(mRecyclerView != null){
                 if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 3)
                     mRecyclerView.smoothScrollToPosition(0);
@@ -80,7 +71,7 @@ public class OlympActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
 
-        disposables = new CompositeDisposable();
+        mDisposables = new CompositeDisposable();
         getListOlympFromURL = new GetListOlympFromURL();
 
         if(savedInstanceState == null){
@@ -97,7 +88,7 @@ public class OlympActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        disposables.dispose();
+        mDisposables.dispose();
     }
 
     @Override
@@ -109,8 +100,8 @@ public class OlympActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_olymp_openInBrowser) {
-            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
+            final Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(mIntent);
         }
 
         return true;
@@ -137,10 +128,10 @@ public class OlympActivity extends AppCompatActivity {
         mList = new ArrayList<>();
         mSwipeRefreshLayout.setRefreshing(true);
 
-        final Observable<ArrayList<OlympItemsData>> observerOlympList
+        final Observable<ArrayList<OlympItemsData>> mObserverOlympList
                 = getListOlympFromURL.getObservableOlympList(url, mList);
 
-        disposables.add(observerOlympList
+        mDisposables.add(mObserverOlympList
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<ArrayList<OlympItemsData>>() {
@@ -162,6 +153,7 @@ public class OlympActivity extends AppCompatActivity {
 
                             if(mSwipeRefreshLayout.isRefreshing())
                                 mSwipeRefreshLayout.setRefreshing(false);
+
                             Toast.makeText(OlympActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
                         } finally {

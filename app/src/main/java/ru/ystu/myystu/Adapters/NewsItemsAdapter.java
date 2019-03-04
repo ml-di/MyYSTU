@@ -46,7 +46,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int ITEM_MORE_PHOTO = 4;
 
     private ArrayList<Parcelable> mList;
-    private Context context;
+    private Context mContext;
     private StringFormatter stringFormatter = new StringFormatter();
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder{
@@ -82,7 +82,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             menuNewsItem = itemView.findViewById(R.id.menu_news_item);
         }
 
-        void setDontAttach(NewsItemsData_DontAttach dontAttach, StringFormatter stringFormatter, Context context){
+        void setDontAttach(NewsItemsData_DontAttach dontAttach, StringFormatter stringFormatter, Context mContext){
 
             postText.setText(stringFormatter.getFormattedString(dontAttach.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
@@ -94,7 +94,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 postPin.setVisibility(View.GONE);
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, dontAttach.getUrlPost(), postText.getText().toString(), dontAttach.getSigner(), context);
+                new MenuItem().showMenu(menuNewsItem, dontAttach.getUrlPost(), postText.getText().toString(), dontAttach.getSigner(), mContext);
             });
         }
     }
@@ -120,7 +120,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             menuNewsItem = itemView.findViewById(R.id.menu_news_item);
         }
 
-        void setOnePhoto(NewsItemsData onePhoto, StringFormatter stringFormatter, Context context){
+        void setOnePhoto(NewsItemsData onePhoto, StringFormatter stringFormatter, Context mContext){
 
             postText.setText(stringFormatter.getFormattedString(onePhoto.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
@@ -135,20 +135,20 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final float h = (float)onePhoto.getListPhoto().get(0).getHeight();
             final float aspectRatio = w / h;
 
-            final ImageRequest imageRequest =
+            final ImageRequest mImageRequest =
                     ImageRequestBuilder.newBuilderWithSource(Uri.parse(onePhoto.getListPhoto().get(0).getUrlPreview()))
                             .disableMemoryCache()
                             .setProgressiveRenderingEnabled(true)
                             .build();
 
             postPhoto.setAspectRatio(aspectRatio);
-            postPhoto.setImageRequest(imageRequest);
+            postPhoto.setImageRequest(mImageRequest);
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, onePhoto.getUrlPost(), postText.getText().toString(), onePhoto.getSigner(), context);
+                new MenuItem().showMenu(menuNewsItem, onePhoto.getUrlPost(), postText.getText().toString(), onePhoto.getSigner(), mContext);
             });
             postPhoto.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(context, onePhoto.getListPhoto(), 0);
+                new PhotoViewSetter().setPhoto(mContext, onePhoto.getListPhoto(), 0);
             });
 
         }
@@ -178,10 +178,10 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             menuNewsItem = itemView.findViewById(R.id.menu_news_item);
         }
 
-        void setTwoPhoto(NewsItemsData twoPhoto, StringFormatter stringFormatter, Context context){
+        void setTwoPhoto(NewsItemsData twoPhoto, StringFormatter stringFormatter, Context mContext){
 
             final int margin = Math.round(TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 2,context.getResources().getDisplayMetrics()));
+                    TypedValue.COMPLEX_UNIT_DIP, 2,mContext.getResources().getDisplayMetrics()));
 
             postText.setText(stringFormatter.getFormattedString(twoPhoto.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
@@ -215,7 +215,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 params.weight = layout_weight;
 
-                final ImageRequest imageRequest =
+                final ImageRequest mImageRequest =
                         ImageRequestBuilder.newBuilderWithSource(Uri.parse(twoPhoto.getListPhoto().get(i).getUrlPreview()))
                                 .disableMemoryCache()
                                 .setProgressiveRenderingEnabled(true)
@@ -225,26 +225,26 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     case 0:
                         params.setMarginEnd(margin);
                         postPhoto_1.setAspectRatio(aspectRatio);
-                        postPhoto_1.setImageRequest(imageRequest);
+                        postPhoto_1.setImageRequest(mImageRequest);
                         postPhoto_1.setLayoutParams(params);
                         break;
                     case 1:
                         params.setMarginStart(margin);
                         postPhoto_2.setAspectRatio(aspectRatio);
-                        postPhoto_2.setImageRequest(imageRequest);
+                        postPhoto_2.setImageRequest(mImageRequest);
                         postPhoto_2.setLayoutParams(params);
                         break;
                 }
             }
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, twoPhoto.getUrlPost(), postText.getText().toString(), twoPhoto.getSigner(), context);
+                new MenuItem().showMenu(menuNewsItem, twoPhoto.getUrlPost(), postText.getText().toString(), twoPhoto.getSigner(), mContext);
             });
             postPhoto_1.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(context, twoPhoto.getListPhoto(), 0);
+                new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 0);
             });
             postPhoto_2.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(context, twoPhoto.getListPhoto(), 1);
+                new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 1);
             });
         }
     }
@@ -279,7 +279,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         }
 
-        void setMorePhoto(NewsItemsData morePhoto, StringFormatter stringFormatter, Context context){
+        void setMorePhoto(NewsItemsData morePhoto, StringFormatter stringFormatter, Context mContext){
 
             postText.setText(stringFormatter.getFormattedString(morePhoto.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
@@ -296,7 +296,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 final float h = (float)morePhoto.getListPhoto().get(i).getHeight();
                 final float aspectRatio = w / h;
 
-                final ImageRequest imageRequest =
+                final ImageRequest mImageRequest =
                         ImageRequestBuilder.newBuilderWithSource(Uri.parse(morePhoto.getListPhoto().get(i).getUrlPreview()))
                                 .disableMemoryCache()
                                 .setProgressiveRenderingEnabled(true)
@@ -305,15 +305,15 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 switch (i){
                     case 0:
                         postPhoto_1.setAspectRatio(aspectRatio);
-                        postPhoto_1.setImageRequest(imageRequest);
+                        postPhoto_1.setImageRequest(mImageRequest);
                         break;
                     case 1:
                         postPhoto_2.setAspectRatio(aspectRatio);
-                        postPhoto_2.setImageRequest(imageRequest);
+                        postPhoto_2.setImageRequest(mImageRequest);
                         break;
                     case 2:
                         postPhoto_3.setAspectRatio(aspectRatio);
-                        postPhoto_3.setImageRequest(imageRequest);
+                        postPhoto_3.setImageRequest(mImageRequest);
                         break;
                 }
 
@@ -321,7 +321,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     final String count = String.valueOf(morePhoto.getListPhoto().size() - 2);
 
-                    postPhoto_3.getHierarchy().setOverlayImage(context.getResources().getDrawable(R.color.colorOverleyImage));
+                    postPhoto_3.getHierarchy().setOverlayImage(mContext.getResources().getDrawable(R.color.colorOverleyImage));
                     photoCountFrame.setVisibility(View.VISIBLE);
                     photoCountText.setText(count);
                 } else {
@@ -332,70 +332,70 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             menuNewsItem.setOnClickListener(e -> {
-                new MenuItem().showMenu(menuNewsItem, morePhoto.getUrlPost(), postText.getText().toString(), morePhoto.getSigner(), context);
+                new MenuItem().showMenu(menuNewsItem, morePhoto.getUrlPost(), postText.getText().toString(), morePhoto.getSigner(), mContext);
             });
             postPhoto_1.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(context, morePhoto.getListPhoto(), 0);
+                new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 0);
             });
             postPhoto_2.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(context, morePhoto.getListPhoto(), 1);
+                new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 1);
             });
             postPhoto_3.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(context, morePhoto.getListPhoto(), 2);
+                new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 2);
             });
         }
     }
 
-    public NewsItemsAdapter(ArrayList<Parcelable> mList, Context context) {
+    public NewsItemsAdapter(ArrayList<Parcelable> mList, Context mContext) {
         this.mList = mList;
-        this.context = context;
+        this.mContext = mContext;
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
 
-        context = recyclerView.getContext();
+        mContext = recyclerView.getContext();
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        RecyclerView.ViewHolder viewHolder;
+        RecyclerView.ViewHolder mViewHolder;
 
         switch (viewType) {
             case ITEM_HEADER:
                 final View viewHeader = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_header, parent, false);
-                viewHolder = new HeaderViewHolder(viewHeader);
+                mViewHolder = new HeaderViewHolder(viewHeader);
             break;
 
             case ITEM_DONT_ATTACH:
                 final View viewDontAttach = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_dont_attach, parent, false);
-                viewHolder = new DontAttachViewHolder(viewDontAttach);
+                mViewHolder = new DontAttachViewHolder(viewDontAttach);
             break;
 
             case ITEM_1_PHOTO:
                 final View viewOnePhoto = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_one_photo, parent, false);
-                viewHolder = new OnePhotoViewHodler(viewOnePhoto);
+                mViewHolder = new OnePhotoViewHodler(viewOnePhoto);
             break;
 
             case ITEM_2_PHOTO:
                 final View viewTwoPhoto = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_two_photo, parent, false);
-                viewHolder = new TwoPhotoViewHodler(viewTwoPhoto);
+                mViewHolder = new TwoPhotoViewHodler(viewTwoPhoto);
             break;
 
             case ITEM_MORE_PHOTO:
                 final View viewMorePhoto = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_more_photo, parent, false);
-                viewHolder = new MorePhotoViewHodler(viewMorePhoto);
+                mViewHolder = new MorePhotoViewHodler(viewMorePhoto);
                 break;
 
             default:
-                viewHolder = null;
+                mViewHolder = null;
                 break;
         }
 
-        return viewHolder;
+        return mViewHolder;
     }
 
     @Override
@@ -409,19 +409,19 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 break;
             case ITEM_DONT_ATTACH:
                 final NewsItemsData_DontAttach dontAttach = (NewsItemsData_DontAttach) mList.get(position);
-                ((DontAttachViewHolder) holder).setDontAttach(dontAttach, stringFormatter, context);
+                ((DontAttachViewHolder) holder).setDontAttach(dontAttach, stringFormatter, mContext);
                 break;
             case ITEM_1_PHOTO:
                 final NewsItemsData onePhoto = (NewsItemsData) mList.get(position);
-                ((OnePhotoViewHodler) holder).setOnePhoto(onePhoto, stringFormatter, context);
+                ((OnePhotoViewHodler) holder).setOnePhoto(onePhoto, stringFormatter, mContext);
                 break;
             case ITEM_2_PHOTO:
                 final NewsItemsData twoPhoto = (NewsItemsData) mList.get(position);
-                ((TwoPhotoViewHodler) holder).setTwoPhoto(twoPhoto, stringFormatter, context);
+                ((TwoPhotoViewHodler) holder).setTwoPhoto(twoPhoto, stringFormatter, mContext);
                 break;
             case ITEM_MORE_PHOTO:
                 final NewsItemsData morePhoto = (NewsItemsData) mList.get(position);
-                ((MorePhotoViewHodler) holder).setMorePhoto(morePhoto, stringFormatter, context);
+                ((MorePhotoViewHodler) holder).setMorePhoto(morePhoto, stringFormatter, mContext);
                 break;
         }
     }
@@ -474,8 +474,8 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             itemMenu.setOnMenuItemClickListener(item -> {
 
-                final ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
-                final ClipData clip;
+                final ClipboardManager mClipboardManager = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+                final ClipData mClipData;
 
                 switch (item.getItemId()) {
                     // Открыть оригинал
@@ -492,15 +492,15 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         return true;
                     // Скопировать ссылку
                     case R.id.menu_news_item_copyLink:
-                        clip = ClipData.newPlainText("post_link", urlPost);
-                        clipboard.setPrimaryClip(clip);
+                        mClipData = ClipData.newPlainText("post_link", urlPost);
+                        mClipboardManager.setPrimaryClip(mClipData);
 
                         Toast.makeText(context, context.getResources().getString(R.string.menu_news_item_isCopyLink), Toast.LENGTH_SHORT).show();
                         return true;
                     // Скопировать текст
                     case R.id.menu_news_item_copyText:
-                        clip = ClipData.newPlainText("post_text", postText);
-                        clipboard.setPrimaryClip(clip);
+                        mClipData = ClipData.newPlainText("post_text", postText);
+                        mClipboardManager.setPrimaryClip(mClipData);
 
                         Toast.makeText(context, context.getResources().getString(R.string.menu_news_item_isCopyText), Toast.LENGTH_SHORT).show();
                         return true;
@@ -519,16 +519,16 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Установить фото в ViewPager
     private static class PhotoViewSetter{
 
-        void setPhoto(Context context, ArrayList<NewsItemsPhotoData> mList, int position){
-            Intent intent = new Intent(context, ViewPhotoActivity.class);
+        void setPhoto(Context mContext, ArrayList<NewsItemsPhotoData> mList, int position){
+            Intent mIntent = new Intent(mContext, ViewPhotoActivity.class);
 
             if(mList.size() > 3 && position == 2)
-                intent.putExtra("position", 0);
+                mIntent.putExtra("position", 0);
             else
-                intent.putExtra("position", position);
+                mIntent.putExtra("position", position);
 
-            intent.putExtra("list", mList);
-            context.startActivity(intent);
+            mIntent.putExtra("list", mList);
+            mContext.startActivity(mIntent);
         }
     }
 }

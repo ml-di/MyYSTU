@@ -19,11 +19,11 @@ import ru.ystu.myystu.Network.FrescoLoadProgressBar;
 
 public class NewsPhotoViewPagerAdapter extends PagerAdapter {
 
-    private Context context;
+    private Context mContext;
     private String[] imageUrls;
 
-    public NewsPhotoViewPagerAdapter(Context context, String[] imageUrls) {
-        this.context = context;
+    public NewsPhotoViewPagerAdapter(Context mContext, String[] imageUrls) {
+        this.mContext = mContext;
         this.imageUrls = imageUrls;
     }
 
@@ -32,10 +32,10 @@ public class NewsPhotoViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
         // Загрузка фото
-        final PhotoDraweeView photoDraweeView = new PhotoDraweeView(context);
+        final PhotoDraweeView mPhotoDraweeView = new PhotoDraweeView(mContext);
         PipelineDraweeControllerBuilder controller = Fresco.newDraweeControllerBuilder();
         controller.setUri(Uri.parse(imageUrls[position]));
-        controller.setOldController(photoDraweeView.getController());
+        controller.setOldController(mPhotoDraweeView.getController());
         controller.setControllerListener(new BaseControllerListener<ImageInfo>() {
             @Override
             public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
@@ -43,20 +43,20 @@ public class NewsPhotoViewPagerAdapter extends PagerAdapter {
                 if (imageInfo == null) {
                     return;
                 }
-                photoDraweeView.update(imageInfo.getWidth(), imageInfo.getHeight());
+                mPhotoDraweeView.update(imageInfo.getWidth(), imageInfo.getHeight());
             }
         });
-        photoDraweeView.setController(controller.build());
+        mPhotoDraweeView.setController(controller.build());
 
         // Ставим progressbar
         final FrescoLoadProgressBar progressBar = new FrescoLoadProgressBar();
-        progressBar.setColor(context.getResources().getColor(R.color.colorAccent));
-        progressBar.setBackgroundColor(context.getResources().getColor(R.color.colorTextPrimary));
-        photoDraweeView.getHierarchy().setProgressBarImage(progressBar);
+        progressBar.setColor(mContext.getResources().getColor(R.color.colorAccent));
+        progressBar.setBackgroundColor(mContext.getResources().getColor(R.color.colorTextPrimary));
+        mPhotoDraweeView.getHierarchy().setProgressBarImage(progressBar);
 
-        container.addView(photoDraweeView);
+        container.addView(mPhotoDraweeView);
 
-        return photoDraweeView;
+        return mPhotoDraweeView;
     }
 
     @Override

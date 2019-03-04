@@ -29,15 +29,16 @@ public class GetListNewsFromURL {
         final Observable<ArrayList<Parcelable>> observableNews = Observable.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
-            final Request request = new Request.Builder()
+            final Request mRequest = new Request.Builder()
                     .url(url)
                     .build();
 
-            client.newCall(request)
+            client.newCall(mRequest)
                     .enqueue(new Callback() {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            emitter.onError(e);
+                            if(!emitter.isDisposed())
+                                emitter.onError(e);
 
                             client.dispatcher().executorService().shutdown();
                             client.connectionPool().evictAll();
@@ -59,7 +60,8 @@ public class GetListNewsFromURL {
                                 } catch (ParseException e) {
                                     e.printStackTrace();
 
-                                    emitter.onError(e);
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(e);
                                     client.dispatcher().executorService().shutdown();
                                     client.connectionPool().evictAll();
                                 }
@@ -169,7 +171,8 @@ public class GetListNewsFromURL {
                                 emitter.onComplete();
 
                             } catch (Exception e){
-                                emitter.onError(e);
+                                if(!emitter.isDisposed())
+                                    emitter.onError(e);
                             } finally {
                                 client.dispatcher().executorService().shutdown();
                                 client.connectionPool().evictAll();

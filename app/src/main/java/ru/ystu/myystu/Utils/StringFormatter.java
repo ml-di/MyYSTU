@@ -22,8 +22,8 @@ public class StringFormatter {
     private String text;
     private int index_s;
     private int index_e;
-    private Pattern pattern;
-    private Matcher matcher;
+    private Pattern mPattern;
+    private Matcher mMatcher;
 
     public SpannableStringBuilder getFormattedString(String text){
 
@@ -70,12 +70,12 @@ public class StringFormatter {
 
         text = textSpannable.toString();
 
-        pattern = Pattern.compile("#[а-яА-Яa-zA-Z0-9ё\\-_!@%$&*()=+\"№;:?{}]{2,}");
-        matcher = pattern.matcher(text);
+        mPattern = Pattern.compile("#[а-яА-Яa-zA-Z0-9ё\\-_!@%$&*()=+\"№;:?{}]{2,}");
+        mMatcher = mPattern.matcher(text);
 
-        while (matcher.find()){
-            index_s = matcher.start();
-            index_e = matcher.end();
+        while (mMatcher.find()){
+            index_s = mMatcher.start();
+            index_e = mMatcher.end();
             response = text.substring(index_s, index_e);
 
             textSpannable.setSpan(new LinkClickableSpan(response, 0), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -90,13 +90,13 @@ public class StringFormatter {
 
         int temp = 0;
 
-        pattern = Pattern.compile("\\[(id|club)\\d+\\|[^]]+]");
-        matcher = pattern.matcher(text);
+        mPattern = Pattern.compile("\\[(id|club)\\d+\\|[^]]+]");
+        mMatcher = mPattern.matcher(text);
 
-        while (matcher.find()){
+        while (mMatcher.find()){
 
-            index_s = matcher.start();
-            index_e = matcher.end();
+            index_s = mMatcher.start();
+            index_e = mMatcher.end();
             response = text.substring(index_s, index_e);
 
             String linkName = response.substring(response.indexOf("|") + 1, response.indexOf("]"));         // Текст в записи
@@ -116,13 +116,13 @@ public class StringFormatter {
 
         text = textSpannable.toString();
 
-        pattern = Pattern.compile("(https?|ftp|file)://[a-zA-Zа-яА-Я0-9+&#/%?=~_-|!:,.;]+\\.[a-zA-Zа-яА-Я0-9+&@#/%?=~_\\-|]+");
-        matcher = pattern.matcher(text);
+        mPattern = Pattern.compile("(https?|ftp|file)://[a-zA-Zа-яА-Я0-9+&#/%?=~_-|!:,.;]+\\.[a-zA-Zа-яА-Я0-9+&@#/%?=~_\\-|]+");
+        mMatcher = mPattern.matcher(text);
 
-        while (matcher.find()){
-            index_s = matcher.start();
-            index_e = matcher.end();
-            response = text.substring(matcher.start(), matcher.end());
+        while (mMatcher.find()){
+            index_s = mMatcher.start();
+            index_e = mMatcher.end();
+            response = text.substring(mMatcher.start(), mMatcher.end());
 
             textSpannable.setSpan(new LinkClickableSpan(response, 2), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
@@ -133,12 +133,12 @@ public class StringFormatter {
 
         text = textSpannable.toString();
 
-        pattern = Pattern.compile("[a-zA-Z0-9+_\\-.]+@[a-zA-Z0-9+_\\-.]+\\.[a-zA-Z0-9+_\\-]+");
-        matcher = pattern.matcher(text);
+        mPattern = Pattern.compile("[a-zA-Z0-9+_\\-.]+@[a-zA-Z0-9+_\\-.]+\\.[a-zA-Z0-9+_\\-]+");
+        mMatcher = mPattern.matcher(text);
 
-        while (matcher.find()){
-            index_s = matcher.start();
-            index_e = matcher.end();
+        while (mMatcher.find()){
+            index_s = mMatcher.start();
+            index_e = mMatcher.end();
             response = text.substring(index_s, index_e);
 
             textSpannable.setSpan(new LinkClickableSpan(response, 3), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -150,13 +150,13 @@ public class StringFormatter {
 
         text = textSpannable.toString();
 
-        pattern = Pattern
+        mPattern = Pattern
                 .compile("(\\+?([78])(-|\\s)?\\(?([89])\\d{2}\\)?(\\s|-)?\\d{3}(-|\\s)?\\d{2}(-|\\s)?\\d{2})|(\\+?\\s?(([78])?\\s?\\(\\d{3,4}\\))?\\s?\\d{1,3}-\\d{2}-\\d{2})");
-        matcher = pattern.matcher(text);
+        mMatcher = mPattern.matcher(text);
 
-        while (matcher.find()){
-            index_s = matcher.start();
-            index_e = matcher.end();
+        while (mMatcher.find()){
+            index_s = mMatcher.start();
+            index_e = mMatcher.end();
             response = text.substring(index_s, index_e);
 
             textSpannable.setSpan(new LinkClickableSpan(response, 4), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -187,7 +187,7 @@ public class StringFormatter {
         public void onClick(@NonNull View tv) {
 
             String url = null;
-            Intent intent = null;
+            Intent mIntent = null;
 
             switch (id){
                 // Хештег
@@ -201,32 +201,32 @@ public class StringFormatter {
                         e.printStackTrace();
                     }
 
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + link));
+                    mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + link));
 
                     break;
                 // Ссылка внутри вк
                 case 1:
                     url = "https://vk.com/" + link;
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     break;
                 // url ссылка
                 case 2:
                     if(URLUtil.isValidUrl(link))
-                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                        mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
                     break;
                 // Почта
                 case 3:
-                    intent = new Intent(Intent.ACTION_SENDTO)
+                    mIntent = new Intent(Intent.ACTION_SENDTO)
                             .setType("text/plain")
                             .setData(Uri.parse("mailto:" + link));
                     break;
                 case 4:
-                    intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", link, null));
+                    mIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", link, null));
                     break;
             }
 
-            if(intent != null)
-                tv.getContext().startActivity(intent);
+            if(mIntent != null)
+                tv.getContext().startActivity(mIntent);
         }
 
         public void updateDrawState(@NonNull TextPaint ds) {

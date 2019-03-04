@@ -1,0 +1,84 @@
+package ru.ystu.myystu.Adapters;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.RecyclerView;
+import ru.ystu.myystu.AdaptersData.ScheduleMenuItemsData;
+import ru.ystu.myystu.R;
+
+public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuItemsAdapter.ScheduleMenuItemsViewHolder> {
+
+    private ArrayList<ScheduleMenuItemsData> mList;
+    private Context mContext;
+
+    static class ScheduleMenuItemsViewHolder extends RecyclerView.ViewHolder {
+
+        private int id;
+        private AppCompatImageView icon;
+        private AppCompatTextView text;
+        private AppCompatImageView fab;
+
+        ScheduleMenuItemsViewHolder(@NonNull View itemView, final ArrayList<ScheduleMenuItemsData> mList, final Context mContext) {
+            super(itemView);
+
+            icon = itemView.findViewById(R.id.schedule_itemMenu_icon);
+            text = itemView.findViewById(R.id.schedule_itemMenu_text);
+            fab = itemView.findViewById(R.id.schedule_itemMenu_fab);
+
+        }
+    }
+
+    public ScheduleMenuItemsAdapter(ArrayList<ScheduleMenuItemsData> mList, Context mContext) {
+        this.mList = mList;
+        this.mContext = mContext;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+
+        mContext = recyclerView.getContext();
+    }
+
+    @NonNull
+    @Override
+    public ScheduleMenuItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item_menu, parent, false);
+        return new ScheduleMenuItemsViewHolder(v, mList, mContext);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ScheduleMenuItemsViewHolder holder, int position) {
+
+        holder.id = mList.get(position).getId();
+        holder.icon.setImageResource(mList.get(position).getIcon());
+        holder.text.setText(mList.get(position).getText());
+
+        holder.fab.setColorFilter(mContext.getResources().getColor(mList.get(position).getColor()));
+        holder.icon.setColorFilter(mContext.getResources().getColor(mList.get(position).getColor()));
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return mList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mList.get(position).hashCode();
+    }
+}

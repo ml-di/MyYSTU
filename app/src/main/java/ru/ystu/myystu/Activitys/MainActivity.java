@@ -24,7 +24,7 @@ public class MainActivity extends FragmentActivity {
     private Fragment mNewsFragment;
     private Fragment mBellFragment;
     private Fragment mMenuFragment;
-    private CoordinatorLayout contentConteiner;
+    private CoordinatorLayout mContentConteiner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +32,8 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         mBottomBar = findViewById(R.id.bottomBar);
-        contentConteiner = findViewById(R.id.contentConteiner);
-        contentConteiner.setFitsSystemWindows(true);
+        mContentConteiner = findViewById(R.id.contentConteiner);
+        mContentConteiner.setFitsSystemWindows(true);
 
         mFragmentManager = getSupportFragmentManager();
 
@@ -64,7 +64,7 @@ public class MainActivity extends FragmentActivity {
                 // Новости
                 case R.id.tab_news:
 
-                    contentConteiner.setFitsSystemWindows(true);
+                    mContentConteiner.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
@@ -75,7 +75,7 @@ public class MainActivity extends FragmentActivity {
                     break;
                 // Уведомления
                 case R.id.tab_bell:
-                    contentConteiner.setFitsSystemWindows(true);
+                    mContentConteiner.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .replace(R.id.contentConteiner, mBellFragment, "BELL_FRAGMENT")
@@ -85,8 +85,8 @@ public class MainActivity extends FragmentActivity {
                     break;
                 // Меню
                 case R.id.tab_menu:
-                    contentConteiner.setFitsSystemWindows(false);
-                    contentConteiner.setPadding(0, 0, 0, 0);
+                    mContentConteiner.setFitsSystemWindows(false);
+                    mContentConteiner.setPadding(0, 0, 0, 0);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .replace(R.id.contentConteiner, mMenuFragment, "MENU_FRAGMENT")

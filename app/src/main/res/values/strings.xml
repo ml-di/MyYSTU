@@ -41,6 +41,20 @@
     <string name="menu_photo_view_share_link">Поделиться</string>
     <string name="photo_view_image_successfully_save">Изображение сохранено</string>
 
+    <!-- Activity расписание -->
+    <string name="menu_schedule_openInBrowser">Открыть в браузере</string>
+    <string name="tab_schedule_one">Очное</string>
+    <string name="tab_schedule_two">Заочное</string>
+
+    <string name="schedule_item_asf">Архитектурно-\nстроительный\nфакультет</string>
+    <string name="schedule_item_ief">Инженерно-\nэкономический\nфакультет</string>
+    <string name="schedule_item_af">Автомеханический\nфакультет</string>
+    <string name="schedule_item_mf">Машиностроительный\nфакультет</string>
+    <string name="schedule_item_htf">Химико\nтехнологический\nфакультет</string>
+    <string name="schedule_item_zf">Заочный\nфакультет</string>
+    <string name="schedule_item_ozf">ОУОП заочный\nфакультет</string>
+
     <!-- Toasts -->
     <string name="toast_dont_network">Отсутствует подключение к интернету</string>
+
 </resources>

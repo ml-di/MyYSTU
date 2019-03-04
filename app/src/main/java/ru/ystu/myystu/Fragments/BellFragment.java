@@ -14,17 +14,6 @@ import ru.ystu.myystu.R;
 
 public class BellFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
-
-    public BellFragment() {
-
-    }
-
-    public static BellFragment newInstance(String param1, String param2) {
-
-        return new BellFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,26 +26,13 @@ public class BellFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_bell, container, false);
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
+    public void onAttach(Context mContext) {
+        super.onAttach(mContext);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-
-        void onFragmentInteraction(Uri uri);
     }
 }

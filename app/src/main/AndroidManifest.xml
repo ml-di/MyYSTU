@@ -26,7 +26,10 @@
         </activity>
         <activity android:name=".Activitys.JobActivity" />
         <activity android:name=".Activitys.OlympActivity" />
-        <activity android:name=".Activitys.ViewPhotoActivity" android:theme="@style/PhotoViewTheme"/>
+        <activity android:name=".Activitys.ScheduleActivity"/>
+        <activity
+            android:name=".Activitys.ViewPhotoActivity"
+            android:theme="@style/PhotoViewTheme" />
     </application>
 
 </manifest>

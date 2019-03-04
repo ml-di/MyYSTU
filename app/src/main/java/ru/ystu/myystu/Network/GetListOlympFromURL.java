@@ -22,15 +22,16 @@ public class GetListOlympFromURL {
         final Observable<ArrayList<OlympItemsData>> observableOlymp = Observable.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
+            Request mRequest = new Request.Builder()
                     .url(url)
                     .build();
 
-            client.newCall(request)
+            client.newCall(mRequest)
                     .enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            emitter.onError(e);
+                            if(!emitter.isDisposed())
+                                emitter.onError(e);
 
                             client.dispatcher().executorService().shutdown();
                             client.connectionPool().evictAll();
@@ -60,7 +61,8 @@ public class GetListOlympFromURL {
                                 emitter.onComplete();
 
                             } catch (Exception e){
-                                emitter.onError(e);
+                                if(!emitter.isDisposed())
+                                    emitter.onError(e);
                             }  finally {
                                 client.dispatcher().executorService().shutdown();
                                 client.connectionPool().evictAll();

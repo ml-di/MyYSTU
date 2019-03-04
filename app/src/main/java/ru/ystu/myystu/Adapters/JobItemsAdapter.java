@@ -20,7 +20,6 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -34,8 +33,8 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobItemsViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     private List<JobItemsData> mList;
-    private Context context;
-    private static AlertDialog.Builder alertDialog;
+    private Context mContext;
+    private static AlertDialog.Builder mAlertDialog;
 
     static class JobItemsViewHolder extends RecyclerView.ViewHolder{
 
@@ -49,7 +48,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         final private String[] mAlertItems;
 
 
-        JobItemsViewHolder(View itemView, final List<JobItemsData> mList, final Context context) {
+        JobItemsViewHolder(View itemView, final List<JobItemsData> mList, final Context mContext) {
             super(itemView);
 
             organization = itemView.findViewById(R.id.itemJob_organization);
@@ -59,31 +58,31 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
             itemJobDateLayout = itemView.findViewById(R.id.itemJob_date_layout);
             fileType = itemView.findViewById(R.id.itemJob_fileType);
 
-            mAlertItems = new String[]{context.getResources().getString(R.string.alert_job_download), context.getResources().getString(R.string.alert_job_share)};
+            mAlertItems = new String[]{mContext.getResources().getString(R.string.alert_job_download), mContext.getResources().getString(R.string.alert_job_share)};
 
             itemJob.setOnClickListener(view -> {
                 final String url = mList.get(id).getUrl();
 
                 if(mList.get(id).getFileType().equals("FILE"))
-                    mAlertItems[0] = context.getResources().getString(R.string.alert_job_download);
+                    mAlertItems[0] = mContext.getResources().getString(R.string.alert_job_download);
                 else
-                    mAlertItems[0] = context.getResources().getString(R.string.alert_job_openLink);
+                    mAlertItems[0] = mContext.getResources().getString(R.string.alert_job_openLink);
 
                 // Диалоговое окно для вакансий
-                alertDialog = new AlertDialog.Builder(context);
-                alertDialog
+                mAlertDialog = new AlertDialog.Builder(mContext);
+                mAlertDialog
                         .setTitle(mList.get(id).getOrganization())
                         .setItems(mAlertItems, (dialogInterface, i) -> {
                             switch (i){
                                 // Скачать или открыть файл
                                 case 0:
 
-                                    if(NetworkInformation.hasConnection(context)){
+                                    if(NetworkInformation.hasConnection(mContext)){
                                         // Файл
                                         if(mList.get(id).getFileType().equals("FILE")){
                                             // Проверка на разрешение записи и чтения файлов
-                                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                                            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                                ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                                             } else {
 
                                                 new Thread(() -> {
@@ -96,16 +95,16 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
                                                     final String fileName = FileInformation.getFileName(fileType);
 
-                                                    final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                                                    request
+                                                    final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(url));
+                                                    mRequest
                                                             .setTitle(fileName)
                                                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                                                             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName + fileExtenstion)
                                                             .allowScanningByMediaScanner();
 
-                                                    final DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                                                    if (manager != null) {
-                                                        manager.enqueue(request);
+                                                    final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                                                    if (mDownloadManager != null) {
+                                                        mDownloadManager.enqueue(mRequest);
                                                     }
                                                 }).start();
 
@@ -114,10 +113,10 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                         // Ссылка
                                         else {
                                             final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                            context.startActivity(openLink);
+                                            mContext.startActivity(openLink);
                                         }
                                     } else
-                                        Toast.makeText(context, context.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(mContext, mContext.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
 
 
 
@@ -130,13 +129,13 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                             .setAction(Intent.ACTION_SEND)
                                             .putExtra(Intent.EXTRA_TEXT, mList.get(id).getOrganization() + "\n" + url)
                                             .setType("text/plain");
-                                    context.startActivity(sharePost);
+                                    mContext.startActivity(sharePost);
 
                                     break;
                             }
 
                         })
-                        .setNegativeButton(context.getResources().getString(R.string.alert_job_close), new DialogInterface.OnClickListener() {
+                        .setNegativeButton(mContext.getResources().getString(R.string.alert_job_close), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.cancel();
@@ -149,23 +148,23 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         }
     }
 
-    public JobItemsAdapter(List<JobItemsData> mList, Context context) {
+    public JobItemsAdapter(List<JobItemsData> mList, Context mContext) {
         this.mList = mList;
-        this.context = context;
+        this.mContext = mContext;
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
 
-        context = recyclerView.getContext();
+        mContext = recyclerView.getContext();
     }
 
     @NonNull
     @Override
     public JobItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_job_item, parent, false);
-        return new JobItemsViewHolder(v, mList, context);
+        final View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_job_item, parent, false);
+        return new JobItemsViewHolder(mView, mList, mContext);
     }
 
     @Override
@@ -205,7 +204,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         switch (requestCode) {
             case 0:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(context, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
