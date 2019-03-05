@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+
 
     <application
         android:name=".Application"
@@ -15,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ToolBar">
+        <activity android:name=".Activitys.ScheduleListActivity"></activity>
         <activity
             android:name=".Activitys.MainActivity"
             android:theme="@style/AppTheme">
@@ -26,7 +29,7 @@
         </activity>
         <activity android:name=".Activitys.JobActivity" />
         <activity android:name=".Activitys.OlympActivity" />
-        <activity android:name=".Activitys.ScheduleActivity"/>
+        <activity android:name=".Activitys.ScheduleActivity" />
         <activity
             android:name=".Activitys.ViewPhotoActivity"
             android:theme="@style/PhotoViewTheme" />

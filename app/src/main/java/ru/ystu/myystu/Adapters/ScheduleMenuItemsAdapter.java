@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.ScheduleMenuItemsData;
 import ru.ystu.myystu.R;
 
@@ -25,6 +28,7 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
         private AppCompatImageView icon;
         private AppCompatTextView text;
         private AppCompatImageView fab;
+        private ConstraintLayout item;
 
         ScheduleMenuItemsViewHolder(@NonNull View itemView, final ArrayList<ScheduleMenuItemsData> mList, final Context mContext) {
             super(itemView);
@@ -32,7 +36,13 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
             icon = itemView.findViewById(R.id.schedule_itemMenu_icon);
             text = itemView.findViewById(R.id.schedule_itemMenu_text);
             fab = itemView.findViewById(R.id.schedule_itemMenu_fab);
+            item = itemView.findViewById(R.id.schedule_itemMenu);
 
+            item.setOnClickListener(view -> {
+                final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
+                mIntent.putExtra("ID", id);
+                mContext.startActivity(mIntent);
+            });
         }
     }
 
@@ -64,7 +74,6 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
 
         holder.fab.setColorFilter(mContext.getResources().getColor(mList.get(position).getColor()));
         holder.icon.setColorFilter(mContext.getResources().getColor(mList.get(position).getColor()));
-
     }
 
     @Override

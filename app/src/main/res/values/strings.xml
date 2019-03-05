@@ -45,6 +45,8 @@
     <string name="menu_schedule_openInBrowser">Открыть в браузере</string>
     <string name="tab_schedule_one">Очное</string>
     <string name="tab_schedule_two">Заочное</string>
+    <string name="schedule_network_error">Подключитесь к интернету</string>
+    <string name="schedule_network_download_error">Ошибка скачивания документа</string>
 
     <string name="schedule_item_asf">Архитектурно-\nстроительный\nфакультет</string>
     <string name="schedule_item_ief">Инженерно-\nэкономический\nфакультет</string>
