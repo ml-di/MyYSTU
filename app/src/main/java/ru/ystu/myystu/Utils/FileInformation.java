@@ -1,17 +1,18 @@
 package ru.ystu.myystu.Utils;
 
-import android.os.AsyncTask;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+import android.app.Activity;
+import android.content.Context;
+import android.util.Base64;
 
-import okhttp3.MediaType;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import ru.ystu.myystu.Activitys.JobActivity;
 
 public class FileInformation {
 
@@ -26,11 +27,16 @@ public class FileInformation {
         String fileInfo = null;
         try (Response mResponse = client.newCall(mRequest).execute()) {
             if (mResponse.body() != null) {
+
+                Headers decodedToUTF8 = mResponse.headers();
                 fileInfo = Objects.requireNonNull(mResponse.body().contentType()).toString();
+
+                mResponse.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         return fileInfo;
     }
