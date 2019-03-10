@@ -2,6 +2,7 @@ package ru.ystu.myystu.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -17,6 +18,7 @@ import ru.ystu.myystu.Adapters.ScheduleItemAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
 import ru.ystu.myystu.Network.GetSchedule;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
 import android.Manifest;
@@ -52,6 +54,11 @@ public class ScheduleListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_list);
+
+        final Toolbar mToolBar = findViewById(R.id.toolBar_scheduleList);
+        setSupportActionBar(mToolBar);
+        mToolBar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+        mToolBar.setNavigationOnClickListener(view -> onBackPressed());
 
         mRecyclerView = findViewById(R.id.recycler_schdeule_items);
         mSwipeRefreshLayout = findViewById(R.id.refresh_schedule);
@@ -200,6 +207,11 @@ public class ScheduleListActivity extends AppCompatActivity {
                 for(int i = 0; i < mZipFile.size(); i++){
                     final ZipEntry mZipEntry = entries.nextElement();
 
+                    final long size = mZipEntry.getSize();
+
+                    final FileInformation mFileInformation = new FileInformation();
+                    final String sizeStr = mFileInformation.getFileSize(size);
+
                     String name;
                     if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
                         name = mZipEntry.getName();
@@ -208,10 +220,14 @@ public class ScheduleListActivity extends AppCompatActivity {
                         // На Android < 7 имена файлов не получается правильно вывести
                         // Спасибо любимому сайту ЯГТУ
 
-                        name = i + ") " + mZipEntry.getName();
+                        name = mZipEntry.getName();
                     }
 
-                    mList.add(new ScheduleListItemData(i, name));
+                    final String type = name.substring(name.lastIndexOf(".") + 1);
+                    name = name.substring(0, name.lastIndexOf("."));
+
+                    if(!mZipEntry.isDirectory())
+                        mList.add(new ScheduleListItemData(i, name, sizeStr, type));
                 }
 
             } catch (IOException e) {
@@ -238,4 +254,5 @@ public class ScheduleListActivity extends AppCompatActivity {
                 break;
         }
     }
+
 }

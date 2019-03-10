@@ -1,18 +1,11 @@
 package ru.ystu.myystu.Utils;
 
-import android.app.Activity;
-import android.content.Context;
-import android.util.Base64;
-
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.ystu.myystu.Activitys.JobActivity;
 
 public class FileInformation {
 
@@ -47,6 +40,22 @@ public class FileInformation {
 
     public static String getFileName(String fileType){
         return parseType(fileType, 1);
+    }
+
+    public String getFileSize(long size){
+
+        String response;
+
+        if(size < 1024)
+            response = size + " БАЙТ";
+        else if(size < 1000000)
+            response = (size / 1024) + " КБ";
+        else if (size < 1000000000)
+            response = (size / 1024 / 1024) + " МБ";
+        else
+            response = (size / 1024 / 1024 / 1024) + " ГБ";
+
+        return response;
     }
 
     private static String parseType(String fileType, int id){

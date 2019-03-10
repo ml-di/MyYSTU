@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Users/nline/Desktop/android-studio-ide-171.4408382-windows/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_chevron_right_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Users/nline/Desktop/android-studio-ide-171.4408382-windows/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_insert_drive_file_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,7 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_next" />
+                            <entry key="outputName" value="ic_document" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="E:\MyYSTU\icons\Кафедры\zf.svg" />
                           </map>
