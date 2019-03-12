@@ -2,7 +2,6 @@ package ru.ystu.myystu.Utils;
 
 import java.io.IOException;
 import java.util.Objects;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -21,7 +20,6 @@ public class FileInformation {
         try (Response mResponse = client.newCall(mRequest).execute()) {
             if (mResponse.body() != null) {
 
-                Headers decodedToUTF8 = mResponse.headers();
                 fileInfo = Objects.requireNonNull(mResponse.body().contentType()).toString();
 
                 mResponse.close();

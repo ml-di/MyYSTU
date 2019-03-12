@@ -12,13 +12,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import io.reactivex.Observable;
+import io.reactivex.Completable;
 
 public class LoadImageFromURL {
 
-    public Observable<Boolean> getObservableImage (String url, Context context) {
+    public Completable getCompletableImage (String url, Context context) {
 
-        final Observable<Boolean> observableImage = Observable.create(emitter -> {
+        return Completable.create(emitter -> {
 
             BroadcastReceiver onComplete = null;
 
@@ -45,9 +45,7 @@ public class LoadImageFromURL {
                     @Override
                     public void onReceive(Context context, Intent intent) {
 
-                        emitter.onNext(true);
                         emitter.onComplete();
-
                         context.unregisterReceiver(this);
                     }
                 };
@@ -56,13 +54,10 @@ public class LoadImageFromURL {
             } catch (Exception e){
                 if(!emitter.isDisposed())
                     emitter.onError(e);
-                emitter.onNext(false);
 
                 if(onComplete != null)
                     context.unregisterReceiver(onComplete);
             }
         });
-
-        return observableImage;
     }
 }

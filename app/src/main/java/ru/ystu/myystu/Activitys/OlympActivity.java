@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Network.GetListOlympFromURL;
 import ru.ystu.myystu.R;
@@ -128,16 +128,25 @@ public class OlympActivity extends AppCompatActivity {
         mList = new ArrayList<>();
         mSwipeRefreshLayout.setRefreshing(true);
 
-        final Observable<ArrayList<OlympItemsData>> mObserverOlympList
-                = getListOlympFromURL.getObservableOlympList(url, mList);
+        final Single<ArrayList<OlympItemsData>> mSingleOlympList
+                = getListOlympFromURL.getSingleOlympList(url, mList);
 
-        mDisposables.add(mObserverOlympList
+        mDisposables.add(mSingleOlympList
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<ArrayList<OlympItemsData>>() {
+                .subscribeWith(new DisposableSingleObserver<ArrayList<OlympItemsData>>() {
+
                     @Override
-                    public void onNext(ArrayList<OlympItemsData> olympItemsData) {
+                    public void onSuccess(ArrayList<OlympItemsData> olympItemsData) {
                         mList = olympItemsData;
+                        try {
+                            mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        } finally {
+                            dispose();
+                        }
                     }
 
                     @Override
@@ -156,20 +165,6 @@ public class OlympActivity extends AppCompatActivity {
 
                             Toast.makeText(OlympActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
-                        } finally {
-                            dispose();
-                        }
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                        try {
-                            mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
-                            mRecyclerViewAdapter.setHasStableIds(true);
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                            mSwipeRefreshLayout.setRefreshing(false);
                         } finally {
                             dispose();
                         }

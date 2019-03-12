@@ -6,8 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -108,15 +108,10 @@ public class ViewPhotoActivity extends AppCompatActivity {
                     } else {
 
                         final LoadImageFromURL loadImageFromURL = new LoadImageFromURL();
-                        final Observable<Boolean> mObservableLoadImage = loadImageFromURL.getObservableImage(url, this);
-                        final Observer<Boolean> mObserver = new Observer<Boolean>() {
+                        final Completable mCompletableLoadImage = loadImageFromURL.getCompletableImage(url, this);
+                        final CompletableObserver mObserver = new CompletableObserver() {
                             @Override
                             public void onSubscribe(Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onNext(Boolean aBoolean) {
 
                             }
 
@@ -131,7 +126,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
                             }
                         };
 
-                        mObservableLoadImage
+                        mCompletableLoadImage
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(mObserver);

@@ -9,10 +9,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.ScheduleItemAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
@@ -20,6 +24,7 @@ import ru.ystu.myystu.Network.GetSchedule;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.ZipUtils;
 
 import android.Manifest;
 import android.content.Context;
@@ -27,15 +32,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class ScheduleListActivity extends AppCompatActivity {
 
@@ -45,10 +46,13 @@ public class ScheduleListActivity extends AppCompatActivity {
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private GetSchedule getSchedule;
+    private Parcelable mRecyclerState;
+    private ZipUtils zipUtils;
     private int id;
     private String link;
-    final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
-    ArrayList<ScheduleListItemData> mList;
+    private final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
+    private File dir = new File(Environment.getExternalStorageDirectory(), "/.MyYSTU");
+    private ArrayList<ScheduleListItemData> mList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +70,25 @@ public class ScheduleListActivity extends AppCompatActivity {
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getSchedule);
 
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL));
+
         mDisposables = new CompositeDisposable();
         getSchedule = new GetSchedule();
+        zipUtils = new ZipUtils();
 
         id = getIntent().getIntExtra("ID", 0);
 
-        getSchedule();
+        if(savedInstanceState == null){
+            getSchedule();
+        } else{
+            mList = savedInstanceState.getParcelableArrayList("mList");
+            mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
+            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        }
     }
 
     @Override
@@ -83,41 +100,31 @@ public class ScheduleListActivity extends AppCompatActivity {
 
     private void getSchedule(){
 
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL));
-
         mList = new ArrayList<>();
 
         mSwipeRefreshLayout.setRefreshing(true);
 
         if(NetworkInformation.hasConnection(this)){
 
-            final Observable<String> mObservable = getSchedule.getLink(id);
-            mDisposables.add(mObservable
+            final Single<String> mSingle = getSchedule.getLink(id);
+            mDisposables.add(mSingle
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableObserver<String>() {
+                    .subscribeWith(new DisposableSingleObserver<String>() {
 
                         @Override
-                        public void onNext(String s) {
+                        public void onSuccess(String s) {
                             link = s;
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(ScheduleListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onComplete() {
 
                             if(getSchedule.isNew(id, link, getApplicationContext()))
                                 openSchedule(true, link);
                             else
                                 openSchedule(false, link);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(ScheduleListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }));
 
@@ -131,7 +138,6 @@ public class ScheduleListActivity extends AppCompatActivity {
         if(isDownload && link != null){
             downloadFile();
         } else {
-            final File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
             final File file = new File(dir, prefix[id] + ".zip");
             if(file.exists())
                 openFile();
@@ -151,94 +157,107 @@ public class ScheduleListActivity extends AppCompatActivity {
             mSwipeRefreshLayout.setRefreshing(false);
         } else {
 
-            final boolean[] isComplete = {false};
+            if(createTempDir(dir)){
+                final Completable mCompletable = getSchedule.downloadSchedule(link, id, this, dir.getAbsolutePath());
+                mDisposables.add(mCompletable
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
 
-            final Observable<Boolean> mObservable = getSchedule.downloadSchedule(link, id, this);
-            mDisposables.add(mObservable
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableObserver<Boolean>() {
+                            @Override
+                            public void onError(Throwable e) {
 
-                        @Override
-                        public void onNext(Boolean v) {
-                            isComplete[0] = v;
-                        }
+                                Toast.makeText(ScheduleListActivity.this,
+                                        getResources().getString(R.string.schedule_network_download_error),
+                                        Toast.LENGTH_LONG).show();
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(ScheduleListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            }
 
-                        @Override
-                        public void onComplete() {
+                            @Override
+                            public void onComplete() {
 
-                            // Успешно скачался
-                            if(isComplete[0]){
                                 final SharedPreferences mSharedPreferences = getSharedPreferences("SCHEDULE", Context.MODE_PRIVATE);
                                 final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
                                 mEditor.putString(prefix[id].toUpperCase(), link);
                                 mEditor.apply();
                                 openFile();
-                            } else {
-                                Toast.makeText(ScheduleListActivity.this,
-                                        getResources().getString(R.string.schedule_network_download_error),
-                                        Toast.LENGTH_LONG).show();
-                                mSwipeRefreshLayout.setRefreshing(false);
+
                             }
-                        }
-                    }));
+                        }));
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.schedule_dir_create_error), Toast.LENGTH_SHORT).show();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 
     private void openFile(){
-        final File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        final File file = new File(dir, prefix[id] + ".zip");
-        if(file.exists()){
+        final File s = new File(dir, prefix[id] + ".zip");
+        if(s.exists()){
 
-            try {
-                final ZipFile mZipFile;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    mZipFile = new ZipFile(file, Charset.forName("CP866"));
-                } else
-                    mZipFile = new ZipFile(file);
+            final FileInformation mFileInformation = new FileInformation();
+            final int[] index = {0};
 
-                final Enumeration<? extends ZipEntry> entries = mZipFile.entries();
-                for(int i = 0; i < mZipFile.size(); i++){
-                    final ZipEntry mZipEntry = entries.nextElement();
+            final Observable<String> unzipObservable = zipUtils.unzipFile(s, new File(dir + "/" + prefix[id]));
+            mDisposables.add(unzipObservable
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableObserver<String>(){
+                        @Override
+                        public void onNext(String s) {
 
-                    final long size = mZipEntry.getSize();
+                            String fileName = s.substring(0, s.lastIndexOf("."));
 
-                    final FileInformation mFileInformation = new FileInformation();
-                    final String sizeStr = mFileInformation.getFileSize(size);
+                            final String fileType = s.substring(s.lastIndexOf(".") + 1, s.lastIndexOf(":"));
+                            final long size = Long.parseLong(s.substring(s.lastIndexOf(":") + 1, s.lastIndexOf("*")));
+                            final String fileSize = mFileInformation.getFileSize(size);
+                            final String fileModifyDate = s.substring(s.lastIndexOf("*") + 1);
 
-                    String name;
-                    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
-                        name = mZipEntry.getName();
-                    else {
+                            mList.add(new ScheduleListItemData(index[0], id, fileName, fileSize, fileType));
+                            index[0]++;
+                        }
 
-                        // На Android < 7 имена файлов не получается правильно вывести
-                        // Спасибо любимому сайту ЯГТУ
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
 
-                        name = mZipEntry.getName();
-                    }
-
-                    final String type = name.substring(name.lastIndexOf(".") + 1);
-                    name = name.substring(0, name.lastIndexOf("."));
-
-                    if(!mZipEntry.isDirectory())
-                        mList.add(new ScheduleListItemData(i, name, sizeStr, type));
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                mSwipeRefreshLayout.setRefreshing(false);
-                mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
-                mRecyclerView.setAdapter(mRecyclerViewAdapter);
-            }
+                        @Override
+                        public void onComplete() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        }
+                    }));
         } else
             mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private static boolean createTempDir (File dir){
+
+        if(!dir.exists()){
+            return dir.mkdirs();
+        } else
+            return true;
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mRecyclerState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelable("recyclerViewState", mRecyclerState);
+        outState.putParcelableArrayList("mList", mList);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
     }
 
     @Override
@@ -254,5 +273,4 @@ public class ScheduleListActivity extends AppCompatActivity {
                 break;
         }
     }
-
 }

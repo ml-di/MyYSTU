@@ -6,15 +6,18 @@ import android.os.Parcelable;
 public class ScheduleListItemData implements Parcelable {
 
     private final int id;
+    private final int id_pref;
     private final String name;
     private final String size;
     private final String type;
 
     public ScheduleListItemData(final int id,
+                                final int id_pref,
                                 final String name,
                                 final String size,
                                 final String type) {
         this.id = id;
+        this.id_pref = id_pref;
         this.name = name;
         this.size = size;
         this.type = type;
@@ -22,6 +25,7 @@ public class ScheduleListItemData implements Parcelable {
 
     private ScheduleListItemData(Parcel in){
         id = in.readInt();
+        id_pref = in.readInt();
         name = in.readString();
         size = in.readString();
         type = in.readString();
@@ -47,6 +51,7 @@ public class ScheduleListItemData implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
+        parcel.writeInt(id_pref);
         parcel.writeString(name);
         parcel.writeString(size);
         parcel.writeString(type);
@@ -54,6 +59,9 @@ public class ScheduleListItemData implements Parcelable {
 
     public int getId() {
         return id;
+    }
+    public int getId_pref() {
+        return id_pref;
     }
     public String getName() {
         return name;

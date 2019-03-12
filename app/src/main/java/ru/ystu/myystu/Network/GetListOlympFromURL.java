@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -17,9 +17,9 @@ import ru.ystu.myystu.AdaptersData.OlympItemsData;
 
 public class GetListOlympFromURL {
 
-    public Observable<ArrayList<OlympItemsData>> getObservableOlympList (String url, ArrayList<OlympItemsData> mList){
+    public Single<ArrayList<OlympItemsData>> getSingleOlympList (String url, ArrayList<OlympItemsData> mList){
 
-        final Observable<ArrayList<OlympItemsData>> observableOlymp = Observable.create(emitter -> {
+        return Single.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
             Request mRequest = new Request.Builder()
@@ -57,8 +57,8 @@ public class GetListOlympFromURL {
                                     mList.add(new OlympItemsData(i - 1, title, textHtml));
                                 }
 
-                                emitter.onNext(mList);
-                                emitter.onComplete();
+                                if(!emitter.isDisposed())
+                                    emitter.onSuccess(mList);
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
@@ -71,8 +71,6 @@ public class GetListOlympFromURL {
                         }
                     });
         });
-
-        return observableOlymp;
     }
 
 }

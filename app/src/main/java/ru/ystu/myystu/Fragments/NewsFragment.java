@@ -20,10 +20,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.DataFragments.DataFragment_News_List;
 import ru.ystu.myystu.R;
@@ -228,66 +228,64 @@ public class NewsFragment extends Fragment {
             isLoad = true;
             mSwipeRefreshLayout.setRefreshing(true);
 
-            final Observable<ArrayList<Parcelable>> observableNewsList
-                    = getListNewsFromURL.getObservableNewsList(url, isOffset, mList);
-            mDisposables.add(observableNewsList
+            final Single<ArrayList<Parcelable>> singleNewsList
+                    = getListNewsFromURL.getSingleNewsList(url, isOffset, mList);
+            mDisposables.add(singleNewsList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableObserver<ArrayList<Parcelable>>(){
-                @Override
-                public void onNext(ArrayList<Parcelable> parcelables) {
-                    mList = parcelables;
-                }
+                    .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>(){
 
-                @Override
-                public void onError(Throwable e) {
+                        @Override
+                        public void onSuccess(ArrayList<Parcelable> parcelables) {
+                            mList = parcelables;
 
-                    try {
+                            try {
 
-                        if(mRecyclerViewAdapter == null){
-                            mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
-                            mRecyclerViewAdapter.setHasStableIds(true);
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                isLoad = false;
+
+                                if (isOffset) {
+                                    mRecyclerViewAdapter.notifyItemRangeInserted(listCount,
+                                            mList.size() - listCount);
+                                } else {
+                                    mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                                    mRecyclerViewAdapter.setHasStableIds(true);
+                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                }
+
+                                if (mSwipeRefreshLayout.isRefreshing())
+                                    mSwipeRefreshLayout.setRefreshing(false);
+
+                                // Конец списка новостей
+                                isEnd = mList.size() <= listCount;
+
+                            } finally {
+                                dispose();
+                            }
                         }
 
-                        isLoad = false;
+                        @Override
+                        public void onError(Throwable e) {
 
-                        if (mSwipeRefreshLayout.isRefreshing())
-                            mSwipeRefreshLayout.setRefreshing(false);
+                            try {
 
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                if(mRecyclerViewAdapter == null){
+                                    mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                                    mRecyclerViewAdapter.setHasStableIds(true);
+                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                }
 
-                    } finally {
-                        dispose();
-                    }
+                                isLoad = false;
 
-                }
+                                if (mSwipeRefreshLayout.isRefreshing())
+                                    mSwipeRefreshLayout.setRefreshing(false);
 
-                @Override
-                public void onComplete() {
-                    try {
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
-                        isLoad = false;
+                            } finally {
+                                dispose();
+                            }
 
-                        if (isOffset) {
-                            mRecyclerViewAdapter.notifyItemRangeInserted(listCount,
-                                    mList.size() - listCount);
-                        } else {
-                            mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
-                            mRecyclerViewAdapter.setHasStableIds(true);
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
                         }
-
-                        if (mSwipeRefreshLayout.isRefreshing())
-                            mSwipeRefreshLayout.setRefreshing(false);
-
-                        // Конец списка новостей
-                        isEnd = mList.size() <= listCount;
-
-                    } finally {
-                        dispose();
-                    }
-                }
             }));
 
         }

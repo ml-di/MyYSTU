@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -24,9 +24,9 @@ import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 
 public class GetListNewsFromURL {
 
-    public Observable<ArrayList<Parcelable>> getObservableNewsList (String url, boolean isOffset, ArrayList<Parcelable> mList){
+    public Single<ArrayList<Parcelable>> getSingleNewsList (String url, boolean isOffset, ArrayList<Parcelable> mList){
 
-        final Observable<ArrayList<Parcelable>> observableNews = Observable.create(emitter -> {
+        return Single.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
             final Request mRequest = new Request.Builder()
@@ -167,8 +167,8 @@ public class GetListNewsFromURL {
                                     }
                                 }
 
-                                emitter.onNext(mList);
-                                emitter.onComplete();
+                                if(!emitter.isDisposed())
+                                    emitter.onSuccess(mList);
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
@@ -180,8 +180,6 @@ public class GetListNewsFromURL {
                         }
                     });
         });
-
-        return observableNews;
     }
 
 }

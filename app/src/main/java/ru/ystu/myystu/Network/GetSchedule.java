@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 
@@ -13,9 +14,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 
-import io.reactivex.Observable;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -40,9 +43,9 @@ public class GetSchedule {
         } else return true;
     }
 
-    public Observable<String> getLink (int id){
+    public Single<String> getLink (int id){
 
-        final Observable<String> observableSchedule = Observable.create(emitter -> {
+        return Single.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
             final String[] prefix_f = new String[]{"Архитектурно", "Инженерно", "Автомеханический",
@@ -103,8 +106,7 @@ public class GetSchedule {
                                     }
                                 }
 
-                                emitter.onNext(link);
-                                emitter.onComplete();
+                                emitter.onSuccess(link);
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
@@ -116,21 +118,21 @@ public class GetSchedule {
                         }
                     });
         });
-
-        return observableSchedule;
     }
 
-    public Observable<Boolean> downloadSchedule (String link, int id, Context mContext){
+    public Completable downloadSchedule (String link, int id, Context mContext, String dir){
 
-        final Observable<Boolean> observableDownload = Observable.create(emitter -> {
+        return Completable.create(emitter -> {
 
             BroadcastReceiver onComplete = null;
 
             try{
+
+                final File patch = new File(dir + "/" + prefix[id] + ".zip");
                 final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(link));
                 mRequest
                         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
-                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOCUMENTS, prefix[id] + ".zip")
+                        .setDestinationUri(Uri.fromFile(patch))
                         .allowScanningByMediaScanner();
 
                 final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -142,10 +144,27 @@ public class GetSchedule {
                     @Override
                     public void onReceive(Context context, Intent intent) {
 
-                        emitter.onNext(true);
-                        emitter.onComplete();
+                        final DownloadManager.Query query = new DownloadManager.Query();
+                        query.setFilterByStatus(DownloadManager.STATUS_FAILED|DownloadManager.STATUS_SUCCESSFUL);
 
-                        context.unregisterReceiver(this);
+                        Cursor c = null;
+                        if (mDownloadManager != null) {
+                            c = mDownloadManager.query(query);
+                        }
+                        if (c != null && c.moveToFirst()) {
+
+                            int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                            switch (status) {
+                                case DownloadManager.STATUS_SUCCESSFUL:
+                                    emitter.onComplete();
+                                    break;
+                                case DownloadManager.STATUS_FAILED:
+                                    emitter.onError(null);
+                                    break;
+                            }
+
+                            context.unregisterReceiver(this);
+                        }
                     }
                 };
 
@@ -154,13 +173,10 @@ public class GetSchedule {
             } catch (Exception e){
                 if(!emitter.isDisposed())
                     emitter.onError(e);
-                emitter.onNext(false);
 
                 if(onComplete != null)
                     mContext.unregisterReceiver(onComplete);
             }
         });
-
-        return observableDownload;
     }
 }

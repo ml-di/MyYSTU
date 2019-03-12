@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -18,9 +18,9 @@ import ru.ystu.myystu.AdaptersData.JobItemsData;
 
 public class GetListJobFromURL {
 
-    public Observable<ArrayList<JobItemsData>> getObservableJobList (String url, ArrayList<JobItemsData> mList){
+    public Single<ArrayList<JobItemsData>> getSingleJobList (String url, ArrayList<JobItemsData> mList){
 
-        final Observable<ArrayList<JobItemsData>> observableJob = Observable.create(emitter -> {
+        return Single.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
             final Request mRequest = new Request.Builder()
@@ -99,8 +99,8 @@ public class GetListJobFromURL {
                                     }
                                 }
 
-                                emitter.onNext(mList);
-                                emitter.onComplete();
+                                if(!emitter.isDisposed())
+                                    emitter.onSuccess(mList);
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
@@ -112,7 +112,5 @@ public class GetListJobFromURL {
                         }
                     });
         });
-
-       return observableJob;
     }
 }

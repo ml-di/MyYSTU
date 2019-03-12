@@ -1,23 +1,19 @@
 package ru.ystu.myystu.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -38,6 +34,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
         final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
 
         private int id;
+        private int id_pref;
         private AppCompatTextView text;
         private AppCompatTextView size;
         private AppCompatTextView type;
@@ -56,25 +53,61 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
             // Открыть расписание
             item.setOnClickListener(view -> {
 
-                //final File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-                final File dir = new File(Environment.getRootDirectory() + ".MyYSTU");
-                final File dirOut = Environment.getExternalStoragePublicDirectory(dir + "\\ystu_temp");
-                final File file = new File(dir, prefix[id] + ".zip");
-                final File fileOut = new File(dirOut, mList.get(id).getName() + "." + mList.get(id).getType());
+                final File dir = new File(Environment.getExternalStorageDirectory(),
+                        "/.MyYSTU/" + prefix[id_pref]);
 
-                if(createTempDir(dir)){
-                    try {
-                        unzip(file, fileOut, id);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                final String fileName = mList.get(id).getName() + "." + mList.get(id).getType();
+                File file = new File(dir, fileName);
+
+                if(file.exists()){
+                    try{
+
+                        if(Build.VERSION.SDK_INT >= 24){
+                            try{
+                                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                m.invoke(null);
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                        Intent intent = new Intent();
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags (Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        intent.setAction(Intent.ACTION_VIEW);
+                        String type = "application/msword";
+                        intent.setDataAndType(Uri.fromFile(file), type);
+                        mContext.startActivity(intent);
+                    } catch (Exception e){
+                        if(e.getMessage().startsWith("No Activity found to handle")){
+                            Toast.makeText(mContext, mContext.getResources()
+                                            .getString(R.string.schedule_file_not_open),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }
+                } else
+                    Toast.makeText(mContext, mContext.getResources()
+                            .getString(R.string.schedule_file_not_found), Toast.LENGTH_SHORT).show();
 
             });
 
             // Меню элемента
             menu.setOnClickListener(view -> {
-                new MenuItem().showMenu(view, mContext, id);
+
+                final File dir = new File(Environment.getExternalStorageDirectory(),
+                        "/.MyYSTU/" + prefix[id_pref]);
+
+                final String fileName = mList.get(id).getName() + "." + mList.get(id).getType();
+                File file = new File(dir, fileName);
+
+                if(file.exists()){
+                    new MenuItem().showMenu(view, mContext, file);
+                } else
+                    Toast.makeText(mContext, mContext.getResources()
+                            .getString(R.string.schedule_file_not_found), Toast.LENGTH_SHORT).show();
+
             });
         }
     }
@@ -103,6 +136,9 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
         holder.text.setText(mList.get(position).getName());
         holder.size.setText(mList.get(position).getSize());
         holder.type.setText(mList.get(position).getType());
+
+        holder.id = mList.get(position).getId();
+        holder.id_pref = mList.get(position).getId_pref();
     }
 
     @Override
@@ -120,50 +156,8 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
         return super.getItemViewType(position);
     }
 
-    private static void unzip(File zipFile, File fileOut, int id) throws IOException {
-
-        final ZipInputStream mZipInputStream;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            mZipInputStream = new ZipInputStream(
-                    new BufferedInputStream(new FileInputStream(zipFile)), Charset.forName("CP866"));
-        } else{
-            mZipInputStream = new ZipInputStream(
-                    new BufferedInputStream(new FileInputStream(zipFile)));
-        }
-
-        try {
-            int read = 0;
-            byte[] buffer = new byte[8192];
-
-            FileOutputStream mFileOutputStream = new FileOutputStream(fileOut);
-            try {
-                while ((read = mZipInputStream.read(buffer)) != -1)
-                    mFileOutputStream.write(buffer, 0, read);
-            } finally {
-                mFileOutputStream.close();
-            }
-        } finally {
-            mZipInputStream.close();
-        }
-    }
-
-    private static boolean createTempDir (File dir){
-
-        if(dir.exists()){
-            // Зачистить
-            final String[] files = dir.list();
-            for(String path:files){
-                File mFile = new File(dir.getPath(), path);
-                mFile.delete();
-            }
-            return true;
-        } else
-            return dir.mkdir();
-
-    }
-
     private static class MenuItem {
-        private void showMenu (View mView, Context mContext, int id){
+        private void showMenu (View mView, Context mContext, File file){
 
             final PopupMenu itemMenu = new PopupMenu(mView.getContext(), mView);
             itemMenu.inflate(R.menu.menu_schedule_item);

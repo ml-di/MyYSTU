@@ -2,24 +2,13 @@ package ru.ystu.myystu.Activitys;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,12 +16,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import ru.ystu.myystu.Adapters.OlympItemsAdapter;
 import ru.ystu.myystu.Network.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
@@ -151,20 +139,28 @@ public class JobActivity extends AppCompatActivity {
         mList = new ArrayList<>();
         mSwipeRefreshLayout.setRefreshing(true);
 
-        final Observable<ArrayList<JobItemsData>> mObservableJobList
-                = getListJobFromURL.getObservableJobList(url, mList);
-        mDisposables.add(mObservableJobList
+        final Single<ArrayList<JobItemsData>> mSingleJobList
+                = getListJobFromURL.getSingleJobList(url, mList);
+        mDisposables.add(mSingleJobList
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<ArrayList<JobItemsData>>() {
+                .subscribeWith(new DisposableSingleObserver<ArrayList<JobItemsData>>() {
                     @Override
-                    public void onNext(ArrayList<JobItemsData> jobItemsData) {
+                    public void onSuccess(ArrayList<JobItemsData> jobItemsData) {
                         mList = jobItemsData;
+
+                        try {
+                            mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        } finally {
+                            dispose();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
                         try{
 
                             if(mRecyclerViewAdapter == null){
@@ -175,20 +171,8 @@ public class JobActivity extends AppCompatActivity {
 
                             if(mSwipeRefreshLayout.isRefreshing())
                                 mSwipeRefreshLayout.setRefreshing(false);
+
                             Toast.makeText(JobActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        } finally {
-                            dispose();
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                        try {
-                            mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
-                            mRecyclerViewAdapter.setHasStableIds(true);
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                            mSwipeRefreshLayout.setRefreshing(false);
                         } finally {
                             dispose();
                         }
