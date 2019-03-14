@@ -28,11 +28,14 @@ import ru.ystu.myystu.Utils.ZipUtils;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.File;
@@ -214,7 +217,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                             final String fileSize = mFileInformation.getFileSize(size);
                             final String fileModifyDate = s.substring(s.lastIndexOf("*") + 1);
 
-                            mList.add(new ScheduleListItemData(index[0], id, fileName, fileSize, fileType));
+                            mList.add(new ScheduleListItemData(index[0], id, fileName, fileSize, fileType, fileModifyDate));
                             index[0]++;
                         }
 
@@ -258,6 +261,23 @@ public class ScheduleListActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_schedule_open, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId() == R.id.menu_schedule_open_change){
+            final Intent mIntent = new Intent(this, ScheduleChangeActivity.class);
+            startActivity(mIntent);
+        }
+
+        return true;
     }
 
     @Override

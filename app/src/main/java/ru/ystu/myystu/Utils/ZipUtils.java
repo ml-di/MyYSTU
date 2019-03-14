@@ -24,6 +24,14 @@ public class ZipUtils {
 
                 if(!dirOut.exists())
                     dirOut.mkdirs();
+                else {
+                    File[] files = dirOut.listFiles();
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            file.delete();
+                        }
+                    }
+                }
 
                 ZipFile zipFiles = null;
                 List<FileHeader> headers = null;

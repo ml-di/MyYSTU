@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 
-
     <application
         android:name=".Application"
         android:allowBackup="true"
@@ -17,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ToolBar">
-        <activity android:name=".Activitys.ScheduleListActivity"></activity>
+        <activity android:name=".Activitys.ScheduleChangeActivity"></activity>
+        <activity android:name=".Activitys.ScheduleListActivity" />
         <activity
             android:name=".Activitys.MainActivity"
             android:theme="@style/AppTheme">

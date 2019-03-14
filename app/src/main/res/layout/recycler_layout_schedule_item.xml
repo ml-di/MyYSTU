@@ -47,10 +47,11 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/menu_schedule_item"
         android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_height="70dp"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="8dp"
+        android:scaleType="fitStart"
         android:tint="@color/colorDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -60,7 +61,7 @@
         android:id="@+id/schedule_item_linear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="36dp"
         android:layout_marginEnd="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,6 +89,22 @@
             android:textStyle="bold"
             app:textAllCaps="true"
             tools:text="DOC" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/schedule_item_date_modify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:background="@drawable/shape_rectangle_rounded"
+            android:backgroundTint="@color/colorDivider"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="12sp"
+            android:alpha="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/schedule_item_text"
+            tools:text="27/12/18" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

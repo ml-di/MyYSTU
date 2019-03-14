@@ -129,6 +129,11 @@ public class GetSchedule {
             try{
 
                 final File patch = new File(dir + "/" + prefix[id] + ".zip");
+
+                if(patch.exists()){
+                    patch.delete();
+                }
+
                 final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(link));
                 mRequest
                         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)

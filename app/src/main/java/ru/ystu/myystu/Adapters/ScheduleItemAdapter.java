@@ -38,6 +38,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
         private AppCompatTextView text;
         private AppCompatTextView size;
         private AppCompatTextView type;
+        private AppCompatTextView dateModify;
         private ConstraintLayout item;
         private AppCompatImageView menu;
 
@@ -47,6 +48,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
             text = itemView.findViewById(R.id.schedule_item_text);
             size = itemView.findViewById(R.id.schedule_item_size);
             type = itemView.findViewById(R.id.schedule_item_type);
+            dateModify = itemView.findViewById(R.id.schedule_item_date_modify);
             item = itemView.findViewById(R.id.schedule_item);
             menu = itemView.findViewById(R.id.menu_schedule_item);
 
@@ -136,6 +138,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
         holder.text.setText(mList.get(position).getName());
         holder.size.setText(mList.get(position).getSize());
         holder.type.setText(mList.get(position).getType());
+        holder.dateModify.setText(mList.get(position).getDate_modify());
 
         holder.id = mList.get(position).getId();
         holder.id_pref = mList.get(position).getId_pref();
@@ -167,12 +170,18 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
                 switch (item.getItemId()){
                     case R.id.menu_schedule_item_shareLink:
 
+                        if(file.exists()){
+                            final Intent mIntent = new Intent(Intent.ACTION_SEND);
+                            mIntent.setType("application/msword");
+                            mIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file));
+                            mContext.startActivity(Intent.createChooser(mIntent,
+                                    mContext.getResources()
+                                            .getString(R.string.intent_schedule_share_doc)));
+                        }
                         return true;
                 }
-
                 return false;
             });
-
             itemMenu.show();
         }
     }
