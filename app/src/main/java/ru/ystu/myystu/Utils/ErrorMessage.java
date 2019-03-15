@@ -11,24 +11,27 @@ import ru.ystu.myystu.Fragments.ErrorMessageFragment;
 
 public class ErrorMessage {
 
-    public static void show(View view, int code, String msg, Context mContext, int backFragment_id){
+    public static void show(View view, int code, String msg, Context mContext){
 
-        // TODO фрагмент ошибки
         final FragmentManager mFragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
         final ErrorMessageFragment mErrorMessageFragment = new ErrorMessageFragment();
         final Bundle mBundle = new Bundle();
         mBundle.putString("error_msg", msg);
         mBundle.putInt("error_code", code);
-        mBundle.putInt("view", view.getId());
-        mBundle.putInt("backFragment", backFragment_id);
         mErrorMessageFragment.setArguments(mBundle);
+
+        if(mFragmentManager.getFragments().size() > 0){
+            for(Fragment fragment : mFragmentManager.getFragments()){
+                mFragmentManager.beginTransaction().remove(fragment).commit();
+            }
+            mFragmentManager.getFragments().clear();
+        }
 
         mFragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(view.getId(), mErrorMessageFragment, "ERROR_FRAGMENT")
+                .add(view.getId(), mErrorMessageFragment, "ERROR_FRAGMENT")
                 .commit();
-
 
     }
 }

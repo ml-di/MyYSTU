@@ -274,6 +274,7 @@ public class ScheduleListActivity extends AppCompatActivity {
 
         if(item.getItemId() == R.id.menu_schedule_open_change){
             final Intent mIntent = new Intent(this, ScheduleChangeActivity.class);
+            mIntent.putExtra("ID", id);
             startActivity(mIntent);
         }
 

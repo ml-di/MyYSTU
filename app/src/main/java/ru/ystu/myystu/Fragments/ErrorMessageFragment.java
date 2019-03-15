@@ -26,8 +26,6 @@ public class ErrorMessageFragment extends Fragment {
 
     private String msg;
     private int code;
-    private int view_id;
-    private int backFragment_id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,23 +33,24 @@ public class ErrorMessageFragment extends Fragment {
         if (getArguments() != null) {
             msg = getArguments().getString("error_msg");
             code = getArguments().getInt("error_code");
-            view_id = getArguments().getInt("view");
-            backFragment_id = getArguments().getInt("backFragment");
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
         refreshBtn.setOnClickListener(view -> {
-
             if(getActivity().getSupportFragmentManager() != null){
-                final Fragment backFragment = getActivity().getSupportFragmentManager().findFragmentById(backFragment_id);
-                if (backFragment != null) {
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(view_id, backFragment).commit();
-                }
-            }
+                    getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
 
+                    // Лютый костыль :)
+                    getActivity().finish();
+                    getActivity().overridePendingTransition(0, 0);
+                    startActivity(getActivity().getIntent());
+                    getActivity().overridePendingTransition(0, 0);
+
+            }
         });
     }
 
@@ -59,7 +58,6 @@ public class ErrorMessageFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // TODO Обработка ошибок
         switch (code){
             // Отсутсвует подключение к интернету
             case 0:

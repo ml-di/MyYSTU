@@ -29,8 +29,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_error" />
-                            <entry key="sourceFile" value="E:\MyYSTU\icons\activity\error.svg" />
+                            <entry key="outputName" value="ic_file_not_found" />
+                            <entry key="sourceFile" value="E:\MyYSTU\icons\activity\file_not_found.svg" />
                           </map>
                         </option>
                       </PersistentState>

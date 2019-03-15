@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <androidx.appcompat.widget.ContentFrameLayout
+        android:id="@+id/pin_change"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.1"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="@color/colorAccent" />
+
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:alpha="0.9"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="@color/colorAccent" />
+    </androidx.appcompat.widget.ContentFrameLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemChange_date"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16sp"
+        android:alpha="0.5"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/pin_change"
+        app:textAllCaps="true"
+        tools:text="22 января" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemChange_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/pin_change"
+        app:layout_constraintTop_toBottomOf="@id/itemChange_date"
+        tools:text="Внесены изменения в расписание групп ОВР-26, ОВР-46." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

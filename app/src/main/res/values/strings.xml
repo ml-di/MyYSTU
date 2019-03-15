@@ -71,5 +71,6 @@
     <string name="error_message_refresh">Обновить</string>
     <string name="error_message_internet_error">Отсутствует подключение к интернету</string>
     <string name="error_message_file_not_found">Файл не найден</string>
+    <string name="error_message_schedule_change_not_found">Изменения не найдены</string>
 
 </resources>

@@ -12,11 +12,14 @@ import android.os.Environment;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import okhttp3.Call;
@@ -24,6 +27,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import ru.ystu.myystu.AdaptersData.ScheduleChangeData;
 
 public class GetSchedule {
 
@@ -58,7 +62,7 @@ public class GetSchedule {
             client.newCall(mRequest)
                     .enqueue(new Callback() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             if(!emitter.isDisposed())
                                 emitter.onError(e);
 
@@ -67,7 +71,7 @@ public class GetSchedule {
                         }
 
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
+                        public void onResponse(@NonNull Call call, @NonNull Response response) {
 
                             try {
                                 Document doc = null;
@@ -182,6 +186,122 @@ public class GetSchedule {
                 if(onComplete != null)
                     mContext.unregisterReceiver(onComplete);
             }
+        });
+    }
+
+    public Single<ArrayList<ScheduleChangeData>> getChange (int id, ArrayList<ScheduleChangeData> mList){
+
+        return Single.create(emitter -> {
+
+            final String[] prefix_f = new String[]{"Архитектурно", "Инженерно", "Автомеханический",
+                    "Машиностроительный", "Химико", "Заочный факультет", "отделение ускоренных"};
+
+            final OkHttpClient client = new OkHttpClient();
+            final Request mRequest = new Request.Builder()
+                    .url(url)
+                    .build();
+
+            client.newCall(mRequest)
+                    .enqueue(new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            if(!emitter.isDisposed())
+                                emitter.onError(e);
+
+                            client.dispatcher().executorService().shutdown();
+                            client.connectionPool().evictAll();
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) {
+
+                            try {
+                                Document doc = null;
+                                try {
+                                    doc = Jsoup.connect(url).get();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(e);
+
+                                    client.dispatcher().executorService().shutdown();
+                                    client.connectionPool().evictAll();
+                                }
+                                Element els = null;
+                                if (doc != null) {
+                                    els = doc.getElementsByClass("PaddingBorder").get(1);
+                                }
+
+                                if(mList.size() > 0)
+                                    mList.clear();
+
+                                String date;
+                                String text;
+
+                                // Поиск позиции нужной кафедры с расписанием
+                                int index = -1;
+                                if (els != null){
+                                    for (int i = 0; i < els.children().size(); i++) {
+                                        if(els.children().get(i).text().contains(prefix_f[id])){
+                                            index = i + 1;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                }
+
+                                // Изменения в расписание
+                                Elements changes = null;
+                                if(index > -1){
+                                    for(int i = 0; i < els.getElementsByIndexEquals(index).size(); i++){
+                                        Element mElement = els.getElementsByIndexEquals(index).get(i);
+                                        if(mElement.parent().hasClass("PaddingBorder"))
+                                            changes = mElement.select("li");
+                                    }
+                                } else {
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                }
+
+                                int id = 0;
+                                if (changes != null) {
+                                    for(Element element : changes){
+                                        date = element.select("strong").text();
+
+                                        text = element.select("li").text();
+                                        text = text.substring(date.length() + 1);
+
+                                        if(date.endsWith(":"))
+                                            date = date.substring(0, date.length() - 1);
+
+                                        mList.add(new ScheduleChangeData(id, date, text));
+                                        id++;
+                                    }
+                                } else {
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                }
+
+                                if(mList.size() > 0){
+                                    if(!emitter.isDisposed())
+                                        emitter.onSuccess(mList);
+                                } else {
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                }
+
+                            } catch (Exception e){
+                                if(!emitter.isDisposed())
+                                    emitter.onError(e);
+                            } finally {
+                                client.dispatcher().executorService().shutdown();
+                                client.connectionPool().evictAll();
+                            }
+                        }
+                    });
         });
     }
 }
