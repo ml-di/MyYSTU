@@ -84,6 +84,10 @@ public class GetListNewsFromURL {
                                     }
                                 }
 
+                                if(response_json.size() < 1 && !isOffset && !emitter.isDisposed()){
+                                    emitter.onError(new IllegalArgumentException("Not found"));
+                                }
+
                                 for (int i = 1; i < response_json.size(); i++) {
 
                                     /*
@@ -167,8 +171,12 @@ public class GetListNewsFromURL {
                                     }
                                 }
 
-                                if(!emitter.isDisposed())
-                                    emitter.onSuccess(mList);
+                                if(!emitter.isDisposed()){
+                                    if(mList.size() > 1)
+                                        emitter.onSuccess(mList);
+                                    else
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                }
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,14 +31,18 @@ import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.NewsItemsAdapter;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.Network.GetListNewsFromURL;
+import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.NetworkInformation;
 
 public class NewsFragment extends Fragment {
 
+    private Context mContext;
+    private CoordinatorLayout mainLayout;
     private int PHOTO_SIZE = 100;                                                                   // Качество загружаемых картинок (50, 100, 200)
     private int OFFSET = 0;                                                                         // Смещение для следующей порции новостей (не менять)
     private int POST_COUNT_LOAD = 20;                                                               // Количество загружаемых постов за раз
-    private String OWNER_ID = "-28414014";                                                          // id группы вуза через дефис
-    //private String OWNER_ID = "-178529732";                                                       // id группы тестовой
+    //private String OWNER_ID = "-28414014";                                                          // id группы вуза через дефис
+    private String OWNER_ID = "-178529732";                                                       // id группы тестовой
     private String VK_API_VERSION = "5.92";                                                         // Версия API
     private String SERVICE_KEY
             = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9";            // Сервисный ключ доступа
@@ -66,6 +71,7 @@ public class NewsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
 
+        mContext = getActivity();
         mDisposables = new CompositeDisposable();
         getListNewsFromURL = new GetListNewsFromURL();
         final FragmentManager mFragmentManager = getFragmentManager();
@@ -151,6 +157,7 @@ public class NewsFragment extends Fragment {
         if(mView != null){
             mRecyclerView = mView.findViewById(R.id.recycler_news_items);
             mSwipeRefreshLayout = mView.findViewById(R.id.refresh_news);
+            mainLayout = getActivity().findViewById(R.id.contentConteiner);
         }
 
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -220,27 +227,24 @@ public class NewsFragment extends Fragment {
     }
 
     private void getNews(final boolean isOffset){
+        if(NetworkInformation.hasConnection(mContext)){
+            final String url = getUrl(isOffset);
+            int listCount = mList.size();
 
-        final String url = getUrl(isOffset);
-        int listCount = mList.size();
+            if(!isLoad) {
+                isLoad = true;
+                mSwipeRefreshLayout.setRefreshing(true);
 
-        if(!isLoad) {
-            isLoad = true;
-            mSwipeRefreshLayout.setRefreshing(true);
+                final Single<ArrayList<Parcelable>> singleNewsList
+                        = getListNewsFromURL.getSingleNewsList(url, isOffset, mList);
+                mDisposables.add(singleNewsList
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>(){
 
-            final Single<ArrayList<Parcelable>> singleNewsList
-                    = getListNewsFromURL.getSingleNewsList(url, isOffset, mList);
-            mDisposables.add(singleNewsList
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>(){
-
-                        @Override
-                        public void onSuccess(ArrayList<Parcelable> parcelables) {
-                            mList = parcelables;
-
-                            try {
-
+                            @Override
+                            public void onSuccess(ArrayList<Parcelable> parcelables) {
+                                mList = parcelables;
                                 isLoad = false;
 
                                 if (isOffset) {
@@ -251,43 +255,37 @@ public class NewsFragment extends Fragment {
                                     mRecyclerViewAdapter.setHasStableIds(true);
                                     mRecyclerView.setAdapter(mRecyclerViewAdapter);
                                 }
-
-                                if (mSwipeRefreshLayout.isRefreshing())
-                                    mSwipeRefreshLayout.setRefreshing(false);
-
+                                mSwipeRefreshLayout.setRefreshing(false);
                                 // Конец списка новостей
                                 isEnd = mList.size() <= listCount;
 
-                            } finally {
-                                dispose();
                             }
-                        }
 
-                        @Override
-                        public void onError(Throwable e) {
-
-                            try {
-
-                                if(mRecyclerViewAdapter == null){
-                                    mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
-                                    mRecyclerViewAdapter.setHasStableIds(true);
-                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                }
+                            @Override
+                            public void onError(Throwable e) {
 
                                 isLoad = false;
+                                mSwipeRefreshLayout.setRefreshing(false);
 
-                                if (mSwipeRefreshLayout.isRefreshing())
-                                    mSwipeRefreshLayout.setRefreshing(false);
-
-                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
-                            } finally {
-                                dispose();
+                                if(isOffset)
+                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                else {
+                                    if(e.getMessage().equals("Not found")){
+                                        ErrorMessage.showToFragment(mainLayout, 1,
+                                                getResources().getString(R.string.error_message_news_not_found_post),
+                                                mContext, getTag());
+                                    }
+                                    else
+                                        ErrorMessage.showToFragment(mainLayout, -1, e.getMessage(), mContext, getTag());
+                                }
                             }
-
-                        }
-            }));
-
+                        }));
+            }
+        } else {
+            if(!isOffset){
+                mSwipeRefreshLayout.setRefreshing(false);
+                ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+            }
         }
     }
 }

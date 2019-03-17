@@ -128,44 +128,29 @@ public class ScheduleChangeActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(ArrayList<ScheduleChangeData> scheduleChangeData) {
                             mList = scheduleChangeData;
-                            try {
-                                mRecyclerViewAdapter = new ScheduleChangeAdapter(mList, getApplicationContext());
-                                mRecyclerViewAdapter.setHasStableIds(true);
-                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                mSwipeRefreshLayout.setRefreshing(false);
-                            } finally {
-                                dispose();
-                            }
+
+                            mRecyclerViewAdapter = new ScheduleChangeAdapter(mList, getApplicationContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            mSwipeRefreshLayout.setRefreshing(false);
                         }
 
                         @Override
                         public void onError(Throwable e) {
 
-                            try {
-                                if(mRecyclerView == null){
-                                    mRecyclerViewAdapter = new ScheduleChangeAdapter(mList, getApplicationContext());
-                                    mRecyclerViewAdapter.setHasStableIds(true);
-                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                }
+                            mSwipeRefreshLayout.setRefreshing(false);
 
-                                if(mSwipeRefreshLayout.isRefreshing())
-                                    mSwipeRefreshLayout.setRefreshing(false);
-
-                                if(e.getMessage().equals("Not found")){
-                                    ErrorMessage.show(mainLayout, 1,
-                                            getResources().getString(R.string.error_message_schedule_change_not_found),
-                                            mContext);
-                                } else
-                                    ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
-
-
-                            } finally {
-                                dispose();
-                            }
+                            if(e.getMessage().equals("Not found")){
+                                ErrorMessage.show(mainLayout, 1,
+                                        getResources().getString(R.string.error_message_schedule_change_not_found),
+                                        mContext);
+                            } else
+                                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                         }
                     }));
         } else {
-            // Фрагмент ошибки
+            mSwipeRefreshLayout.setRefreshing(false);
+
             ErrorMessage.show(mainLayout, 0, null, this);
         }
     }

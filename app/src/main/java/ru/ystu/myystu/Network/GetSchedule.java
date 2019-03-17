@@ -109,7 +109,13 @@ public class GetSchedule {
                                     }
                                 }
 
-                                emitter.onSuccess(link);
+                                if(!emitter.isDisposed()){
+                                    if (link != null && link.contains("file"))
+                                        emitter.onSuccess(link);
+                                    else {
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                    }
+                                }
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
@@ -164,10 +170,12 @@ public class GetSchedule {
                             int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
                             switch (status) {
                                 case DownloadManager.STATUS_SUCCESSFUL:
-                                    emitter.onComplete();
+                                    if(!emitter.isDisposed())
+                                        emitter.onComplete();
                                     break;
                                 case DownloadManager.STATUS_FAILED:
-                                    emitter.onError(null);
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(new IllegalArgumentException("Download error"));
                                     break;
                             }
 

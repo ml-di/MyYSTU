@@ -48,7 +48,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
 
                     // Расписание
                     case 0:
-                            mContext.startActivity(new Intent(mContext, ScheduleActivity.class));
+                        mContext.startActivity(new Intent(mContext, ScheduleActivity.class));
                         break;
                     // Карта корпусов
                     case 1:
@@ -56,21 +56,11 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                         break;
                     // Олимпиады
                     case 2:
-
-                        if(NetworkInformation.hasConnection(mContext))
-                            mContext.startActivity(new Intent(mContext, OlympActivity.class));
-                        else
-                            Toast.makeText(mContext, mContext.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
-
+                        mContext.startActivity(new Intent(mContext, OlympActivity.class));
                         break;
                     // Трудоустройство
                     case 3:
-
-                        if(NetworkInformation.hasConnection(mContext))
-                            mContext.startActivity(new Intent(mContext, JobActivity.class));
-                        else
-                            Toast.makeText(mContext, mContext.getResources().getString(R.string.toast_dont_network), Toast.LENGTH_LONG).show();
-
+                        mContext.startActivity(new Intent(mContext, JobActivity.class));
                         break;
                     // Обратная связь
                     case 4:

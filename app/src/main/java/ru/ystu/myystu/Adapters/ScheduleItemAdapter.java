@@ -91,7 +91,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
                     }
                 } else
                     Toast.makeText(mContext, mContext.getResources()
-                            .getString(R.string.schedule_file_not_found), Toast.LENGTH_SHORT).show();
+                            .getString(R.string.error_message_schedule_file_not_found), Toast.LENGTH_SHORT).show();
 
             });
 
@@ -108,7 +108,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
                     new MenuItem().showMenu(view, mContext, file);
                 } else
                     Toast.makeText(mContext, mContext.getResources()
-                            .getString(R.string.schedule_file_not_found), Toast.LENGTH_SHORT).show();
+                            .getString(R.string.error_message_schedule_file_not_found), Toast.LENGTH_SHORT).show();
 
             });
         }

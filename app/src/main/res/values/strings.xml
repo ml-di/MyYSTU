@@ -45,10 +45,6 @@
     <string name="menu_schedule_openInBrowser">Открыть в браузере</string>
     <string name="tab_schedule_one">Очное</string>
     <string name="tab_schedule_two">Заочное</string>
-    <string name="schedule_network_error">Подключитесь к интернету</string>
-    <string name="schedule_network_download_error">Ошибка скачивания документа</string>
-    <string name="schedule_dir_create_error">Ошибка создания директории</string>
-    <string name="schedule_file_not_found">Файл не найден</string>
     <string name="schedule_file_not_open">Нет приложения для открытия doc/docx</string>
     <string name="menu_schedule_item_shareLink">Поделиться</string>
     <string name="menu_schedule_open_change">Изменения</string>
@@ -72,5 +68,11 @@
     <string name="error_message_internet_error">Отсутствует подключение к интернету</string>
     <string name="error_message_file_not_found">Файл не найден</string>
     <string name="error_message_schedule_change_not_found">Изменения не найдены</string>
+    <string name="error_message_schedule_network_download_error">Ошибка скачивания документа</string>
+    <string name="error_message_schedule_dir_create_error">Ошибка создания директории</string>
+    <string name="error_message_schedule_file_not_found">Расписание не найдено</string>
+    <string name="error_message_olymp_not_found">Олимпиады не найдены</string>
+    <string name="error_message_job_not_found">Вакансии не найдены</string>
+    <string name="error_message_news_not_found_post">Записи не найдены</string>
 
 </resources>

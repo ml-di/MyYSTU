@@ -47,18 +47,27 @@ public class GetListOlympFromURL {
                                 String title;
                                 String textHtml;
 
-                                for(int i = 1; i < els.size(); i++){
+                                if(els != null){
+                                    for(int i = 1; i < els.size(); i++){
 
-                                    title = els.get(i).select("td").get(0).text();
-                                    textHtml = els.get(i).select("td").get(1).html();
+                                        title = els.get(i).select("td").get(0).text();
+                                        textHtml = els.get(i).select("td").get(1).html();
 
-                                    textHtml = textHtml.replaceAll("href=\"/files", "href=\"https://www.ystu.ru/files");
+                                        textHtml = textHtml.replaceAll("href=\"/files", "href=\"https://www.ystu.ru/files");
 
-                                    mList.add(new OlympItemsData(i - 1, title, textHtml));
+                                        mList.add(new OlympItemsData(i - 1, title, textHtml));
+                                    }
+                                } else {
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(new IllegalArgumentException("Not found"));
                                 }
 
-                                if(!emitter.isDisposed())
-                                    emitter.onSuccess(mList);
+                                if(!emitter.isDisposed()){
+                                    if(mList.size() < 1 )
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                    else
+                                        emitter.onSuccess(mList);
+                                }
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
@@ -67,10 +76,8 @@ public class GetListOlympFromURL {
                                 client.dispatcher().executorService().shutdown();
                                 client.connectionPool().evictAll();
                             }
-
                         }
                     });
         });
     }
-
 }

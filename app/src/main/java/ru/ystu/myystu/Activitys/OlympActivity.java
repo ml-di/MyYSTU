@@ -1,17 +1,18 @@
 package ru.ystu.myystu.Activitys;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,9 +26,13 @@ import ru.ystu.myystu.Network.GetListOlympFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.OlympItemsAdapter;
 import ru.ystu.myystu.AdaptersData.OlympItemsData;
+import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.NetworkInformation;
 
 public class OlympActivity extends AppCompatActivity {
 
+    private Context mContext;
+    private ConstraintLayout mainLayout;
     private String url = "https://www.ystu.ru/science/olimp/"; // Url страницы олимпиады сайта ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
@@ -42,6 +47,9 @@ public class OlympActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_olymp);
+
+        mContext = this;
+        mainLayout = findViewById(R.id.main_layout_olymp);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_olymp);
         setSupportActionBar(mToolbar);
@@ -125,51 +133,46 @@ public class OlympActivity extends AppCompatActivity {
 
     // Загрузка html страницы и ее парсинг
     private void getOlymp(){
-        mList = new ArrayList<>();
-        mSwipeRefreshLayout.setRefreshing(true);
+        if(NetworkInformation.hasConnection(mContext)){
+            mList = new ArrayList<>();
+            mSwipeRefreshLayout.setRefreshing(true);
 
-        final Single<ArrayList<OlympItemsData>> mSingleOlympList
-                = getListOlympFromURL.getSingleOlympList(url, mList);
+            final Single<ArrayList<OlympItemsData>> mSingleOlympList
+                    = getListOlympFromURL.getSingleOlympList(url, mList);
 
-        mDisposables.add(mSingleOlympList
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<ArrayList<OlympItemsData>>() {
+            mDisposables.add(mSingleOlympList
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<ArrayList<OlympItemsData>>() {
 
-                    @Override
-                    public void onSuccess(ArrayList<OlympItemsData> olympItemsData) {
-                        mList = olympItemsData;
-                        try {
+                        @Override
+                        public void onSuccess(ArrayList<OlympItemsData> olympItemsData) {
+                            mList = olympItemsData;
+
                             mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
                             mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             mSwipeRefreshLayout.setRefreshing(false);
-                        } finally {
-                            dispose();
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
+                        @Override
+                        public void onError(Throwable e) {
 
-                        try {
+                            mSwipeRefreshLayout.setRefreshing(false);
 
-                            if(mRecyclerView == null){
-                                mRecyclerViewAdapter = new OlympItemsAdapter(mList, getApplicationContext());
-                                mRecyclerViewAdapter.setHasStableIds(true);
-                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            if(e.getMessage().equals("Not found")){
+                                ErrorMessage.show(mainLayout, 1,
+                                        mContext.getResources().getString(R.string.error_message_olymp_not_found),
+                                        mContext);
+                            } else {
+                                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                             }
-
-                            if(mSwipeRefreshLayout.isRefreshing())
-                                mSwipeRefreshLayout.setRefreshing(false);
-
-                            Toast.makeText(OlympActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
-                        } finally {
-                            dispose();
                         }
+                    }));
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            ErrorMessage.show(mainLayout, 0, null, mContext);
+        }
 
-                    }
-                }));
     }
 }

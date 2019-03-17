@@ -1,18 +1,19 @@
 package ru.ystu.myystu.Activitys;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +27,13 @@ import ru.ystu.myystu.Network.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
+import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.NetworkInformation;
 
 public class JobActivity extends AppCompatActivity {
 
+    private Context mContext;
+    private ConstraintLayout mainLayout;
     private final String url = "https://www.ystu.ru/learning/placement/"; // Url страницы трудоустройство сайта ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
@@ -43,6 +48,9 @@ public class JobActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job);
+
+        mContext = this;
+        mainLayout = findViewById(R.id.main_layout_job);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_job);
         setSupportActionBar(mToolbar);
@@ -136,48 +144,43 @@ public class JobActivity extends AppCompatActivity {
 
     // Загрузка html страницы и ее парсинг
     private void getJob(){
+        if(NetworkInformation.hasConnection(mContext)){
+            mList = new ArrayList<>();
+            mSwipeRefreshLayout.setRefreshing(true);
 
-        mList = new ArrayList<>();
-        mSwipeRefreshLayout.setRefreshing(true);
+            final Single<ArrayList<JobItemsData>> mSingleJobList
+                    = getListJobFromURL.getSingleJobList(url, mList);
+            mDisposables.add(mSingleJobList
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<ArrayList<JobItemsData>>() {
+                        @Override
+                        public void onSuccess(ArrayList<JobItemsData> jobItemsData) {
+                            mList = jobItemsData;
 
-        final Single<ArrayList<JobItemsData>> mSingleJobList
-                = getListJobFromURL.getSingleJobList(url, mList);
-        mDisposables.add(mSingleJobList
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<ArrayList<JobItemsData>>() {
-                    @Override
-                    public void onSuccess(ArrayList<JobItemsData> jobItemsData) {
-                        mList = jobItemsData;
-
-                        try {
                             mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
                             mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             mSwipeRefreshLayout.setRefreshing(false);
-                        } finally {
-                            dispose();
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        try{
+                        @Override
+                        public void onError(Throwable e) {
 
-                            if(mRecyclerViewAdapter == null){
-                                mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
-                                mRecyclerViewAdapter.setHasStableIds(true);
-                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            mSwipeRefreshLayout.setRefreshing(false);
+
+                            if(e.getMessage().equals("Not found")){
+                                ErrorMessage.show(mainLayout, 1,
+                                        mContext.getResources().getString(R.string.error_message_job_not_found),
+                                        mContext);
+                            } else {
+                                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                             }
-
-                            if(mSwipeRefreshLayout.isRefreshing())
-                                mSwipeRefreshLayout.setRefreshing(false);
-
-                            Toast.makeText(JobActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        } finally {
-                            dispose();
                         }
-                    }
-                }));
+                    }));
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            ErrorMessage.show(mainLayout, 0, null, mContext);
+        }
     }
 }

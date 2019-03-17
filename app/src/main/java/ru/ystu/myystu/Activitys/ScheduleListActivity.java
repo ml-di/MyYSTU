@@ -3,6 +3,7 @@ package ru.ystu.myystu.Activitys;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -22,6 +23,7 @@ import ru.ystu.myystu.Adapters.ScheduleItemAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
 import ru.ystu.myystu.Network.GetSchedule;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.ZipUtils;
@@ -43,6 +45,8 @@ import java.util.ArrayList;
 
 public class ScheduleListActivity extends AppCompatActivity {
 
+    private ConstraintLayout mainLayout;
+    private Context mContext;
     private CompositeDisposable mDisposables;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -61,6 +65,9 @@ public class ScheduleListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_list);
+
+        mContext = this;
+        mainLayout = findViewById(R.id.main_layout_schedule_list);
 
         final Toolbar mToolBar = findViewById(R.id.toolBar_scheduleList);
         setSupportActionBar(mToolBar);
@@ -127,7 +134,13 @@ public class ScheduleListActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(ScheduleListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            if(e.getMessage().equals("Not found")){
+                                ErrorMessage.show(mainLayout, 1,
+                                        getResources().getString(R.string.error_message_schedule_file_not_found),
+                                        mContext);
+                            } else
+                            ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                         }
                     }));
 
@@ -147,10 +160,9 @@ public class ScheduleListActivity extends AppCompatActivity {
             else if(link != null)
                 downloadFile();
             else{
-                Toast.makeText(this, getResources().getString(R.string.schedule_network_error), Toast.LENGTH_SHORT).show();
                 mSwipeRefreshLayout.setRefreshing(false);
+                ErrorMessage.show(mainLayout, 0, null, this);
             }
-
         }
     }
 
@@ -170,11 +182,10 @@ public class ScheduleListActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
 
-                                Toast.makeText(ScheduleListActivity.this,
-                                        getResources().getString(R.string.schedule_network_download_error),
-                                        Toast.LENGTH_LONG).show();
-
                                 mSwipeRefreshLayout.setRefreshing(false);
+                                ErrorMessage.show(mainLayout, -1,
+                                        getResources().getString(R.string.error_message_schedule_network_download_error),
+                                        mContext);
                             }
 
                             @Override
@@ -189,8 +200,10 @@ public class ScheduleListActivity extends AppCompatActivity {
                             }
                         }));
             } else {
-                Toast.makeText(this, getResources().getString(R.string.schedule_dir_create_error), Toast.LENGTH_SHORT).show();
                 mSwipeRefreshLayout.setRefreshing(false);
+                ErrorMessage.show(mainLayout, -1,
+                        getResources().getString(R.string.error_message_schedule_dir_create_error),
+                        mContext);
             }
         }
     }
@@ -223,8 +236,8 @@ public class ScheduleListActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             mSwipeRefreshLayout.setRefreshing(false);
+                            ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                         }
 
                         @Override

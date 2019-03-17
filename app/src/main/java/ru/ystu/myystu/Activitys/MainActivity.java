@@ -7,6 +7,7 @@ import android.view.View;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -17,7 +18,7 @@ import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
 import ru.ystu.myystu.R;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView mBottomBar;
     private FragmentManager mFragmentManager;
@@ -42,12 +43,10 @@ public class MainActivity extends FragmentActivity {
         mMenuFragment = new MenuFragment();
 
         if (savedInstanceState == null) {
-
             mFragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
-
             lightAppBar(true);
         }
 

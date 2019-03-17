@@ -97,10 +97,18 @@ public class GetListJobFromURL {
                                             }
                                         }
                                     }
+                                } else {
+                                    if(!emitter.isDisposed())
+                                        emitter.onError(new IllegalArgumentException("Not found"));
                                 }
 
-                                if(!emitter.isDisposed())
-                                    emitter.onSuccess(mList);
+                                if(!emitter.isDisposed()){
+                                    if(mList.size() < 1)
+                                        emitter.onError(new IllegalArgumentException("Not found"));
+                                    else
+                                        emitter.onSuccess(mList);
+                                }
+
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())

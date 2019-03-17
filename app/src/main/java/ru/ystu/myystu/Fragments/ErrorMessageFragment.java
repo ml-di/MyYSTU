@@ -1,7 +1,5 @@
 package ru.ystu.myystu.Fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,8 +12,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import ru.ystu.myystu.R;
 
 public class ErrorMessageFragment extends Fragment {
@@ -27,12 +23,17 @@ public class ErrorMessageFragment extends Fragment {
     private String msg;
     private int code;
 
+    private int layout_id;
+    private String fragment_tag;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             msg = getArguments().getString("error_msg");
             code = getArguments().getInt("error_code");
+            layout_id = getArguments().getInt("view_id");
+            fragment_tag = getArguments().getString("fragment_tag");
         }
     }
 
@@ -40,16 +41,29 @@ public class ErrorMessageFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        // Лютый костыль :)
         refreshBtn.setOnClickListener(view -> {
             if(getActivity().getSupportFragmentManager() != null){
                     getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+                    // Для фрагментов
+                    if(fragment_tag != null){
+                        Fragment mFragment = null;
 
-                    // Лютый костыль :)
-                    getActivity().finish();
-                    getActivity().overridePendingTransition(0, 0);
-                    startActivity(getActivity().getIntent());
-                    getActivity().overridePendingTransition(0, 0);
+                        if(fragment_tag.equals("NEWS_FRAGMENT"))
+                            mFragment = new NewsFragment();
 
+                        if (mFragment != null) {
+                            getActivity().getSupportFragmentManager().beginTransaction()
+                                    .replace(layout_id, mFragment, fragment_tag)
+                                    .commit();
+                        }
+                    } else {
+                        // Для активити
+                        getActivity().finish();
+                        getActivity().overridePendingTransition(0, 0);
+                        startActivity(getActivity().getIntent());
+                        getActivity().overridePendingTransition(0, 0);
+                    }
             }
         });
     }
@@ -102,7 +116,5 @@ public class ErrorMessageFragment extends Fragment {
         iconImageView = mView.findViewById(R.id.error_message_icon);
         refreshBtn = mView.findViewById(R.id.error_message_refresh_btn);
         return mView;
-
     }
-
 }
