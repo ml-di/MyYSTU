@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Environment;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -243,14 +242,26 @@ public class GetSchedule {
                                 int index = -1;
                                 if (els != null){
                                     for (int i = 0; i < els.children().size(); i++) {
-                                        if(els.children().get(i).text().contains(prefix_f[id])){
-                                            index = i + 1;
-                                            break;
+
+                                        if(id == 5){
+                                            if(els.children().get(i).text().equals(prefix_f[id])){
+                                                index = i + 1;
+                                                break;
+                                            }
+                                        } else {
+                                            if(els.children().get(i).text().contains(prefix_f[id])){
+                                                index = i + 1;
+                                                break;
+                                            }
                                         }
                                     }
                                 } else {
                                     if(!emitter.isDisposed())
                                         emitter.onError(new IllegalArgumentException("Not found"));
+                                }
+
+                                if(id == 5 || id == 6){
+                                    index++;
                                 }
 
                                 // Изменения в расписание
@@ -261,9 +272,6 @@ public class GetSchedule {
                                         if(mElement.parent().hasClass("PaddingBorder"))
                                             changes = mElement.select("li");
                                     }
-                                } else {
-                                    if(!emitter.isDisposed())
-                                        emitter.onError(new IllegalArgumentException("Not found"));
                                 }
 
                                 int id = 0;
@@ -280,9 +288,6 @@ public class GetSchedule {
                                         mList.add(new ScheduleChangeData(id, date, text));
                                         id++;
                                     }
-                                } else {
-                                    if(!emitter.isDisposed())
-                                        emitter.onError(new IllegalArgumentException("Not found"));
                                 }
 
                                 if(mList.size() > 0){

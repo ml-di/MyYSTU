@@ -12,6 +12,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.AdaptersData.ScheduleChangeData;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.StringFormatter;
 
 public class ScheduleChangeAdapter extends RecyclerView.Adapter<ScheduleChangeAdapter.ScheduleChangeViewHolder> {
 
@@ -56,7 +57,7 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<ScheduleChangeAd
     public void onBindViewHolder(@NonNull ScheduleChangeViewHolder holder, int position) {
 
         holder.date.setText(mList.get(position).getDate());
-        holder.text.setText(mList.get(position).getText());
+        holder.text.setText(new StringFormatter().groupFormated(mList.get(position).getText()));
 
         holder.id = mList.get(position).getId();
     }

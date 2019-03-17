@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -114,7 +113,6 @@ public class ScheduleChangeActivity extends AppCompatActivity {
     }
 
     public void showChange(){
-        // TODO Отображение изменений расписания
         if(NetworkInformation.hasConnection(getApplicationContext())){
             // Изменения
             mList = new ArrayList<>();
@@ -166,7 +164,6 @@ public class ScheduleChangeActivity extends AppCompatActivity {
                             }
                         }
                     }));
-
         } else {
             // Фрагмент ошибки
             ErrorMessage.show(mainLayout, 0, null, this);

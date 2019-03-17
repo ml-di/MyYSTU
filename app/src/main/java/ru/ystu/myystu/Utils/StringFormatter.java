@@ -2,6 +2,7 @@ package ru.ystu.myystu.Utils;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -165,6 +166,21 @@ public class StringFormatter {
         return textSpannable;
     }
 
+    public SpannableString groupFormated (String text){
+
+        Pattern mPattern = Pattern.compile("[А-Я]{1,4}([а-я]{1})?-\\d{1,2}([а-яА-Я]{1})?");
+        Matcher mMatcher = mPattern.matcher(text);
+        SpannableString mSpannableString = new SpannableString(text);
+
+        while (mMatcher.find()){
+            int index_s = mMatcher.start();
+            int index_e = mMatcher.end();
+
+            mSpannableString.setSpan(new LinkClickableSpan(null, 5), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return mSpannableString;
+    }
+
     class LinkClickableSpan extends ClickableSpan{
 
         /*
@@ -174,6 +190,7 @@ public class StringFormatter {
         *   2 - url ссылка
         *   3 - почта
         *   4 - телефон
+        *   5 - другое, без обработки кликов
         * */
 
         String link;

@@ -10,8 +10,8 @@
 
     <androidx.appcompat.widget.ContentFrameLayout
         android:id="@+id/pin_change"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -35,14 +35,14 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/itemChange_date"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16sp"
         android:alpha="0.5"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:textSize="21sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/pin_change"
@@ -56,7 +56,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/pin_change"
         app:layout_constraintTop_toBottomOf="@id/itemChange_date"
