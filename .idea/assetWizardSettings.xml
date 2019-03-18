@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Users/nline/Desktop/android-studio-ide-171.4408382-windows/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_insert_drive_file_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Users/nline/Desktop/android-studio-ide-171.4408382-windows/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/social/ic_school_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_file_not_found" />
+                            <entry key="outputName" value="ic_olymp" />
                             <entry key="sourceFile" value="E:\MyYSTU\icons\activity\file_not_found.svg" />
                           </map>
                         </option>

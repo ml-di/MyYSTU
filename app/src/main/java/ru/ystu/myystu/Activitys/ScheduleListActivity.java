@@ -136,9 +136,20 @@ public class ScheduleListActivity extends AppCompatActivity {
                         public void onError(Throwable e) {
                             mSwipeRefreshLayout.setRefreshing(false);
                             if(e.getMessage().equals("Not found")){
-                                ErrorMessage.show(mainLayout, 1,
-                                        getResources().getString(R.string.error_message_schedule_file_not_found),
-                                        mContext);
+                                final File file = new File(dir, prefix[id] + ".zip");
+                                if(file.exists()){
+                                    openFile();
+                                    // TODO информация о том что расписание не смогло проверить обновление
+                                    Toast.makeText(mContext,
+                                            "Не удалось проверить обновление",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                else{
+                                    ErrorMessage.show(mainLayout, 1,
+                                            getResources().getString(R.string.error_message_schedule_file_not_found),
+                                            mContext);
+                                }
                             } else
                             ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                         }

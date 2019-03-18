@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Utils;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;

@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,8 +29,6 @@ import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.NetworkInformation;
-
-import android.util.Base64;
 
 public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobItemsViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
@@ -97,12 +94,13 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                                         fileExtenstion = "." + fileExtenstion;
 
                                                     final String fileName = FileInformation.getFileName(fileType);
+                                                    final String subPatch = fileName + "" + fileExtenstion;
 
                                                     final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(url));
                                                     mRequest
-                                                            .setTitle(fileName)
+                                                            .setTitle(subPatch)
                                                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName + fileExtenstion)
+                                                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPatch)
                                                             .allowScanningByMediaScanner();
 
                                                     final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -110,7 +108,6 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                                                         mDownloadManager.enqueue(mRequest);
                                                     }
                                                 }).start();
-
                                             }
                                         }
                                         // Ссылка

@@ -41,13 +41,12 @@ public class NewsFragment extends Fragment {
     private int PHOTO_SIZE = 100;                                                                   // Качество загружаемых картинок (50, 100, 200)
     private int OFFSET = 0;                                                                         // Смещение для следующей порции новостей (не менять)
     private int POST_COUNT_LOAD = 20;                                                               // Количество загружаемых постов за раз
-    //private String OWNER_ID = "-28414014";                                                          // id группы вуза через дефис
-    private String OWNER_ID = "-178529732";                                                       // id группы тестовой
+    private String OWNER_ID = "-28414014";                                                          // id группы вуза через дефис
+    //private String OWNER_ID = "-178529732";                                                       // id группы тестовой
     private String VK_API_VERSION = "5.92";                                                         // Версия API
     private String SERVICE_KEY
             = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9";            // Сервисный ключ доступа
 
-    private int postionScroll = 0;
     private boolean isLoad = false;
     private boolean isEnd = false;
 
@@ -90,6 +89,7 @@ public class NewsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
 
+        isLoad = false;
         final ImagePipeline mImagePipeline = Fresco.getImagePipeline();
         mDisposables.dispose();
         mImagePipeline.clearMemoryCaches();
@@ -98,8 +98,6 @@ public class NewsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        mList.add(new NewsItemsData_Header(0, "Тестирую header"));
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
@@ -112,7 +110,6 @@ public class NewsFragment extends Fragment {
             mLayoutManager.onRestoreInstanceState(mRecyclerState);
             mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
-            postionScroll = savedInstanceState.getInt("postionScroll");
             OFFSET = savedInstanceState.getInt("offset");
         }
 
@@ -142,7 +139,6 @@ public class NewsFragment extends Fragment {
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
-        outState.putInt("postionScroll", postionScroll);
         outState.putInt("offset", OFFSET);
 
         dataFragment_news_list.setList(mList);
@@ -183,17 +179,11 @@ public class NewsFragment extends Fragment {
 
         if(mRecyclerView != null){
             if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0){
-                postionScroll = ((LinearLayoutManager)mLayoutManager).findFirstCompletelyVisibleItemPosition();
                 if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 10)
                     mRecyclerView.smoothScrollToPosition(0);
                 else{
                     mRecyclerView.scrollToPosition(5);
                     mRecyclerView.smoothScrollToPosition(0);
-                }
-            } else{
-                if(postionScroll > 0){
-                    mRecyclerView.scrollToPosition(postionScroll - 1);
-                    mRecyclerView.smoothScrollToPosition(postionScroll);
                 }
             }
         }
@@ -228,6 +218,7 @@ public class NewsFragment extends Fragment {
 
     private void getNews(final boolean isOffset){
         if(NetworkInformation.hasConnection(mContext)){
+
             final String url = getUrl(isOffset);
             int listCount = mList.size();
 
@@ -257,7 +248,8 @@ public class NewsFragment extends Fragment {
                                 }
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 // Конец списка новостей
-                                isEnd = mList.size() <= listCount;
+                                if(isOffset)
+                                    isEnd = mList.size() <= listCount;
 
                             }
 

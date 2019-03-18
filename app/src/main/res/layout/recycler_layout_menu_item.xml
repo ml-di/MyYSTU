@@ -24,7 +24,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:padding="8dp"
-        android:tint="@color/colorPrimary"
+        android:tint="@color/colorPrimaryLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/itemMenu"
         app:layout_constraintTop_toTopOf="parent"

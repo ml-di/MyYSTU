@@ -20,6 +20,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import ru.ystu.myystu.AdaptersData.NewsItemsData;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
+import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 
 public class GetListNewsFromURL {
@@ -71,7 +72,7 @@ public class GetListNewsFromURL {
 
                                 int id = 0;
 
-                                if (mList.size() > 1){
+                                if (mList.size() > 0){
 
                                     if(mList.get(mList.size() - 1) instanceof NewsItemsData)
                                         id = ((NewsItemsData) mList.get(mList.size() - 1)).getId();
@@ -81,8 +82,10 @@ public class GetListNewsFromURL {
                                     if(!isOffset){
                                         mList.clear();
                                         id = 0;
+                                        mList.add(new NewsItemsData_Header(0, "Тестирую header"));
                                     }
-                                }
+                                } else
+                                    mList.add(new NewsItemsData_Header(0, "Тестирую header"));
 
                                 if(response_json.size() < 1 && !isOffset && !emitter.isDisposed()){
                                     emitter.onError(new IllegalArgumentException("Not found"));

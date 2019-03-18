@@ -17,6 +17,8 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Completable;
@@ -31,6 +33,9 @@ import ru.ystu.myystu.AdaptersData.ScheduleChangeData;
 public class GetSchedule {
 
     final String url = "https://www.ystu.ru/learning/schedule/";
+    // TODO фейк ссылка с расписанием
+    //final String url = "https://myystu.000webhostapp.com/myystu/schedule.txt";
+
     final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
 
     public boolean isNew(int id, String link, Context mContext){
@@ -286,21 +291,29 @@ public class GetSchedule {
                                 if (changes != null) {
                                     for(Element element : changes){
                                         date = element.select("strong").text();
-
                                         text = element.select("li").text();
-                                        text = text.substring(date.length() + 1);
+                                        if(date.length() > 1 && text.length() > 1){
+                                            text = text.substring(date.length() + 1);
 
-                                        if(date.endsWith(":"))
-                                            date = date.substring(0, date.length() - 1);
+                                            if(date.endsWith(":"))
+                                                date = date.substring(0, date.length() - 1);
 
-                                        mList.add(new ScheduleChangeData(id, date, text));
-                                        id++;
+                                            mList.add(new ScheduleChangeData(id, date, text));
+                                            id++;
+                                        } else {
+                                            if(!emitter.isDisposed())
+                                                emitter.onError(new IllegalArgumentException("Not found"));
+                                        }
+
                                     }
                                 }
 
                                 if(mList.size() > 0){
-                                    if(!emitter.isDisposed())
+                                    if(!emitter.isDisposed()){
+                                        Collections.reverse(mList);
                                         emitter.onSuccess(mList);
+                                    }
+
                                 } else {
                                     if(!emitter.isDisposed())
                                         emitter.onError(new IllegalArgumentException("Not found"));
