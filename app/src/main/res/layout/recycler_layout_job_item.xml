@@ -45,7 +45,6 @@
             android:id="@+id/itemJob_date_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView

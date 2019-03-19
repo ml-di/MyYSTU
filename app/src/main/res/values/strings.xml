@@ -26,6 +26,9 @@
     <string name="activity_olymp_title">Олимпиады</string>
     <string name="menu_olymp_openInBrowser">Открыть в браузере</string>
 
+    <!-- Activity карты -->
+    <string name="activity_map_title">Карта корпусов</string>
+
     <!-- Fragment новости -->
     <string name="menu_news_item_openOriginal">Открыть оригинал</string>
     <string name="menu_news_item_shareLink">Поделиться</string>

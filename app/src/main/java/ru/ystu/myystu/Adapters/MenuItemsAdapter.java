@@ -15,6 +15,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobActivity;
+import ru.ystu.myystu.Activitys.MapActivity;
 import ru.ystu.myystu.Activitys.OlympActivity;
 import ru.ystu.myystu.Activitys.ScheduleActivity;
 import ru.ystu.myystu.R;
@@ -52,7 +53,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                         break;
                     // Карта корпусов
                     case 1:
-
+                        mContext.startActivity(new Intent(mContext, MapActivity.class));
                         break;
                     // Олимпиады
                     case 2:

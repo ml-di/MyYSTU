@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ToolBar">
-        <activity android:name=".Activitys.ScheduleChangeActivity"></activity>
+        <activity android:name=".Activitys.MapActivity"></activity>
+        <activity android:name=".Activitys.ScheduleChangeActivity" />
         <activity android:name=".Activitys.ScheduleListActivity" />
         <activity
             android:name=".Activitys.MainActivity"
