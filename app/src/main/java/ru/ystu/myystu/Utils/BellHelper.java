@@ -1,33 +1,22 @@
 package ru.ystu.myystu.Utils;
 
 import android.content.Context;
-
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import ru.ystu.myystu.R;
 
 public class BellHelper {
 
-    private String stringTimeTemp;
     private Context mContext;
-    private int month;
 
     public BellHelper(Context mContext) {
-
         this.mContext = mContext;
-
-        final Date mDate = Calendar.getInstance().getTime();
-        final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
-        mSimpleDateFormat.setTimeZone(TimeZone.getDefault());
-        stringTimeTemp = mSimpleDateFormat.format(mDate);
-        month = Integer.parseInt(stringTimeTemp.substring(stringTimeTemp.indexOf("/") + 1, stringTimeTemp.lastIndexOf("/")));
     }
 
     public String getHalfYear(){
+
+        final Calendar mCalendar = Calendar.getInstance();
+        final int month =  mCalendar.get(Calendar.MONTH);
 
         if(month > 1 && month < 6)
             return mContext.getResources().getString(R.string.bell_title_two);
@@ -44,6 +33,7 @@ public class BellHelper {
     public String getCountWeek() {
 
         final Calendar mCalendar = Calendar.getInstance();
+        final int month = mCalendar.get(Calendar.MONTH);
         mCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
 
         // Второе учебное полугодие
@@ -108,22 +98,49 @@ public class BellHelper {
 
     public String getCountLesson() {
 
-        int hour = Integer.parseInt(stringTimeTemp.substring(0, stringTimeTemp.indexOf(":")));
-        int minutes = Integer.parseInt(stringTimeTemp.substring(stringTimeTemp.indexOf(":") + 1, stringTimeTemp.indexOf(" ")));
+        final Calendar mCalendar = Calendar.getInstance();
+        // 1 - Воскресенье
+        if(mCalendar.get(Calendar.DAY_OF_WEEK) != 1){
 
-        /*
-        *
-        * 8.30-10.00
-        * 10.10-11.40
-        * 11.50-12-20
-        * 12.20-13.50
-        * 14.00-15.30
-        * 15.40-17.10
-        * 17.30-19.00
-        *
-        * */
+            /*
+             * 8.30-10.00
+             * 10.10-11.40
+             * 11.50-12-20
+             * 12.20-13.50
+             * 14.00-15.30
+             * 15.40-17.10
+             * 17.30-19.00
+             * */
 
-        return "";
+            final int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
+            final int minute = mCalendar.get(Calendar.MINUTE);
+            final int time = hour * 60 + minute;
+
+            if(time >= 510 && time <= 600){
+                return "1";
+            } else if (time >= 600 && time <= 610){
+                return "Перерыв";
+            } else if (time >= 610 && time <= 700){
+                return "2";
+            } else if (time >= 700 && time <= 740) {
+                return "Большой перерыв";
+            } else if (time >= 740 && time <= 830) {
+                return "3";
+            } else if (time >= 830 && time <= 840) {
+                return "Перерыв";
+            } else if (time >= 840 && time <= 930) {
+                return "4";
+            } else if (time >= 930 && time <= 940) {
+                return "Перерыв";
+            } else if (time >= 940 && time <= 1030) {
+                return "5";
+            } else if (time >= 1030 && time <= 1050) {
+                return "Перерыв";
+            } else if (time >= 1050 && time <= 1140) {
+                return "6";
+            } else
+                return "-";
+        } else
+            return "Выходной";
     }
-
 }

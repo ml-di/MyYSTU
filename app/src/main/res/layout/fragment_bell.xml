@@ -36,6 +36,7 @@
         app:layout_constraintTop_toBottomOf="@id/bell_title">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/week_layout"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
@@ -53,26 +54,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:textColor="@color/colorPrimaryLight"
-                android:textSize="26sp"
-                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 tools:text="14" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:alpha="0.7"
-                android:gravity="bottom"
-                android:paddingBottom="7dp"
-                android:text="@string/bell_text_week"
-                android:textColor="@color/colorPrimaryLight"
-                app:layout_constraintLeft_toRightOf="@id/bell_count_week" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lesson_layout"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
@@ -90,26 +78,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:textColor="@color/colorPrimaryLight"
-                android:textSize="26sp"
-                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 tools:text="2" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:alpha="0.7"
-                android:gravity="bottom"
-                android:paddingBottom="7dp"
-                android:text="@string/bell_text_lesson"
-                android:textColor="@color/colorPrimaryLight"
-                app:layout_constraintLeft_toRightOf="@id/bell_count_lesson" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/time_layout"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
@@ -127,22 +102,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:textColor="@color/colorPrimaryLight"
-                android:textSize="26sp"
-                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 tools:text="12:30" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:alpha="0.7"
-                android:gravity="bottom"
-                android:paddingBottom="7dp"
-                android:text="@string/bell_text_time"
-                android:textColor="@color/colorPrimaryLight"
-                app:layout_constraintLeft_toRightOf="@id/bell_count_time" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
