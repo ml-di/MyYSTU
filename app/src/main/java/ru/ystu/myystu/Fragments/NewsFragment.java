@@ -113,9 +113,7 @@ public class NewsFragment extends Fragment {
             OFFSET = savedInstanceState.getInt("offset");
         }
 
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            getNews(false);
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(() -> getNews(false));
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

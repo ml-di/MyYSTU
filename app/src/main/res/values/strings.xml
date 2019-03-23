@@ -78,4 +78,14 @@
     <string name="error_message_job_not_found">Вакансии не найдены</string>
     <string name="error_message_news_not_found_post">Записи не найдены</string>
 
+    <!-- BellFragment -->
+    <string name="bell_title_one">Первое учебное полугодие</string>
+    <string name="bell_title_two">Второе учебное полугодие</string>
+    <string name="bell_title_three">Летние каникулы</string>
+    <string name="bell_title_session_one">Зимняя сессия</string>
+    <string name="bell_title_session_two">Летняя сессия</string>
+    <string name="bell_text_week">Нед.</string>
+    <string name="bell_text_lesson">Пара</string>
+    <string name="bell_text_time">Звонок</string>
+
 </resources>
