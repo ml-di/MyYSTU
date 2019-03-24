@@ -77,6 +77,7 @@
     <string name="error_message_olymp_not_found">Олимпиады не найдены</string>
     <string name="error_message_job_not_found">Вакансии не найдены</string>
     <string name="error_message_news_not_found_post">Записи не найдены</string>
+    <string name="error_message_shedule_not_update">Не удалось проверить обновление</string>
 
     <!-- BellFragment -->
     <string name="bell_title_one">Первое учебное полугодие</string>
@@ -84,8 +85,11 @@
     <string name="bell_title_three">Летние каникулы</string>
     <string name="bell_title_session_one">Зимняя сессия</string>
     <string name="bell_title_session_two">Летняя сессия</string>
-    <string name="bell_text_week">Нед.</string>
-    <string name="bell_text_lesson">Пара</string>
-    <string name="bell_text_time">Звонок</string>
+    <string name="bell_text_week">нед.</string>
+    <string name="bell_text_lesson">пара</string>
+    <string name="bell_text_time">звон.</string>
+    <string name="bell_break_one">Перерыв</string>
+    <string name="bell_break_two">Большой пер.</string>
+    <string name="bell_day_off">Выходной</string>
 
 </resources>

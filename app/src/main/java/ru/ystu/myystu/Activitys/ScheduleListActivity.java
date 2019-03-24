@@ -141,7 +141,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                                     openFile();
                                     // TODO информация о том что расписание не смогло проверить обновление
                                     Toast.makeText(mContext,
-                                            "Не удалось проверить обновление",
+                                            getResources().getString(R.string.error_message_shedule_not_update),
                                             Toast.LENGTH_SHORT).show();
                                 }
 

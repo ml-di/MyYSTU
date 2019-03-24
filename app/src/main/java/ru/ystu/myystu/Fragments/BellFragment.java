@@ -100,10 +100,11 @@ public class BellFragment extends Fragment {
 
         final String week = bellHelper.getCountWeek();
         final String lesson = bellHelper.getCountLesson();
+        final String time = bellHelper.getTime();
         Spannable text;
 
         if(!week.equals("-")){
-            text = new SpannableString(week + " нед.");
+            text = new SpannableString(week + " " + getResources().getString(R.string.bell_text_week));
             text.setSpan(new TextAppearanceSpan(mContext, R.style.BellCountStyle), 0, week.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextStyle), week.length() + 1, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -114,11 +115,14 @@ public class BellFragment extends Fragment {
         }
 
         if(!lesson.equals("-")){
+            // Надписи
             if(lesson.length() > 2){
-                // TODO надписи в другом шрифте
                 text = new SpannableString(lesson);
-            } else {
-                text = new SpannableString(lesson + " пара");
+                text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextOtherStyle), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            // Счетчик
+            else {
+                text = new SpannableString(lesson + " " + getResources().getString(R.string.bell_text_lesson));
                 text.setSpan(new TextAppearanceSpan(mContext, R.style.BellCountStyle), 0, lesson.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextStyle), lesson.length() + 1, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
@@ -126,6 +130,16 @@ public class BellFragment extends Fragment {
             lessonLayout.setVisibility(View.VISIBLE);
         } else {
             lessonLayout.setVisibility(View.GONE);
+        }
+
+        if(!time.equals("-")){
+            text = new SpannableString(time + " " + getResources().getString(R.string.bell_text_time));
+            text.setSpan(new TextAppearanceSpan(mContext, R.style.BellCountStyle), 0, time.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextStyle), time.length() + 1, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            countTime.setText(text);
+            timeLayout.setVisibility(View.VISIBLE);
+        } else {
+            timeLayout.setVisibility(View.GONE);
         }
     }
 }

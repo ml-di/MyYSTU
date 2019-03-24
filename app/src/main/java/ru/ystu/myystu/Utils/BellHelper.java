@@ -7,6 +7,17 @@ import ru.ystu.myystu.R;
 
 public class BellHelper {
 
+    /*
+     *     Звонки
+     *     8.30-10.00
+     *     10.10-11.40
+     *     11.50-12-20
+     *     12.20-13.50
+     *     14.00-15.30
+     *     15.40-17.10
+     *     17.30-19.00
+     */
+
     private Context mContext;
 
     public BellHelper(Context mContext) {
@@ -102,45 +113,74 @@ public class BellHelper {
         // 1 - Воскресенье
         if(mCalendar.get(Calendar.DAY_OF_WEEK) != 1){
 
-            /*
-             * 8.30-10.00
-             * 10.10-11.40
-             * 11.50-12-20
-             * 12.20-13.50
-             * 14.00-15.30
-             * 15.40-17.10
-             * 17.30-19.00
-             * */
+            final int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
+            final int minute = mCalendar.get(Calendar.MINUTE);
+            final int time = hour * 60 + minute;
+
+            if(time >= 510 && time < 600){
+                return "1";
+            } else if (time >= 600 && time < 610){
+                return mContext.getResources().getString(R.string.bell_break_one);
+            } else if (time >= 610 && time < 700){
+                return "2";
+            } else if (time >= 700 && time < 740) {
+                return mContext.getResources().getString(R.string.bell_break_two);
+            } else if (time >= 740 && time < 830) {
+                return "3";
+            } else if (time >= 830 && time < 840) {
+                return mContext.getResources().getString(R.string.bell_break_one);
+            } else if (time >= 840 && time < 930) {
+                return "4";
+            } else if (time >= 930 && time < 940) {
+                return mContext.getResources().getString(R.string.bell_break_one);
+            } else if (time >= 940 && time < 1030) {
+                return "5";
+            } else if (time >= 1030 && time < 1050) {
+                return mContext.getResources().getString(R.string.bell_break_one);
+            } else if (time >= 1050 && time < 1140) {
+                return "6";
+            } else
+                return "-";
+        } else
+            return mContext.getResources().getString(R.string.bell_day_off);
+    }
+
+    public String getTime() {
+        final Calendar mCalendar = Calendar.getInstance();
+        // 1 - Воскресенье
+        if(mCalendar.get(Calendar.DAY_OF_WEEK) != 1){
 
             final int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
             final int minute = mCalendar.get(Calendar.MINUTE);
             final int time = hour * 60 + minute;
 
-            if(time >= 510 && time <= 600){
-                return "1";
-            } else if (time >= 600 && time <= 610){
-                return "Перерыв";
-            } else if (time >= 610 && time <= 700){
-                return "2";
-            } else if (time >= 700 && time <= 740) {
-                return "Большой перерыв";
-            } else if (time >= 740 && time <= 830) {
-                return "3";
-            } else if (time >= 830 && time <= 840) {
-                return "Перерыв";
-            } else if (time >= 840 && time <= 930) {
-                return "4";
-            } else if (time >= 930 && time <= 940) {
-                return "Перерыв";
-            } else if (time >= 940 && time <= 1030) {
-                return "5";
-            } else if (time >= 1030 && time <= 1050) {
-                return "Перерыв";
-            } else if (time >= 1050 && time <= 1140) {
-                return "6";
+            if(time >= 420 && time < 510){
+                return "8:30";
+            } else if (time >= 510 && time < 600){
+                return "10:00";
+            } else if (time >= 600 && time < 610){
+                return "10:10";
+            } else if (time >= 610 && time < 700){
+                return "11:40";
+            } else if (time >= 700 && time < 740) {
+                return "12:20";
+            } else if (time >= 740 && time < 830) {
+                return "13:50";
+            } else if (time >= 830 && time < 840) {
+                return "14:00";
+            } else if (time >= 840 && time < 930) {
+                return "15:30";
+            } else if (time >= 930 && time < 940) {
+                return "15:40";
+            } else if (time >= 940 && time < 1030) {
+                return "17:10";
+            } else if (time >= 1030 && time < 1050) {
+                return "17:30";
+            } else if (time >= 1050 && time < 1140) {
+                return "19:00";
             } else
                 return "-";
         } else
-            return "Выходной";
+            return "-";
     }
 }

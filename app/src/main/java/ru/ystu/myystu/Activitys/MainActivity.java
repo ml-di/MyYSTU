@@ -1,12 +1,17 @@
 package ru.ystu.myystu.Activitys;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
@@ -17,6 +22,8 @@ import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Services.UpdateCheck;
+import ru.ystu.myystu.Utils.BottomBarHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,11 +33,22 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mBellFragment;
     private Fragment mMenuFragment;
     private CoordinatorLayout mContentConteiner;
+    private PendingIntent mPendingIntent;
+    private ArrayList<String> updateList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // TODO запуск сервиса
+        // Запуск сервиса для проверки обновлений
+        mPendingIntent = createPendingResult(1, new Intent(), 0);
+        final Intent mIntent = new Intent(this, UpdateCheck.class)
+                .putExtra("pending", mPendingIntent);
+        startService(mIntent);
+
+        updateList = new ArrayList<>();
 
         mBottomBar = findViewById(R.id.bottomBar);
         mContentConteiner = findViewById(R.id.contentConteiner);
@@ -74,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 // Уведомления
                 case R.id.tab_bell:
+                    // TODO убрать badage при открытии уведомлений
+                    BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
                     mContentConteiner.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -105,6 +125,23 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // TODO получаем обновления
+        if (data != null) {
+            String response = data.getStringExtra("shedule_update");
+            if(!updateList.contains(response)){
+                updateList.add(response);
+                if(updateList.size() > 0)
+                    BottomBarHelper.showBadge(this, mBottomBar, R.id.tab_bell, updateList.size());
+                else
+                    BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
+            }
+
+        }
     }
 
     @Override
