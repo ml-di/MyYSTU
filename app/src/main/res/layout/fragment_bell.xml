@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.BellFragment"
-    android:background="@color/colorToolBar">
+    android:background="@color/colorToolBar"
+    tools:context=".Fragments.BellFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_bell"
@@ -29,83 +29,100 @@
         app:textAllCaps="true"
         tools:text="Второе учебное полугодие" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <HorizontalScrollView
+        android:id="@+id/bell_count_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:orientation="horizontal"
+        android:scrollbars="none"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bell_title">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/week_layout"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/shape_rectangle_rounded"
-            android:elevation="20dp"
-            android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/bell_count_week"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/week_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                app:layout_constraintLeft_toLeftOf="parent"
-                tools:text="14" />
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/shape_rectangle_rounded"
+                android:elevation="20dp"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="4dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/bell_count_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    tools:text="14" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/lesson_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/shape_rectangle_rounded"
-            android:elevation="20dp"
-            android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/bell_count_lesson"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lesson_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                app:layout_constraintLeft_toLeftOf="parent"
-                tools:text="2" />
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/shape_rectangle_rounded"
+                android:elevation="20dp"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="4dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/bell_count_lesson"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    tools:text="2" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/time_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/shape_rectangle_rounded"
-            android:elevation="20dp"
-            android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/bell_count_time"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/time_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                app:layout_constraintLeft_toLeftOf="parent"
-                tools:text="12:30" />
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/shape_rectangle_rounded"
+                android:elevation="20dp"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="4dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/bell_count_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    tools:text="12:30" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_bell_items"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bell_count_layout" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

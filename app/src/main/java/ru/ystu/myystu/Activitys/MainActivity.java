@@ -92,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 // Уведомления
                 case R.id.tab_bell:
+
+                    // TODO set arguments
+                    final Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("update", updateList);
+                    mBellFragment.setArguments(bundle);
+
                     // TODO убрать badage при открытии уведомлений
                     BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
                     mContentConteiner.setFitsSystemWindows(true);
@@ -132,15 +138,21 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         // TODO получаем обновления
         if (data != null) {
-            String response = data.getStringExtra("shedule_update");
-            if(!updateList.contains(response)){
-                updateList.add(response);
-                if(updateList.size() > 0)
-                    BottomBarHelper.showBadge(this, mBottomBar, R.id.tab_bell, updateList.size());
-                else
-                    BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
+
+            if(data.getStringArrayListExtra("shedule_update").size() > 0){
+                for(int i = 0; i < data.getStringArrayListExtra("shedule_update").size(); i++){
+
+                    final String temp = data.getStringArrayListExtra("shedule_update").get(i);
+                    if(!updateList.contains(temp)){
+                        updateList.add(temp);
+                    }
+                }
             }
 
+            if(updateList.size() > 0)
+                BottomBarHelper.showBadge(this, mBottomBar, R.id.tab_bell, updateList.size());
+            else
+                BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
         }
     }
 

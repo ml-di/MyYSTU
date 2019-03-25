@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.ScaleAnimation;
-import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,13 +26,12 @@ public class BottomBarHelper {
         if(value > 9)
             text.setText("9+");
         else
-            text.setText("" + value);
+            text.setText(String.valueOf(value));
 
         if(itemView.getChildCount() < 3){
             itemView.addView(badge);
             badge.startAnimation(show);
         } else {
-            // TODO не перекрывать анимацию появления
             itemView.removeViewAt(2);
             itemView.addView(badge);
 

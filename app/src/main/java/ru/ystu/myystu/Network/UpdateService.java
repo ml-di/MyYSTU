@@ -6,6 +6,7 @@ import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -31,6 +32,8 @@ public class UpdateService {
     public Observable<String> checkShedule () {
 
         final String url = "https://www.ystu.ru/learning/schedule/";
+        // TODO temp url
+        //final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
 
         return Observable.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();
@@ -64,42 +67,61 @@ public class UpdateService {
                                     client.dispatcher().executorService().shutdown();
                                     client.connectionPool().evictAll();
                                 }
-                                Elements els = null;
+                                Element els = null;
                                 if (doc != null) {
-                                    els = doc.getElementsByClass("PaddingBorder").select("h3").select("a");
+                                    els = doc.getElementsByClass("PaddingBorder").get(1);
                                 }
 
+                                int index = -1;
                                 String link;
+                                String text;
 
                                 if (els != null) {
-                                    for(int i = 0; i < els.size(); i++){
 
+                                    for (int i = 0; i < els.children().size(); i++) {
                                         for(int p = 0; p < prefix_f.length; p++){
+
                                             if(p == 5){
-                                                if(els.get(i).text().equals(prefix_f[p])){
-                                                    link = "https://www.ystu.ru" + els.get(i).attr("href");
+                                                if(els.children().get(i).text().equals(prefix_f[p])){
+
+                                                    link = "https://www.ystu.ru" + els.children().get(i).select("h3").select("a").attr("href");
                                                     if(isNew(p, link)){
-                                                        Log.d("update", link);
-                                                        if(!emitter.isDisposed())
-                                                            emitter.onNext("0*" + p + "*" + link);
+                                                        if(!emitter.isDisposed()){
+                                                            emitter.onNext("0*" + p + "*" + link + "*"
+                                                                    + getChange(els.getElementsByIndexEquals(index)));
+                                                        }
                                                     }
+
+                                                    index = i + 2;
+                                                    break;
                                                 }
                                             } else {
-                                                if(els.get(i).text().contains(prefix_f[p])){
-                                                    link = "https://www.ystu.ru" + els.get(i).attr("href");
+                                                if(els.children().get(i).text().contains(prefix_f[p])){
+
+                                                    link = "https://www.ystu.ru" + els.children().get(i).select("h3").select("a").attr("href");
                                                     if(isNew(p, link)){
-                                                        Log.d("update", link);
-                                                        if(!emitter.isDisposed())
-                                                            emitter.onNext("0*" + p + "*" + link);
+                                                        if(!emitter.isDisposed()){
+                                                            emitter.onNext("0*" + p + "*" + link + "*"
+                                                                    + getChange(els.getElementsByIndexEquals(index)));
+                                                        }
                                                     }
+
+                                                    if(index == 6)
+                                                        index = i + 2;
+                                                    else
+                                                        index = i + 1;
+
+                                                    break;
                                                 }
                                             }
                                         }
+
                                     }
                                 }
-                                Log.d("update", "-");
-                                if(!emitter.isDisposed())
+                                if(!emitter.isDisposed()){
+                                    emitter.onNext("end");
                                     emitter.onComplete();
+                                }
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
@@ -114,7 +136,7 @@ public class UpdateService {
 
     }
 
-    private boolean isNew(int id, String link){
+    private boolean isNew (int id, String link){
 
         final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE", Context.MODE_PRIVATE);
 
@@ -125,6 +147,11 @@ public class UpdateService {
             } else
                 return true;
         } else return true;
+    }
+    private String getChange (Elements els) {
+
+        Elements temp = els.select("li");
+        return temp.get(temp.size() - 1).text();
     }
 
 }

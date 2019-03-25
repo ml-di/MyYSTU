@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +13,18 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Network.UpdateService;
 
 public class UpdateCheck extends Service {
+
+    // TODO интервал обновления
+    private final int DELAY_UPDATE_SEC = 3600;
 
     private UpdateService mUpdateService;
     private CompositeDisposable mDisposables;
@@ -57,23 +63,27 @@ public class UpdateCheck extends Service {
 
     private void update(){
 
-        final List<String> links = new ArrayList<>();
+        // TODO Update
+        final ArrayList<String> links = new ArrayList<>();
         final Observable<String> mObservable = mUpdateService.checkShedule();
-        final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
+        final boolean[] isUpdate = {false};
 
         mDisposables.add(mObservable
                 .subscribeOn(Schedulers.io())
-                .delay(10, TimeUnit.SECONDS)
-                .repeat()
+                .repeatWhen(objectObservable -> objectObservable.delay(DELAY_UPDATE_SEC, TimeUnit.SECONDS))
+                .retryWhen(throwableObservable -> throwableObservable.delay(DELAY_UPDATE_SEC, TimeUnit.SECONDS))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<String>() {
                     @Override
                     public void onNext(String s) {
 
-                        if(!links.contains(s)){
-                            links.add(s);
+                        if(s.equals("end")){
                             onComplete();
+                        } else if(!links.contains(s)){
+                            links.add(s);
+                            isUpdate[0] = true;
                         }
+
                     }
 
                     @Override
@@ -84,11 +94,18 @@ public class UpdateCheck extends Service {
                     @Override
                     public void onComplete() {
 
-                        final Intent intent = new Intent().putExtra("shedule_update", links.get(links.size() - 1));
-                        try {
-                            mPendingIntent.send(UpdateCheck.this, 0, intent);
-                        } catch (PendingIntent.CanceledException e) {
-                            e.printStackTrace();
+                        if(links.size() > 0 && isUpdate[0]){
+
+                            final Intent intent = new Intent();
+                            intent.putStringArrayListExtra("shedule_update", links);
+
+                            try {
+                                mPendingIntent.send(UpdateCheck.this, 0, intent);
+                            } catch (PendingIntent.CanceledException e) {
+                                e.printStackTrace();
+                            }
+
+                            isUpdate[0] = false;
                         }
                     }
                 }));

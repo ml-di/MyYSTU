@@ -91,5 +91,6 @@
     <string name="bell_break_one">Перерыв</string>
     <string name="bell_break_two">Большой пер.</string>
     <string name="bell_day_off">Выходной</string>
+    <string name="bell_item_title_schedule">Обновление в расписании</string>
 
 </resources>

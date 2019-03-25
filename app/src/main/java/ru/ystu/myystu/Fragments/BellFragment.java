@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -16,12 +17,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import ru.ystu.myystu.Adapters.BellItemsAdapter;
+import ru.ystu.myystu.AdaptersData.BellItemsData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BellHelper;
 
@@ -37,9 +45,16 @@ public class BellFragment extends Fragment {
     private ConstraintLayout lessonLayout;
     private ConstraintLayout timeLayout;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mRecyclerViewAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<BellItemsData> mList;
+    private Parcelable mRecyclerState;
     private Context mContext;
 
     BellHelper bellHelper;
+
+    private ArrayList<String> update;
 
 
     @Override
@@ -49,6 +64,10 @@ public class BellFragment extends Fragment {
 
         mContext = getActivity();
         bellHelper = new BellHelper(mContext);
+
+        if (getArguments() != null) {
+            update = getArguments().getStringArrayList("update");
+        }
     }
 
     @Override
@@ -60,7 +79,20 @@ public class BellFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(this::update);
         mSwipeRefreshLayout.setEnabled(false);
-        update();
+
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,
+                DividerItemDecoration.VERTICAL));
+
+        if(savedInstanceState == null){
+            update();
+        } else{
+            mList = savedInstanceState.getParcelableArrayList("mList");
+            mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
+            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        }
     }
 
     @Override
@@ -79,6 +111,8 @@ public class BellFragment extends Fragment {
             weekLayout = mView.findViewById(R.id.week_layout);
             lessonLayout = mView.findViewById(R.id.lesson_layout);
             timeLayout = mView.findViewById(R.id.time_layout);
+
+            mRecyclerView = mView.findViewById(R.id.recycler_bell_items);
         }
 
         return mView;
@@ -92,6 +126,23 @@ public class BellFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(mRecyclerState != null)
+            mLayoutManager.onRestoreInstanceState(mRecyclerState);
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mRecyclerState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelableArrayList("mList", mList);
     }
 
     private void update(){
@@ -141,5 +192,40 @@ public class BellFragment extends Fragment {
         } else {
             timeLayout.setVisibility(View.GONE);
         }
+
+        formattingList();
+    }
+
+    private void formattingList() {
+
+        mList = new ArrayList<>();
+        final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МФ", "ХТФ", "ЗФ", "ОЗФ"};
+
+        for(int i = 0; i < update.size(); i++){
+
+            String temp = update.get(i);
+            final int idType = Integer.parseInt(temp.substring(0, temp.indexOf("*")));
+            temp = temp.substring(temp.indexOf("*") + 1);
+            final int idSubType = Integer.parseInt(temp.substring(0, temp.indexOf("*")));
+            temp = temp.substring(temp.indexOf("*") + 1);
+            final String link = temp.substring(0, temp.indexOf("*"));
+            temp = temp.substring(temp.indexOf("*") + 1);
+            final String text_temp = temp;
+
+            final String date = text_temp.substring(0, text_temp.indexOf(":"));
+            final String text = text_temp.substring(text_temp.indexOf(":") + 2);
+
+            String title = null;
+            // Обновлено расписание
+            if(idType == 0){
+                title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
+            }
+
+            mList.add(new BellItemsData(i, idType, idSubType, 0, title, text, date));
+        }
+
+        mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
+        mRecyclerViewAdapter.setHasStableIds(true);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
 }
