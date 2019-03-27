@@ -30,7 +30,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/colorTextSecondary"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/itemBell_date"
         app:layout_constraintTop_toTopOf="@id/itemBell"

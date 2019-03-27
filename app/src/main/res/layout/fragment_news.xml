@@ -11,9 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_news_items"
+        <androidx.appcompat.widget.ContentFrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_news_items"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layoutAnimation="@anim/layout_news_recyclerview_show" />
+
+            <androidx.appcompat.widget.ContentFrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@drawable/recyclerview_grandient" />
+
+        </androidx.appcompat.widget.ContentFrameLayout>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

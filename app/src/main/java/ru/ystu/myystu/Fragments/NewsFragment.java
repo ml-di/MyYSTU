@@ -29,7 +29,6 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.DataFragments.DataFragment_News_List;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.NewsItemsAdapter;
-import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.Network.GetListNewsFromURL;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.NetworkInformation;
@@ -248,6 +247,8 @@ public class NewsFragment extends Fragment {
                                 // Конец списка новостей
                                 if(isOffset)
                                     isEnd = mList.size() <= listCount;
+                                else
+                                    mRecyclerView.scheduleLayoutAnimation();
 
                             }
 

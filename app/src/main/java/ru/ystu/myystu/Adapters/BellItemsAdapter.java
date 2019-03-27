@@ -1,6 +1,11 @@
 package ru.ystu.myystu.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +14,12 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.BellItemsData;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.StringFormatter;
 
 public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.BellItemsViewHolder> {
 
@@ -21,16 +29,36 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
     static class BellItemsViewHolder extends RecyclerView.ViewHolder {
 
         private int id;
+        private int idType;
+        private int idSubType;
         final private AppCompatTextView date;
         final private AppCompatTextView title;
         final private AppCompatTextView subTitle;
+        final private ConstraintLayout item;
 
-        public BellItemsViewHolder(@NonNull View itemView, final List<BellItemsData> mList, final Context mContext) {
+        BellItemsViewHolder(@NonNull View itemView, final List<BellItemsData> mList, final Context mContext) {
             super(itemView);
 
             date = itemView.findViewById(R.id.itemBell_date);
             title = itemView.findViewById(R.id.itemBell_title);
             subTitle = itemView.findViewById(R.id.itemBell_subTitle);
+            item = itemView.findViewById(R.id.itemBell);
+
+            item.setOnClickListener(view -> {
+
+                switch (idType){
+                    // Расписание
+                    case 0:
+
+                        final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
+                        mIntent.putExtra("ID", idSubType);
+                        mContext.startActivity(mIntent);
+
+                        break;
+
+                }
+
+            });
         }
     }
 
@@ -57,9 +85,25 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
     public void onBindViewHolder(@NonNull BellItemsViewHolder holder, int position) {
 
         holder.id = mList.get(position).getId();
-        holder.title.setText(mList.get(position).getTitle());
-        holder.subTitle.setText(mList.get(position).getSubTitle());
+        holder.idType = mList.get(position).getIdType();
+        holder.idSubType = mList.get(position).getIdSubType();
 
+        holder.title.setText(mList.get(position).getTitle());
+
+        if(mList.get(position).getSubTitle() != null){
+            holder.subTitle.setText(new StringFormatter().groupFormated(mList.get(position).getSubTitle()));
+        }
+
+        if(mList.get(position).getDate() != null){
+            String date = mList.get(position).getDate().substring(0, mList.get(position).getDate().indexOf(" ") + 4);
+            if(date.length() == 5){
+                date = "0" + date;
+            }
+            final Spannable spanDate = new SpannableString(date);
+            spanDate.setSpan(new TextAppearanceSpan(mContext, R.style.BellItemCountStyle), 0, date.indexOf(" "), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spanDate.setSpan(new TextAppearanceSpan(mContext, R.style.BellItemTextStyle), date.indexOf(" ") + 1, date.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.date.setText(spanDate);
+        }
     }
 
     @Override
@@ -75,6 +119,10 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
     @Override
     public int getItemViewType(int position) {
         return super.getItemViewType(position);
+    }
+
+    public void removeItem (int postition) {
+        mList.remove(postition);
     }
 
 }

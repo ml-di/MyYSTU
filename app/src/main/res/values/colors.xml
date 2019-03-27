@@ -14,6 +14,8 @@
     <color name="colorTextSecondary">#616161</color>
     <color name="colorTextTertiary">#a5a5a5</color>
 
+    <color name="colorTextSecondaryOpacity">#BF616161</color>
+
     <color name="colorDivider">#DCDCDC</color>
     <color name="colorPlaceHolderImage">#EEEEEE</color>
     <color name="colorOverleyImage">#A6000000</color>

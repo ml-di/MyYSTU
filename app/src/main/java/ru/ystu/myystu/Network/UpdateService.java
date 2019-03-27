@@ -2,7 +2,6 @@ package ru.ystu.myystu.Network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,9 +30,9 @@ public class UpdateService {
 
     public Observable<String> checkShedule () {
 
-        final String url = "https://www.ystu.ru/learning/schedule/";
+        //final String url = "https://www.ystu.ru/learning/schedule/";
         // TODO temp url
-        //final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
+        final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
 
         return Observable.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();
@@ -81,18 +80,22 @@ public class UpdateService {
                                     for (int i = 0; i < els.children().size(); i++) {
                                         for(int p = 0; p < prefix_f.length; p++){
 
+                                            if(p == 5 || p == 6)
+                                                index = i + 2;
+                                            else
+                                                index = i + 1;
+
                                             if(p == 5){
                                                 if(els.children().get(i).text().equals(prefix_f[p])){
 
                                                     link = "https://www.ystu.ru" + els.children().get(i).select("h3").select("a").attr("href");
                                                     if(isNew(p, link)){
                                                         if(!emitter.isDisposed()){
-                                                            emitter.onNext("0*" + p + "*" + link + "*"
-                                                                    + getChange(els.getElementsByIndexEquals(index)));
+                                                                emitter.onNext("0*" + p + "*" + link + "*"
+                                                                        + getChange(els, index));
                                                         }
                                                     }
 
-                                                    index = i + 2;
                                                     break;
                                                 }
                                             } else {
@@ -102,15 +105,9 @@ public class UpdateService {
                                                     if(isNew(p, link)){
                                                         if(!emitter.isDisposed()){
                                                             emitter.onNext("0*" + p + "*" + link + "*"
-                                                                    + getChange(els.getElementsByIndexEquals(index)));
+                                                                    + getChange(els, index));
                                                         }
                                                     }
-
-                                                    if(index == 6)
-                                                        index = i + 2;
-                                                    else
-                                                        index = i + 1;
-
                                                     break;
                                                 }
                                             }
@@ -148,10 +145,17 @@ public class UpdateService {
                 return true;
         } else return true;
     }
-    private String getChange (Elements els) {
+    private String getChange (Element els, int index) {
 
-        Elements temp = els.select("li");
-        return temp.get(temp.size() - 1).text();
+        Elements temp = els.getElementsByIndexEquals(index);
+
+        for(Element el : temp){
+            if(el.parent().hasClass("PaddingBorder")){
+                return el.select("li").get(el.select("li").size() - 1).text();
+            }
+        }
+
+        return "";
     }
 
 }

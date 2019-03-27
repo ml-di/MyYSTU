@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import ru.ystu.myystu.Fragments.BellFragment;
@@ -33,23 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mBellFragment;
     private Fragment mMenuFragment;
     private CoordinatorLayout mContentConteiner;
-    private PendingIntent mPendingIntent;
     private ArrayList<String> updateList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // TODO запуск сервиса
-        // Запуск сервиса для проверки обновлений
-        mPendingIntent = createPendingResult(1, new Intent(), 0);
-        final Intent mIntent = new Intent(this, UpdateCheck.class)
-                .putExtra("pending", mPendingIntent);
-        startService(mIntent);
-
         updateList = new ArrayList<>();
-
         mBottomBar = findViewById(R.id.bottomBar);
         mContentConteiner = findViewById(R.id.contentConteiner);
         mContentConteiner.setFitsSystemWindows(true);
@@ -66,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
             lightAppBar(true);
+
+            // TODO запуск сервиса
+            // Запуск сервиса для проверки обновлений
+            final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
+            final Intent mIntent = new Intent(this, UpdateCheck.class)
+                    .putExtra("pending", mPendingIntent);
+            startService(mIntent);
         }
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
@@ -93,13 +89,10 @@ public class MainActivity extends AppCompatActivity {
                 // Уведомления
                 case R.id.tab_bell:
 
-                    // TODO set arguments
                     final Bundle bundle = new Bundle();
                     bundle.putStringArrayList("update", updateList);
                     mBellFragment.setArguments(bundle);
 
-                    // TODO убрать badage при открытии уведомлений
-                    BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
                     mContentConteiner.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -107,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                             .commit();
 
                     lightAppBar(true);
+
                     break;
                 // Меню
                 case R.id.tab_menu:
@@ -149,17 +143,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if(updateList.size() > 0)
-                BottomBarHelper.showBadge(this, mBottomBar, R.id.tab_bell, updateList.size());
-            else
-                BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
+            badgeChange(updateList.size());
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
-        outState.putInt("activeTabPosition", mBottomBar.getSelectedItemId());
+        outState.putStringArrayList("updateList", updateList);
 
         super.onSaveInstanceState(outState);
     }
@@ -167,8 +158,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-        int activeTabPosition = savedInstanceState.getInt("activeTabPosition");
-        mBottomBar.setSelectedItemId(activeTabPosition);
+        updateList = savedInstanceState.getStringArrayList("updateList");
+        if (updateList != null && updateList.size() > 0) {
+            badgeChange(updateList.size());
+        }
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -187,5 +180,16 @@ public class MainActivity extends AppCompatActivity {
                 view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
+    }
+
+    public void removeItemUpdate (int position){
+        updateList.remove(position);
+    }
+    public void badgeChange (int count){
+
+        if(count > 0)
+            BottomBarHelper.showBadge(this, mBottomBar, R.id.tab_bell, count);
+        else
+            BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
     }
 }

@@ -169,13 +169,13 @@ public class StringFormatter {
 
     public SpannableString groupFormated (String text){
 
-        Pattern mPattern = Pattern.compile("[А-Я]{1,4}([а-я]{1})?-\\d{1,2}([а-яА-Я]{1})?");
-        Matcher mMatcher = mPattern.matcher(text);
-        SpannableString mSpannableString = new SpannableString(text);
+        mPattern = Pattern.compile("[А-Я]{1,4}([а-я]{1})?-\\d{1,2}([а-яА-Я]{1})?");
+        mMatcher = mPattern.matcher(text);
+        final SpannableString mSpannableString = new SpannableString(text);
 
         while (mMatcher.find()){
-            int index_s = mMatcher.start();
-            int index_e = mMatcher.end();
+            index_s = mMatcher.start();
+            index_e = mMatcher.end();
 
             mSpannableString.setSpan(new LinkClickableSpan(null, 5), index_s, index_e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
