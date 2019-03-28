@@ -30,7 +30,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_job_items"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:background="@android:color/white"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

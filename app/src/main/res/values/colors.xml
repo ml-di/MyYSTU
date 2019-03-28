@@ -21,6 +21,8 @@
     <color name="colorOverleyImage">#A6000000</color>
     <color name="colorPhotoViewBackground">#000000</color>
 
+    <color name="colorLightStatusBar">#C8C8C8</color>
+
     <!-- Цвета кафедр -->
     <color name="colorAsf">#710A0E</color>
     <color name="colorIef">#007100</color>

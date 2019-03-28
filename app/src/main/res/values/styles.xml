@@ -3,10 +3,10 @@
     <!-- Базовая тема -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorLightStatusBar</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:navigationBarColor">@color/colorLightStatusBar</item>
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 
     <!-- Тема для photoView -->
@@ -14,18 +14,17 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowBackground">@color/colorPhotoViewBackground</item>
     </style>
 
     <!-- Тема для activity с toolbar -->
     <style name="AppTheme.ToolBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorTextTertiary</item>
+        <item name="colorPrimaryDark">@color/colorLightStatusBar</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorLightStatusBar</item>
     </style>
 
     <!-- Тема для toolbar -->

@@ -69,8 +69,8 @@
                 tools:text="01.01.1970" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-
-        <androidx.appcompat.widget.ContentFrameLayout
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemJob_fileType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
@@ -81,18 +81,11 @@
             android:background="@drawable/shape_rectangle_rounded"
             android:backgroundTint="@color/colorPrimaryLight"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/itemJob_fileType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorToolBar"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                tools:text="FILE" />
-
-        </androidx.appcompat.widget.ContentFrameLayout>
+            android:paddingEnd="8dp"
+            android:textColor="@color/colorToolBar"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="FILE" />
 
     </androidx.appcompat.widget.ContentFrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

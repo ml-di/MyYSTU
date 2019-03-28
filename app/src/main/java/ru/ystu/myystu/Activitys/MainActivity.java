@@ -1,10 +1,14 @@
 package ru.ystu.myystu.Activitys;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -23,6 +27,7 @@ import ru.ystu.myystu.Fragments.NewsFragment;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Services.UpdateCheck;
 import ru.ystu.myystu.Utils.BottomBarHelper;
+import ru.ystu.myystu.Utils.LightStatusBar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
-            lightAppBar(true);
+            LightStatusBar.setLight(true, this);
 
             // TODO запуск сервиса
             // Запуск сервиса для проверки обновлений
@@ -66,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
                 || mBottomBar.getSelectedItemId() == R.id.tab_bell){
-            lightAppBar(true);
+            LightStatusBar.setLight(true, this);
         } else if (mBottomBar.getSelectedItemId() == R.id.tab_menu){
-            lightAppBar(false);
+            LightStatusBar.setLight(false, this);
         }
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
@@ -83,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
 
-                    lightAppBar(true);
+                    LightStatusBar.setLight(true, this);
 
                     break;
                 // Уведомления
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentConteiner, mBellFragment, "BELL_FRAGMENT")
                             .commit();
 
-                    lightAppBar(true);
+                    LightStatusBar.setLight(true, this);
 
                     break;
                 // Меню
@@ -111,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentConteiner, mMenuFragment, "MENU_FRAGMENT")
                             .commit();
 
-                    lightAppBar(false);
+                    LightStatusBar.setLight(false, this);
                     break;
             }
 
@@ -164,22 +169,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    private void lightAppBar(boolean isLight){
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-            final View view = this.getWindow().getDecorView();
-
-            if(isLight){
-                // Значки статус бара в черный цвет
-                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            } else {
-                // Значки статус бара в белый цвет
-                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            }
-        }
     }
 
     public void removeItemUpdate (int position){
