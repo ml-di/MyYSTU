@@ -2,6 +2,7 @@ package ru.ystu.myystu.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -139,7 +140,6 @@ public class ScheduleListActivity extends AppCompatActivity {
                                 final File file = new File(dir, prefix[id] + ".zip");
                                 if(file.exists()){
                                     openFile();
-                                    // TODO информация о том что расписание не смогло проверить обновление
                                     Toast.makeText(mContext,
                                             getResources().getString(R.string.error_message_shedule_not_update),
                                             Toast.LENGTH_SHORT).show();
@@ -202,8 +202,12 @@ public class ScheduleListActivity extends AppCompatActivity {
                             @Override
                             public void onComplete() {
 
-                                final SharedPreferences mSharedPreferences = getSharedPreferences("SCHEDULE", Context.MODE_PRIVATE);
-                                final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+                                SharedPreferences mSharedPreferences = getSharedPreferences("SCHEDULE", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+                                mEditor.putString(prefix[id].toUpperCase(), link);
+                                mEditor.apply();
+                                mSharedPreferences = getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
+                                mEditor = mSharedPreferences.edit();
                                 mEditor.putString(prefix[id].toUpperCase(), link);
                                 mEditor.apply();
                                 openFile();

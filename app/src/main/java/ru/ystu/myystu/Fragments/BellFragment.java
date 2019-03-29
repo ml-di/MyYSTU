@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Spannable;
@@ -62,6 +63,15 @@ public class BellFragment extends Fragment {
         mContext = getActivity();
         bellHelper = new BellHelper(mContext);
 
+        ((MainActivity) Objects.requireNonNull(getActivity())).showBottomBar(true);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        ((MainActivity) Objects.requireNonNull(getActivity())).showBottomBar(false);
     }
 
     @Override
@@ -229,7 +239,7 @@ public class BellFragment extends Fragment {
                 title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
             }
 
-            mList.add(new BellItemsData(i, idType, idSubType, 0, title, text, date));
+            mList.add(new BellItemsData(i, idType, idSubType, 0, title, text, date, link));
         }
 
         mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
@@ -249,11 +259,21 @@ public class BellFragment extends Fragment {
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
             int pos = viewHolder.getAdapterPosition();
+
+            final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
+
+            final String link = ((BellItemsAdapter)mRecyclerViewAdapter).getLink(pos);
+            final int id = ((BellItemsAdapter)mRecyclerViewAdapter).getSubId(pos);
+
+            final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
+            final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+            mEditor.putString(prefix[id].toUpperCase(), link);
+            mEditor.apply();
+
             ((BellItemsAdapter) mRecyclerViewAdapter).removeItem(pos);
             ((MainActivity) Objects.requireNonNull(getActivity())).removeItemUpdate(pos);
             ((MainActivity) getActivity()).badgeChange(mRecyclerViewAdapter.getItemCount());
             mRecyclerViewAdapter.notifyItemRemoved(pos);
-
         }
     };
 }

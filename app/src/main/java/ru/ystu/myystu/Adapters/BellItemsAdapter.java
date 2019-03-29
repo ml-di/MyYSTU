@@ -2,6 +2,7 @@ package ru.ystu.myystu.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.ystu.myystu.Activitys.MainActivity;
 import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.BellItemsData;
 import ru.ystu.myystu.R;
@@ -49,10 +51,23 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
                 switch (idType){
                     // Расписание
                     case 0:
-
+                        final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
                         final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
                         mIntent.putExtra("ID", idSubType);
                         mContext.startActivity(mIntent);
+
+                        // Удаление элемента из BellFragment
+                        final String link = mList.get(id).getLink();
+                        final int idSub = (mList.get(id).getIdSubType());
+
+                        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
+                        final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+                        mEditor.putString(prefix[idSub].toUpperCase(), link);
+                        mEditor.apply();
+
+                        mList.remove(idSub - 1);
+                        ((MainActivity) mContext).removeItemUpdate(idSub - 1);
+                        ((MainActivity) mContext).badgeChange(mList.size());
 
                         break;
 
@@ -123,6 +138,12 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
 
     public void removeItem (int postition) {
         mList.remove(postition);
+    }
+    public String getLink(int position) {
+        return mList.get(position).getLink();
+    }
+    public int getSubId(int position) {
+        return mList.get(position).getIdSubType();
     }
 
 }

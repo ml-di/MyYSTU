@@ -1,15 +1,10 @@
 package ru.ystu.myystu.Activitys;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -138,12 +133,14 @@ public class MainActivity extends AppCompatActivity {
         // TODO получаем обновления
         if (data != null) {
 
-            if(data.getStringArrayListExtra("shedule_update").size() > 0){
-                for(int i = 0; i < data.getStringArrayListExtra("shedule_update").size(); i++){
+            if(data.getStringArrayListExtra("shedule_update") != null){
+                if(data.getStringArrayListExtra("shedule_update").size() > 0){
+                    for(int i = 0; i < data.getStringArrayListExtra("shedule_update").size(); i++){
 
-                    final String temp = data.getStringArrayListExtra("shedule_update").get(i);
-                    if(!updateList.contains(temp)){
-                        updateList.add(temp);
+                        final String temp = data.getStringArrayListExtra("shedule_update").get(i);
+                        if(!updateList.contains(temp)){
+                            updateList.add(temp);
+                        }
                     }
                 }
             }
@@ -180,5 +177,18 @@ public class MainActivity extends AppCompatActivity {
             BottomBarHelper.showBadge(this, mBottomBar, R.id.tab_bell, count);
         else
             BottomBarHelper.removeBadge(this, mBottomBar, R.id.tab_bell);
+    }
+    public void showBottomBar (boolean isShow) {
+
+        final CoordinatorLayout.LayoutParams paramsBottomBar = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+        final CoordinatorLayout.LayoutParams paramsMainLayout = (CoordinatorLayout.LayoutParams) mContentConteiner.getLayoutParams();
+        if(isShow){
+            paramsBottomBar.setBehavior(null);
+            paramsMainLayout.setMargins(0, 0, 0, mBottomBar.getHeight());
+        } else {
+            paramsBottomBar.setBehavior(new HideBottomViewOnScrollBehavior());
+            paramsMainLayout.setMargins(0, 0, 0, 0);
+        }
+
     }
 }

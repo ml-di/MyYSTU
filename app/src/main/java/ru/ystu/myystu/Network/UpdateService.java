@@ -115,6 +115,7 @@ public class UpdateService {
 
                                     }
                                 }
+
                                 if(!emitter.isDisposed()){
                                     emitter.onNext("end");
                                     emitter.onComplete();
@@ -135,14 +136,18 @@ public class UpdateService {
 
     private boolean isNew (int id, String link){
 
-        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE", Context.MODE_PRIVATE);
+        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
 
         if(id < 7){
             if(mSharedPreferences.contains(prefix[id].toUpperCase())){
                 final String oldFile = mSharedPreferences.getString(prefix[id].toUpperCase(), null);
                 return !link.equals(oldFile);
-            } else
-                return true;
+            } else {
+                final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+                mEditor.putString(prefix[id].toUpperCase(), link);
+                mEditor.apply();
+                return false;
+            }
         } else return true;
     }
     private String getChange (Element els, int index) {

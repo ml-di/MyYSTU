@@ -12,6 +12,7 @@ public class BellItemsData implements Parcelable {
     private final String title;
     private final String subTitle;
     private final String date;
+    private final String link;
 
     public BellItemsData(final int id,
                          final int idType,
@@ -19,7 +20,8 @@ public class BellItemsData implements Parcelable {
                          final int icon,
                          final String title,
                          final String subTitle,
-                         final String date) {
+                         final String date,
+                         final String link) {
         this.id = id;
         this.idType = idType;
         this.idSubType = idSubType;
@@ -27,6 +29,7 @@ public class BellItemsData implements Parcelable {
         this.title = title;
         this.subTitle = subTitle;
         this.date = date;
+        this.link = link;
     }
 
     private BellItemsData(Parcel in) {
@@ -37,6 +40,7 @@ public class BellItemsData implements Parcelable {
         title = in.readString();
         subTitle = in.readString();
         date = in.readString();
+        link = in.readString();
     }
 
     public static final Creator<BellItemsData> CREATOR = new Creator<BellItemsData>() {
@@ -65,6 +69,7 @@ public class BellItemsData implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(subTitle);
         parcel.writeString(date);
+        parcel.writeString(link);
     }
 
     public int getId() {
@@ -87,5 +92,8 @@ public class BellItemsData implements Parcelable {
     }
     public String getDate() {
         return date;
+    }
+    public String getLink() {
+        return link;
     }
 }
