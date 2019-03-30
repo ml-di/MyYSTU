@@ -8,6 +8,7 @@ import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         updateList = new ArrayList<>();
         mBottomBar = findViewById(R.id.bottomBar);
         mContentConteiner = findViewById(R.id.contentConteiner);
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mMenuFragment = new MenuFragment();
 
         if (savedInstanceState == null) {
+
             mFragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")

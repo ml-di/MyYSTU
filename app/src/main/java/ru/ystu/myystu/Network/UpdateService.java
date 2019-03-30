@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,11 +29,11 @@ public class UpdateService {
         this.mContext = mContext;
     }
 
-    public Observable<String> checkShedule () {
+    public Observable<String> checkSchedule () {
 
-        //final String url = "https://www.ystu.ru/learning/schedule/";
+        final String url = "https://www.ystu.ru/learning/schedule/";
         // TODO temp url
-        final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
+        //final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
 
         return Observable.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();
@@ -43,7 +44,7 @@ public class UpdateService {
             client.newCall(mRequest)
                     .enqueue(new Callback() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             if(!emitter.isDisposed())
                                 emitter.onError(e);
 
@@ -52,7 +53,7 @@ public class UpdateService {
                         }
 
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
+                        public void onResponse(@NonNull Call call, @NonNull Response response) {
                             try {
                                 Document doc = null;
                                 try {
@@ -71,9 +72,8 @@ public class UpdateService {
                                     els = doc.getElementsByClass("PaddingBorder").get(1);
                                 }
 
-                                int index = -1;
+                                int index;
                                 String link;
-                                String text;
 
                                 if (els != null) {
 

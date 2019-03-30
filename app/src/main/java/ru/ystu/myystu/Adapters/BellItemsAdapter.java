@@ -30,7 +30,6 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
 
     static class BellItemsViewHolder extends RecyclerView.ViewHolder {
 
-        private int id;
         private int idType;
         private int idSubType;
         final private AppCompatTextView date;
@@ -51,22 +50,23 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
                 switch (idType){
                     // Расписание
                     case 0:
+                        final int position = getAdapterPosition();
                         final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
                         final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
                         mIntent.putExtra("ID", idSubType);
                         mContext.startActivity(mIntent);
 
                         // Удаление элемента из BellFragment
-                        final String link = mList.get(id).getLink();
-                        final int idSub = (mList.get(id).getIdSubType());
+                        final String link = mList.get(position).getLink();
+                        final int idSub = (mList.get(position).getIdSubType());
 
                         final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
                         final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
                         mEditor.putString(prefix[idSub].toUpperCase(), link);
                         mEditor.apply();
 
-                        mList.remove(idSub - 1);
-                        ((MainActivity) mContext).removeItemUpdate(idSub - 1);
+                        mList.remove(position);
+                        ((MainActivity) mContext).removeItemUpdate(position);
                         ((MainActivity) mContext).badgeChange(mList.size());
 
                         break;
@@ -99,7 +99,6 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
     @Override
     public void onBindViewHolder(@NonNull BellItemsViewHolder holder, int position) {
 
-        holder.id = mList.get(position).getId();
         holder.idType = mList.get(position).getIdType();
         holder.idSubType = mList.get(position).getIdSubType();
 
@@ -136,8 +135,8 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
         return super.getItemViewType(position);
     }
 
-    public void removeItem (int postition) {
-        mList.remove(postition);
+    public void removeItem (int position) {
+        mList.remove(position);
     }
     public String getLink(int position) {
         return mList.get(position).getLink();

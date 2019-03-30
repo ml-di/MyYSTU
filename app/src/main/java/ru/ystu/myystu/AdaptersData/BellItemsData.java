@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 public class BellItemsData implements Parcelable {
 
-    private final int id;
     private final int idType;
     private final int idSubType;
     private final int icon;
@@ -14,15 +13,13 @@ public class BellItemsData implements Parcelable {
     private final String date;
     private final String link;
 
-    public BellItemsData(final int id,
-                         final int idType,
+    public BellItemsData(final int idType,
                          final int idSubType,
                          final int icon,
                          final String title,
                          final String subTitle,
                          final String date,
                          final String link) {
-        this.id = id;
         this.idType = idType;
         this.idSubType = idSubType;
         this.icon = icon;
@@ -33,7 +30,6 @@ public class BellItemsData implements Parcelable {
     }
 
     private BellItemsData(Parcel in) {
-        id = in.readInt();
         idType = in.readInt();
         idSubType = in.readInt();
         icon = in.readInt();
@@ -62,7 +58,6 @@ public class BellItemsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
         parcel.writeInt(idType);
         parcel.writeInt(idSubType);
         parcel.writeInt(icon);
@@ -72,9 +67,6 @@ public class BellItemsData implements Parcelable {
         parcel.writeString(link);
     }
 
-    public int getId() {
-        return id;
-    }
     public int getIdType() {
         return idType;
     }

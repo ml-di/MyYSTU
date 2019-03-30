@@ -14,11 +14,13 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.Activitys.MainActivity;
 import ru.ystu.myystu.Network.UpdateService;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.NetworkInformation;
@@ -26,8 +28,8 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 public class UpdateCheck extends Service {
 
     // TODO интервал обновления
-    private final int DELAY_UPDATE_SEC = 10;    // Интервал проверки обновлений в сек
-    private final int DELAY_WAIT_CONNECT = 5;   // Интервал проверки подключения к интернету в сек
+    private final int DELAY_UPDATE_SEC = 900;     // Интервал проверки обновлений в сек
+    private final int DELAY_WAIT_CONNECT = 5;     // Интервал проверки подключения к интернету в сек
 
     private UpdateService mUpdateService;
     private CompositeDisposable mDisposables;
@@ -45,8 +47,13 @@ public class UpdateCheck extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mPendingIntent = intent.getParcelableExtra("pending");
+
+        if(intent != null && intent.getParcelableExtra("pending") != null){
+            mPendingIntent = intent.getParcelableExtra("pending");
+        }
+
         update();
+
         // TODO не понятно пререзапускается ли
         return START_REDELIVER_INTENT;
     }
@@ -68,8 +75,9 @@ public class UpdateCheck extends Service {
 
         // TODO Update
         final ArrayList<String> links = new ArrayList<>();
-        final Observable<String> mObservable = mUpdateService.checkShedule();
+        final Observable<String> mObservable = mUpdateService.checkSchedule();
         final boolean[] isUpdate = {false};
+        final int[] notificationCount = {0};
 
         mDisposables.add(mObservable
                 .subscribeOn(Schedulers.io())
@@ -91,15 +99,13 @@ public class UpdateCheck extends Service {
                 .subscribeWith(new DisposableObserver<String>() {
                     @Override
                     public void onNext(String s) {
-
                         if(s.equals("end")){
                             onComplete();
                         } else if(!links.contains(s)){
                             links.add(s);
                             isUpdate[0] = true;
-                            showNotification(s);
+                            notificationCount[0]++;
                         }
-
                     }
 
                     @Override
@@ -109,16 +115,23 @@ public class UpdateCheck extends Service {
 
                     @Override
                     public void onComplete() {
-
                         if(links.size() > 0 && isUpdate[0]){
 
                             final Intent intent = new Intent();
                             intent.putStringArrayListExtra("shedule_update", links);
 
-                            try {
-                                mPendingIntent.send(UpdateCheck.this, 0, intent);
-                            } catch (PendingIntent.CanceledException e) {
-                                e.printStackTrace();
+                            if(mPendingIntent != null){
+                                try {
+                                    mPendingIntent.send(UpdateCheck.this, 0, intent);
+                                } catch (PendingIntent.CanceledException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            showNotification(links.get(links.size() - 1), notificationCount[0]);
+
+                            if(notificationCount[0] > 0){
+                                notificationCount[0] = 0;
                             }
 
                             isUpdate[0] = false;
@@ -127,7 +140,7 @@ public class UpdateCheck extends Service {
                 }));
     }
 
-    private void showNotification(String temp) {
+    private void showNotification(String temp, int count) {
 
         final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
 
@@ -152,17 +165,25 @@ public class UpdateCheck extends Service {
             title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
         }
 
-        NotificationCompat.Builder mNotification = new NotificationCompat.Builder(this)
+        final Intent mIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder mTaskStackBuilder = TaskStackBuilder.create(this);
+        mTaskStackBuilder.addParentStack(MainActivity.class);
+        mTaskStackBuilder.addNextIntent(mIntent);
+        PendingIntent mPendingIntent = mTaskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final NotificationCompat.Builder mNotification = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_pin)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setWhen(System.currentTimeMillis())
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setLights(Color.parseColor("#ec7200"), 1, 0)
+                .setColor(Color.argb(100, 255, 110, 0))
                 .setContentIntent(mPendingIntent)
+                .setNumber(count)
                 .setAutoCancel(true);
 
-        NotificationManager mNotificationManager =
+        final NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(idType, mNotification.build());

@@ -31,7 +31,6 @@ import ru.ystu.myystu.AdaptersData.BellItemsData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BellHelper;
 
-
 public class BellFragment extends Fragment {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -132,7 +131,7 @@ public class BellFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context mContext) {
+    public void onAttach(@NonNull Context mContext) {
         super.onAttach(mContext);
     }
 
@@ -239,7 +238,7 @@ public class BellFragment extends Fragment {
                 title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
             }
 
-            mList.add(new BellItemsData(i, idType, idSubType, 0, title, text, date, link));
+            mList.add(new BellItemsData(idType, idSubType, 0, title, text, date, link));
         }
 
         mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
