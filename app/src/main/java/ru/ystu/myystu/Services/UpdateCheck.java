@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +29,10 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 public class UpdateCheck extends Service {
 
     // TODO интервал обновления
-    private final int DELAY_UPDATE_SEC = 900;     // Интервал проверки обновлений в сек
+    private final int DELAY_UPDATE_SEC = 30;     // Интервал проверки обновлений в сек
     private final int DELAY_WAIT_CONNECT = 5;     // Интервал проверки подключения к интернету в сек
+
+    ArrayList<String> updates;
 
     private UpdateService mUpdateService;
     private CompositeDisposable mDisposables;
@@ -43,6 +46,8 @@ public class UpdateCheck extends Service {
         mContext = this;
         mUpdateService = new UpdateService(this);
         mDisposables = new CompositeDisposable();
+
+        updates = new ArrayList<>();
     }
 
     @Override
@@ -55,7 +60,7 @@ public class UpdateCheck extends Service {
         update();
 
         // TODO не понятно пререзапускается ли
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Override
@@ -74,7 +79,6 @@ public class UpdateCheck extends Service {
     private void update(){
 
         // TODO Update
-        final ArrayList<String> links = new ArrayList<>();
         final Observable<String> mObservable = mUpdateService.checkSchedule();
         final boolean[] isUpdate = {false};
         final int[] notificationCount = {0};
@@ -99,10 +103,14 @@ public class UpdateCheck extends Service {
                 .subscribeWith(new DisposableObserver<String>() {
                     @Override
                     public void onNext(String s) {
+                        Log.e("Tag", s);
                         if(s.equals("end")){
                             onComplete();
-                        } else if(!links.contains(s)){
-                            links.add(s);
+                        } else if(s.startsWith("old")) {
+                            final String temp = s.substring(s.indexOf("|") + 1);
+                            updates.remove(temp);
+                        } else if(!updates.contains(s)) {
+                            updates.add(s);
                             isUpdate[0] = true;
                             notificationCount[0]++;
                         }
@@ -115,10 +123,10 @@ public class UpdateCheck extends Service {
 
                     @Override
                     public void onComplete() {
-                        if(links.size() > 0 && isUpdate[0]){
+                        if(updates.size() > 0 && isUpdate[0]){
 
                             final Intent intent = new Intent();
-                            intent.putStringArrayListExtra("shedule_update", links);
+                            intent.putStringArrayListExtra("shedule_update", updates);
 
                             if(mPendingIntent != null){
                                 try {
@@ -128,7 +136,7 @@ public class UpdateCheck extends Service {
                                 }
                             }
 
-                            showNotification(links.get(links.size() - 1), notificationCount[0]);
+                            showNotification(updates.get(updates.size() - 1), notificationCount[0]);
 
                             if(notificationCount[0] > 0){
                                 notificationCount[0] = 0;
@@ -187,5 +195,12 @@ public class UpdateCheck extends Service {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(idType, mNotification.build());
+    }
+
+    public void removeItemUpdate(int position) {
+        if(updates != null && updates.get(position) != null){
+            updates.remove(position);
+        }
+
     }
 }

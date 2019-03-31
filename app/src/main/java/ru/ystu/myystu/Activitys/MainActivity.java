@@ -8,7 +8,6 @@ import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mNewsFragment;
     private Fragment mBellFragment;
     private Fragment mMenuFragment;
-    private CoordinatorLayout mContentConteiner;
+    private CoordinatorLayout mContentContainer;
     private ArrayList<String> updateList;
 
     @Override
@@ -42,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         updateList = new ArrayList<>();
         mBottomBar = findViewById(R.id.bottomBar);
-        mContentConteiner = findViewById(R.id.contentConteiner);
-        mContentConteiner.setFitsSystemWindows(true);
+        mContentContainer = findViewById(R.id.contentContainer);
+        mContentContainer.setFitsSystemWindows(true);
 
         mFragmentManager = getSupportFragmentManager();
 
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
             mFragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
+                    .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
             LightStatusBar.setLight(true, this);
 
@@ -80,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
                 // Новости
                 case R.id.tab_news:
 
-                    mContentConteiner.setFitsSystemWindows(true);
+                    mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                            .replace(R.id.contentConteiner, mNewsFragment, "NEWS_FRAGMENT")
+                            .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
 
                     LightStatusBar.setLight(true, this);
@@ -96,10 +95,10 @@ public class MainActivity extends AppCompatActivity {
                     bundle.putStringArrayList("update", updateList);
                     mBellFragment.setArguments(bundle);
 
-                    mContentConteiner.setFitsSystemWindows(true);
+                    mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                            .replace(R.id.contentConteiner, mBellFragment, "BELL_FRAGMENT")
+                            .replace(R.id.contentContainer, mBellFragment, "BELL_FRAGMENT")
                             .commit();
 
                     LightStatusBar.setLight(true, this);
@@ -107,11 +106,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 // Меню
                 case R.id.tab_menu:
-                    mContentConteiner.setFitsSystemWindows(false);
-                    mContentConteiner.setPadding(0, 0, 0, 0);
+                    mContentContainer.setFitsSystemWindows(false);
+                    mContentContainer.setPadding(0, 0, 0, 0);
                     mFragmentManager.beginTransaction()
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                            .replace(R.id.contentConteiner, mMenuFragment, "MENU_FRAGMENT")
+                            .replace(R.id.contentContainer, mMenuFragment, "MENU_FRAGMENT")
                             .commit();
 
                     LightStatusBar.setLight(false, this);
@@ -148,7 +147,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            // Обновить уведомления если вкладка с ними открыта
             badgeChange(updateList.size());
+            if(mBottomBar.getSelectedItemId() == R.id.tab_bell){
+                if(updateList.size() > 0){
+                    ((BellFragment) mBellFragment).updateRecycler(updateList);
+                }
+            }
         }
     }
 
@@ -184,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     public void showBottomBar (boolean isShow) {
 
         final CoordinatorLayout.LayoutParams paramsBottomBar = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-        final CoordinatorLayout.LayoutParams paramsMainLayout = (CoordinatorLayout.LayoutParams) mContentConteiner.getLayoutParams();
+        final CoordinatorLayout.LayoutParams paramsMainLayout = (CoordinatorLayout.LayoutParams) mContentContainer.getLayoutParams();
         if(isShow){
             paramsBottomBar.setBehavior(null);
             paramsMainLayout.setMargins(0, 0, 0, mBottomBar.getHeight());

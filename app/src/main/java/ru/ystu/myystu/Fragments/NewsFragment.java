@@ -150,7 +150,7 @@ public class NewsFragment extends Fragment {
         if(mView != null){
             mRecyclerView = mView.findViewById(R.id.recycler_news_items);
             mSwipeRefreshLayout = mView.findViewById(R.id.refresh_news);
-            mainLayout = getActivity().findViewById(R.id.contentConteiner);
+            mainLayout = getActivity().findViewById(R.id.contentContainer);
         }
 
         mLayoutManager = new LinearLayoutManager(getContext());

@@ -31,9 +31,9 @@ public class UpdateService {
 
     public Observable<String> checkSchedule () {
 
-        final String url = "https://www.ystu.ru/learning/schedule/";
+        //final String url = "https://www.ystu.ru/learning/schedule/";
         // TODO temp url
-        //final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
+        final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
 
         return Observable.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();
@@ -89,11 +89,12 @@ public class UpdateService {
                                                 if(els.children().get(i).text().equals(prefix_f[p])){
 
                                                     link = "https://www.ystu.ru" + els.children().get(i).select("h3").select("a").attr("href");
-                                                    if(isNew(p, link)){
-                                                        if(!emitter.isDisposed()){
-                                                                emitter.onNext("0*" + p + "*" + link + "*"
-                                                                        + getChange(els, index));
-                                                        }
+                                                    if (isNew(p, link) && !emitter.isDisposed()){
+                                                        emitter.onNext("0*" + p + "*" + link + "*"
+                                                                + getChange(els, index));
+                                                    } else {
+                                                        emitter.onNext("old|0*" + p + "*" + link + "*"
+                                                                + getChange(els, index));
                                                     }
 
                                                     break;
@@ -102,11 +103,12 @@ public class UpdateService {
                                                 if(els.children().get(i).text().contains(prefix_f[p])){
 
                                                     link = "https://www.ystu.ru" + els.children().get(i).select("h3").select("a").attr("href");
-                                                    if(isNew(p, link)){
-                                                        if(!emitter.isDisposed()){
-                                                            emitter.onNext("0*" + p + "*" + link + "*"
-                                                                    + getChange(els, index));
-                                                        }
+                                                    if(isNew(p, link) && !emitter.isDisposed()){
+                                                        emitter.onNext("0*" + p + "*" + link + "*"
+                                                                + getChange(els, index));
+                                                    } else {
+                                                        emitter.onNext("old|0*" + p + "*" + link + "*"
+                                                                + getChange(els, index));
                                                     }
                                                     break;
                                                 }

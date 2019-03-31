@@ -8,15 +8,18 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.TextAppearanceSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -41,6 +44,7 @@ public class BellFragment extends Fragment {
     private ConstraintLayout weekLayout;
     private ConstraintLayout lessonLayout;
     private ConstraintLayout timeLayout;
+    private ConstraintLayout mainLayout;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
@@ -83,7 +87,15 @@ public class BellFragment extends Fragment {
             if (getArguments() != null) {
                 update = getArguments().getStringArrayList("update");
             }
+
+            if(update != null && update.size() > 0){
+                showPlaceHolder(false);
+            } else {
+                showPlaceHolder(true);
+            }
+
             formattingList();
+
         } else {
             mList = savedInstanceState.getParcelableArrayList("mList");
             mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
@@ -111,20 +123,15 @@ public class BellFragment extends Fragment {
             weekLayout = mView.findViewById(R.id.week_layout);
             lessonLayout = mView.findViewById(R.id.lesson_layout);
             timeLayout = mView.findViewById(R.id.time_layout);
+            mainLayout = mView.findViewById(R.id.main_layout_bell);
 
-            mRecyclerView = mView.findViewById(R.id.recycler_bell_items);
+            //mRecyclerView = mView.findViewById(R.id.recycler_bell_items);
 
             mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                     R.color.colorPrimary);
 
             mSwipeRefreshLayout.setOnRefreshListener(this::update);
             mSwipeRefreshLayout.setEnabled(false);
-
-            mLayoutManager = new LinearLayoutManager(mContext);
-            mRecyclerView.setHasFixedSize(true);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-            mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,
-                    DividerItemDecoration.VERTICAL));
         }
 
         return mView;
@@ -209,43 +216,95 @@ public class BellFragment extends Fragment {
 
     private void formattingList() {
 
-        mList = new ArrayList<>();
-        final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
+        if(update.size() > 0){
+            if(mList == null)
+                mList = new ArrayList<>();
+            else
+                mList.clear();
 
-        for(int i = 0; i < update.size(); i++){
 
-            String temp = update.get(i);
-            String[] var = new String[3];
-            for(int v = 0; v < var.length; v++){
-                var[v] = temp.substring(0, temp.indexOf("*"));
-                temp = temp.substring(temp.indexOf("*") + 1);
+            final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
+
+            for(int i = 0; i < update.size(); i++){
+
+                String temp = update.get(i);
+                String[] var = new String[3];
+                for(int v = 0; v < var.length; v++){
+                    var[v] = temp.substring(0, temp.indexOf("*"));
+                    temp = temp.substring(temp.indexOf("*") + 1);
+                }
+
+                final int idType = Integer.parseInt(var[0]);
+                final int idSubType = Integer.parseInt(var[1]);
+                final String link = var[2];
+
+                String date = null;
+                String text = null;
+                if(!temp.equals("")){
+                    date = temp.substring(0, temp.indexOf(":"));
+                    text = temp.substring(temp.indexOf(":") + 2);
+                }
+
+                String title = null;
+                // Обновлено расписание
+                if(idType == 0){
+                    title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
+                }
+
+                mList.add(new BellItemsData(idType, idSubType, 0, title, text, date, link));
             }
 
-            final int idType = Integer.parseInt(var[0]);
-            final int idSubType = Integer.parseInt(var[1]);
-            final String link = var[2];
+            mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
+            mRecyclerViewAdapter.setHasStableIds(true);
+            mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
-            String date = null;
-            String text = null;
-            if(!temp.equals("")){
-                date = temp.substring(0, temp.indexOf(":"));
-                text = temp.substring(temp.indexOf(":") + 2);
-            }
+            new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
+        } else {
+            showPlaceHolder(true);
+        }
+    }
 
-            String title = null;
-            // Обновлено расписание
-            if(idType == 0){
-                title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
-            }
+    private void showPlaceHolder(boolean isShow) {
 
-            mList.add(new BellItemsData(idType, idSubType, 0, title, text, date, link));
+        final DisplayMetrics metrics = new DisplayMetrics();
+        Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        final float logicalDensity = metrics.density;
+
+        mainLayout.removeAllViews();
+        ViewGroup.LayoutParams params;
+
+        if(isShow) {
+            final AppCompatImageView placeHolder = new AppCompatImageView(Objects.requireNonNull(getContext()));
+            placeHolder.setImageResource(R.drawable.ic_bell_null);
+            params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
+                            ConstraintLayout.LayoutParams.MATCH_PARENT);
+
+            mainLayout.addView(placeHolder, 0 , params);
+
+        } else {
+
+            params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mRecyclerView = new RecyclerView(mainLayout.getContext());
+            mainLayout.addView(mRecyclerView, 0 , params);
+
+            params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) Math.ceil(12 * logicalDensity));
+            final FrameLayout mContentFrameLayout = new FrameLayout(mainLayout.getContext());
+            mContentFrameLayout.setBackground(getResources().getDrawable(R.drawable.recyclerview_grandient));
+            mainLayout.addView(mContentFrameLayout, 1 , params);
+
+            mLayoutManager = new LinearLayoutManager(mContext);
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,
+                    DividerItemDecoration.VERTICAL));
         }
 
-        mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
-        mRecyclerViewAdapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+    }
 
-        new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
+    public void updateRecycler(ArrayList<String> updateList){
+        showPlaceHolder(false);
+        update = updateList;
+        formattingList();
     }
 
     private ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -273,6 +332,10 @@ public class BellFragment extends Fragment {
             ((MainActivity) Objects.requireNonNull(getActivity())).removeItemUpdate(pos);
             ((MainActivity) getActivity()).badgeChange(mRecyclerViewAdapter.getItemCount());
             mRecyclerViewAdapter.notifyItemRemoved(pos);
+
+            if(mRecyclerViewAdapter.getItemCount() <= 0){
+                showPlaceHolder(true);
+            }
         }
     };
 }

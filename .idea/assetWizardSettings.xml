@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_olymp" />
-                            <entry key="sourceFile" value="E:\MyYSTU\icons\activity\file_not_found.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_bell_null" />
+                            <entry key="sourceFile" value="E:\MyYSTU\icons\activity\bell_null.svg" />
                           </map>
                         </option>
                       </PersistentState>

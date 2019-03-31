@@ -11,7 +11,6 @@ public class BootIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        // TODO запуск сервиса из широковещателя
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
             Intent pushIntent = new Intent(context, UpdateCheck.class);
             context.startService(pushIntent);
