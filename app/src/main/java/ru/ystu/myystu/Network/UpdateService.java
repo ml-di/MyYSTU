@@ -31,9 +31,9 @@ public class UpdateService {
 
     public Observable<String> checkSchedule () {
 
-        //final String url = "https://www.ystu.ru/learning/schedule/";
+        final String url = "https://www.ystu.ru/learning/schedule/";
         // TODO temp url
-        final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
+        //final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
 
         return Observable.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();

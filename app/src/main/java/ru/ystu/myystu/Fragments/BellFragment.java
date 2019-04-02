@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -276,8 +277,15 @@ public class BellFragment extends Fragment {
         if(isShow) {
             final AppCompatImageView placeHolder = new AppCompatImageView(Objects.requireNonNull(getContext()));
             placeHolder.setImageResource(R.drawable.ic_bell_null);
-            params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
-                            ConstraintLayout.LayoutParams.MATCH_PARENT);
+            params = new ConstraintLayout.LayoutParams((int) Math.ceil(80 * logicalDensity),
+                    (int) Math.ceil(80 * logicalDensity));
+
+            // TODO Центрировать картинку
+            /*final ConstraintSet mConstraintSet = new ConstraintSet();
+            mConstraintSet.clone(mainLayout);
+            mConstraintSet.connect(pa,R.id.check_answer1,ConstraintSet.RIGHT,0);
+            constraintSet.connect(R.id.imageView,ConstraintSet.TOP,R.id.check_answer1,ConstraintSet.TOP,0);
+            constraintSet.applyTo(constraintLayout);*/
 
             mainLayout.addView(placeHolder, 0 , params);
 

@@ -6,11 +6,13 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
@@ -29,7 +31,7 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 public class UpdateCheck extends Service {
 
     // TODO интервал обновления
-    private final int DELAY_UPDATE_SEC = 30;     // Интервал проверки обновлений в сек
+    private final int DELAY_UPDATE_SEC = 900;     // Интервал проверки обновлений в сек
     private final int DELAY_WAIT_CONNECT = 5;     // Интервал проверки подключения к интернету в сек
 
     ArrayList<String> updates;
@@ -48,26 +50,37 @@ public class UpdateCheck extends Service {
         mDisposables = new CompositeDisposable();
 
         updates = new ArrayList<>();
+
+        update();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        Log.e("tag", "start");
+
         if(intent != null && intent.getParcelableExtra("pending") != null){
             mPendingIntent = intent.getParcelableExtra("pending");
         }
 
-        update();
+        // TODO временное решение, пока без кеша
+        if(updates.size() > 0){
+            updates.clear();
+        }
 
-        // TODO не понятно пререзапускается ли
-        return START_STICKY;
+        Log.e("tag", mPendingIntent.getCreatorPackage());
+        return START_REDELIVER_INTENT;
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        mDisposables.dispose();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        mDisposables.dispose();
     }
 
     @Nullable
@@ -126,9 +139,10 @@ public class UpdateCheck extends Service {
                         if(updates.size() > 0 && isUpdate[0]){
 
                             final Intent intent = new Intent();
-                            intent.putStringArrayListExtra("shedule_update", updates);
-
+                            intent.putStringArrayListExtra("schedule_update", updates);
+                            Log.e("tag", "null");
                             if(mPendingIntent != null){
+                                Log.e("tag", "not null");
                                 try {
                                     mPendingIntent.send(UpdateCheck.this, 0, intent);
                                 } catch (PendingIntent.CanceledException e) {
@@ -136,7 +150,20 @@ public class UpdateCheck extends Service {
                                 }
                             }
 
-                            showNotification(updates.get(updates.size() - 1), notificationCount[0]);
+                            final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("NOTIFICATION_UPDATE_ID", Context.MODE_PRIVATE);
+                            final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+
+                            if(mSharedPreferences.contains("id")){
+                                final String oldTemp = mSharedPreferences.getString("id", null);
+                                if(!Objects.equals(oldTemp, updates.get(updates.size() - 1))){
+                                    showNotification(updates.get(updates.size() - 1), notificationCount[0]);
+                                    mEditor.putString("id", updates.get(updates.size() - 1));
+                                }
+                            } else {
+                                mEditor.putString("id", updates.get(updates.size() - 1));
+                                showNotification(updates.get(updates.size() - 1), notificationCount[0]);
+                            }
+                            mEditor.apply();
 
                             if(notificationCount[0] > 0){
                                 notificationCount[0] = 0;
@@ -195,12 +222,5 @@ public class UpdateCheck extends Service {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(idType, mNotification.build());
-    }
-
-    public void removeItemUpdate(int position) {
-        if(updates != null && updates.get(position) != null){
-            updates.remove(position);
-        }
-
     }
 }

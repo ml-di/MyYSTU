@@ -3,6 +3,7 @@ package ru.ystu.myystu.Activitys;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -57,13 +58,7 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
             LightStatusBar.setLight(true, this);
-
-            // TODO запуск сервиса
-            // Запуск сервиса для проверки обновлений
-            final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
-            final Intent mIntent = new Intent(this, UpdateCheck.class)
-                    .putExtra("pending", mPendingIntent);
-            startService(mIntent);
+            startService();
         }
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
@@ -135,11 +130,13 @@ public class MainActivity extends AppCompatActivity {
         // TODO получаем обновления
         if (data != null) {
 
-            if(data.getStringArrayListExtra("shedule_update") != null){
-                if(data.getStringArrayListExtra("shedule_update").size() > 0){
-                    for(int i = 0; i < data.getStringArrayListExtra("shedule_update").size(); i++){
+            if(data.getStringArrayListExtra("schedule_update") != null){
+                Log.e("res", data.getStringArrayListExtra("schedule_update").size() + "");
+                if(data.getStringArrayListExtra("schedule_update").size() > 0){
+                    for(int i = 0; i < data.getStringArrayListExtra("schedule_update").size(); i++){
 
-                        final String temp = data.getStringArrayListExtra("shedule_update").get(i);
+                        final String temp = data.getStringArrayListExtra("schedule_update").get(i);
+
                         if(!updateList.contains(temp)){
                             updateList.add(temp);
                         }
@@ -198,5 +195,15 @@ public class MainActivity extends AppCompatActivity {
             paramsMainLayout.setMargins(0, 0, 0, 0);
         }
 
+    }
+
+    private void startService() {
+        // TODO запуск сервиса
+        // Запуск сервиса для проверки обновлений
+        final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
+        final Intent mIntent = new Intent(this, UpdateCheck.class)
+                .putExtra("pending", mPendingIntent);
+
+        startService(mIntent);
     }
 }
