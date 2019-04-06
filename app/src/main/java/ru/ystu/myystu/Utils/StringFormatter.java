@@ -118,7 +118,7 @@ public class StringFormatter {
 
         text = textSpannable.toString();
 
-        mPattern = Pattern.compile("(https?|ftp|file)://[a-zA-Zа-яА-Я0-9+&#/%?=~_-|!:,.;]+\\.[a-zA-Zа-яА-Я0-9+&@#/%?=~_\\-|]+");
+        mPattern = Pattern.compile("(((https?|ftp|file)://)|(www.))[a-zA-Zа-яА-Я0-9+&#/%?=~_\\-|!:,.;]+\\.[a-zA-Zа-яА-Я0-9+&@#/%?=~_\\-|]+");
         mMatcher = mPattern.matcher(text);
 
         while (mMatcher.find()){
@@ -229,8 +229,12 @@ public class StringFormatter {
                     break;
                 // url ссылка
                 case 2:
-                    if(URLUtil.isValidUrl(link))
+                    if(URLUtil.isValidUrl(link)){
                         mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                    } else {
+                        mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
+                    }
+
                     break;
                 // Почта
                 case 3:

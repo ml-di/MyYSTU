@@ -18,8 +18,9 @@
     <string name="activity_job_title">Вакансии</string>
     <string name="menu_job_openInBrowser">Открыть в браузере</string>
     <string name="alert_job_download">Скачать файл</string>
-    <string name="alert_job_openLink">Открыть ссылку</string>
-    <string name="alert_job_share">Поделиться ссылкой</string>
+    <string name="alert_job_read">Подробнее</string>
+    <string name="alert_job_openLink">Открыть в браузере</string>
+    <string name="alert_job_share">Поделиться</string>
     <string name="alert_job_close">Закрыть</string>
 
     <!-- Activity олимпиады -->

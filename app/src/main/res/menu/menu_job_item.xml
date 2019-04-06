@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_job_item_openLink"
+        android:title="@string/alert_job_download"/>
+    <item
+        android:id="@+id/menu_job_item_openLinkInBrowser"
+        android:title="@string/alert_job_openLink" />
+    <item
+        android:id="@+id/menu_job_item_share"
+        android:title="@string/alert_job_share" />
+</menu>

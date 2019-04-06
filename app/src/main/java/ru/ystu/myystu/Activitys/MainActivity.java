@@ -58,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
             LightStatusBar.setLight(true, this);
-            startService();
+            // TODO Запуск сервиса
+            //startService();
         }
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news

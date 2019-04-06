@@ -9,20 +9,17 @@ public class JobItemsData implements Parcelable {
     private final String organization;
     private final String post;
     private final String url;
-    private final String date;
     private final String fileType;
 
     public JobItemsData(final int id,
                         final String organization,
                         final String post,
                         final String url,
-                        final String date,
                         final String fileType) {
         this.id = id;
         this.organization = organization;
         this.post = post;
         this.url = url;
-        this.date = date;
         this.fileType = fileType;
     }
 
@@ -31,7 +28,6 @@ public class JobItemsData implements Parcelable {
         organization = in.readString();
         post = in.readString();
         url = in.readString();
-        date = in.readString();
         fileType = in.readString();
     }
 
@@ -58,7 +54,6 @@ public class JobItemsData implements Parcelable {
         parcel.writeString(organization);
         parcel.writeString(post);
         parcel.writeString(url);
-        parcel.writeString(date);
         parcel.writeString(fileType);
     }
 
@@ -73,9 +68,6 @@ public class JobItemsData implements Parcelable {
     }
     public String getUrl() {
         return url;
-    }
-    public String getDate() {
-        return date;
     }
     public String getFileType() {
         return fileType;

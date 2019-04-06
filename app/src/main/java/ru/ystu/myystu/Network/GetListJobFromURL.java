@@ -2,6 +2,7 @@ package ru.ystu.myystu.Network;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -56,8 +57,7 @@ public class GetListJobFromURL {
                                 }
                                 Elements els = null;
                                 if (doc != null) {
-                                    els = doc.getElementsByClass("Tabs").select("table")
-                                            .get(1).select("tbody").select("tr");
+                                    els = doc.getElementsByClass("single-page-description").select("h3,h5");
                                 }
 
                                 if(mList.size() > 0)
@@ -72,29 +72,39 @@ public class GetListJobFromURL {
                                 int id = 0;
 
                                 if (els != null) {
-                                    for (int i = 1; i < els.size(); i++) {
-                                        // Если вакансии заполнены по правильному шаблону
-                                        if(els.get(i).select("td").get(0).text().equals("")){
-                                            if(els.get(i).select("td").get(1) != null
-                                                    && els.get(i).select("td").get(2) != null){
-                                                // Отлавливал такое что название организации было в дополнительной таблице, по этому проверку на всякий ¯\_(ツ)_/¯
-                                                if(els.get(i).select("td").get(1).childNodeSize() < 2){
 
-                                                    organization = els.get(i).select("td").get(1).text();
-                                                    post = els.get(i).select("td").get(2).text();
-                                                    url = els.get(i).select("td").get(2).select("a").attr("href");
+                                    for(int i =0; i < els.size(); i++){
 
-                                                    if(url.startsWith("/files")){
-                                                        url = "https://www.ystu.ru" + url;
+                                        if(!els.get(i).text().equals("")){
+
+                                            organization = els.get(i).text();
+
+                                            final Element post_el = doc
+                                                    .getElementsByClass("single-page-description")
+                                                    .get(0);
+
+                                            int a = els.get(i).elementSiblingIndex();
+
+                                            while(true){
+                                                if(post_el.child(a).tagName().equals("div")){
+                                                    post = post_el.child(a).toString();
+                                                    fileType = "TEXT";
+                                                    url = null;
+                                                    break;
+                                                } else if (post_el.child(a).tagName().equals("span")) {
+                                                    if(!post_el.child(a).select("a").attr("href").isEmpty()){
+                                                        post = post_el.child(a).select("a").attr("href").substring(1);
                                                         fileType = "FILE";
-                                                    } else
-                                                        fileType = "LINK";
-
-                                                    date = els.get(i).select("td").get(3).text();
-                                                    mList.add(new JobItemsData(id, organization, post, url, date, fileType));
-                                                    id++;
+                                                        url = "https://www.ystu.ru" + post_el.child(a).select("a").attr("href");
+                                                        break;
+                                                    }
                                                 }
+
+                                                a++;
                                             }
+
+                                            mList.add(new JobItemsData(id, organization, post, url, fileType));
+                                            id++;
                                         }
                                     }
                                 } else {
