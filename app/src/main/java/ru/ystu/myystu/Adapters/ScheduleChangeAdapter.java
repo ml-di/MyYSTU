@@ -21,7 +21,6 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<ScheduleChangeAd
 
     static class ScheduleChangeViewHolder extends RecyclerView.ViewHolder{
 
-        private int id;
         private AppCompatTextView date;
         private AppCompatTextView text;
 
@@ -58,8 +57,6 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<ScheduleChangeAd
 
         holder.date.setText(mList.get(position).getDate());
         holder.text.setText(new StringFormatter().groupFormated(mList.get(position).getText()));
-
-        holder.id = mList.get(position).getId();
     }
 
     @Override

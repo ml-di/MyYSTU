@@ -7,20 +7,16 @@ import java.util.ArrayList;
 
 public class ScheduleChangeData implements Parcelable {
 
-    private final int id;
     private final String date;
     private final String text;
 
-    public ScheduleChangeData(final int id,
-                              final String date,
+    public ScheduleChangeData(final String date,
                               final String text) {
-        this.id = id;
         this.date = date;
         this.text = text;
     }
 
     private ScheduleChangeData(Parcel in){
-        id = in.readInt();
         date = in.readString();
         text = in.readString();
     }
@@ -44,14 +40,10 @@ public class ScheduleChangeData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
         parcel.writeString(date);
         parcel.writeString(text);
     }
 
-    public int getId() {
-        return id;
-    }
     public String getDate() {
         return date;
     }

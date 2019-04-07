@@ -5,34 +5,19 @@ import android.os.Parcelable;
 
 public class ScheduleListItemData implements Parcelable {
 
-    private final int id;
-    private final int id_pref;
     private final String name;
-    private final String size;
-    private final String type;
-    private final String date_modify;
+    private final String link;
 
-    public ScheduleListItemData(final int id,
-                                final int id_pref,
-                                final String name,
-                                final String size,
-                                final String type,
-                                final String date_modify) {
-        this.id = id;
-        this.id_pref = id_pref;
+    public ScheduleListItemData(final String name,
+                                final String link) {
+
         this.name = name;
-        this.size = size;
-        this.type = type;
-        this.date_modify = date_modify;
+        this.link = link;
     }
 
     private ScheduleListItemData(Parcel in){
-        id = in.readInt();
-        id_pref = in.readInt();
         name = in.readString();
-        size = in.readString();
-        type = in.readString();
-        date_modify = in.readString();
+        link = in.readString();
     }
 
     public static final Creator<ScheduleListItemData> CREATOR = new Creator<ScheduleListItemData>() {
@@ -54,30 +39,14 @@ public class ScheduleListItemData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
-        parcel.writeInt(id_pref);
         parcel.writeString(name);
-        parcel.writeString(size);
-        parcel.writeString(type);
-        parcel.writeString(date_modify);
+        parcel.writeString(link);
     }
 
-    public int getId() {
-        return id;
-    }
-    public int getId_pref() {
-        return id_pref;
-    }
     public String getName() {
         return name;
     }
-    public String getSize() {
-        return size;
-    }
-    public String getType() {
-        return type;
-    }
-    public String getDate_modify() {
-        return date_modify;
+    public String getLink() {
+        return link;
     }
 }

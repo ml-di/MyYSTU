@@ -33,27 +33,20 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
 
         final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
 
-        private int id;
-        private int id_pref;
         private AppCompatTextView text;
-        private AppCompatTextView size;
-        private AppCompatTextView type;
-        private AppCompatTextView dateModify;
         private ConstraintLayout item;
         private AppCompatImageView menu;
+        private String link;
 
         ScheduleItemViewHolder(@NonNull View itemView, final ArrayList<ScheduleListItemData> mList, final Context mContext) {
             super(itemView);
 
             text = itemView.findViewById(R.id.schedule_item_text);
-            size = itemView.findViewById(R.id.schedule_item_size);
-            type = itemView.findViewById(R.id.schedule_item_type);
-            dateModify = itemView.findViewById(R.id.schedule_item_date_modify);
             item = itemView.findViewById(R.id.schedule_item);
             menu = itemView.findViewById(R.id.menu_schedule_item);
 
             // Открыть расписание
-            item.setOnClickListener(view -> {
+            /*item.setOnClickListener(view -> {
 
                 final File dir = new File(Environment.getExternalStorageDirectory(),
                         "/.MyYSTU/" + prefix[id_pref]);
@@ -93,10 +86,10 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
                     Toast.makeText(mContext, mContext.getResources()
                             .getString(R.string.error_message_schedule_file_not_found), Toast.LENGTH_SHORT).show();
 
-            });
+            });*/
 
             // Меню элемента
-            menu.setOnClickListener(view -> {
+            /*menu.setOnClickListener(view -> {
 
                 final File dir = new File(Environment.getExternalStorageDirectory(),
                         "/.MyYSTU/" + prefix[id_pref]);
@@ -110,7 +103,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
                     Toast.makeText(mContext, mContext.getResources()
                             .getString(R.string.error_message_schedule_file_not_found), Toast.LENGTH_SHORT).show();
 
-            });
+            });*/
         }
     }
 
@@ -136,12 +129,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
     @Override
     public void onBindViewHolder(@NonNull ScheduleItemViewHolder holder, int position) {
         holder.text.setText(mList.get(position).getName());
-        holder.size.setText(mList.get(position).getSize());
-        holder.type.setText(mList.get(position).getType());
-        holder.dateModify.setText(mList.get(position).getDate_modify());
-
-        holder.id = mList.get(position).getId();
-        holder.id_pref = mList.get(position).getId_pref();
+        holder.link = mList.get(position).getLink();
     }
 
     @Override
