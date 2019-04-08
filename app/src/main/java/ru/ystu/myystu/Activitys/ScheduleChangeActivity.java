@@ -35,7 +35,7 @@ public class ScheduleChangeActivity extends AppCompatActivity {
 
         mLayoutManager = new LinearLayoutManager(this);
 
-        mRecyclerView = findViewById(R.id.recycler_schdeule_change);
+        mRecyclerView = findViewById(R.id.recycler_schedule_change);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -45,10 +45,12 @@ public class ScheduleChangeActivity extends AppCompatActivity {
             mList = new ArrayList<>();
             for (String temp : tempList) {
 
-                final String date = temp.substring(0, temp.lastIndexOf(": "));
-                final String text = temp.substring(temp.lastIndexOf(": ") + 2);
+                if(temp.contains(": ")) {
+                    final String date = temp.substring(0, temp.lastIndexOf(": "));
+                    final String text = temp.substring(temp.lastIndexOf(": ") + 2);
 
-                mList.add(new ScheduleChangeData(date, text));
+                    mList.add(new ScheduleChangeData(date, text));
+                }
             }
 
             Collections.reverse(mList);

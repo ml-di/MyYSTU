@@ -50,7 +50,8 @@
     <string name="tab_schedule_one">Очное</string>
     <string name="tab_schedule_two">Заочное</string>
     <string name="schedule_file_not_open">Нет приложения для открытия doc/docx</string>
-    <string name="menu_schedule_item_shareLink">Поделиться</string>
+    <string name="menu_schedule_item_shareLink">Поделиться ссылкой</string>
+    <string name="menu_schedule_item_shareFile">Поделиться файлом</string>
     <string name="menu_schedule_open_change">Изменения</string>
 
     <string name="intent_schedule_share_doc">Отправить документ</string>

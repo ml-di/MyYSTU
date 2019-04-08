@@ -45,7 +45,6 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
         final private AppCompatImageView icon;
         final private AppCompatImageView menu;
 
-
         JobItemsViewHolder(View itemView, final List<JobItemsData> mList, final Context mContext) {
             super(itemView);
 

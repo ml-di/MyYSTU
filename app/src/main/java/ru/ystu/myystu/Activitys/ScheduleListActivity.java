@@ -45,8 +45,6 @@ public class ScheduleListActivity extends AppCompatActivity {
     private GetSchedule getSchedule;
     private Parcelable mRecyclerState;
     private int id;
-    private final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
-    private File dir = new File(Environment.getExternalStorageDirectory(), "/.MyYSTU");
     private ArrayList<ScheduleListItemData> mList;
     private ArrayList<String> changeList;
 
@@ -84,6 +82,7 @@ public class ScheduleListActivity extends AppCompatActivity {
             getSchedule();
         } else{
             mList = savedInstanceState.getParcelableArrayList("mList");
+            changeList = savedInstanceState.getStringArrayList("cList");
             mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
@@ -123,7 +122,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                             } else if (s.startsWith("links")) {
                                 final String link = s.substring(s.indexOf(":") + 1, s.lastIndexOf("*"));
                                 final String name = s.substring(s.lastIndexOf("*") + 1);
-                                mList.add(new ScheduleListItemData(name, link));
+                                mList.add(new ScheduleListItemData(id, name, link));
                             }
                         }
 
@@ -149,8 +148,24 @@ public class ScheduleListActivity extends AppCompatActivity {
                     }));
 
         } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            ErrorMessage.show(mainLayout, 0, null, this);
+
+            final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
+            final File dir = new File(Environment.getExternalStorageDirectory(),
+                    "/.MyYSTU/" + prefix[id]);
+
+            if(dir.list() != null) {
+                for (String name : dir.list()) {
+                    mList.add(new ScheduleListItemData(id, name.substring(0, name.lastIndexOf(".")), "http://www.ystu.ru/" + name));
+                }
+
+                mSwipeRefreshLayout.setRefreshing(false);
+                mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
+                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+            } else {
+                mSwipeRefreshLayout.setRefreshing(false);
+                ErrorMessage.show(mainLayout, 0, null, this);
+            }
         }
     }
 
@@ -161,6 +176,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
         outState.putParcelableArrayList("mList", mList);
+        outState.putStringArrayList("cList", changeList);
     }
 
     @Override
@@ -186,6 +202,10 @@ public class ScheduleListActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    public void updateItem (int position) {
+        mRecyclerViewAdapter.notifyItemChanged(position);
     }
 
     @Override
