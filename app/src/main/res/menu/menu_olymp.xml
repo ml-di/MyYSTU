@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_olymp_openInBrowser"
-        android:title="@string/menu_olymp_openInBrowser"/>
+        android:id="@+id/menu_event_openInBrowser"
+        android:title="@string/menu_event_openInBrowser"/>
 </menu>

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -16,11 +15,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobActivity;
 import ru.ystu.myystu.Activitys.MapActivity;
-import ru.ystu.myystu.Activitys.OlympActivity;
+import ru.ystu.myystu.Activitys.EventActivity;
 import ru.ystu.myystu.Activitys.ScheduleActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.MenuItemsData;
-import ru.ystu.myystu.Utils.NetworkInformation;
 
 public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.MenuItemsViewHolder> {
 
@@ -57,7 +55,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                         break;
                     // Олимпиады
                     case 2:
-                        mContext.startActivity(new Intent(mContext, OlympActivity.class));
+                        mContext.startActivity(new Intent(mContext, EventActivity.class));
                         break;
                     // Трудоустройство
                     case 3:

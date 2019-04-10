@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activitys.JobActivity" />
-        <activity android:name=".Activitys.OlympActivity" />
+        <activity android:name=".Activitys.EventActivity" />
         <activity android:name=".Activitys.ScheduleActivity" />
         <activity
             android:name=".Activitys.ViewPhotoActivity"

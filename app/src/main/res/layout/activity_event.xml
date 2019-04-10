@@ -6,32 +6,32 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".Activitys.OlympActivity">
+    tools:context=".Activitys.EventActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolBar_olymp"
+            android:id="@+id/toolBar_event"
             style="@style/Toolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="@string/activity_olymp_title" />
+            app:title="@string/activity_event_title" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_layout_olymp"
+        android:id="@+id/main_layout_event"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_olymp"
+            android:id="@+id/refresh_event"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_olymp_items"
+                android:id="@+id/recycler_event_items"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/white"/>

@@ -9,7 +9,7 @@
     <!-- Названия кнопок в меню -->
     <string name="menu_text_schedule">Расписание</string>
     <string name="menu_text_map">Карта корпусов</string>
-    <string name="menu_text_olymp">Олимпиады</string>
+    <string name="menu_text_event">События</string>
     <string name="menu_text_job">Трудоустройство</string>
     <string name="menu_text_chat">Обратная связь</string>
     <string name="menu_text_settings">Настройки</string>
@@ -23,9 +23,9 @@
     <string name="alert_job_share">Поделиться</string>
     <string name="alert_job_close">Закрыть</string>
 
-    <!-- Activity олимпиады -->
-    <string name="activity_olymp_title">Олимпиады</string>
-    <string name="menu_olymp_openInBrowser">Открыть в браузере</string>
+    <!-- Activity события -->
+    <string name="activity_event_title">События</string>
+    <string name="menu_event_openInBrowser">Открыть в браузере</string>
 
     <!-- Activity карты -->
     <string name="activity_map_title">Карта корпусов</string>
@@ -76,10 +76,10 @@
     <string name="error_message_schedule_network_download_error">Ошибка скачивания документа</string>
     <string name="error_message_schedule_dir_create_error">Ошибка создания директории</string>
     <string name="error_message_schedule_file_not_found">Расписание не найдено</string>
-    <string name="error_message_olymp_not_found">Олимпиады не найдены</string>
+    <string name="error_message_event_not_found">События не найдены</string>
     <string name="error_message_job_not_found">Вакансии не найдены</string>
     <string name="error_message_news_not_found_post">Записи не найдены</string>
-    <string name="error_message_shedule_not_update">Не удалось проверить обновление</string>
+    <string name="error_message_schedule_not_update">Не удалось проверить обновление</string>
 
     <!-- BellFragment -->
     <string name="bell_title_one">Первое учебное полугодие</string>
