@@ -23,6 +23,8 @@
 
     <color name="colorLightStatusBar">#C8C8C8</color>
 
+    <color name="colorLightBackgroundText">#E6FFFFFF</color>
+
     <!-- Цвета кафедр -->
     <color name="colorAsf">#710A0E</color>
     <color name="colorIef">#007100</color>

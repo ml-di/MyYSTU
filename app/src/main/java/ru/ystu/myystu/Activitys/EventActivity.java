@@ -130,7 +130,12 @@ public class EventActivity extends AppCompatActivity {
     // Загрузка html страницы и ее парсинг
     public void getEvent(String link){
         if(NetworkInformation.hasConnection(mContext)){
-            mList = new ArrayList<>();
+            if(mList == null) {
+                mList = new ArrayList<>();
+            } else {
+                mList.clear();
+            }
+
             mSwipeRefreshLayout.setRefreshing(true);
 
             final Single<ArrayList<Parcelable>> mSingleEventList
@@ -145,9 +150,14 @@ public class EventActivity extends AppCompatActivity {
                         public void onSuccess(ArrayList<Parcelable> eventItemsData) {
                             mList = eventItemsData;
 
-                            mRecyclerViewAdapter = new EventItemsAdapter(mList, getApplicationContext());
-                            mRecyclerViewAdapter.setHasStableIds(true);
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            if(mRecyclerViewAdapter == null) {
+                                mRecyclerViewAdapter = new EventItemsAdapter(mList, getApplicationContext());
+                                mRecyclerViewAdapter.setHasStableIds(true);
+                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            } else {
+                                mRecyclerViewAdapter.notifyItemRangeChanged(1, mList.size());
+                            }
+
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
 
@@ -169,6 +179,5 @@ public class EventActivity extends AppCompatActivity {
             mSwipeRefreshLayout.setRefreshing(false);
             ErrorMessage.show(mainLayout, 0, null, mContext);
         }
-
     }
 }

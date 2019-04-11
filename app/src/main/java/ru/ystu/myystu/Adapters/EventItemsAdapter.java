@@ -1,10 +1,12 @@
 package ru.ystu.myystu.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -12,8 +14,11 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.EventActivity;
+import ru.ystu.myystu.Activitys.EventFullActivity;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
@@ -40,7 +45,6 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             chip1 = itemView.findViewById(R.id.eventItem_header_chip1);
             chip2 = itemView.findViewById(R.id.eventItem_header_chip2);
             chip3 = itemView.findViewById(R.id.eventItem_header_chip3);
-
         }
 
         void setHeader (EventItemsData_Header headerItem, Context mContext) {
@@ -104,6 +108,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     static class  EventItemViewHolder extends RecyclerView.ViewHolder{
 
+        private ConstraintLayout mainLayout;
         private SimpleDraweeView image;
         private AppCompatTextView date;
         private AppCompatTextView location;
@@ -112,6 +117,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         EventItemViewHolder(View itemView) {
             super(itemView);
 
+            mainLayout = itemView.findViewById(R.id.eventItem_mainLayout);
             image = itemView.findViewById(R.id.eventItem_image);
             date = itemView.findViewById(R.id.eventItem_date);
             location = itemView.findViewById(R.id.eventItem_location);
@@ -131,6 +137,15 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 location.setVisibility(View.VISIBLE);
             }
 
+            mainLayout.setOnClickListener(view -> {
+                final Intent mIntent = new Intent(mContext, EventFullActivity.class);
+                mIntent.putExtra("url", eventItem.getLink());
+                mIntent.putExtra("urlPhoto", eventItem.getPhotoUrl());
+                mIntent.putExtra("title", eventItem.getTitle());
+                mIntent.putExtra("date", eventItem.getDate());
+                mIntent.putExtra("location", eventItem.getLocation());
+                mContext.startActivity(mIntent);
+            });
         }
     }
 
