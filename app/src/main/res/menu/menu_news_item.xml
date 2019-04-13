@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/menu_news_item_shareLink"
-        android:title="@string/menu_news_item_shareLink"/>
+        android:title="@string/menu_shareLink"/>
     <item
         android:id="@+id/menu_news_item_openOriginal"
-        android:title="@string/menu_news_item_openOriginal"/>
+        android:title="@string/menu_openOriginal"/>
     <item
         android:id="@+id/menu_news_item_copyLink"
-        android:title="@string/menu_news_item_copyLink"/>
+        android:title="@string/menu_copyLink"/>
     <item
         android:id="@+id/menu_news_item_copyText"
-        android:title="@string/menu_news_item_copyText"/>
+        android:title="@string/menu_copyText"/>
     <item
         android:id="@+id/menu_news_item_openAuthor"
-        android:title="@string/menu_news_item_openAuthor"/>
+        android:title="@string/menu_openAuthor"/>
 </menu>

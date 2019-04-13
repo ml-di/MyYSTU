@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_job_item_openLink"
-        android:title="@string/alert_job_download"/>
+        android:title="@string/menu_openOriginal"/>
     <item
         android:id="@+id/menu_job_item_openLinkInBrowser"
-        android:title="@string/alert_job_openLink" />
+        android:title="@string/menu_openInBrowser" />
     <item
         android:id="@+id/menu_job_item_share"
-        android:title="@string/alert_job_share" />
+        android:title="@string/menu_share" />
 </menu>

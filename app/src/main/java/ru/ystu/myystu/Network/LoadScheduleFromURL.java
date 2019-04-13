@@ -24,7 +24,7 @@ public class LoadScheduleFromURL {
                 final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(link));
                 mRequest
                         .setTitle(file.getName())
-                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
+                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                         .setDestinationUri(Uri.fromFile(file))
                         .allowScanningByMediaScanner();
 

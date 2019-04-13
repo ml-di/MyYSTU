@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_event_openInBrowser"
+        android:title="@string/menu_openInBrowser"/>
+    <item
+        android:id="@+id/menu_event_copyText"
+        android:title="@string/menu_copyText"/>
+    <item
+        android:id="@+id/menu_event_shareLink"
+        android:title="@string/menu_shareLink"/>
+</menu>

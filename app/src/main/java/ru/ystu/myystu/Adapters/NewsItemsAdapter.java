@@ -487,7 +487,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     case R.id.menu_news_item_shareLink:
                         final Intent shareLink = new Intent(Intent.ACTION_SEND)
                                 .putExtra(Intent.EXTRA_TEXT, urlPost)
-                                .setType("text/plain");;
+                                .setType("text/plain");
                         context.startActivity(shareLink);
                         return true;
                     // Скопировать ссылку
@@ -495,14 +495,14 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         mClipData = ClipData.newPlainText("post_link", urlPost);
                         mClipboardManager.setPrimaryClip(mClipData);
 
-                        Toast.makeText(context, context.getResources().getString(R.string.menu_news_item_isCopyLink), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getResources().getString(R.string.toast_isCopyLink), Toast.LENGTH_SHORT).show();
                         return true;
                     // Скопировать текст
                     case R.id.menu_news_item_copyText:
                         mClipData = ClipData.newPlainText("post_text", postText);
                         mClipboardManager.setPrimaryClip(mClipData);
 
-                        Toast.makeText(context, context.getResources().getString(R.string.menu_news_item_isCopyText), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getResources().getString(R.string.toast_isCopyText), Toast.LENGTH_SHORT).show();
                         return true;
                     // Открыть владельца
                     case R.id.menu_news_item_openAuthor:

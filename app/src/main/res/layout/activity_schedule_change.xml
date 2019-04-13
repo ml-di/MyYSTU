@@ -10,13 +10,14 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar_scheduleChange"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar_schedule_change"
             style="@style/Toolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="@string/menu_schedule_open_change" />
+            app:title="@string/menu_change" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

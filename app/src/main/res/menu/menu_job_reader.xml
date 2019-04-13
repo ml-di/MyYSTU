@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_photo_view_save"
-        android:title="@string/menu_download"/>
+        android:id="@+id/menu_job_reader_copyText"
+        android:title="@string/menu_copyText"/>
     <item
-        android:id="@+id/menu_photo_view_share_link"
+        android:id="@+id/menu_job_reader_share"
         android:title="@string/menu_share"/>
 </menu>

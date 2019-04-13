@@ -97,7 +97,7 @@ public class EventActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_olymp, menu);
+        getMenuInflater().inflate(R.menu.menu_event, menu);
         return true;
     }
 

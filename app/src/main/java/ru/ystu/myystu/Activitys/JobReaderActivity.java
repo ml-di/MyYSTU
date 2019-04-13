@@ -7,11 +7,17 @@ import androidx.core.widget.NestedScrollView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.StringFormatter;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 public class JobReaderActivity extends AppCompatActivity {
 
@@ -61,5 +67,40 @@ public class JobReaderActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         scroll.smoothScrollTo(0, savedInstanceState.getInt("position", 0));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_job_reader, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.menu_job_reader_copyText:
+
+                final ClipboardManager mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
+                final ClipData mClipData = ClipData.newPlainText("job_text", text.getText().toString());
+                mClipboardManager.setPrimaryClip(mClipData);
+
+                Toast.makeText(this, getResources().getString(R.string.toast_isCopyText), Toast.LENGTH_SHORT).show();
+
+                return true;
+
+            case R.id.menu_job_reader_share:
+
+                final Intent shareText = new Intent(Intent.ACTION_SEND)
+                        .putExtra(Intent.EXTRA_TEXT, getSupportActionBar().getTitle().toString()
+                                + "\n\n" + text.getText().toString())
+                        .setType("text/plain");
+                startActivity(shareText);
+
+                return true;
+        }
+
+        return false;
     }
 }

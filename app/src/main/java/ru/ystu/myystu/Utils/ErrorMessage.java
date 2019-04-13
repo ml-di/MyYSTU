@@ -41,7 +41,9 @@ public class ErrorMessage {
             mFragmentManager.getFragments().clear();
         }
 
-        ((ViewGroup)view).removeAllViews();
+        if(view != null && ((ViewGroup)view).getChildCount() > 0) {
+            ((ViewGroup)view).removeAllViews();
+        }
 
         mFragmentManager
                 .beginTransaction()

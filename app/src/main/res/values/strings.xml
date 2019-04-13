@@ -16,43 +16,22 @@
 
     <!-- Activity вакансии -->
     <string name="activity_job_title">Вакансии</string>
-    <string name="menu_job_openInBrowser">Открыть в браузере</string>
-    <string name="alert_job_download">Скачать файл</string>
-    <string name="alert_job_read">Подробнее</string>
-    <string name="alert_job_openLink">Открыть в браузере</string>
-    <string name="alert_job_share">Поделиться</string>
-    <string name="alert_job_close">Закрыть</string>
 
     <!-- Activity события -->
     <string name="activity_event_title">События</string>
-    <string name="menu_event_openInBrowser">Открыть в браузере</string>
+    <string name="activity_eventFull_locationTitle">Адрес</string>
+    <string name="activity_eventFull_dateTitle">Когда</string>
 
     <!-- Activity карты -->
     <string name="activity_map_title">Карта корпусов</string>
 
-    <!-- Fragment новости -->
-    <string name="menu_news_item_openOriginal">Открыть оригинал</string>
-    <string name="menu_news_item_shareLink">Поделиться</string>
-    <string name="menu_news_item_copyLink">Скопировать ссылку</string>
-    <string name="menu_news_item_copyText">Скопировать текст</string>
-    <string name="menu_news_item_openAuthor">Открыть автора</string>
-
-    <string name="menu_news_item_isCopyLink">Ссылка скопирована</string>
-    <string name="menu_news_item_isCopyText">Текст скопирован</string>
-
     <!-- Activity photoView -->
-    <string name="menu_photo_view_save">Скачать</string>
-    <string name="menu_photo_view_share_link">Поделиться</string>
     <string name="photo_view_image_successfully_save">Изображение сохранено</string>
 
     <!-- Activity расписание -->
-    <string name="menu_schedule_openInBrowser">Открыть в браузере</string>
     <string name="tab_schedule_one">Очное</string>
     <string name="tab_schedule_two">Заочное</string>
     <string name="schedule_file_not_open">Нет приложения для открытия doc/docx</string>
-    <string name="menu_schedule_item_shareLink">Поделиться ссылкой</string>
-    <string name="menu_schedule_item_shareFile">Поделиться файлом</string>
-    <string name="menu_schedule_open_change">Изменения</string>
 
     <string name="intent_schedule_share_doc">Отправить документ</string>
 
@@ -63,9 +42,6 @@
     <string name="schedule_item_htf">Химико\nтехнологический\nфакультет</string>
     <string name="schedule_item_zf">Заочный\nфакультет</string>
     <string name="schedule_item_ozf">ОУОП заочный\nфакультет</string>
-
-    <!-- Toasts -->
-    <string name="toast_dont_network">Отсутствует подключение к интернету</string>
 
     <!-- ErrorMessage -->
     <string name="error_message_title">Что-то пошло не так…</string>
@@ -94,5 +70,23 @@
     <string name="bell_break_two">Большой пер.</string>
     <string name="bell_day_off">Выходной</string>
     <string name="bell_item_title_schedule">Обновление в расписании</string>
+
+    <!-- Menu -->
+    <string name="menu_openOriginal">Открыть оригинал</string>
+    <string name="menu_openInBrowser">Открыть в браузере</string>
+    <string name="menu_share">Поделиться</string>
+    <string name="menu_shareLink">Поделиться ссылкой</string>
+    <string name="menu_shareFile">Поделиться файлом</string>
+    <string name="menu_download">Скачать</string>
+    <string name="menu_change">Изменения</string>
+    <string name="menu_detail">Подробнее</string>
+    <string name="menu_copyLink">Скопировать ссылку</string>
+    <string name="menu_copyText">Скопировать текст</string>
+    <string name="menu_openAuthor">Открыть автора</string>
+
+    <!-- Toast -->
+    <string name="toast_isCopyLink">Ссылка скопирована</string>
+    <string name="toast_isCopyText">Текст скопирован</string>
+
 
 </resources>

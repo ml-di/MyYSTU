@@ -3,11 +3,11 @@
 
     <item
         android:id="@+id/menu_schedule_item_openInBrowser"
-        android:title="@string/menu_schedule_openInBrowser" />
+        android:title="@string/menu_openInBrowser" />
     <item
         android:id="@+id/menu_schedule_item_shareFile"
-        android:title="@string/menu_schedule_item_shareFile" />
+        android:title="@string/menu_shareFile" />
     <item
         android:id="@+id/menu_schedule_item_shareLink"
-        android:title="@string/menu_schedule_item_shareLink" />
+        android:title="@string/menu_shareLink" />
 </menu>

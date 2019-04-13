@@ -130,10 +130,10 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
             final Menu mMenu = itemMenu.getMenu();
             if(mList.get(id).getFileType().equals("FILE")){
-                mMenu.getItem(0).setTitle(R.string.alert_job_download);
+                mMenu.getItem(0).setTitle(R.string.menu_download);
                 mMenu.getItem(1).setVisible(true);
             } else {
-                mMenu.getItem(0).setTitle(R.string.alert_job_read);
+                mMenu.getItem(0).setTitle(R.string.menu_detail);
                 mMenu.getItem(1).setVisible(false);
             }
 

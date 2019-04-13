@@ -3,6 +3,7 @@ package ru.ystu.myystu.Network;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -51,10 +52,16 @@ public class GetFullEventFromURL {
                                 }
                                 Elements els = null;
                                 if (doc != null) {
-                                    els = doc.getElementsByClass("page-main-content-event-speeker__description");
+                                    els = doc.getElementsByClass("page-main-content-event__description");
                                 }
 
                                 if (els != null) {
+                                    emitter.onNext("title: " + els.text());
+
+                                    els = doc.getElementsByClass("page-main-content-event-speeker").get(0).children();
+                                    els.last().children().remove();
+                                    els.select("img").remove();
+
                                     emitter.onNext(els.html() + "<br><br>");
                                 }
 

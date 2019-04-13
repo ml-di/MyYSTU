@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/eventFull_mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -30,122 +29,143 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/eventFull_appBar">
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/eventFull_mainLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:fitsSystemWindows="true"
-            android:orientation="vertical">
+            android:fitsSystemWindows="true">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/eventFull_scroll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/eventFull_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:alpha="0.8"
-                    android:gravity="fill_horizontal"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorTextPrimary"
-                    android:textSize="21sp"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Конференция Лингводидактика в неязыковом вузе" />
+                    android:layout_height="wrap_content">
 
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/eventFull_linear"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginEnd="16dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/eventFull_title">
-
-                    <com.facebook.drawee.view.SimpleDraweeView
-                        android:id="@+id/eventFull_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:scaleType="centerCrop"
-                        app:placeholderImage="@color/colorPlaceHolderImage"
-                        app:roundedCornerRadius="15dp" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/eventFull_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1">
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:alpha="0.8"
+                        android:gravity="fill_horizontal"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="21sp"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Конференция Лингводидактика в неязыковом вузе" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/eventFull_dateTitle"
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/eventFull_linear"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginEnd="16dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/eventFull_title">
+
+                        <com.facebook.drawee.view.SimpleDraweeView
+                            android:id="@+id/eventFull_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:scaleType="centerCrop"
+                            app:placeholderImage="@color/colorPlaceHolderImage"
+                            app:roundedCornerRadius="15dp" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:alpha="0.75"
-                            android:text="Когда"
-                            android:textSize="16sp"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/eventFull_date"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.75"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:textColor="@color/colorPrimaryLight"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/eventFull_dateTitle"
-                            tools:text="17 Мая 2019" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/eventFull_dateTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.75"
+                                android:text="@string/activity_eventFull_dateTitle"
+                                android:textSize="16sp"
+                                app:layout_constraintTop_toTopOf="parent" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/eventFull_locationTitle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:alpha="0.75"
-                            android:text="Адрес"
-                            android:textSize="16sp"
-                            app:layout_constraintTop_toBottomOf="@id/eventFull_date" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/eventFull_date"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.75"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/colorPrimaryLight"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintTop_toBottomOf="@id/eventFull_dateTitle"
+                                tools:text="17 Мая 2019" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/eventFull_location"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.75"
-                            android:ellipsize="middle"
-                            android:maxLines="4"
-                            android:textColor="@color/colorPrimaryLight"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/eventFull_locationTitle"
-                            tools:text="150023, Ярославль, Московский пр., д. 88" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/eventFull_locationTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:alpha="0.75"
+                                android:text="@string/activity_eventFull_locationTitle"
+                                android:textSize="16sp"
+                                app:layout_constraintTop_toBottomOf="@id/eventFull_date" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.appcompat.widget.LinearLayoutCompat>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/eventFull_location"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.75"
+                                android:ellipsize="middle"
+                                android:maxLines="4"
+                                android:textColor="@color/colorPrimaryLight"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintTop_toBottomOf="@id/eventFull_locationTitle"
+                                tools:text="150023, Ярославль, Московский пр., д. 88" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/eventFull_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:textSize="18sp"
-                    app:layout_constraintTop_toBottomOf="@id/eventFull_linear"
-                    tools:text="Конференция состоится 17-18 мая 2019 года и будет направлена на развитие сотрудничества в области образования и науки, создания условий для обмена опытом научных и педагогических работников ЯГТУ с ведущими учеными и практиками." />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/eventFull_titleText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:alpha="0.75"
+                        android:textSize="21sp"
+                        app:layout_constraintTop_toBottomOf="@id/eventFull_linear"
+                        tools:text="В ЯГТУ пройдет Международная научно-практическая конференция Лингводидактика в неязыковом вузе: традиционные и инновационные подходы" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/eventFull_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:textSize="18sp"
+                        app:layout_constraintTop_toBottomOf="@id/eventFull_titleText"
+                        tools:text="Конференция состоится 17-18 мая 2019 года и будет направлена на развитие сотрудничества в области образования и науки, создания условий для обмена опытом научных и педагогических работников ЯГТУ с ведущими учеными и практиками." />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

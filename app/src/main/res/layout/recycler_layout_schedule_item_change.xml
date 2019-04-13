@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:alpha="0.1"
             android:background="@drawable/shape_circle"
-            android:backgroundTint="@color/colorAccent" />
+            android:backgroundTint="@color/colorPrimaryLight" />
 
         <androidx.appcompat.widget.ContentFrameLayout
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             android:layout_margin="10dp"
             android:alpha="0.9"
             android:background="@drawable/shape_circle"
-            android:backgroundTint="@color/colorAccent" />
+            android:backgroundTint="@color/colorPrimaryLight" />
     </androidx.appcompat.widget.ContentFrameLayout>
 
     <androidx.appcompat.widget.AppCompatTextView

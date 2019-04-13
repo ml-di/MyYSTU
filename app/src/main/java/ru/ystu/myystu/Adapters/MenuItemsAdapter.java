@@ -53,7 +53,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                     case 1:
                         mContext.startActivity(new Intent(mContext, MapActivity.class));
                         break;
-                    // Олимпиады
+                    // События
                     case 2:
                         mContext.startActivity(new Intent(mContext, EventActivity.class));
                         break;
