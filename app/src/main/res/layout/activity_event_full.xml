@@ -162,6 +162,13 @@
                         app:layout_constraintTop_toBottomOf="@id/eventFull_titleText"
                         tools:text="Конференция состоится 17-18 мая 2019 года и будет направлена на развитие сотрудничества в области образования и науки, создания условий для обмена опытом научных и педагогических работников ЯГТУ с ведущими учеными и практиками." />
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_eventAdditional_items"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintTop_toBottomOf="@id/eventFull_text" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
 

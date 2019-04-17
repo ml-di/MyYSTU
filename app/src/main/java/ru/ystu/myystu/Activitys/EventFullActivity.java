@@ -6,12 +6,17 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.Adapters.EventAdditionalItemsAdapter;
+import ru.ystu.myystu.AdaptersData.EventAdditionalData_Additional;
+import ru.ystu.myystu.AdaptersData.EventAdditionalData_Documents;
 import ru.ystu.myystu.Network.GetFullEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.ErrorMessage;
@@ -24,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -34,6 +40,7 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class EventFullActivity extends AppCompatActivity {
@@ -60,9 +67,14 @@ public class EventFullActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private NestedScrollView scroll;
     private ConstraintLayout mainLayout;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mRecyclerViewAdapter;
 
-    GetFullEventFromURL getFullEventFromURL;
-    CompositeDisposable mDisposable;
+    private GetFullEventFromURL getFullEventFromURL;
+    private CompositeDisposable mDisposable;
+
+    private ArrayList<Parcelable> additionalsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +94,16 @@ public class EventFullActivity extends AppCompatActivity {
         mSwipeRefreshLayout = findViewById(R.id.refresh_eventFull);
         scroll = findViewById(R.id.eventFull_scroll);
         mainLayout = findViewById(R.id.eventFull_mainLayout);
+
+        mLayoutManager = new LinearLayoutManager(this) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        mRecyclerView = findViewById(R.id.recycler_eventAdditional_items);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
@@ -113,8 +135,6 @@ public class EventFullActivity extends AppCompatActivity {
             location.setText(locationStr);
         }
 
-
-
         if(savedInstanceState == null) {
             getEvent();
         } else {
@@ -126,8 +146,11 @@ public class EventFullActivity extends AppCompatActivity {
             spanText = stringFormatter.getFormattedString(spanText.toString());
             text.setText(spanText);
             text.setMovementMethod(LinkMovementMethod.getInstance());
-        }
 
+            additionalsList = savedInstanceState.getParcelableArrayList("aList");
+            mRecyclerViewAdapter = new EventAdditionalItemsAdapter(additionalsList, mContext);
+            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        }
     }
 
     @Override
@@ -147,7 +170,7 @@ public class EventFullActivity extends AppCompatActivity {
         outState.putString("subTitle", (String) titleText.getText());
         outState.putString("text", textTemp);
         outState.putString("url", url);
-
+        outState.putParcelableArrayList("aList", additionalsList);
     }
 
     @Override
@@ -205,6 +228,11 @@ public class EventFullActivity extends AppCompatActivity {
         mDisposable = new CompositeDisposable();
         mSwipeRefreshLayout.setRefreshing(true);
 
+        if(additionalsList == null)
+            additionalsList = new ArrayList<>();
+        else
+            additionalsList.clear();
+
         if(NetworkInformation.hasConnection(this)){
 
             final Observable<String> mObservable = getFullEventFromURL.getObservableEventFull(url);
@@ -216,19 +244,40 @@ public class EventFullActivity extends AppCompatActivity {
                         @Override
                         public void onNext(String s) {
 
-                            if(s.startsWith("title: ")) {
+                            if (s.startsWith("title: ")) {
                                 titleText.setText(s.substring(s.indexOf(": ") + 2));
-                            } else {
-                                textTemp = s;
-                                Spanned spanText = Html.fromHtml(s);
+                            } else if (s.startsWith("cont: ")) {
+                                textTemp = s.substring(s.indexOf(": ") + 2);
+                                Spanned spanText = Html.fromHtml(textTemp);
                                 spanText = stringFormatter.getFormattedString(spanText.toString());
                                 text.setText(spanText);
                                 text.setMovementMethod(LinkMovementMethod.getInstance());
+                            } else if (s.startsWith("addit: ")) {
+
+                                final String title = s.substring(s.indexOf(": ") + 2, s.indexOf("*"));
+                                final String description = s.substring(s.indexOf("*") + 1);
+                                additionalsList.add(new EventAdditionalData_Additional(title, description));
+
+                            } else if (s.startsWith("doc_title: ")) {
+
+                                // TODO Титл для доков
+
+                            } else if (s.startsWith("doc_file: ")) {
+
+                                final String name = s.substring(s.indexOf(": ") + 2, s.indexOf("*"));
+                                final String link = s.substring(s.indexOf("*") + 1, s.indexOf("`"));
+                                final String info = s.substring(s.indexOf("`") + 1);
+                                final String ext = info.substring(0, info.indexOf(", "));
+                                final String size = info.substring(info.indexOf(", ") + 2);
+
+                                additionalsList.add(new EventAdditionalData_Documents(name, link, ext, size));
                             }
                         }
 
                         @Override
                         public void onComplete() {
+                            mRecyclerViewAdapter = new EventAdditionalItemsAdapter(additionalsList, mContext);
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
 
@@ -248,6 +297,5 @@ public class EventFullActivity extends AppCompatActivity {
             mSwipeRefreshLayout.setRefreshing(false);
             ErrorMessage.show(mainLayout, 0, null, mContext);
         }
-
     }
 }
