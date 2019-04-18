@@ -1,5 +1,6 @@
 package ru.ystu.myystu.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
                 final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
                 mIntent.putExtra("ID", id);
                 mContext.startActivity(mIntent);
+                ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
             });
         }
     }

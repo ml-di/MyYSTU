@@ -1,12 +1,14 @@
 package ru.ystu.myystu.Adapters;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -14,7 +16,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.EventActivity;
@@ -64,6 +65,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             chip1.setOnClickListener(View -> {
                 if(headerItem.getSelected_id() != 0){
                     ((EventActivity) mContext).getEvent(headerItem.getUrl()[0]);
+                    ((EventActivity) mContext).setUrl(headerItem.getUrl()[0]);
                     resetChip();
                     View.setAlpha(1);
                 }
@@ -71,6 +73,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             chip2.setOnClickListener(View -> {
                 if(headerItem.getSelected_id() != 1){
                     ((EventActivity) mContext).getEvent(headerItem.getUrl()[1]);
+                    ((EventActivity) mContext).setUrl(headerItem.getUrl()[1]);
                     resetChip();
                     View.setAlpha(1);
                 }
@@ -78,6 +81,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             chip3.setOnClickListener(View -> {
                 if(headerItem.getSelected_id() != 2){
                     ((EventActivity) mContext).getEvent(headerItem.getUrl()[2]);
+                    ((EventActivity) mContext).setUrl(headerItem.getUrl()[2]);
                     resetChip();
                     View.setAlpha(1);
                 }
@@ -138,13 +142,16 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
 
             mainLayout.setOnClickListener(view -> {
+
                 final Intent mIntent = new Intent(mContext, EventFullActivity.class);
                 mIntent.putExtra("url", eventItem.getLink());
                 mIntent.putExtra("urlPhoto", eventItem.getPhotoUrl());
                 mIntent.putExtra("title", eventItem.getTitle());
                 mIntent.putExtra("date", eventItem.getDate());
                 mIntent.putExtra("location", eventItem.getLocation());
+
                 mContext.startActivity(mIntent);
+                ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
             });
         }
     }

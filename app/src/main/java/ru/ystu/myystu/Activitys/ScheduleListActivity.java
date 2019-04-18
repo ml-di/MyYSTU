@@ -20,6 +20,7 @@ import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -93,6 +94,14 @@ public class ScheduleListActivity extends AppCompatActivity {
         super.onDestroy();
 
         mDisposables.dispose();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(isFinishing()) {
+            overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+        }
     }
 
     private void getSchedule(){
@@ -199,6 +208,8 @@ public class ScheduleListActivity extends AppCompatActivity {
             final Intent mIntent = new Intent(this, ScheduleChangeActivity.class);
             mIntent.putExtra("mList", changeList);
             startActivity(mIntent);
+            overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+
         }
 
         return true;

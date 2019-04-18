@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -112,12 +113,13 @@ public class EventActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
         outState.putParcelableArrayList("mList", mList);
+        outState.putString("url", url);
     }
 
     @Override
@@ -125,6 +127,11 @@ public class EventActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
+        url = savedInstanceState.getString("url");
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
     }
 
     // Загрузка html страницы и ее парсинг

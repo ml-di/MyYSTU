@@ -190,7 +190,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                             readIntent.putExtra("content", mList.get(id).getPost());
                             readIntent.putExtra("title", mList.get(id).getOrganization());
                             mContext.startActivity(readIntent);
-
+                            ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
                         }
 
                         return true;

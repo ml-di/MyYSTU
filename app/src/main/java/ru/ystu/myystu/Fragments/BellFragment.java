@@ -2,6 +2,7 @@ package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Spannable;
@@ -9,6 +10,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.TextAppearanceSpan;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -44,7 +48,7 @@ public class BellFragment extends Fragment {
     private ConstraintLayout weekLayout;
     private ConstraintLayout lessonLayout;
     private ConstraintLayout timeLayout;
-    private ConstraintLayout mainLayout;
+    private ContentFrameLayout mainLayout;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
@@ -66,7 +70,9 @@ public class BellFragment extends Fragment {
         mContext = getActivity();
         bellHelper = new BellHelper(mContext);
 
-        ((MainActivity) Objects.requireNonNull(getActivity())).showBottomBar(true);
+        if(savedInstanceState == null) {
+            ((MainActivity) Objects.requireNonNull(getActivity())).showBottomBar(true);
+        }
 
     }
 
@@ -99,11 +105,14 @@ public class BellFragment extends Fragment {
         } else {
             mList = savedInstanceState.getParcelableArrayList("mList");
             mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
-            mLayoutManager.onRestoreInstanceState(mRecyclerState);
+            if (mRecyclerState != null) {
+                mLayoutManager.onRestoreInstanceState(mRecyclerState);
+            }
             mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
-            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-
-            new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
+            if (mRecyclerView != null) {
+                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
+            }
         }
     }
 
@@ -277,21 +286,20 @@ public class BellFragment extends Fragment {
         ViewGroup.LayoutParams params;
 
         if(isShow) {
-            final AppCompatImageView placeHolder = new AppCompatImageView(Objects.requireNonNull(getContext()));
-            placeHolder.setImageResource(R.drawable.ic_bell_null);
-            params = new ConstraintLayout.LayoutParams((int) Math.ceil(80 * logicalDensity),
-                    (int) Math.ceil(80 * logicalDensity));
+            final AppCompatTextView placeHolder = new AppCompatTextView(Objects.requireNonNull(getContext()));
+            placeHolder.setText("Уведомлений нет");
+            params = new ContentFrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            ((FrameLayout.LayoutParams) params).gravity = Gravity.CENTER;
+            placeHolder.setTextSize(21);
+            placeHolder.setAlpha(0.35f);
+            placeHolder.setTypeface(placeHolder.getTypeface(), Typeface.BOLD);
 
-            // TODO Центрировать картинку
-            /*final ConstraintSet mConstraintSet = new ConstraintSet();
-            mConstraintSet.clone(mainLayout);
-            mConstraintSet.connect(pa,R.id.check_answer1,ConstraintSet.RIGHT,0);
-            constraintSet.connect(R.id.imageView,ConstraintSet.TOP,R.id.check_answer1,ConstraintSet.TOP,0);
-            constraintSet.applyTo(constraintLayout);*/
-
+            placeHolder.setLayoutParams(params);
             mainLayout.addView(placeHolder, 0 , params);
 
         } else {
+            // TODO вставить rv при уведомлениях
 
             params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRecyclerView = new RecyclerView(mainLayout.getContext());

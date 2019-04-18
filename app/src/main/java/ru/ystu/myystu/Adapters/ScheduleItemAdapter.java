@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -39,7 +40,7 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 
 public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapter.ScheduleItemViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
+    private final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
     private ArrayList<ScheduleListItemData> mList;
     private Context mContext;
 
@@ -76,7 +77,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
 
                 if(!file.exists()) {
                     // Скачать файл
-                    downloadFile(file, link, mContext, getAdapterPosition(), false);
+                    downloadFile(file, link, mContext, getAdapterPosition(), 0);
                 } else {
                     // Открыть файл
                     openFile(file, mContext);
@@ -167,7 +168,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
         }
     }
 
-    private static void downloadFile(File file, String link, Context mContext, int position, boolean isShare) {
+    private static void downloadFile(File file, String link, Context mContext, int position, int id) {
 
         if(NetworkInformation.hasConnection(mContext)){
 
@@ -185,18 +186,33 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
 
                     @Override
                     public void onComplete() {
-                        if(!isShare) {
-                            openFile(file, mContext);
-                        } else {
 
-                            if(file.exists()){
-                                final Intent mIntent = new Intent(Intent.ACTION_SEND);
-                                mIntent.setType("application/msword");
-                                mIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file));
-                                mContext.startActivity(Intent.createChooser(mIntent,
-                                        mContext.getResources()
-                                                .getString(R.string.intent_schedule_share_doc)));
-                            }
+                        /*
+                        *   ID
+                        *   -1 - Ничего не делать
+                        *   0 - Открыть
+                        *   1 - Поделиться
+                        * */
+
+                        switch (id) {
+
+                            case 0:
+                                openFile(file, mContext);
+                                break;
+
+                            case 1:
+                                if(file.exists()){
+                                    final Intent mIntent = new Intent(Intent.ACTION_SEND);
+                                    mIntent.setType("application/msword");
+                                    mIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file));
+                                    mContext.startActivity(Intent.createChooser(mIntent,
+                                            mContext.getResources()
+                                                    .getString(R.string.intent_schedule_share_doc)));
+                                }
+                                break;
+
+                            default:
+                                break;
                         }
 
                         ((ScheduleListActivity) mContext).updateItem(position);
@@ -260,14 +276,41 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
     }
 
     private static class MenuItem {
-        private void showMenu (View mView, Context mContext, File file, String link, String name, int postition){
+        private void showMenu (View mView, Context mContext, File file, String link, String name, int position){
 
             final PopupMenu itemMenu = new PopupMenu(mView.getContext(), mView);
             itemMenu.inflate(R.menu.menu_schedule_item);
 
+            final Menu mMenu = itemMenu.getMenu();
+            if(file.exists()){
+                mMenu.getItem(0).setTitle(R.string.menu_delete);
+            } else {
+                mMenu.getItem(0).setTitle(R.string.menu_download);
+            }
+
             itemMenu.setOnMenuItemClickListener(item -> {
 
                 switch (item.getItemId()){
+
+                    case R.id.menu_schedule_item_download:
+
+                        if(file.exists()) {
+                            // Удалить
+                            if(file.delete()) {
+                                ((ScheduleListActivity) mContext).updateItem(position);
+                            } else {
+                                Toast.makeText(mContext, mContext
+                                                .getResources()
+                                                .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+
+                        } else {
+                            // Скачать
+                            downloadFile(file, link, mContext, position, -1);
+                        }
+
+                        break;
 
                     // Открыть в браузере
                     case R.id.menu_schedule_item_openInBrowser:
@@ -288,7 +331,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
                                     mContext.getResources()
                                             .getString(R.string.intent_schedule_share_doc)));
                         } else {
-                            downloadFile(file, link, mContext, postition, true);
+                            downloadFile(file, link, mContext, position, 1);
                         }
                         return true;
 

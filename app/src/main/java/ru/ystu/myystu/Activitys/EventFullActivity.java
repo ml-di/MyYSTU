@@ -17,6 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.EventAdditionalItemsAdapter;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Additional;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Documents;
+import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
 import ru.ystu.myystu.Network.GetFullEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.ErrorMessage;
@@ -163,6 +164,14 @@ public class EventFullActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing()){
+            overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -244,14 +253,25 @@ public class EventFullActivity extends AppCompatActivity {
                         @Override
                         public void onNext(String s) {
 
+                            if(additionalsList.size() == 0) {
+                                additionalsList.add(
+                                        new EventItemsData_Divider(mContext
+                                                .getResources()
+                                                .getString(R.string.activity_eventFull_sitebar_title)));
+                            }
+
                             if (s.startsWith("title: ")) {
+
                                 titleText.setText(s.substring(s.indexOf(": ") + 2));
+
                             } else if (s.startsWith("cont: ")) {
+
                                 textTemp = s.substring(s.indexOf(": ") + 2);
                                 Spanned spanText = Html.fromHtml(textTemp);
                                 spanText = stringFormatter.getFormattedString(spanText.toString());
                                 text.setText(spanText);
                                 text.setMovementMethod(LinkMovementMethod.getInstance());
+
                             } else if (s.startsWith("addit: ")) {
 
                                 final String title = s.substring(s.indexOf(": ") + 2, s.indexOf("*"));
@@ -260,7 +280,7 @@ public class EventFullActivity extends AppCompatActivity {
 
                             } else if (s.startsWith("doc_title: ")) {
 
-                                // TODO Титл для доков
+                                additionalsList.add(new EventItemsData_Divider(s.substring(s.indexOf(": ") + 2)));
 
                             } else if (s.startsWith("doc_file: ")) {
 

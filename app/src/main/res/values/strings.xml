@@ -21,6 +21,7 @@
     <string name="activity_event_title">События</string>
     <string name="activity_eventFull_locationTitle">Адрес</string>
     <string name="activity_eventFull_dateTitle">Когда</string>
+    <string name="activity_eventFull_sitebar_title">Доп. информация</string>
 
     <!-- Activity карты -->
     <string name="activity_map_title">Карта корпусов</string>
@@ -32,9 +33,7 @@
     <string name="tab_schedule_one">Очное</string>
     <string name="tab_schedule_two">Заочное</string>
     <string name="schedule_file_not_open">Нет приложения для открытия doc/docx</string>
-
     <string name="intent_schedule_share_doc">Отправить документ</string>
-
     <string name="schedule_item_asf">Архитектурно-\nстроительный\nфакультет</string>
     <string name="schedule_item_ief">Инженерно-\nэкономический\nфакультет</string>
     <string name="schedule_item_af">Автомеханический\nфакультет</string>
@@ -42,20 +41,6 @@
     <string name="schedule_item_htf">Химико\nтехнологический\nфакультет</string>
     <string name="schedule_item_zf">Заочный\nфакультет</string>
     <string name="schedule_item_ozf">ОУОП заочный\nфакультет</string>
-
-    <!-- ErrorMessage -->
-    <string name="error_message_title">Что-то пошло не так…</string>
-    <string name="error_message_refresh">Обновить</string>
-    <string name="error_message_internet_error">Отсутствует подключение к интернету</string>
-    <string name="error_message_file_not_found">Файл не найден</string>
-    <string name="error_message_schedule_change_not_found">Изменения не найдены</string>
-    <string name="error_message_schedule_network_download_error">Ошибка скачивания документа</string>
-    <string name="error_message_schedule_dir_create_error">Ошибка создания директории</string>
-    <string name="error_message_schedule_file_not_found">Расписание не найдено</string>
-    <string name="error_message_event_not_found">События не найдены</string>
-    <string name="error_message_job_not_found">Вакансии не найдены</string>
-    <string name="error_message_news_not_found_post">Записи не найдены</string>
-    <string name="error_message_schedule_not_update">Не удалось проверить обновление</string>
 
     <!-- BellFragment -->
     <string name="bell_title_one">Первое учебное полугодие</string>
@@ -71,6 +56,20 @@
     <string name="bell_day_off">Выходной</string>
     <string name="bell_item_title_schedule">Обновление в расписании</string>
 
+    <!-- ErrorMessage -->
+    <string name="error_message_title">Что-то пошло не так…</string>
+    <string name="error_message_refresh">Обновить</string>
+    <string name="error_message_internet_error">Отсутствует подключение к интернету</string>
+    <string name="error_message_file_not_found">Файл не найден</string>
+    <string name="error_message_schedule_change_not_found">Изменения не найдены</string>
+    <string name="error_message_schedule_network_download_error">Ошибка скачивания документа</string>
+    <string name="error_message_schedule_dir_create_error">Ошибка создания директории</string>
+    <string name="error_message_schedule_file_not_found">Расписание не найдено</string>
+    <string name="error_message_event_not_found">События не найдены</string>
+    <string name="error_message_job_not_found">Вакансии не найдены</string>
+    <string name="error_message_news_not_found_post">Записи не найдены</string>
+    <string name="error_message_schedule_not_update">Не удалось проверить обновление</string>
+
     <!-- Menu -->
     <string name="menu_openOriginal">Открыть оригинал</string>
     <string name="menu_openInBrowser">Открыть в браузере</string>
@@ -78,6 +77,7 @@
     <string name="menu_shareLink">Поделиться ссылкой</string>
     <string name="menu_shareFile">Поделиться файлом</string>
     <string name="menu_download">Скачать</string>
+    <string name="menu_delete">Удалить</string>
     <string name="menu_change">Изменения</string>
     <string name="menu_detail">Подробнее</string>
     <string name="menu_copyLink">Скопировать ссылку</string>
@@ -87,6 +87,6 @@
     <!-- Toast -->
     <string name="toast_isCopyLink">Ссылка скопирована</string>
     <string name="toast_isCopyText">Текст скопирован</string>
-
+    <string name="toast_errorDeleteFile">Не удалось удалить файл</string>
 
 </resources>

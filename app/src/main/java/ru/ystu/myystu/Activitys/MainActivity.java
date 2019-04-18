@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
         outState.putStringArrayList("updateList", updateList);
+        outState.putInt("selItemId", mBottomBar.getSelectedItemId());
 
         super.onSaveInstanceState(outState);
     }
@@ -170,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
         if (updateList != null && updateList.size() > 0) {
             badgeChange(updateList.size());
         }
+
+        mBottomBar.setSelectedItemId(savedInstanceState.getInt("selItemId"));
 
         super.onRestoreInstanceState(savedInstanceState);
     }
