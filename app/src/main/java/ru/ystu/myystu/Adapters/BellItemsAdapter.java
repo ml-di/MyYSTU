@@ -106,10 +106,14 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
 
         if(mList.get(position).getSubTitle() != null){
             holder.subTitle.setText(new StringFormatter().groupFormated(mList.get(position).getSubTitle()));
+            holder.subTitle.setVisibility(View.VISIBLE);
+        } else {
+            holder.subTitle.setText("");
+            holder.subTitle.setVisibility(View.GONE);
         }
 
         if(mList.get(position).getDate() != null){
-            String date = mList.get(position).getDate().substring(0, mList.get(position).getDate().indexOf(" ") + 4);
+            String date = mList.get(position).getDate();
             if(date.length() == 5){
                 date = "0" + date;
             }

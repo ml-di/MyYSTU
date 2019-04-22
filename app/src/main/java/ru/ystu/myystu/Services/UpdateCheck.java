@@ -31,7 +31,7 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 public class UpdateCheck extends Service {
 
     // TODO интервал обновления
-    private final int DELAY_UPDATE_SEC = 900;     // Интервал проверки обновлений в сек
+    private final int DELAY_UPDATE_SEC = 15;     // Интервал проверки обновлений в сек
     private final int DELAY_WAIT_CONNECT = 5;     // Интервал проверки подключения к интернету в сек
 
     ArrayList<String> updates;
@@ -140,9 +140,7 @@ public class UpdateCheck extends Service {
 
                             final Intent intent = new Intent();
                             intent.putStringArrayListExtra("schedule_update", updates);
-                            Log.e("tag", "null");
                             if(mPendingIntent != null){
-                                Log.e("tag", "not null");
                                 try {
                                     mPendingIntent.send(UpdateCheck.this, 0, intent);
                                 } catch (PendingIntent.CanceledException e) {
@@ -179,21 +177,11 @@ public class UpdateCheck extends Service {
 
         final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
 
-        final String[] var = new String[3];
-        for(int i = 0; i < var.length; i++){
-            var[i] = temp.substring(0, temp.indexOf("*"));
-            temp = temp.substring(temp.indexOf("*") + 1);
-        }
-
-        final int idType = Integer.parseInt(var[0]);
-        final int idSubType = Integer.parseInt(var[1]);
-        final String link = var[2];
+        final int idType = Integer.parseInt(temp.substring(0, temp.indexOf("*")));
+        final int idSubType = Integer.parseInt(temp.substring(temp.indexOf("*") + 1, temp.indexOf("`")));
+        final String date = temp.substring(temp.indexOf("`") + 1);
 
         String text = null;
-        if(!temp.equals("")){
-            text = temp.substring(temp.indexOf(":") + 2);
-        }
-
         String title = null;
         // Обновлено расписание
         if(idType == 0){

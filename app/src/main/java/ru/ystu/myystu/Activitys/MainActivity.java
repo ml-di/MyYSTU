@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
             LightStatusBar.setLight(true, this);
             // TODO Запуск сервиса
-            //startService();
+            startService();
         }
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news

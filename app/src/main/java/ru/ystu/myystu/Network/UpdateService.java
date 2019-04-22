@@ -9,6 +9,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Observable;
@@ -23,7 +26,7 @@ public class UpdateService {
     final private Context mContext;
     final private String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
     final private String[] prefix_f = new String[]{"Архитектурно", "Инженерно", "Автомеханический",
-            "Машиностроительный", "Химико", "Заочный факультет", "отделение ускоренных"};
+            "Машиностроительный", "Химико", "Заочный факультет", "Отделение ускоренных"};
 
     public UpdateService(Context mContext) {
         this.mContext = mContext;
@@ -31,9 +34,9 @@ public class UpdateService {
 
     public Observable<String> checkSchedule () {
 
-        final String url = "https://www.ystu.ru/learning/schedule/";
+        //final String url = "http://www.ystu.ru/information/students/raspisanie-zanyatiy/";
         // TODO temp url
-        //final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
+        final String url = "https://justpaste.it/1r9t1";
 
         return Observable.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();
@@ -67,54 +70,37 @@ public class UpdateService {
                                     client.dispatcher().executorService().shutdown();
                                     client.connectionPool().evictAll();
                                 }
-                                Element els = null;
+                                Elements els_title = null;
+                                Elements els_desc = null;
                                 if (doc != null) {
-                                    els = doc.getElementsByClass("PaddingBorder").get(1);
+                                    els_title = doc.getElementsByClass("single-page-description").select("h3");
+                                    els_desc = doc.getElementsByClass("page-main-content__spoiler js-spoiler");
                                 }
 
-                                int index;
-                                String link;
+                                if (els_title != null && els_title.size() > 0) {
 
-                                if (els != null) {
+                                    int index = 0;
+                                    for (int i = 0; i < els_title.size(); i++) {
+                                        for (int id = 0 ; id < prefix_f.length; id++) {
 
-                                    for (int i = 0; i < els.children().size(); i++) {
-                                        for(int p = 0; p < prefix_f.length; p++){
+                                            if (els_title.get(i).text().contains(prefix_f[id])) {
 
-                                            if(p == 5 || p == 6)
-                                                index = i + 2;
-                                            else
-                                                index = i + 1;
-
-                                            if(p == 5){
-                                                if(els.children().get(i).text().equals(prefix_f[p])){
-
-                                                    link = "https://www.ystu.ru" + els.children().get(i).select("h3").select("a").attr("href");
-                                                    if (isNew(p, link) && !emitter.isDisposed()){
-                                                        emitter.onNext("0*" + p + "*" + link + "*"
-                                                                + getChange(els, index));
-                                                    } else {
-                                                        emitter.onNext("old|0*" + p + "*" + link + "*"
-                                                                + getChange(els, index));
-                                                    }
-
-                                                    break;
+                                                if(els_title.get(i).text().contains(prefix_f[6])) {
+                                                    id = 6;
                                                 }
-                                            } else {
-                                                if(els.children().get(i).text().contains(prefix_f[p])){
 
-                                                    link = "https://www.ystu.ru" + els.children().get(i).select("h3").select("a").attr("href");
-                                                    if(isNew(p, link) && !emitter.isDisposed()){
-                                                        emitter.onNext("0*" + p + "*" + link + "*"
-                                                                + getChange(els, index));
-                                                    } else {
-                                                        emitter.onNext("old|0*" + p + "*" + link + "*"
-                                                                + getChange(els, index));
+                                                if(els_desc.get(index).parent().className().equals("single-page-description")) {
+                                                    final int lastChangeSize = els_desc.get(index).text().length();
+                                                    if(!emitter.isDisposed() && isNew(id, lastChangeSize)) {
+                                                        Date mDate = new Date();
+                                                        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd.MM", Locale.getDefault());
+                                                        emitter.onNext("0*" + id + "`" + mSimpleDateFormat.format(mDate));
                                                     }
-                                                    break;
                                                 }
+
+                                                index++;
                                             }
                                         }
-
                                     }
                                 }
 
@@ -133,36 +119,27 @@ public class UpdateService {
                         }
                     });
         });
-
     }
 
-    private boolean isNew (int id, String link){
+    private boolean isNew (int id, int size){
 
-        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
+        // TODO Врменное решение, потом БД
+        if (size < 10) {
+            return false;
+        } else {
+            final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
 
-        if(id < 7){
-            if(mSharedPreferences.contains(prefix[id].toUpperCase())){
-                final String oldFile = mSharedPreferences.getString(prefix[id].toUpperCase(), null);
-                return !link.equals(oldFile);
-            } else {
-                final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-                mEditor.putString(prefix[id].toUpperCase(), link);
-                mEditor.apply();
-                return false;
-            }
-        } else return true;
-    }
-    private String getChange (Element els, int index) {
-
-        Elements temp = els.getElementsByIndexEquals(index);
-
-        for(Element el : temp){
-            if(el.parent().hasClass("PaddingBorder")){
-                return el.select("li").get(el.select("li").size() - 1).text();
-            }
+            if(id < 7){
+                if(mSharedPreferences.contains(prefix[id].toUpperCase())){
+                    final int oldSize = mSharedPreferences.getInt(prefix[id].toUpperCase(), 0);
+                    return size != oldSize;
+                } else {
+                    final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+                    mEditor.putInt(prefix[id].toUpperCase(), size);
+                    mEditor.apply();
+                    return false;
+                }
+            } else return false;
         }
-
-        return "";
     }
-
 }

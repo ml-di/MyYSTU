@@ -6,15 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
+    android:minHeight="60dp"
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/itemBell_date"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,9 +31,10 @@
         android:maxLines="1"
         android:textColor="@color/colorTextSecondary"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/itemBell_subTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/itemBell_date"
-        app:layout_constraintTop_toTopOf="@id/itemBell"
+        app:layout_constraintTop_toTopOf="parent"
         app:textAllCaps="true"
         tools:text="Обновлено расписание АСФ" />
 
@@ -46,6 +47,7 @@
         android:layout_marginEnd="16dp"
         android:alpha="0.9"
         android:textColor="@color/colorTextPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/itemBell_date"
         app:layout_constraintTop_toBottomOf="@id/itemBell_title"
