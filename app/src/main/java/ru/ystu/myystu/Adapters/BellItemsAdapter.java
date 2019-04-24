@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +36,8 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
         final private AppCompatTextView date;
         final private AppCompatTextView title;
         final private AppCompatTextView subTitle;
+        final private AppCompatTextView type;
+        final private AppCompatImageView icon;
         final private ConstraintLayout item;
 
         BellItemsViewHolder(@NonNull View itemView, final List<BellItemsData> mList, final Context mContext) {
@@ -43,6 +46,8 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
             date = itemView.findViewById(R.id.itemBell_date);
             title = itemView.findViewById(R.id.itemBell_title);
             subTitle = itemView.findViewById(R.id.itemBell_subTitle);
+            type = itemView.findViewById(R.id.itemBell_type);
+            icon = itemView.findViewById(R.id.itemBell_icon);
             item = itemView.findViewById(R.id.itemBell);
 
             item.setOnClickListener(view -> {
@@ -50,6 +55,7 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
                 switch (idType){
                     // Расписание
                     case 0:
+
                         final int position = getAdapterPosition();
                         final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
                         final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
@@ -112,15 +118,13 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
             holder.subTitle.setVisibility(View.GONE);
         }
 
-        if(mList.get(position).getDate() != null){
-            String date = mList.get(position).getDate();
-            if(date.length() == 5){
-                date = "0" + date;
-            }
-            final Spannable spanDate = new SpannableString(date);
-            spanDate.setSpan(new TextAppearanceSpan(mContext, R.style.BellItemCountStyle), 0, date.indexOf(" "), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spanDate.setSpan(new TextAppearanceSpan(mContext, R.style.BellItemTextStyle), date.indexOf(" ") + 1, date.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            holder.date.setText(spanDate);
+        holder.date.setText("• " + mList.get(position).getDate());
+
+        switch (mList.get(position).getIdType()) {
+            case 0:
+                holder.icon.setImageResource(R.drawable.ic_document_text);
+                holder.type.setText(mContext.getResources().getString(R.string.menu_text_schedule));
+                break;
         }
     }
 

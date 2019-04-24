@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -34,8 +35,6 @@ public class UpdateCheck extends Service {
     private final int DELAY_UPDATE_SEC = 15;     // Интервал проверки обновлений в сек
     private final int DELAY_WAIT_CONNECT = 5;     // Интервал проверки подключения к интернету в сек
 
-    ArrayList<String> updates;
-
     private UpdateService mUpdateService;
     private CompositeDisposable mDisposables;
     private Context mContext;
@@ -49,8 +48,6 @@ public class UpdateCheck extends Service {
         mUpdateService = new UpdateService(this);
         mDisposables = new CompositeDisposable();
 
-        updates = new ArrayList<>();
-
         update();
     }
 
@@ -61,11 +58,6 @@ public class UpdateCheck extends Service {
 
         if(intent != null && intent.getParcelableExtra("pending") != null){
             mPendingIntent = intent.getParcelableExtra("pending");
-        }
-
-        // TODO временное решение, пока без кеша
-        if(updates.size() > 0){
-            updates.clear();
         }
 
         Log.e("tag", mPendingIntent.getCreatorPackage());
@@ -94,7 +86,7 @@ public class UpdateCheck extends Service {
         // TODO Update
         final Observable<String> mObservable = mUpdateService.checkSchedule();
         final boolean[] isUpdate = {false};
-        final int[] notificationCount = {0};
+        final List<String> temp = new ArrayList<>();
 
         mDisposables.add(mObservable
                 .subscribeOn(Schedulers.io())
@@ -117,15 +109,13 @@ public class UpdateCheck extends Service {
                     @Override
                     public void onNext(String s) {
                         Log.e("Tag", s);
+
                         if(s.equals("end")){
                             onComplete();
-                        } else if(s.startsWith("old")) {
-                            final String temp = s.substring(s.indexOf("|") + 1);
-                            updates.remove(temp);
-                        } else if(!updates.contains(s)) {
-                            updates.add(s);
+                            temp.clear();
+                        } else {
+                            temp.add(s);
                             isUpdate[0] = true;
-                            notificationCount[0]++;
                         }
                     }
 
@@ -136,10 +126,10 @@ public class UpdateCheck extends Service {
 
                     @Override
                     public void onComplete() {
-                        if(updates.size() > 0 && isUpdate[0]){
+                        if(isUpdate[0]){
 
                             final Intent intent = new Intent();
-                            intent.putStringArrayListExtra("schedule_update", updates);
+                            intent.putExtra("isUpdate", true);
                             if(mPendingIntent != null){
                                 try {
                                     mPendingIntent.send(UpdateCheck.this, 0, intent);
@@ -148,24 +138,7 @@ public class UpdateCheck extends Service {
                                 }
                             }
 
-                            final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("NOTIFICATION_UPDATE_ID", Context.MODE_PRIVATE);
-                            final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-
-                            if(mSharedPreferences.contains("id")){
-                                final String oldTemp = mSharedPreferences.getString("id", null);
-                                if(!Objects.equals(oldTemp, updates.get(updates.size() - 1))){
-                                    showNotification(updates.get(updates.size() - 1), notificationCount[0]);
-                                    mEditor.putString("id", updates.get(updates.size() - 1));
-                                }
-                            } else {
-                                mEditor.putString("id", updates.get(updates.size() - 1));
-                                showNotification(updates.get(updates.size() - 1), notificationCount[0]);
-                            }
-                            mEditor.apply();
-
-                            if(notificationCount[0] > 0){
-                                notificationCount[0] = 0;
-                            }
+                            showNotification(temp.get(temp.size() - 1), temp.size());
 
                             isUpdate[0] = false;
                         }
@@ -177,9 +150,9 @@ public class UpdateCheck extends Service {
 
         final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
 
-        final int idType = Integer.parseInt(temp.substring(0, temp.indexOf("*")));
-        final int idSubType = Integer.parseInt(temp.substring(temp.indexOf("*") + 1, temp.indexOf("`")));
-        final String date = temp.substring(temp.indexOf("`") + 1);
+        final int idType = Integer.parseInt(temp.substring(0, 1));
+        final int idSubType = Integer.parseInt(temp.substring(1, 2));
+        final String date = temp.substring(2);
 
         String text = null;
         String title = null;

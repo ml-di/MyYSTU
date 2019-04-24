@@ -1,7 +1,9 @@
 package ru.ystu.myystu.Activitys;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -27,20 +29,20 @@ import ru.ystu.myystu.Utils.LightStatusBar;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SharedPreferences mSharedPreferences;
+
     private BottomNavigationView mBottomBar;
     private FragmentManager mFragmentManager;
     private Fragment mNewsFragment;
     private Fragment mBellFragment;
     private Fragment mMenuFragment;
     private CoordinatorLayout mContentContainer;
-    private ArrayList<String> updateList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        updateList = new ArrayList<>();
         mBottomBar = findViewById(R.id.bottomBar);
         mContentContainer = findViewById(R.id.contentContainer);
         mContentContainer.setFitsSystemWindows(true);
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         mNewsFragment = new NewsFragment();
         mBellFragment = new BellFragment();
         mMenuFragment = new MenuFragment();
+
+        mSharedPreferences = getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
 
         if (savedInstanceState == null) {
 
@@ -88,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.tab_bell:
 
                     final Bundle bundle = new Bundle();
-                    bundle.putStringArrayList("update", updateList);
                     mBellFragment.setArguments(bundle);
 
                     mContentContainer.setFitsSystemWindows(true);
@@ -131,25 +134,22 @@ public class MainActivity extends AppCompatActivity {
         // TODO получаем обновления
         if (data != null) {
 
-            if(data.getStringArrayListExtra("schedule_update") != null){
-                Log.e("res", data.getStringArrayListExtra("schedule_update").size() + "");
-                if(data.getStringArrayListExtra("schedule_update").size() > 0){
-                    for(int i = 0; i < data.getStringArrayListExtra("schedule_update").size(); i++){
-
-                        final String temp = data.getStringArrayListExtra("schedule_update").get(i);
-
-                        if(!updateList.contains(temp)){
-                            updateList.add(temp);
-                        }
-                    }
-                }
-            }
-
+            int size = mSharedPreferences.getAll().size();
+            badgeChange(mSharedPreferences.getAll().size());
             // Обновить уведомления если вкладка с ними открыта
-            badgeChange(updateList.size());
             if(mBottomBar.getSelectedItemId() == R.id.tab_bell){
-                if(updateList.size() > 0){
-                    ((BellFragment) mBellFragment).updateRecycler(updateList);
+                if(mSharedPreferences.getAll().size() > 0){
+
+                    for (int i = 0; i < mSharedPreferences.getAll().size(); i++) {
+
+                        final String test = (String) mSharedPreferences.getAll().get(i);
+                        final int type;
+                        final int id;
+                        //final int size;
+
+                    }
+
+                    //((BellFragment) mBellFragment).updateRecycler(updateList);
                 }
             }
         }
@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
-        outState.putStringArrayList("updateList", updateList);
         outState.putInt("selItemId", mBottomBar.getSelectedItemId());
 
         super.onSaveInstanceState(outState);
@@ -167,18 +166,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-        updateList = savedInstanceState.getStringArrayList("updateList");
-        if (updateList != null && updateList.size() > 0) {
-            badgeChange(updateList.size());
-        }
-
+        badgeChange(mSharedPreferences.getAll().size());
         mBottomBar.setSelectedItemId(savedInstanceState.getInt("selItemId"));
 
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     public void removeItemUpdate (int position){
-        updateList.remove(position);
+        //updateList.remove(position);
     }
     public void badgeChange (int count){
 

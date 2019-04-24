@@ -236,15 +236,13 @@ public class BellFragment extends Fragment {
 
 
             final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
-            final String[] prefix_month = new String[]{"ЯНВ","ФЕВ","МАР","АПР","МАЙ","ИЮН","ИЮЛ","АВГ","СЕН","ОКТ","НОЯ","ДЕК"};
 
             for(int i = 0; i < update.size(); i++){
 
                 String temp = update.get(i);
                 final int idType = Integer.parseInt(temp.substring(0, temp.indexOf("*")));
                 final int idSubType = Integer.parseInt(temp.substring(temp.indexOf("*") + 1, temp.indexOf("`")));
-                String date = temp.substring(temp.indexOf("`") + 1);
-                date = date.substring(0, date.indexOf(".")) + " " + prefix_month[Integer.parseInt(date.substring(date.indexOf(".") + 1)) - 1];
+                final String date = temp.substring(temp.indexOf("`") + 1);
 
                 String title = null;
                 // Обновлено расписание
