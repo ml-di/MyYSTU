@@ -6,14 +6,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
@@ -32,7 +30,7 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 public class UpdateCheck extends Service {
 
     // TODO интервал обновления
-    private final int DELAY_UPDATE_SEC = 15;     // Интервал проверки обновлений в сек
+    private final int DELAY_UPDATE_SEC = 900;     // Интервал проверки обновлений в сек
     private final int DELAY_WAIT_CONNECT = 5;     // Интервал проверки подключения к интернету в сек
 
     private UpdateService mUpdateService;
@@ -83,7 +81,6 @@ public class UpdateCheck extends Service {
 
     private void update(){
 
-        // TODO Update
         final Observable<String> mObservable = mUpdateService.checkSchedule();
         final boolean[] isUpdate = {false};
         final List<String> temp = new ArrayList<>();
@@ -152,13 +149,15 @@ public class UpdateCheck extends Service {
 
         final int idType = Integer.parseInt(temp.substring(0, 1));
         final int idSubType = Integer.parseInt(temp.substring(1, 2));
-        final String date = temp.substring(2);
+        final String date = temp.substring(2, temp.indexOf("*"));
+        String text = temp.substring(temp.indexOf("*") + 1);
 
-        String text = null;
         String title = null;
         // Обновлено расписание
         if(idType == 0){
             title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
+            if(text.contains(":"))
+                text = text.substring(text.indexOf(":") + 2);
         }
 
         final Intent mIntent = new Intent(this, MainActivity.class);
@@ -173,7 +172,7 @@ public class UpdateCheck extends Service {
                 .setContentText(text)
                 .setWhen(System.currentTimeMillis())
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setLights(Color.parseColor("#ec7200"), 1, 0)
+                .setLights(Color.parseColor("#4c6bb8"), 1, 0)
                 .setColor(Color.argb(100, 255, 110, 0))
                 .setContentIntent(mPendingIntent)
                 .setNumber(count)

@@ -2,7 +2,6 @@ package ru.ystu.myystu.Network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,7 +10,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,6 @@ import okhttp3.Response;
 public class UpdateService {
 
     final private Context mContext;
-    final private String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
     final private String[] prefix_f = new String[]{"Архитектурно", "Инженерно", "Автомеханический",
             "Машиностроительный", "Химико", "Заочный факультет", "Отделение ускоренных"};
 
@@ -35,9 +35,9 @@ public class UpdateService {
 
     public Observable<String> checkSchedule () {
 
-        //final String url = "http://www.ystu.ru/information/students/raspisanie-zanyatiy/";
+        final String url = "http://www.ystu.ru/information/students/raspisanie-zanyatiy/";
         // TODO temp url
-        final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
+        //final String url = "http://myystu.000webhostapp.com/myystu/schedule.txt";
 
         return Observable.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();
@@ -72,16 +72,14 @@ public class UpdateService {
                                     client.connectionPool().evictAll();
                                 }
                                 Elements els_title = null;
-                                Elements els_desc = null;
                                 if (doc != null) {
                                     els_title = doc.getElementsByClass("single-page-description").select("h3");
-                                    els_desc = doc.getElementsByClass("page-main-content__spoiler js-spoiler");
                                 }
 
-                                // TODO пересмотреть эту дич, особенно index, много ошибок
-
                                 if (els_title != null && els_title.size() > 0) {
-                                    int index = 0;
+
+                                    List<String> change = new ArrayList<>();
+
                                     for (int i = 0; i < els_title.size(); i++) {
                                         for (int id = 0 ; id < prefix_f.length; id++) {
 
@@ -91,23 +89,56 @@ public class UpdateService {
                                                     id = 6;
                                                 }
 
-                                                if(els_desc.get(index).parent().className().equals("single-page-description")) {
-                                                    final int lastChangeSize = els_desc.get(index).text().length();
-                                                    if(!emitter.isDisposed() && isNew(0, id, lastChangeSize)) {
-                                                        Date mDate = new Date();
-                                                        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd.MM HH:mm", Locale.getDefault());
-                                                        emitter.onNext(0 + "" + id + mSimpleDateFormat.format(mDate));
+                                                int index = els_title.get(i).elementSiblingIndex();
+                                                final Elements el = doc.getElementsByClass("single-page-description").get(0).children();
 
-                                                        Log.e("WTF", 0 + "" + id + "" + lastChangeSize);
+                                                Element temp;
+                                                while (true) {
+                                                    temp = el.get(index);
+                                                    if(temp.tagName().equals("div")){
+                                                        break;
+                                                    }
+                                                    index++;
+                                                }
 
-                                                        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
-                                                        final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-                                                        mEditor.putInt(0 + "" + id, lastChangeSize);
-                                                        mEditor.apply();
+                                                boolean isNextChange = false;
+                                                for (Element e : temp.children()) {
+                                                    if (e.tagName().equals("span") && e.select("span").attr("href").isEmpty()) {
+
+                                                        if (isNextChange) {
+
+                                                            if(e.select("span").text().contains(":")) {
+                                                                change.add(e.select("span").text());
+                                                            }
+
+                                                        } else if (e.select("span").text().equals("Изменения:")) {
+                                                            isNextChange = true;
+                                                        }
                                                     }
                                                 }
 
-                                                index++;
+
+                                                String lastChange = change.get(change.size() - 1);
+
+                                                lastChange = lastChange
+                                                        .replaceAll("&nbsp;", " ")
+                                                        .replaceAll("&bsp;", " ")
+                                                        .replaceAll("&sp;", " ")
+                                                        .replaceAll("&p;", " ")
+                                                        .replaceAll("&;", " ");
+
+                                                if(!emitter.isDisposed() && isNew(0, id, lastChange)) {
+                                                    Date mDate = new Date();
+                                                    SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd.MM HH:mm", Locale.getDefault());
+                                                    emitter.onNext(0 + "" + id + mSimpleDateFormat.format(mDate) + "*" + lastChange);
+
+                                                    final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
+                                                    final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+                                                    mEditor.putString(0 + "" + id, mSimpleDateFormat.format(mDate) + "*" + lastChange);
+                                                    mEditor.apply();
+                                                }
+
+                                                change.clear();
                                             }
                                         }
                                     }
@@ -130,10 +161,9 @@ public class UpdateService {
         });
     }
 
-    private boolean isNew (int type, int id, int size){
+    private boolean isNew (int type, int id, String lastChange){
 
-        // TODO Врменное решение, потом БД
-        if (size < 10) {
+        if (lastChange.length() < 5) {
             return false;
         } else {
             final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE", Context.MODE_PRIVATE);
@@ -141,14 +171,15 @@ public class UpdateService {
 
             if(id < 7){
                 if(mSharedPreferences.contains(type + "" + id)){
-                    final int oldSize = mSharedPreferences.getInt(type + "" + id, 0);
-                    if(size != oldSize) {
-                        mEditor.putInt(type + "" + id, size);
+                    final String oldChange = mSharedPreferences.getString(type + "" + id, null);
+
+                    if(!lastChange.equals(oldChange)) {
+                        mEditor.putString(type + "" + id, lastChange);
                         mEditor.apply();
                         return true;
                     } else return false;
                 } else {
-                    mEditor.putInt(type + "" + id, size);
+                    mEditor.putString(type + "" + id, lastChange);
                     mEditor.apply();
                     return false;
                 }

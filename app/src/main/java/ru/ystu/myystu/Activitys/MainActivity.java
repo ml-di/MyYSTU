@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +30,7 @@ import ru.ystu.myystu.Utils.LightStatusBar;
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences mSharedPreferences;
+    private ArrayList<String> updateList;
 
     private BottomNavigationView mBottomBar;
     private FragmentManager mFragmentManager;
@@ -57,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
 
+            updateList = new ArrayList<>();
             mFragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
             LightStatusBar.setLight(true, this);
-            // TODO Запуск сервиса
             startService();
         }
 
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (mBottomBar.getSelectedItemId() == R.id.tab_menu){
             LightStatusBar.setLight(false, this);
         }
+
+        badgeChange(mSharedPreferences.getAll().size());
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
 
@@ -90,9 +93,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 // Уведомления
                 case R.id.tab_bell:
-
-                    final Bundle bundle = new Bundle();
-                    mBellFragment.setArguments(bundle);
 
                     mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
@@ -131,25 +131,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // TODO получаем обновления
         if (data != null) {
 
-            int size = mSharedPreferences.getAll().size();
             badgeChange(mSharedPreferences.getAll().size());
             // Обновить уведомления если вкладка с ними открыта
             if(mBottomBar.getSelectedItemId() == R.id.tab_bell){
                 if(mSharedPreferences.getAll().size() > 0){
 
-                    for (int i = 0; i < mSharedPreferences.getAll().size(); i++) {
-
-                        final String test = (String) mSharedPreferences.getAll().get(i);
-                        final int type;
-                        final int id;
-                        //final int size;
-
+                    for(Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
+                        final int type = Integer.parseInt(entry.getKey().substring(0, 1));
+                        final int id = Integer.parseInt(entry.getKey().substring(1, 2));
+                        final String text = (String) entry.getValue();
+                        updateList.add(type + "" + id + "" + text);
                     }
 
-                    //((BellFragment) mBellFragment).updateRecycler(updateList);
+                    ((BellFragment) mBellFragment).updateRecycler(updateList);
                 }
             }
         }
@@ -170,10 +166,6 @@ public class MainActivity extends AppCompatActivity {
         mBottomBar.setSelectedItemId(savedInstanceState.getInt("selItemId"));
 
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    public void removeItemUpdate (int position){
-        //updateList.remove(position);
     }
     public void badgeChange (int count){
 
@@ -197,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startService() {
-        // TODO запуск сервиса
         // Запуск сервиса для проверки обновлений
         final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
         final Intent mIntent = new Intent(this, UpdateCheck.class)

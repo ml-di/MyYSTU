@@ -3,10 +3,6 @@ package ru.ystu.myystu.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,20 +61,18 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
                         // Удаление элемента из BellFragment
                         final String link = mList.get(position).getLink();
                         final int idSub = (mList.get(position).getIdSubType());
+                        final int type = (mList.get(position).getIdType());
 
-                        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
+                        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
                         final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-                        mEditor.putString(prefix[idSub].toUpperCase(), link);
+                        mEditor.remove(type + "" + idSub);
                         mEditor.apply();
 
                         mList.remove(position);
-                        ((MainActivity) mContext).removeItemUpdate(position);
                         ((MainActivity) mContext).badgeChange(mList.size());
 
                         break;
-
                 }
-
             });
         }
     }
@@ -151,6 +145,9 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
     }
     public int getSubId(int position) {
         return mList.get(position).getIdSubType();
+    }
+    public int getType(int position) {
+        return mList.get(position).getIdType();
     }
 
 }

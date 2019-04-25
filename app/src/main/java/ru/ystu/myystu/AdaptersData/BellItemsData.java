@@ -7,7 +7,6 @@ public class BellItemsData implements Parcelable {
 
     private final int idType;
     private final int idSubType;
-    private final int icon;
     private final String title;
     private final String subTitle;
     private final String date;
@@ -15,14 +14,12 @@ public class BellItemsData implements Parcelable {
 
     public BellItemsData(final int idType,
                          final int idSubType,
-                         final int icon,
                          final String title,
                          final String subTitle,
                          final String date,
                          final String link) {
         this.idType = idType;
         this.idSubType = idSubType;
-        this.icon = icon;
         this.title = title;
         this.subTitle = subTitle;
         this.date = date;
@@ -32,7 +29,6 @@ public class BellItemsData implements Parcelable {
     private BellItemsData(Parcel in) {
         idType = in.readInt();
         idSubType = in.readInt();
-        icon = in.readInt();
         title = in.readString();
         subTitle = in.readString();
         date = in.readString();
@@ -60,7 +56,6 @@ public class BellItemsData implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(idType);
         parcel.writeInt(idSubType);
-        parcel.writeInt(icon);
         parcel.writeString(title);
         parcel.writeString(subTitle);
         parcel.writeString(date);
@@ -72,9 +67,6 @@ public class BellItemsData implements Parcelable {
     }
     public int getIdSubType() {
         return idSubType;
-    }
-    public int getIcon() {
-        return icon;
     }
     public String getTitle() {
         return title;

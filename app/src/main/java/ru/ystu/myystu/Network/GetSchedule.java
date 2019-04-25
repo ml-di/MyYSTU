@@ -6,18 +6,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.ystu.myystu.AdaptersData.ScheduleChangeData;
 
 public class GetSchedule {
 

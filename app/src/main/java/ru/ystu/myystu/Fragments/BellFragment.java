@@ -17,15 +17,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -87,21 +86,32 @@ public class BellFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        update = new ArrayList<>();
         update();
 
+        // Получить значения уведомлений
+        SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
+        if(mSharedPreferences.getAll().size() > 0){
+
+            for(Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
+                final int type = Integer.parseInt(entry.getKey().substring(0, 1));
+                final int id = Integer.parseInt(entry.getKey().substring(1, 2));
+                final String text = (String) entry.getValue();
+                update.add(type + "" + id + "" + text);
+            }
+        }
+
+        // Отрисовать RecyclerView при уведомлениях
+        // или placeholder при их отсутствии
+        if(mSharedPreferences.getAll().size() > 0){
+            showPlaceHolder(false);
+        } else {
+            showPlaceHolder(true);
+        }
+
         if(savedInstanceState == null){
-            if (getArguments() != null) {
-                update = getArguments().getStringArrayList("update");
-            }
-
-            if(update != null && update.size() > 0){
-                showPlaceHolder(false);
-            } else {
-                showPlaceHolder(true);
-            }
-
+            // Заполнить RecyclerView
             formattingList();
-
         } else {
             mList = savedInstanceState.getParcelableArrayList("mList");
             mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
@@ -240,17 +250,21 @@ public class BellFragment extends Fragment {
             for(int i = 0; i < update.size(); i++){
 
                 String temp = update.get(i);
-                final int idType = Integer.parseInt(temp.substring(0, temp.indexOf("*")));
-                final int idSubType = Integer.parseInt(temp.substring(temp.indexOf("*") + 1, temp.indexOf("`")));
-                final String date = temp.substring(temp.indexOf("`") + 1);
+                final int idType = Integer.parseInt(temp.substring(0, 1));
+                final int idSubType = Integer.parseInt(temp.substring(1, 2));
+                final String date = temp.substring(2, temp.indexOf("*"));
+                String subTitle = temp.substring(temp.indexOf("*") + 1);
 
                 String title = null;
                 // Обновлено расписание
                 if(idType == 0){
                     title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
+                    if(subTitle.contains(":")) {
+                        subTitle = subTitle.substring(subTitle.indexOf(":") + 2);
+                    }
                 }
 
-                mList.add(new BellItemsData(idType, idSubType, 0, title, null, date, null));
+                mList.add(new BellItemsData(idType, idSubType, title, subTitle, date, null));
             }
 
             mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
@@ -286,8 +300,6 @@ public class BellFragment extends Fragment {
             mainLayout.addView(placeHolder, 0 , params);
 
         } else {
-            // TODO вставить rv при уведомлениях
-
             params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRecyclerView = new RecyclerView(mainLayout.getContext());
             mainLayout.addView(mRecyclerView, 0 , params);
@@ -325,17 +337,17 @@ public class BellFragment extends Fragment {
 
             final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
 
-            final String link = ((BellItemsAdapter)mRecyclerViewAdapter).getLink(pos);
-            final int id = ((BellItemsAdapter)mRecyclerViewAdapter).getSubId(pos);
+            final String link = ((BellItemsAdapter) mRecyclerViewAdapter).getLink(pos);
+            final int id = ((BellItemsAdapter) mRecyclerViewAdapter).getSubId(pos);
+            final int type = ((BellItemsAdapter) mRecyclerViewAdapter).getType(pos);
 
-            final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("SCHEDULE_UPDATE", Context.MODE_PRIVATE);
+            final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
             final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-            mEditor.putString(prefix[id].toUpperCase(), link);
+            mEditor.remove(type + "" + id);
             mEditor.apply();
 
             ((BellItemsAdapter) mRecyclerViewAdapter).removeItem(pos);
-            ((MainActivity) Objects.requireNonNull(getActivity())).removeItemUpdate(pos);
-            ((MainActivity) getActivity()).badgeChange(mRecyclerViewAdapter.getItemCount());
+            ((MainActivity) Objects.requireNonNull(getActivity())).badgeChange(mSharedPreferences.getAll().size());
             mRecyclerViewAdapter.notifyItemRemoved(pos);
 
             if(mRecyclerViewAdapter.getItemCount() <= 0){
