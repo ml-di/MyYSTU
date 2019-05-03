@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,13 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.ystu.myystu.Activitys.MainActivity;
+import ru.ystu.myystu.Activitys.SettingsActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.MenuItemsAdapter;
 import ru.ystu.myystu.AdaptersData.MenuItemsData;
@@ -20,6 +25,8 @@ public class MenuFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private ArrayList<MenuItemsData> mList;
+
+    private AppCompatImageView menuBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,15 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        menuBtn.setOnClickListener(view -> {
+            final Intent mIntent = new Intent(getContext(), SettingsActivity.class);
+            getContext().startActivity(mIntent);
+        });
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -52,6 +68,7 @@ public class MenuFragment extends Fragment {
 
         if(mView != null){
             mRecyclerView = mView.findViewById(R.id.recycler_menu_items);
+            menuBtn = mView.findViewById(R.id.menu_settings);
         }
 
         mRecyclerView.setHasFixedSize(true);

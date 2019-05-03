@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Основные">
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/photoSize_Array"
+            android:entryValues="@array/photoSize_Values"
+            android:key="preference_general_photoSize"
+            android:title="Размер загружаемых фото"
+            android:summary="Среднее"/>
+
+        <PreferenceScreen
+            android:key="preference_general_bell"
+            android:title="Уведомления">
+
+            <SwitchPreference
+                android:key="preference_bell_enable"
+                android:title="Включить уведомления"
+                android:defaultValue="true"/>
+
+            <Preference
+                android:key="preference_bell_ringtone"
+                android:title="Звук"
+                android:summary="По умолчанию (Rhea)"/>
+
+            <SwitchPreference
+                android:key="preference_bell_vibration"
+                android:title="Вибрация"
+                android:defaultValue="true"/>
+
+            <SwitchPreference
+                android:key="preference_bell_indicator"
+                android:title="Индикатор"
+                android:defaultValue="true"/>
+            <SwitchPreference
+                android:key="preference_bell_indicator"
+                android:title="Всплывающие уведомления"
+                android:defaultValue="true"/>
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Кеш">
+
+        <Preference
+            android:key="preference_cache_photo"
+            android:title="Удалить кеш фото"
+            android:summary="Занято: 0 Б"/>
+
+        <Preference
+            android:key="preference_cache_data"
+            android:title="Удалить данные приложения"
+            android:summary="Занято: 0 Б"/>
+
+        <Preference
+            android:key="preference_cache_schedule"
+            android:title="Удалить файлы расписания"
+            android:summary="Занято: 0 Б"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Другое">
+
+        <Preference
+            android:key="preference_other_about"
+            android:title="О программе"/>
+
+        <Preference
+            android:key="preference_other_library_about"
+            android:title="Лицензия открытого ПО"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>
