@@ -44,9 +44,9 @@ public class BellFragment extends Fragment {
     private AppCompatTextView countWeek;
     private AppCompatTextView countLesson;
     private AppCompatTextView countTime;
-    private ConstraintLayout weekLayout;
-    private ConstraintLayout lessonLayout;
-    private ConstraintLayout timeLayout;
+    private ContentFrameLayout weekLayout;
+    private ContentFrameLayout lessonLayout;
+    private ContentFrameLayout timeLayout;
     private ContentFrameLayout mainLayout;
 
     private RecyclerView mRecyclerView;
@@ -194,42 +194,23 @@ public class BellFragment extends Fragment {
         final String week = bellHelper.getCountWeek();
         final String lesson = bellHelper.getCountLesson();
         final String time = bellHelper.getTime();
-        Spannable text;
 
         if(!week.equals("-")){
-            text = new SpannableString(week + " " + getResources().getString(R.string.bell_text_week));
-            text.setSpan(new TextAppearanceSpan(mContext, R.style.BellCountStyle), 0, week.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextStyle), week.length() + 1, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            countWeek.setText(text);
+            countWeek.setText(week);
             weekLayout.setVisibility(View.VISIBLE);
         } else {
             weekLayout.setVisibility(View.GONE);
         }
 
         if(!lesson.equals("-")){
-            // Надписи
-            if(lesson.length() > 2){
-                text = new SpannableString(lesson);
-                text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextOtherStyle), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            // Счетчик
-            else {
-                text = new SpannableString(lesson + " " + getResources().getString(R.string.bell_text_lesson));
-                text.setSpan(new TextAppearanceSpan(mContext, R.style.BellCountStyle), 0, lesson.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextStyle), lesson.length() + 1, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            countLesson.setText(text);
+            countLesson.setText(lesson);
             lessonLayout.setVisibility(View.VISIBLE);
         } else {
             lessonLayout.setVisibility(View.GONE);
         }
 
         if(!time.equals("-")){
-            text = new SpannableString(time + " " + getResources().getString(R.string.bell_text_time));
-            text.setSpan(new TextAppearanceSpan(mContext, R.style.BellCountStyle), 0, time.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            text.setSpan(new TextAppearanceSpan(mContext, R.style.BellTextStyle), time.length() + 1, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            countTime.setText(text);
+            countTime.setText(time);
             timeLayout.setVisibility(View.VISIBLE);
         } else {
             timeLayout.setVisibility(View.GONE);

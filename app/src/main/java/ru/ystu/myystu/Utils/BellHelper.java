@@ -74,7 +74,6 @@ public class BellHelper {
                 mCalendar.set(Calendar.DAY_OF_MONTH, 1);
                 int temp = mCalendar.get(Calendar.DAY_OF_WEEK);
 
-                //mCalendar.clear(Calendar.MONTH);
                 mCalendar.clear(Calendar.DAY_OF_MONTH);
 
                 if(temp == 1)

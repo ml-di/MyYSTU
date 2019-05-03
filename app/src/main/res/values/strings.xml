@@ -48,12 +48,12 @@
     <string name="bell_title_three">Летние каникулы</string>
     <string name="bell_title_session_one">Зимняя сессия</string>
     <string name="bell_title_session_two">Летняя сессия</string>
-    <string name="bell_text_week">нед.</string>
+    <string name="bell_text_week">неделя</string>
     <string name="bell_text_lesson">пара</string>
-    <string name="bell_text_time">звон.</string>
-    <string name="bell_break_one">Перерыв</string>
-    <string name="bell_break_two">Большой пер.</string>
-    <string name="bell_day_off">Выходной</string>
+    <string name="bell_text_time">звонок</string>
+    <string name="bell_break_one">П</string>
+    <string name="bell_break_two">БП</string>
+    <string name="bell_day_off">В</string>
     <string name="bell_item_title_schedule">Обновление в расписании</string>
 
     <!-- ErrorMessage -->
