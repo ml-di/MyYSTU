@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="@string/settings_category_general">
+
+        <ListPreference
+            android:defaultValue="src_big"
+            android:entries="@array/photoSize_Array"
+            android:entryValues="@array/photoSize_Values"
+            android:icon="@drawable/ic_photo_size"
+            android:key="preference_general_photoSize"
+            android:summary="Среднее"
+            android:title="@string/settings_general_photoSize" />
+
+        <PreferenceScreen
+            android:icon="@drawable/ic_bell"
+            android:key="preference_general_notification"
+            android:title="@string/settings_general_notification">
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="preference_notification_enable"
+                android:title="@string/settings_general_notification_on"
+                app:iconSpaceReserved="false" />
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="preference_notification_ringtone_enable"
+                android:title="@string/settings_general_notification_song_on"
+                app:iconSpaceReserved="false" />
+
+            <Preference
+                android:key="preference_notification_ringtone"
+                android:summary="По умолчанию (Rhea)"
+                android:title="@string/settings_general_notification_song"
+                app:iconSpaceReserved="false" />
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="preference_notification_vibration"
+                android:title="@string/settings_general_notification_vibration"
+                app:iconSpaceReserved="false" />
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="preference_notification_indicator"
+                android:title="@string/settings_general_notification_indicator"
+                app:iconSpaceReserved="false" />
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="preference_notification_push"
+                android:title="@string/settings_general_notification_push"
+                app:iconSpaceReserved="false" />
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_additional">
+
+        <PreferenceScreen
+            android:icon="@drawable/ic_cache"
+            android:key="preference_additional_cache"
+            android:title="@string/settings_category_additional_cache">
+
+            <Preference
+                android:key="preference_cache_photo"
+                android:summary="Занято: 0 Б"
+                android:title="@string/settings_category_additional_cache_delete_photo"
+                app:iconSpaceReserved="false" />
+
+            <Preference
+                android:key="preference_cache_data"
+                android:summary="Занято: 0 Б"
+                android:title="@string/settings_category_additional_cache_delete_data"
+                app:iconSpaceReserved="false" />
+
+            <Preference
+                android:key="preference_cache_schedule"
+                android:summary="@string/settings_category_additional_cache_summary"
+                android:title="@string/settings_category_additional_cache_delete_schedule"
+                app:iconSpaceReserved="false" />
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_other">
+
+        <Preference
+            android:icon="@drawable/ic_about"
+            android:key="preference_other_about"
+            android:title="@string/settings_category_other_about" />
+
+        <Preference
+            android:icon="@drawable/ic_library_about"
+            android:key="preference_other_library_about"
+            android:title="@string/settings_category_other_library_about" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

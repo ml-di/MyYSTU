@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="photoSize_Array">
-        <item>Максимальное</item>
-        <item>Хорошее</item>
-        <item>Среднее (рекомендуется)</item>
-        <item>Минимальное</item>
+        <item>Максимальный</item>
+        <item>Хороший</item>
+        <item>Средний (рекомендуется)</item>
+        <item>Минимальный</item>
     </string-array>
 
     <string-array name="photoSize_Values">

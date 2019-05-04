@@ -25,6 +25,7 @@
         <item name="colorPrimaryDark">@color/colorLightStatusBar</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorLightStatusBar</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
     </style>
 
     <!-- Тема для toolbar -->
@@ -77,6 +78,10 @@
     <style name="BellItemTextStyle" parent="@android:style/Widget.TextView">
         <item name="android:textColor">@color/colorTextSecondaryOpacity</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="PreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="android:tint">@color/colorSettingsIcon</item>
     </style>
 
 </resources>

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.util.Log;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.preference.PreferenceManager;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -145,42 +147,70 @@ public class UpdateCheck extends Service {
 
     private void showNotification(String temp, int count) {
 
-        final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
+        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        // Включены ли уведомления
+        if(sharedPrefs.getBoolean("preference_notification_enable",true)) {
 
-        final int idType = Integer.parseInt(temp.substring(0, 1));
-        final int idSubType = Integer.parseInt(temp.substring(1, 2));
-        final String date = temp.substring(2, temp.indexOf("*"));
-        String text = temp.substring(temp.indexOf("*") + 1);
+            final boolean isLights = sharedPrefs.getBoolean("preference_notification_indicator", true);
+            final boolean isSound = sharedPrefs.getBoolean("preference_notification_ringtone_enable", true);;
+            final boolean isVibrate = sharedPrefs.getBoolean("preference_notification_vibration", true);
+            final boolean isPush = sharedPrefs.getBoolean("preference_notification_push", false);
 
-        String title = null;
-        // Обновлено расписание
-        if(idType == 0){
-            title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
-            if(text.contains(":"))
-                text = text.substring(text.indexOf(":") + 2);
+            int light = 0;
+            int vibrate = 0;
+            int sound = 0;
+
+            if(isLights)
+                light = Notification.DEFAULT_LIGHTS;
+            if(isVibrate)
+                vibrate = Notification.DEFAULT_VIBRATE;
+            if(isSound)
+                sound = Notification.DEFAULT_SOUND;
+
+            final int defaults = light | vibrate | sound;
+
+            int priority = NotificationCompat.PRIORITY_DEFAULT;
+            if(isPush)
+                priority = NotificationCompat.PRIORITY_HIGH;
+
+            final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
+
+            final int idType = Integer.parseInt(temp.substring(0, 1));
+            final int idSubType = Integer.parseInt(temp.substring(1, 2));
+            //final String date = temp.substring(2, temp.indexOf("*"));
+            String text = temp.substring(temp.indexOf("*") + 1);
+
+            String title = null;
+            // Обновлено расписание
+            if(idType == 0){
+                title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
+                if(text.contains(":"))
+                    text = text.substring(text.indexOf(":") + 2);
+            }
+
+            final Intent mIntent = new Intent(this, MainActivity.class);
+            TaskStackBuilder mTaskStackBuilder = TaskStackBuilder.create(this);
+            mTaskStackBuilder.addParentStack(MainActivity.class);
+            mTaskStackBuilder.addNextIntent(mIntent);
+            PendingIntent mPendingIntent = mTaskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            final NotificationCompat.Builder mNotification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_pin)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setWhen(System.currentTimeMillis())
+                    .setPriority(priority)
+                    .setLights(Color.parseColor("#4c6bb8"), 1, 0)
+                    .setColor(Color.argb(100, 255, 110, 0))
+                    .setContentIntent(mPendingIntent)
+                    .setDefaults(defaults)
+                    .setNumber(count)
+                    .setAutoCancel(true);
+
+            final NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            mNotificationManager.notify(idType, mNotification.build());
         }
-
-        final Intent mIntent = new Intent(this, MainActivity.class);
-        TaskStackBuilder mTaskStackBuilder = TaskStackBuilder.create(this);
-        mTaskStackBuilder.addParentStack(MainActivity.class);
-        mTaskStackBuilder.addNextIntent(mIntent);
-        PendingIntent mPendingIntent = mTaskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        final NotificationCompat.Builder mNotification = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_pin)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setWhen(System.currentTimeMillis())
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setLights(Color.parseColor("#4c6bb8"), 1, 0)
-                .setColor(Color.argb(100, 255, 110, 0))
-                .setContentIntent(mPendingIntent)
-                .setNumber(count)
-                .setAutoCancel(true);
-
-        final NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        mNotificationManager.notify(idType, mNotification.build());
     }
 }

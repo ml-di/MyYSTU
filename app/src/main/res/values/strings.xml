@@ -89,4 +89,27 @@
     <string name="toast_isCopyText">Текст скопирован</string>
     <string name="toast_errorDeleteFile">Не удалось удалить файл</string>
 
+    <!-- Settings -->
+    <string name="settings_category_general">Основные</string>
+    <string name="settings_category_additional">Дополнительные</string>
+    <string name="settings_category_other">Другое</string>
+
+    <string name="settings_general_photoSize">Размер загружаемых фото</string>
+    <string name="settings_general_notification">Уведомления</string>
+    <string name="settings_general_notification_on">Включить уведомления</string>
+    <string name="settings_general_notification_song">Звук</string>
+    <string name="settings_general_notification_song_on">Включить звук</string>
+    <string name="settings_general_notification_vibration">Вибрация</string>
+    <string name="settings_general_notification_indicator">Индикатор</string>
+    <string name="settings_general_notification_push">Всплывающие уведомления</string>
+
+    <string name="settings_category_additional_cache">Кеш</string>
+    <string name="settings_category_additional_cache_delete_photo">Удалить кеш фото</string>
+    <string name="settings_category_additional_cache_delete_data">Удалить данные приложения</string>
+    <string name="settings_category_additional_cache_delete_schedule">Удалить файлы расписания</string>
+    <string name="settings_category_additional_cache_summary">Занято:</string>
+
+    <string name="settings_category_other_about">О программе</string>
+    <string name="settings_category_other_library_about">Лицензия открытого ПО</string>
+
 </resources>
