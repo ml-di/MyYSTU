@@ -24,6 +24,14 @@
                 android:title="@string/settings_general_notification_on"
                 app:iconSpaceReserved="false" />
 
+            <MultiSelectListPreference
+                android:defaultValue="@array/type_Values"
+                android:entries="@array/type_Array"
+                android:entryValues="@array/type_Values"
+                android:key="preference_notification_type"
+                android:title="@string/settings_general_notification_type"
+                app:iconSpaceReserved="false" />
+
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="preference_notification_ringtone_enable"
@@ -59,6 +67,36 @@
     <PreferenceCategory android:title="@string/settings_category_additional">
 
         <PreferenceScreen
+            android:icon="@drawable/ic_update"
+            android:key="preference_additional_update"
+            android:title="@string/settings_category_additional_update">
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="preference_additional_update_enable"
+                android:title="@string/settings_category_additional_update_enable"
+                app:iconSpaceReserved="false" />
+
+            <ListPreference
+                android:defaultValue="900"
+                android:entries="@array/delay_Array"
+                android:entryValues="@array/delay_Values"
+                android:key="preference_additional_update_delay"
+                android:summary="Каждые 15 мин"
+                android:title="@string/settings_category_additional_update_delay"
+                app:iconSpaceReserved="false" />
+
+            <MultiSelectListPreference
+                android:defaultValue="@array/type_Values"
+                android:entries="@array/type_Array"
+                android:entryValues="@array/type_Values"
+                android:key="preference_additional_update_type"
+                android:title="@string/settings_category_additional_update_type"
+                app:iconSpaceReserved="false" />
+
+        </PreferenceScreen>
+
+        <PreferenceScreen
             android:icon="@drawable/ic_cache"
             android:key="preference_additional_cache"
             android:title="@string/settings_category_additional_cache">
@@ -67,12 +105,6 @@
                 android:key="preference_cache_photo"
                 android:summary="Занято: 0 Б"
                 android:title="@string/settings_category_additional_cache_delete_photo"
-                app:iconSpaceReserved="false" />
-
-            <Preference
-                android:key="preference_cache_data"
-                android:summary="Занято: 0 Б"
-                android:title="@string/settings_category_additional_cache_delete_data"
                 app:iconSpaceReserved="false" />
 
             <Preference
