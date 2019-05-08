@@ -1,5 +1,7 @@
 package ru.ystu.myystu.Network;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
 
 import org.json.simple.JSONArray;
@@ -12,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.preference.ListPreference;
+import androidx.preference.PreferenceManager;
 import io.reactivex.Single;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -25,8 +29,7 @@ import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 
 public class GetListNewsFromURL {
 
-    public Single<ArrayList<Parcelable>> getSingleNewsList (String url, boolean isOffset, ArrayList<Parcelable> mList){
-
+    public Single<ArrayList<Parcelable>> getSingleNewsList (String url, boolean isOffset, ArrayList<Parcelable> mList, Context mContext){
         return Single.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
@@ -144,9 +147,18 @@ public class GetListNewsFromURL {
                                                             final JSONObject photo = (JSONObject) attachment.get("photo");
 
                                                             final String urlFull;
-                                                            final String urlPreview = (String) Objects.requireNonNull(photo).get("src_big");
+                                                            final String urlPreview;
                                                             final int width = ((Long) Objects.requireNonNull(photo.get("width"))).intValue();
                                                             final int height = ((Long) Objects.requireNonNull(photo.get("height"))).intValue();
+
+                                                            // Получение превью
+                                                            final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+                                                            final String sizePhoto = sharedPrefs.getString("preference_general_photoSize", "src_big");
+
+                                                            if(photo.get(sizePhoto) != null)
+                                                                urlPreview = (String) Objects.requireNonNull(photo).get(sizePhoto);
+                                                            else
+                                                                urlPreview = (String) Objects.requireNonNull(photo).get("src_big");
 
                                                             // Получение оригинала
                                                             if(photo.get("src_xxxbig") != null)

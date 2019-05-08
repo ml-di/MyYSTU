@@ -15,7 +15,6 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.ystu.myystu.Activitys.MainActivity;
 import ru.ystu.myystu.Activitys.SettingsActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.MenuItemsAdapter;

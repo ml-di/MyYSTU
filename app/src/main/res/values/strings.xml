@@ -88,6 +88,7 @@
     <string name="toast_isCopyLink">Ссылка скопирована</string>
     <string name="toast_isCopyText">Текст скопирован</string>
     <string name="toast_errorDeleteFile">Не удалось удалить файл</string>
+    <string name="toast_reloadApp">Требуется перезапуск приложения</string>
 
     <!-- Settings -->
     <string name="settings_category_general">Основные</string>

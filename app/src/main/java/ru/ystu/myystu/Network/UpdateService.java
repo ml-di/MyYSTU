@@ -2,6 +2,7 @@ package ru.ystu.myystu.Network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,6 +59,7 @@ public class UpdateService {
 
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) {
+
                             try {
                                 Document doc = null;
                                 try {
@@ -143,6 +145,8 @@ public class UpdateService {
                                         }
                                     }
                                 }
+
+
 
                                 if(!emitter.isDisposed()){
                                     emitter.onNext("end");

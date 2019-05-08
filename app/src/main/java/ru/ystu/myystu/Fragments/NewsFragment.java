@@ -224,7 +224,7 @@ public class NewsFragment extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(true);
 
                 final Single<ArrayList<Parcelable>> singleNewsList
-                        = getListNewsFromURL.getSingleNewsList(url, isOffset, mList);
+                        = getListNewsFromURL.getSingleNewsList(url, isOffset, mList, mContext);
                 mDisposables.add(singleNewsList
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

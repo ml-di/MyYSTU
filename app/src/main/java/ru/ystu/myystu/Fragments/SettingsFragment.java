@@ -2,6 +2,7 @@ package ru.ystu.myystu.Fragments;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipeline;
@@ -46,11 +47,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
         // Включить / Отключить обновления
-        final SwitchPreference updateNotification = findPreference("preference_additional_update_enable");
-        if(updateNotification != null) {
-            notificationUpdateChange(updateNotification);
-            updateNotification.setOnPreferenceClickListener(view -> {
-                notificationUpdateChange(updateNotification);
+        final SwitchPreference enableUpdate = findPreference("preference_additional_update_enable");
+        if(enableUpdate != null) {
+            notificationUpdateChange(enableUpdate);
+            enableUpdate.setOnPreferenceClickListener(view -> {
+                notificationUpdateChange(enableUpdate);
+                Toast.makeText(getContext(), getResources().getString(R.string.toast_reloadApp), Toast.LENGTH_SHORT).show();
                 return true;
             });
         }
@@ -67,6 +69,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
                     index++;
                 }
+
+                Toast.makeText(getContext(), getResources().getString(R.string.toast_reloadApp), Toast.LENGTH_SHORT).show();
+
                 return true;
             });
         }

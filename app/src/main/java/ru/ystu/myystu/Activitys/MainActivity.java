@@ -19,6 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mBellFragment;
     private Fragment mMenuFragment;
     private CoordinatorLayout mContentContainer;
+
+    private boolean updateEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         badgeChange(mSharedPreferences.getAll().size());
+
+        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        updateEnabled = sharedPrefs.getBoolean("preference_additional_update_enable", true);
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
 
@@ -167,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onRestoreInstanceState(savedInstanceState);
     }
+
     public void badgeChange (int count){
 
         if(count > 0)
@@ -185,15 +192,16 @@ public class MainActivity extends AppCompatActivity {
             paramsBottomBar.setBehavior(new HideBottomViewOnScrollBehavior());
             paramsMainLayout.setMargins(0, 0, 0, 0);
         }
-
     }
 
     private void startService() {
-        // Запуск сервиса для проверки обновлений
-        final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
-        final Intent mIntent = new Intent(this, UpdateCheck.class)
-                .putExtra("pending", mPendingIntent);
+        if(updateEnabled) {
+            // Запуск сервиса для проверки обновлений
+            final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
+            final Intent mIntent = new Intent(this, UpdateCheck.class)
+                    .putExtra("pending", mPendingIntent);
 
-        startService(mIntent);
+            startService(mIntent);
+        }
     }
 }

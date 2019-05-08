@@ -9,6 +9,7 @@ import androidx.preference.PreferenceScreen;
 import ru.ystu.myystu.Fragments.SettingsFragment;
 import ru.ystu.myystu.R;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

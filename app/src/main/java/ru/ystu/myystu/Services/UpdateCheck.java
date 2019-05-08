@@ -13,6 +13,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
@@ -32,7 +33,7 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 public class UpdateCheck extends Service {
 
     // TODO интервал обновления
-    private final int DELAY_UPDATE_SEC = 900;     // Интервал проверки обновлений в сек
+    private int DELAY_UPDATE_SEC = 900;           // Интервал проверки обновлений в сек
     private final int DELAY_WAIT_CONNECT = 5;     // Интервал проверки подключения к интернету в сек
 
     private UpdateService mUpdateService;
@@ -43,24 +44,22 @@ public class UpdateCheck extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mContext = this;
         mUpdateService = new UpdateService(this);
         mDisposables = new CompositeDisposable();
 
+        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        DELAY_UPDATE_SEC = Integer.parseInt(Objects.requireNonNull(sharedPrefs.getString("preference_additional_update_delay", "900")));
         update();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e("tag", "start");
-
         if(intent != null && intent.getParcelableExtra("pending") != null){
             mPendingIntent = intent.getParcelableExtra("pending");
         }
 
-        Log.e("tag", mPendingIntent.getCreatorPackage());
         return START_REDELIVER_INTENT;
     }
 
@@ -84,7 +83,7 @@ public class UpdateCheck extends Service {
     private void update(){
 
         final Observable<String> mObservable = mUpdateService.checkSchedule();
-        final boolean[] isUpdate = {false};
+        final boolean[] isNew = {false};
         final List<String> temp = new ArrayList<>();
 
         mDisposables.add(mObservable
@@ -114,7 +113,7 @@ public class UpdateCheck extends Service {
                             temp.clear();
                         } else {
                             temp.add(s);
-                            isUpdate[0] = true;
+                            isNew[0] = true;
                         }
                     }
 
@@ -125,10 +124,10 @@ public class UpdateCheck extends Service {
 
                     @Override
                     public void onComplete() {
-                        if(isUpdate[0]){
+                        if(isNew[0]){
 
                             final Intent intent = new Intent();
-                            intent.putExtra("isUpdate", true);
+                            intent.putExtra("isNew", true);
                             if(mPendingIntent != null){
                                 try {
                                     mPendingIntent.send(UpdateCheck.this, 0, intent);
@@ -139,7 +138,7 @@ public class UpdateCheck extends Service {
 
                             showNotification(temp.get(temp.size() - 1), temp.size());
 
-                            isUpdate[0] = false;
+                            isNew[0] = false;
                         }
                     }
                 }));
