@@ -32,8 +32,9 @@
     <style name="Toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
-        <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <!-- <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item> -->
         <item name="android:background">@color/colorToolBar</item>
+
     </style>
 
     <!-- Тема для tabLayout -->

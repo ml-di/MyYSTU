@@ -5,18 +5,15 @@ import android.os.Parcelable;
 
 public class JobItemsData implements Parcelable {
 
-    private final int id;
     private final String organization;
     private final String post;
     private final String url;
     private final String fileType;
 
-    public JobItemsData(final int id,
-                        final String organization,
+    public JobItemsData(final String organization,
                         final String post,
                         final String url,
                         final String fileType) {
-        this.id = id;
         this.organization = organization;
         this.post = post;
         this.url = url;
@@ -24,7 +21,6 @@ public class JobItemsData implements Parcelable {
     }
 
     private JobItemsData(Parcel in) {
-        id = in.readInt();
         organization = in.readString();
         post = in.readString();
         url = in.readString();
@@ -50,16 +46,12 @@ public class JobItemsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
         parcel.writeString(organization);
         parcel.writeString(post);
         parcel.writeString(url);
         parcel.writeString(fileType);
     }
 
-    public int getId() {
-        return id;
-    }
     public String getOrganization() {
         return organization;
     }

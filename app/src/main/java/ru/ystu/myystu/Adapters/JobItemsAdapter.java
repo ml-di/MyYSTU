@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,7 +21,6 @@ import java.net.URLDecoder;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
@@ -28,24 +28,38 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobReaderActivity;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
-public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobItemsViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
+public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
-    private static List<JobItemsData> mList;
+    private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
+    private static final int ITEM_JOB = 1;
+
+    private List<Parcelable> mList;
     private Context mContext;
 
-    static class JobItemsViewHolder extends RecyclerView.ViewHolder{
+    static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
 
-        private int id;
-        final private AppCompatTextView organization;
-        final private AppCompatTextView fileType;
-        final private AppCompatImageView icon;
-        final private AppCompatImageView menu;
+        PlaceholderViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
 
-        JobItemsViewHolder(View itemView, final List<JobItemsData> mList, final Context mContext) {
+        void setPlaceholder (ToolbarPlaceholderData placeholderItem) {
+
+        }
+    }
+
+    static class JobItemViewHolder extends RecyclerView.ViewHolder {
+
+        private AppCompatTextView organization;
+        private AppCompatTextView fileType;
+        private AppCompatImageView icon;
+        private AppCompatImageView menu;
+
+        JobItemViewHolder(View itemView) {
             super(itemView);
 
             organization = itemView.findViewById(R.id.itemJob_organization);
@@ -53,14 +67,28 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
             icon  = itemView.findViewById(R.id.itemJob_icon);
             menu = itemView.findViewById(R.id.itemJob_menu);
 
+        }
+
+        void setJob (JobItemsData jobItem, Context mContext) {
+
+            organization.setText(jobItem.getOrganization());
+
+            if(jobItem.getFileType().equals("FILE")){
+                icon.setImageResource(R.drawable.ic_document);
+                fileType.setText(jobItem.getUrl().substring(jobItem.getUrl().lastIndexOf(".") + 1));
+            } else {
+                icon.setImageResource(R.drawable.ic_document_text);
+                fileType.setText("");
+            }
+
             menu.setOnClickListener(view -> {
-                new MenuItem().showMenu(view, mContext, getAdapterPosition());
+                new MenuItem().showMenu(view, mContext, jobItem);
             });
         }
     }
 
-    public JobItemsAdapter(List<JobItemsData> mList, Context mContext) {
-        JobItemsAdapter.mList = mList;
+    public JobItemsAdapter(List<Parcelable> mList, Context mContext) {
+        this.mList = mList;
         this.mContext = mContext;
     }
 
@@ -73,24 +101,43 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
     @NonNull
     @Override
-    public JobItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_job_item, parent, false);
-        return new JobItemsViewHolder(mView, mList, mContext);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        RecyclerView.ViewHolder mViewHolder;
+
+        switch (viewType) {
+            case ITEM_TOOLBAR_PLACEHOLDER:
+                final View viewPlaceholder = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_toolbar_placeholder, parent, false);
+                mViewHolder = new PlaceholderViewHolder(viewPlaceholder);
+                break;
+
+            case ITEM_JOB:
+                final View viewJob = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_job_item, parent, false);
+                mViewHolder = new JobItemViewHolder(viewJob);
+                break;
+
+            default:
+                mViewHolder = null;
+                break;
+        }
+
+        return mViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull JobItemsViewHolder holder, int position) {
-        holder.organization.setText(mList.get(position).getOrganization());
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        if(mList.get(position).getFileType().equals("FILE")){
-            holder.icon.setImageResource(R.drawable.ic_document);
-            holder.fileType.setText(mList.get(position).getUrl().substring(mList.get(position).getUrl().lastIndexOf(".") + 1));
-        } else {
-            holder.icon.setImageResource(R.drawable.ic_document_text);
-            holder.fileType.setText("");
+        int viewType = holder.getItemViewType();
+        switch (viewType) {
+            case ITEM_TOOLBAR_PLACEHOLDER:
+                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mList.get(position);
+                ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
+                break;
+            case ITEM_JOB:
+                final JobItemsData job = (JobItemsData) mList.get(position);
+                ((JobItemViewHolder) holder).setJob(job, mContext);
+                break;
         }
-
-        holder.id = mList.get(position).getId();
     }
 
     @Override
@@ -100,7 +147,18 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+
+        int viewType;
+
+        if (mList.get(position) instanceof ToolbarPlaceholderData) {
+            viewType = ITEM_TOOLBAR_PLACEHOLDER;
+        } else if (mList.get(position) instanceof JobItemsData) {
+            viewType = ITEM_JOB;
+        } else {
+            viewType = -1;
+        }
+
+        return viewType;
     }
 
     @Override
@@ -123,13 +181,13 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
     }
 
     private static class MenuItem {
-        private void showMenu (View mView, Context mContext, int id){
+        private void showMenu (View mView, Context mContext, JobItemsData jobItem){
 
             final PopupMenu itemMenu = new PopupMenu(mView.getContext(), mView);
             itemMenu.inflate(R.menu.menu_job_item);
 
             final Menu mMenu = itemMenu.getMenu();
-            if(mList.get(id).getFileType().equals("FILE")){
+            if(jobItem.getFileType().equals("FILE")){
                 mMenu.getItem(0).setTitle(R.string.menu_download);
                 mMenu.getItem(1).setVisible(true);
             } else {
@@ -143,7 +201,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                     // Скачать / Читать
                     case R.id.menu_job_item_openLink:
 
-                        if(mList.get(id).getFileType().equals("FILE")){
+                        if(jobItem.getFileType().equals("FILE")){
                             // Скачать
                             if(NetworkInformation.hasConnection(mContext)){
 
@@ -155,14 +213,14 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
 
                                         String fileName = null;
                                         try {
-                                            fileName = URLDecoder.decode(mList.get(id).getPost(), "UTF-8");
+                                            fileName = URLDecoder.decode(jobItem.getPost(), "UTF-8");
                                             fileName = fileName.replaceAll(" ", "_");
                                         } catch (UnsupportedEncodingException e) {
                                             e.printStackTrace();
                                         }
 
                                         if(fileName != null){
-                                            final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(mList.get(id).getUrl()));
+                                            final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(jobItem.getUrl()));
                                             mRequest
                                                     .setTitle(fileName)
                                                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
@@ -187,8 +245,8 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                             // Прочитать
 
                             final Intent readIntent = new Intent(mContext, JobReaderActivity.class);
-                            readIntent.putExtra("content", mList.get(id).getPost());
-                            readIntent.putExtra("title", mList.get(id).getOrganization());
+                            readIntent.putExtra("content", jobItem.getPost());
+                            readIntent.putExtra("title", jobItem.getOrganization());
                             mContext.startActivity(readIntent);
                             ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
                         }
@@ -197,7 +255,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                     // Открыть в бразуере, если файл
                     case R.id.menu_job_item_openLinkInBrowser:
 
-                        final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(mList.get(id).getUrl()));
+                        final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(jobItem.getUrl()));
                         mContext.startActivity(openLink);
 
                         return true;
@@ -205,16 +263,16 @@ public class JobItemsAdapter extends RecyclerView.Adapter<JobItemsAdapter.JobIte
                     case R.id.menu_job_item_share:
 
                         final String shareText;
-                        if(mList.get(id).getFileType().equals("FILE")){
-                            shareText = mList.get(id).getUrl();
+                        if(jobItem.getFileType().equals("FILE")){
+                            shareText = jobItem.getUrl();
                         } else {
-                            shareText = Html.fromHtml(mList.get(id).getPost()).toString();
+                            shareText = Html.fromHtml(jobItem.getPost()).toString();
                         }
 
                         final Intent sharePost = new Intent();
                         sharePost
                                 .setAction(Intent.ACTION_SEND)
-                                .putExtra(Intent.EXTRA_TEXT, mList.get(id).getOrganization() + "\n\n" + shareText)
+                                .putExtra(Intent.EXTRA_TEXT, jobItem.getOrganization() + "\n\n" + shareText)
                                 .setType("text/plain");
                         mContext.startActivity(sharePost);
 

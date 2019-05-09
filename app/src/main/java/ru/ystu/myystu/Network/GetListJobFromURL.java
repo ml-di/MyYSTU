@@ -1,5 +1,7 @@
 package ru.ystu.myystu.Network;
 
+import android.os.Parcelable;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,10 +18,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 
 public class GetListJobFromURL {
 
-    public Single<ArrayList<JobItemsData>> getSingleJobList (String url, ArrayList<JobItemsData> mList){
+    public Single<ArrayList<Parcelable>> getSingleJobList (String url, ArrayList<Parcelable> mList){
 
         return Single.create(emitter -> {
 
@@ -63,13 +66,12 @@ public class GetListJobFromURL {
                                 if(mList.size() > 0)
                                     mList.clear();
 
+                                mList.add(new ToolbarPlaceholderData(0));
+
                                 String organization;
                                 String post;
                                 String url;
-                                String date;
                                 String fileType;
-
-                                int id = 0;
 
                                 if (els != null) {
 
@@ -99,12 +101,9 @@ public class GetListJobFromURL {
                                                         break;
                                                     }
                                                 }
-
                                                 a++;
                                             }
-
-                                            mList.add(new JobItemsData(id, organization, post, url, fileType));
-                                            id++;
+                                            mList.add(new JobItemsData(organization, post, url, fileType));
                                         }
                                     }
                                 } else {
@@ -118,7 +117,6 @@ public class GetListJobFromURL {
                                     else
                                         emitter.onSuccess(mList);
                                 }
-
 
                             } catch (Exception e){
                                 if(!emitter.isDisposed())

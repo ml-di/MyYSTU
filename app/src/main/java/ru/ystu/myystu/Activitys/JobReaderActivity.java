@@ -5,6 +5,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.StringFormatter;
 
 import android.content.ClipData;
@@ -32,6 +33,8 @@ public class JobReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_reader);
 
+        LightStatusBar.setLight(true, this);
+
         Bundle mBundle = getIntent().getExtras();
         if(mBundle != null){
             content = mBundle.getString("content");
@@ -49,7 +52,7 @@ public class JobReaderActivity extends AppCompatActivity {
         mToolbar.setTitle(title);
 
         final StringFormatter stringFormatter = new StringFormatter();
-        Spanned spanText = Html.fromHtml(content);
+        Spanned spanText = Html.fromHtml("<br><br>" + content);
         spanText = stringFormatter.getFormattedString(spanText.toString());
         text.setText(spanText);
         text.setMovementMethod(LinkMovementMethod.getInstance());

@@ -3,8 +3,6 @@ package ru.ystu.myystu.AdaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 public class ScheduleChangeData implements Parcelable {
 
     private final String date;

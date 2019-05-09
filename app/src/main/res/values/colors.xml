@@ -8,7 +8,7 @@
     <color name="colorPrimaryLightOpacity">#B24C6BB8</color>
 
     <color name="colorMenuItem">#fff</color>
-    <color name="colorToolBar">#fff</color>
+    <color name="colorToolBar">#F2FFFFFF</color>
 
     <color name="colorTextPrimary">#424242</color>
     <color name="colorTextSecondary">#616161</color>

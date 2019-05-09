@@ -26,8 +26,9 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Network.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
-import ru.ystu.myystu.AdaptersData.JobItemsData;
+import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
 public class JobActivity extends AppCompatActivity {
@@ -38,7 +39,7 @@ public class JobActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<JobItemsData> mList;
+    private ArrayList<Parcelable> mList;
     private Parcelable mRecyclerState;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CompositeDisposable mDisposables;
@@ -51,6 +52,8 @@ public class JobActivity extends AppCompatActivity {
 
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_job);
+
+        LightStatusBar.setLight(true, this);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_job);
         setSupportActionBar(mToolbar);
@@ -76,6 +79,7 @@ public class JobActivity extends AppCompatActivity {
                 R.color.colorPrimary);
 
         mSwipeRefreshLayout.setOnRefreshListener(this::getJob);
+        mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -148,14 +152,14 @@ public class JobActivity extends AppCompatActivity {
             mList = new ArrayList<>();
             mSwipeRefreshLayout.setRefreshing(true);
 
-            final Single<ArrayList<JobItemsData>> mSingleJobList
+            final Single<ArrayList<Parcelable>> mSingleJobList
                     = getListJobFromURL.getSingleJobList(url, mList);
             mDisposables.add(mSingleJobList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<ArrayList<JobItemsData>>() {
+                    .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>() {
                         @Override
-                        public void onSuccess(ArrayList<JobItemsData> jobItemsData) {
+                        public void onSuccess(ArrayList<Parcelable> jobItemsData) {
                             mList = jobItemsData;
 
                             mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
