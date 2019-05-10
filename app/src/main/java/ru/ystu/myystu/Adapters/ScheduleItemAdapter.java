@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,15 +35,29 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Network.LoadScheduleFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
-public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapter.ScheduleItemViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
-    private ArrayList<ScheduleListItemData> mList;
+    private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
+    private static final int ITEM_SCHEDULE = 1;
+
+    private ArrayList<Parcelable> mList;
     private Context mContext;
+
+    static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
+
+        PlaceholderViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        void setPlaceholder (ToolbarPlaceholderData placeholderItem) {
+
+        }
+    }
 
     static class ScheduleItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -55,10 +70,9 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
         private AppCompatTextView text;
         private ConstraintLayout item;
         private AppCompatImageView menu;
-        final private AppCompatImageView downloadIcon;
+        private AppCompatImageView downloadIcon;
 
-
-        ScheduleItemViewHolder(@NonNull View itemView, final ArrayList<ScheduleListItemData> mList, final Context mContext) {
+        ScheduleItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             text = itemView.findViewById(R.id.schedule_item_text);
@@ -66,21 +80,45 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
             menu = itemView.findViewById(R.id.menu_schedule_item);
             downloadIcon = itemView.findViewById(R.id.schedule_item_download_icon);
 
+        }
+
+        void setSchedule (ScheduleListItemData scheduleItem, Context mContext) {
+
+            text.setText(scheduleItem.getName());
+            id = scheduleItem.getId();
+            fileName = scheduleItem.getName();
+            link = scheduleItem.getLink();
+
+            File dir;
+            File file;
+            String ext;
+
+            dir = new File(Environment.getExternalStorageDirectory(),
+                    "/.MyYSTU/" + prefix[scheduleItem.getId()]);
+            ext = scheduleItem.getLink().substring(scheduleItem.getLink().lastIndexOf("."));
+            file = new File(dir, scheduleItem.getName() + ext);
+
+            if(file.exists()){
+                downloadIcon.setVisibility(View.VISIBLE);
+            } else {
+                downloadIcon.setVisibility(View.GONE);
+            }
+
             // Открыть расписание
             item.setOnClickListener(view -> {
 
-                final File dir = new File(Environment.getExternalStorageDirectory(),
+                final File dir_item = new File(Environment.getExternalStorageDirectory(),
                         "/.MyYSTU/" + prefix[id]);
 
-                final String ext = link.substring(link.lastIndexOf("."));
-                final File file = new File(dir, fileName + ext);
+                final String ext_item = link.substring(link.lastIndexOf("."));
+                final File file_item = new File(dir_item, fileName + ext_item);
 
-                if(!file.exists()) {
+                if(!file_item.exists()) {
                     // Скачать файл
-                    downloadFile(file, link, mContext, getAdapterPosition(), 0);
+                    downloadFile(file_item, link, mContext, getAdapterPosition(), 0);
                 } else {
                     // Открыть файл
-                    openFile(file, mContext);
+                    openFile(file_item, mContext);
                 }
 
             });
@@ -88,19 +126,19 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
             // Меню элемента
             menu.setOnClickListener(view -> {
 
-                final File dir = new File(Environment.getExternalStorageDirectory(),
+                final File dir_menu = new File(Environment.getExternalStorageDirectory(),
                         "/.MyYSTU/" + prefix[id]);
 
-                final String ext = link.substring(link.lastIndexOf("."));
-                final File file = new File(dir, fileName + ext);
+                final String ext_menu = link.substring(link.lastIndexOf("."));
+                final File file_menu = new File(dir_menu, fileName + ext_menu);
 
-                new MenuItem().showMenu(view, mContext, file, link, fileName, getAdapterPosition());
+                new MenuItem().showMenu(view, mContext, file_menu, link, fileName, getAdapterPosition());
 
             });
         }
     }
 
-    public ScheduleItemAdapter(ArrayList<ScheduleListItemData> mList, Context mContext) {
+    public ScheduleItemAdapter(ArrayList<Parcelable> mList, Context mContext) {
         this.mList = mList;
         this.mContext = mContext;
     }
@@ -114,28 +152,42 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
 
     @NonNull
     @Override
-    public ScheduleItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item, parent, false);
-        return new ScheduleItemViewHolder(v, mList, mContext);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        RecyclerView.ViewHolder mViewHolder;
+
+        switch (viewType) {
+            case ITEM_TOOLBAR_PLACEHOLDER:
+                final View viewPlaceholder = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_toolbar_placeholder, parent, false);
+                mViewHolder = new PlaceholderViewHolder(viewPlaceholder);
+                break;
+
+            case ITEM_SCHEDULE:
+                final View viewSchedule = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item, parent, false);
+                mViewHolder = new ScheduleItemViewHolder(viewSchedule);
+                break;
+
+            default:
+                mViewHolder = null;
+                break;
+        }
+
+        return mViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ScheduleItemViewHolder holder, int position) {
-        holder.text.setText(mList.get(position).getName());
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        holder.id = mList.get(position).getId();
-        holder.fileName = mList.get(position).getName();
-        holder.link = mList.get(position).getLink();
-
-
-        final File dir = new File(Environment.getExternalStorageDirectory(),
-                "/.MyYSTU/" + prefix[mList.get(position).getId()]);
-        final String ext = mList.get(position).getLink().substring(mList.get(position).getLink().lastIndexOf("."));
-        final File file = new File(dir, mList.get(position).getName() + ext);
-        if(file.exists()){
-            holder.downloadIcon.setVisibility(View.VISIBLE);
-        } else {
-            holder.downloadIcon.setVisibility(View.GONE);
+        int viewType = holder.getItemViewType();
+        switch (viewType) {
+            case ITEM_TOOLBAR_PLACEHOLDER:
+                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mList.get(position);
+                ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
+                break;
+            case ITEM_SCHEDULE:
+                final ScheduleListItemData schedule = (ScheduleListItemData) mList.get(position);
+                ((ScheduleItemViewHolder) holder).setSchedule(schedule, mContext);
+                break;
         }
     }
 
@@ -151,7 +203,18 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<ScheduleItemAdapte
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+
+        int viewType;
+
+        if (mList.get(position) instanceof ToolbarPlaceholderData) {
+            viewType = ITEM_TOOLBAR_PLACEHOLDER;
+        } else if (mList.get(position) instanceof ScheduleListItemData) {
+            viewType = ITEM_SCHEDULE;
+        } else {
+            viewType = -1;
+        }
+
+        return viewType;
     }
 
     @Override

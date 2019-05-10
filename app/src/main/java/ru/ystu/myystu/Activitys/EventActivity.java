@@ -25,7 +25,9 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Network.GetListEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
+import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
 public class EventActivity extends AppCompatActivity {
@@ -47,12 +49,12 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
+        LightStatusBar.setLight(true, this);
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_event);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_event);
         setSupportActionBar(mToolbar);
-
         mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         mToolbar.setNavigationOnClickListener(view -> onBackPressed());
         mToolbar.setOnClickListener(e -> {
@@ -66,15 +68,15 @@ public class EventActivity extends AppCompatActivity {
         });
 
         mLayoutManager = new LinearLayoutManager(this);
-
         mRecyclerView = findViewById(R.id.recycler_event_items);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
         mSwipeRefreshLayout = findViewById(R.id.refresh_event);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(() -> getEvent(url));
-
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
         mDisposables = new CompositeDisposable();
         getListEventFromURL = new GetListEventFromURL();
@@ -162,7 +164,7 @@ public class EventActivity extends AppCompatActivity {
                                 mRecyclerViewAdapter.setHasStableIds(true);
                                 mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             } else {
-                                mRecyclerViewAdapter.notifyItemRangeChanged(1, mList.size());
+                                mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
                             }
 
                             mSwipeRefreshLayout.setRefreshing(false);

@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import ru.ystu.myystu.Adapters.SchedulePagerAdapter;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.LightStatusBar;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -25,6 +26,8 @@ public class ScheduleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
+
+        LightStatusBar.setLight(true, this);
 
         final Toolbar mToolBar = findViewById(R.id.toolBar_schedule);
         setSupportActionBar(mToolBar);

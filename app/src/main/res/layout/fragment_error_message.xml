@@ -10,22 +10,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/error_message_icon"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center"
-            tools:srcCompat="@drawable/ic_connect_error" />
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:layout_gravity="center">
+
+            <androidx.appcompat.widget.ContentFrameLayout
+                android:id="@+id/error_message_icon_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.075"
+                android:background="@drawable/shape_circle"
+                android:backgroundTint="@color/colorPrimaryLight" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/error_message_icon"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                tools:srcCompat="@drawable/ic_connect_error" />
+
+        </androidx.appcompat.widget.ContentFrameLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/error_message_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
             android:alpha="0.5"
             android:ellipsize="end"
@@ -52,23 +68,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:layout_marginTop="32dp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/shape_rectangle_rounded_border"
-                android:paddingStart="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/shape_rectangle_rounded"
+                android:backgroundTint="@color/colorPrimaryLight"
+                android:elevation="6dp"
+                android:paddingStart="32dp"
                 android:paddingTop="6dp"
-                android:paddingEnd="16dp"
+                android:paddingEnd="32dp"
                 android:paddingBottom="6dp"
                 android:text="@string/error_message_refresh"
-                android:textColor="@color/colorPrimaryLight"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:textAllCaps="true" />
-
         </androidx.appcompat.widget.ContentFrameLayout>
 
     </LinearLayout>

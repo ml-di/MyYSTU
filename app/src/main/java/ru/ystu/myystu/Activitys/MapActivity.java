@@ -7,6 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
 import android.annotation.TargetApi;
@@ -28,6 +29,8 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        LightStatusBar.setLight(true, this);
 
         final ConstraintLayout mainLayout = findViewById(R.id.main_layout_map);
         mSwipeRefreshLayout = findViewById(R.id.refresh_map);

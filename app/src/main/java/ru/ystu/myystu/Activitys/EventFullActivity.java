@@ -20,7 +20,9 @@ import ru.ystu.myystu.AdaptersData.EventAdditionalData_Documents;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
 import ru.ystu.myystu.Network.GetFullEventFromURL;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.StringFormatter;
 
@@ -82,6 +84,7 @@ public class EventFullActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_full);
 
+        LightStatusBar.setLight(true, this);
         mContext = this;
         stringFormatter = new StringFormatter();
 
@@ -109,6 +112,7 @@ public class EventFullActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getEvent);
+        mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
         if(getIntent().getExtras() != null) {
             titleStr = getIntent().getExtras().getString("title");

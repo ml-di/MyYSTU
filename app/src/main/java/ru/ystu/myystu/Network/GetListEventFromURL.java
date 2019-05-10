@@ -20,6 +20,7 @@ import okhttp3.Response;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 
 public class GetListEventFromURL {
 
@@ -68,6 +69,8 @@ public class GetListEventFromURL {
                                     }
                                 }
 
+                                // Добавление пустого пространства под toolbar и шапки
+                                mList.add(new ToolbarPlaceholderData(0));
                                 mList.add(new EventItemsData_Header(titles, links, selected_id));
 
                                 /*

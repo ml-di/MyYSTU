@@ -15,12 +15,14 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.ScheduleItemAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Network.GetSchedule;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,7 +48,7 @@ public class ScheduleListActivity extends AppCompatActivity {
     private GetSchedule getSchedule;
     private Parcelable mRecyclerState;
     private int id;
-    private ArrayList<ScheduleListItemData> mList;
+    private ArrayList<Parcelable> mList;
     private ArrayList<String> changeList;
 
     @Override
@@ -54,6 +56,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_list);
 
+        LightStatusBar.setLight(true, this);
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_schedule_list);
 
@@ -61,14 +64,23 @@ public class ScheduleListActivity extends AppCompatActivity {
         setSupportActionBar(mToolBar);
         mToolBar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         mToolBar.setNavigationOnClickListener(view -> onBackPressed());
+        mToolBar.setOnClickListener(e -> {
+            if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0 && mRecyclerView != null){
+                if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 10)
+                    mRecyclerView.smoothScrollToPosition(0);
+                else
+                    mRecyclerView.scrollToPosition(0);
+            }
+        });
 
-        mRecyclerView = findViewById(R.id.recycler_schdeule_items);
         mSwipeRefreshLayout = findViewById(R.id.refresh_schedule);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getSchedule);
+        mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
         mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView = findViewById(R.id.recycler_schedule_items);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
@@ -113,6 +125,8 @@ public class ScheduleListActivity extends AppCompatActivity {
             mList.clear();
             changeList.clear();
         }
+
+        mList.add(new ToolbarPlaceholderData(0));
 
         mSwipeRefreshLayout.setRefreshing(true);
 

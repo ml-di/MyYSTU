@@ -1,5 +1,7 @@
 package ru.ystu.myystu.Fragments;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import ru.ystu.myystu.R;
 
 public class ErrorMessageFragment extends Fragment {
@@ -19,6 +25,9 @@ public class ErrorMessageFragment extends Fragment {
     private AppCompatTextView messageTextView;
     private AppCompatImageView iconImageView;
     private ContentFrameLayout refreshBtn;
+    private ContentFrameLayout iconBackground;
+
+    private ObjectAnimator scaleDown;
 
     private String msg;
     private int code;
@@ -40,6 +49,25 @@ public class ErrorMessageFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        // Анимация пульсации фона
+        if(scaleDown == null) {
+            scaleDown = ObjectAnimator.ofPropertyValuesHolder(
+                    iconBackground,
+                    PropertyValuesHolder.ofFloat("scaleX", 0.85f),
+                    PropertyValuesHolder.ofFloat("scaleY", 0.85f),
+                    PropertyValuesHolder.ofFloat("alpha", 0.02f));
+            scaleDown.setDuration(2000);
+            scaleDown.setRepeatCount(ObjectAnimator.INFINITE);
+            scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
+            scaleDown.setInterpolator(new FastOutSlowInInterpolator());
+            scaleDown.start();
+        } else {
+            if (scaleDown.isPaused())
+                scaleDown.start();
+        }
+
+
 
         // Лютый костыль :)
         refreshBtn.setOnClickListener(view -> {
@@ -66,6 +94,22 @@ public class ErrorMessageFragment extends Fragment {
                     }
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(scaleDown.isRunning()) {
+            scaleDown.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (scaleDown.isRunning()) {
+            scaleDown.cancel();
+        }
     }
 
     @Override
@@ -115,6 +159,7 @@ public class ErrorMessageFragment extends Fragment {
         messageTextView = mView.findViewById(R.id.error_message_msg);
         iconImageView = mView.findViewById(R.id.error_message_icon);
         refreshBtn = mView.findViewById(R.id.error_message_refresh_btn);
+        iconBackground = mView.findViewById(R.id.error_message_icon_background);
         return mView;
     }
 }

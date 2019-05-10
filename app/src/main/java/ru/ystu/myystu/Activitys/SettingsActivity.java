@@ -4,18 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import ru.ystu.myystu.Fragments.SettingsFragment;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.LightStatusBar;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
 
@@ -25,6 +19,8 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        LightStatusBar.setLight(true, this);
 
         mToolbar = findViewById(R.id.toolBar_settings);
         setSupportActionBar(mToolbar);
