@@ -21,7 +21,6 @@ public class EventItemsData_Event implements Parcelable {
         this.date = date;
         this.location = location;
         this.photoUrl = photoUrl;
-
     }
 
     private EventItemsData_Event(Parcel in){

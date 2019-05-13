@@ -35,7 +35,7 @@ public class JobActivity extends AppCompatActivity {
 
     private Context mContext;
     private ConstraintLayout mainLayout;
-    private final String url = "https://www.ystu.ru/information/students/trudoustroystvo/"; // Url страницы трудоустройство сайта ЯГТУ
+    private final String url = "https://www.ystu.ru/information/students/trudoustroystvo/";         // Url страницы трудоустройство сайта ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;

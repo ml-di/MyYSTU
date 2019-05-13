@@ -1,19 +1,10 @@
 package ru.ystu.myystu.Activitys;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Parcelable;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -22,44 +13,52 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import ru.ystu.myystu.Network.GetListEventFromURL;
+import ru.ystu.myystu.Adapters.UsersItemsAdapter;
+import ru.ystu.myystu.Network.GetListUsersFromURL;
 import ru.ystu.myystu.R;
-import ru.ystu.myystu.Adapters.EventItemsAdapter;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
-public class EventActivity extends AppCompatActivity {
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
+
+public class UsersActivity extends AppCompatActivity {
 
     private Context mContext;
     private ConstraintLayout mainLayout;
-    private String url = "http://www.ystu.ru/events/";                                              // Url страницы событий сайта ЯГТУ
+    private final String url = "http://www.ystu.ru/users/";                                         // Url страницы сотрудников и преподавателей ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ArrayList<Parcelable> mList;
     private Parcelable mRecyclerState;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private CompositeDisposable mDisposables;
-    private GetListEventFromURL getListEventFromURL;
+    private GetListUsersFromURL getListUsersFromURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event);
+        setContentView(R.layout.activity_users);
+
+        mContext = this;
+        mainLayout = findViewById(R.id.main_layout_users);
 
         LightStatusBar.setLight(true, this);
-        mContext = this;
-        mainLayout = findViewById(R.id.main_layout_event);
 
-        final Toolbar mToolbar = findViewById(R.id.toolBar_event);
+        final Toolbar mToolbar = findViewById(R.id.toolBar_users);
         setSupportActionBar(mToolbar);
+
         mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         mToolbar.setNavigationOnClickListener(view -> onBackPressed());
         mToolbar.setOnClickListener(e -> {
-            if(mRecyclerView != null){
-                if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 3)
+            if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() > 0 && mRecyclerView != null){
+                if(((LinearLayoutManager)mLayoutManager).findFirstVisibleItemPosition() < 10)
                     mRecyclerView.smoothScrollToPosition(0);
                 else
                     mRecyclerView.scrollToPosition(0);
@@ -68,27 +67,39 @@ public class EventActivity extends AppCompatActivity {
         });
 
         mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView = findViewById(R.id.recycler_event_items);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mSwipeRefreshLayout = findViewById(R.id.refresh_event);
+        mRecyclerView = findViewById(R.id.recycler_users_items);
+        mSwipeRefreshLayout = findViewById(R.id.refresh_users);
+
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> getEvent(url));
+
+        mSwipeRefreshLayout.setOnRefreshListener(this::getUsers);
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL));
+
         mDisposables = new CompositeDisposable();
-        getListEventFromURL = new GetListEventFromURL();
+
+        getListUsersFromURL = new GetListUsersFromURL();
 
         if(savedInstanceState == null){
-            getEvent(url);
-        }
-        else{
+            getUsers();
+        } else{
             mList = savedInstanceState.getParcelableArrayList("mList");
-            mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
+            mRecyclerViewAdapter = new UsersItemsAdapter(mList, this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mRecyclerState != null)
+            mLayoutManager.onRestoreInstanceState(mRecyclerState);
     }
 
     @Override
@@ -99,29 +110,12 @@ public class EventActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_event, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.menu_event_openInBrowser) {
-            final Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(mIntent);
-        }
-
-        return true;
-    }
-
-    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
         outState.putParcelableArrayList("mList", mList);
-        outState.putString("url", url);
     }
 
     @Override
@@ -129,42 +123,30 @@ public class EventActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
-        url = savedInstanceState.getString("url");
     }
 
-    public void setUrl (String url) {
-        this.url = url;
-    }
-
-    // Загрузка html страницы и ее парсинг
-    public void getEvent(String link){
-        if(NetworkInformation.hasConnection(mContext)){
-            if(mList == null) {
-                mList = new ArrayList<>();
-            } else {
-                mList.clear();
-            }
-
+    // Получение списка сотрудников и преподователей
+    private void getUsers() {
+        if (NetworkInformation.hasConnection(mContext)) {
+            mList = new ArrayList<>();
             mSwipeRefreshLayout.setRefreshing(true);
-
-            final Single<ArrayList<Parcelable>> mSingleEventList
-                    = getListEventFromURL.getSingleEventList(link, mList);
-
-            mDisposables.add(mSingleEventList
+            final Single<ArrayList<Parcelable>> mSingleUsersList
+                    = getListUsersFromURL.getSingleUsersList(url, mList);
+            mDisposables.add(mSingleUsersList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>() {
-
                         @Override
-                        public void onSuccess(ArrayList<Parcelable> eventItemsData) {
-                            mList = eventItemsData;
+                        public void onSuccess(ArrayList<Parcelable> usersItemsData) {
 
-                            if(mRecyclerViewAdapter == null) {
-                                mRecyclerViewAdapter = new EventItemsAdapter(mList, getApplicationContext());
+                            mList = usersItemsData;
+
+                            if (mRecyclerViewAdapter == null) {
+                                mRecyclerViewAdapter = new UsersItemsAdapter(mList, getApplicationContext());
                                 mRecyclerViewAdapter.setHasStableIds(true);
                                 mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             } else {
-                                mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
+                                mRecyclerViewAdapter.notifyItemRangeChanged(1, mList.size());
                             }
 
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -177,7 +159,7 @@ public class EventActivity extends AppCompatActivity {
 
                             if(e.getMessage().equals("Not found")){
                                 ErrorMessage.show(mainLayout, 1,
-                                        mContext.getResources().getString(R.string.error_message_event_not_found),
+                                        mContext.getResources().getString(R.string.error_message_job_not_found),
                                         mContext);
                             } else {
                                 ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);

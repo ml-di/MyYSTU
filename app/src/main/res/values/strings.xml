@@ -11,7 +11,7 @@
     <string name="menu_text_map">Карта корпусов</string>
     <string name="menu_text_event">События</string>
     <string name="menu_text_job">Трудоустройство</string>
-    <string name="menu_text_chat">Обратная связь</string>
+    <string name="menu_text_users">Сотрудники</string>
     <string name="menu_text_settings">Настройки</string>
 
     <!-- Activity вакансии -->

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobActivity;
 import ru.ystu.myystu.Activitys.MapActivity;
 import ru.ystu.myystu.Activitys.EventActivity;
+import ru.ystu.myystu.Activitys.UsersActivity;
 import ru.ystu.myystu.Activitys.ScheduleActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.MenuItemsData;
@@ -32,7 +33,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
         private final AppCompatImageView icon;
         private final ConstraintLayout itemMenu;
 
-        MenuItemsViewHolder(View itemView, final ArrayList<MenuItemsData> mList, final Context mContext) {
+        MenuItemsViewHolder(View itemView, final Context mContext) {
             super(itemView);
 
 
@@ -61,9 +62,9 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                     case 3:
                         mContext.startActivity(new Intent(mContext, JobActivity.class));
                         break;
-                    // Обратная связь
+                    // Сотрудники и преподаватели
                     case 4:
-
+                        mContext.startActivity(new Intent(mContext, UsersActivity.class));
                         break;
                 }
             });
@@ -86,7 +87,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
     @Override
     public MenuItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_menu_item, parent, false);
-        return new MenuItemsViewHolder(mView, mList, mContext);
+        return new MenuItemsViewHolder(mView, mContext);
     }
 
     @Override

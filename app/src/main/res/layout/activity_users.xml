@@ -6,20 +6,20 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:fitsSystemWindows="true"
-    tools:context=".Activitys.JobActivity">
+    tools:context=".Activitys.UsersActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_layout_job"
+        android:id="@+id/main_layout_users"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_job"
+            android:id="@+id/refresh_users"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_job_items"
+                android:id="@+id/recycler_users_items"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/white" />
@@ -33,9 +33,10 @@
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolBar_job"
+            android:id="@+id/toolBar_users"
             style="@style/Toolbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="@string/activity_job_title" />
+            app:title="@string/menu_text_users" />
     </com.google.android.material.appbar.AppBarLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

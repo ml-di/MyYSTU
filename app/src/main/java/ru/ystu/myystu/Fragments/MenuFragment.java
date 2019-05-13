@@ -44,7 +44,7 @@ public class MenuFragment extends Fragment {
         mList.add(new MenuItemsData(2, R.drawable.ic_event, getResources().getString(R.string.menu_text_event)));
         mList.add(new MenuItemsData(1, R.drawable.ic_map, getResources().getString(R.string.menu_text_map)));
         mList.add(new MenuItemsData(3, R.drawable.ic_job, getResources().getString(R.string.menu_text_job)));
-        mList.add(new MenuItemsData(4, R.drawable.ic_chat, getResources().getString(R.string.menu_text_chat)));
+        mList.add(new MenuItemsData(4, R.drawable.ic_person, getResources().getString(R.string.menu_text_users)));
 
         final RecyclerView.Adapter mRecyclerViewAdapter = new MenuItemsAdapter(mList, getContext());
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
