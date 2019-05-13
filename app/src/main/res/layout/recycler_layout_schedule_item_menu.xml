@@ -7,15 +7,20 @@
     android:layout_height="120dp"
     android:background="?android:attr/selectableItemBackground">
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginBottom="12dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="2dp">
+        android:layout_marginBottom="12dp">
+
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:id="@+id/schedule_itemMenu_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="16dp"
+            android:alpha="0.05"
+            android:background="@drawable/shape_rectangle_right_rounded_max"
+            tools:backgroundTint="@color/colorAsf" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/schedule_itemMenu_icon"
@@ -24,37 +29,34 @@
             android:layout_marginStart="16dp"
             android:alpha="0.8"
             android:padding="16dp"
+            app:layout_constraintStart_toStartOf="parent"
             tools:srcCompat="@drawable/ic_schedule_asf"
+            tools:tint="@color/colorAsf" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/schedule_itemMenu_fab"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="24dp"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_next"
             tools:tint="@color/colorAsf" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/schedule_itemMenu_text"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="100dp"
-            android:layout_marginEnd="25dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
             android:textSize="16sp"
-            tools:text="@string/schedule_item_asf" />
+            app:layout_constraintEnd_toStartOf="@id/schedule_itemMenu_fab"
+            app:layout_constraintStart_toEndOf="@id/schedule_itemMenu_icon"
+            tools:text="@string/schedule_item_asf"
+            tools:textColor="@color/colorAsf" />
 
-    </com.google.android.material.card.MaterialCardView>
-
-    <androidx.appcompat.widget.ContentFrameLayout
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/shape_circle"
-        android:elevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/schedule_itemMenu_fab"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_next" />
-
-    </androidx.appcompat.widget.ContentFrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

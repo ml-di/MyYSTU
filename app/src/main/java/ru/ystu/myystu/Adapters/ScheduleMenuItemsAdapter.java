@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.ScheduleMenuItemsData;
@@ -30,14 +32,16 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
         private AppCompatTextView text;
         private AppCompatImageView fab;
         private ConstraintLayout item;
+        private ContentFrameLayout background;
 
-        ScheduleMenuItemsViewHolder(@NonNull View itemView, final ArrayList<ScheduleMenuItemsData> mList, final Context mContext) {
+        ScheduleMenuItemsViewHolder(@NonNull View itemView, final Context mContext) {
             super(itemView);
 
             icon = itemView.findViewById(R.id.schedule_itemMenu_icon);
             text = itemView.findViewById(R.id.schedule_itemMenu_text);
             fab = itemView.findViewById(R.id.schedule_itemMenu_fab);
             item = itemView.findViewById(R.id.schedule_itemMenu);
+            background = itemView.findViewById(R.id.schedule_itemMenu_background);
 
             item.setOnClickListener(view -> {
                 final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
@@ -64,7 +68,7 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
     @Override
     public ScheduleMenuItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item_menu, parent, false);
-        return new ScheduleMenuItemsViewHolder(v, mList, mContext);
+        return new ScheduleMenuItemsViewHolder(v, mContext);
     }
 
     @Override
@@ -74,8 +78,12 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
         holder.icon.setImageResource(mList.get(position).getIcon());
         holder.text.setText(mList.get(position).getText());
 
-        holder.fab.setColorFilter(mContext.getResources().getColor(mList.get(position).getColor()));
-        holder.icon.setColorFilter(mContext.getResources().getColor(mList.get(position).getColor()));
+        final int color = mContext.getResources().getColor(mList.get(position).getColor());
+
+        holder.fab.setColorFilter(color);
+        holder.icon.setColorFilter(color);
+        holder.text.setTextColor(color);
+        holder.background.setBackgroundTintList(ContextCompat.getColorStateList(mContext, mList.get(position).getColor()));
     }
 
     @Override
