@@ -67,8 +67,6 @@ public class ErrorMessageFragment extends Fragment {
                 scaleDown.start();
         }
 
-
-
         // Лютый костыль :)
         refreshBtn.setOnClickListener(view -> {
             if(getActivity().getSupportFragmentManager() != null){
@@ -160,6 +158,7 @@ public class ErrorMessageFragment extends Fragment {
         iconImageView = mView.findViewById(R.id.error_message_icon);
         refreshBtn = mView.findViewById(R.id.error_message_refresh_btn);
         iconBackground = mView.findViewById(R.id.error_message_icon_background);
+
         return mView;
     }
 }

@@ -1,31 +1,38 @@
 package ru.ystu.myystu.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.ystu.myystu.Activitys.UserFullActivity;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.R;
 
-public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
     private static final int ITEM_HEADER = 1;
     private static final int ITEM_USER = 2;
 
-    private List<Parcelable> mList;
+    private ArrayList<Parcelable> mList;
+    private ArrayList<Parcelable> mListFiltered;
     private Context mContext;
 
     static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
@@ -71,14 +78,23 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             information.setText(user.getInformation());
 
             mainLayout.setOnClickListener(view -> {
+                final Intent mIntent = new Intent(mContext, UserFullActivity.class);
+                mIntent
+                        .putExtra("link", user.getLink())
+                        .putExtra("name", user.getName())
+                        .putExtra("image", user.getImage())
+                        .putExtra("information", user.getInformation());
 
+                mContext.startActivity(mIntent);
+                ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
             });
 
         }
     }
 
-    public UsersItemsAdapter(List<Parcelable> mList, Context mContext) {
+    public UsersItemsAdapter(ArrayList<Parcelable> mList, Context mContext) {
         this.mList = mList;
+        this.mListFiltered = mList;
         this.mContext = mContext;
     }
 
@@ -128,15 +144,15 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         switch (viewType) {
 
             case ITEM_TOOLBAR_PLACEHOLDER:
-                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mList.get(position);
+                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mListFiltered.get(position);
                 ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
                 break;
             case ITEM_HEADER:
-                final EventItemsData_Header header = (EventItemsData_Header)mList.get(position);
+                final EventItemsData_Header header = (EventItemsData_Header)mListFiltered.get(position);
                 ((HeaderViewHolder) holder).setHeader(header, mContext);
                 break;
             case ITEM_USER:
-                final UsersItemsData user = (UsersItemsData) mList.get(position);
+                final UsersItemsData user = (UsersItemsData) mListFiltered.get(position);
                 ((UserViewHolder) holder).setUser(user, mContext);
                 break;
         }
@@ -147,11 +163,11 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         int viewType;
 
-        if (mList.get(position) instanceof ToolbarPlaceholderData) {
+        if (mListFiltered.get(position) instanceof ToolbarPlaceholderData) {
             viewType = ITEM_TOOLBAR_PLACEHOLDER;
-        } else if (mList.get(position) instanceof EventItemsData_Header) {
+        } else if (mListFiltered.get(position) instanceof EventItemsData_Header) {
             viewType = ITEM_HEADER;
-        } else if (mList.get(position) instanceof UsersItemsData) {
+        } else if (mListFiltered.get(position) instanceof UsersItemsData) {
             viewType = ITEM_USER;
         }  else {
             viewType = -1;
@@ -162,11 +178,58 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return mListFiltered.size();
     }
 
     @Override
     public long getItemId(int position) {
         return mList.get(position).hashCode();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+
+                final FilterResults mFilterResults = new FilterResults();
+                final ArrayList<Parcelable> resultList = new ArrayList<>();
+
+                if (constraint.equals("")) {
+                    mListFiltered = mList;
+                } else {
+                    final String filter = constraint.toString().toLowerCase().trim();
+                    for (Parcelable p : mList) {
+                        if (p instanceof UsersItemsData) {
+                            final String nameTemp = ((UsersItemsData) p).getName().toLowerCase();
+                            final String informationTemp = ((UsersItemsData) p).getInformation().toLowerCase();
+
+                            if (nameTemp.contains(filter) || informationTemp.contains(filter)) {
+                                final String link = ((UsersItemsData) p).getLink();
+                                final String image = ((UsersItemsData) p).getImage();
+                                final String name = ((UsersItemsData) p).getName();
+                                final String information = ((UsersItemsData) p).getInformation();
+
+                                resultList.add(new UsersItemsData(link, image, name, information));
+                            }
+                        }
+                    }
+                    mListFiltered = resultList;
+                    mListFiltered.add(0, new ToolbarPlaceholderData(0));
+                }
+
+                mFilterResults.values = mListFiltered;
+                mFilterResults.count = mListFiltered.size();
+
+                return mFilterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+
+                mListFiltered = (ArrayList<Parcelable>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }

@@ -144,11 +144,12 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mainLayout.setOnClickListener(view -> {
 
                 final Intent mIntent = new Intent(mContext, EventFullActivity.class);
-                mIntent.putExtra("url", eventItem.getLink());
-                mIntent.putExtra("urlPhoto", eventItem.getPhotoUrl());
-                mIntent.putExtra("title", eventItem.getTitle());
-                mIntent.putExtra("date", eventItem.getDate());
-                mIntent.putExtra("location", eventItem.getLocation());
+                mIntent
+                        .putExtra("url", eventItem.getLink())
+                        .putExtra("urlPhoto", eventItem.getPhotoUrl())
+                        .putExtra("title", eventItem.getTitle())
+                        .putExtra("date", eventItem.getDate())
+                        .putExtra("location", eventItem.getLocation());
 
                 mContext.startActivity(mIntent);
                 ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);

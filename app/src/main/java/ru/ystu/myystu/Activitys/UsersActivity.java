@@ -2,6 +2,7 @@ package ru.ystu.myystu.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -24,6 +25,10 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.widget.Adapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -123,6 +128,32 @@ public class UsersActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_user, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_user_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter("");
+                } else {
+                    ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter(newText);
+                }
+                return true;
+            }
+        });
+
+        return true;
     }
 
     // Получение списка сотрудников и преподователей

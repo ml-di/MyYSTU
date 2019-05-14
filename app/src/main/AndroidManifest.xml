@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ToolBar">
-        <activity android:name=".Activitys.UsersActivity"></activity>
+        <activity android:name=".Activitys.UserFullActivity"></activity>
+        <activity android:name=".Activitys.UsersActivity" />
         <activity android:name=".Activitys.SettingsActivity" />
         <activity android:name=".Activitys.EventFullActivity" />
         <activity android:name=".Activitys.JobReaderActivity" />

@@ -1,7 +1,6 @@
 package ru.ystu.myystu.Utils;
 
 import android.content.Intent;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -131,7 +130,7 @@ public class StringFormatter {
 
         return textSpannable;
     }
-    private SpannableStringBuilder getEmail (SpannableStringBuilder textSpannable){
+    public SpannableStringBuilder getEmail (SpannableStringBuilder textSpannable){
 
         text = textSpannable.toString();
 
@@ -148,7 +147,7 @@ public class StringFormatter {
 
         return textSpannable;
     }
-    private SpannableStringBuilder getPhoneNumber (SpannableStringBuilder textSpannable){
+    public SpannableStringBuilder getPhoneNumber (SpannableStringBuilder textSpannable){
 
         text = textSpannable.toString();
 
@@ -166,7 +165,6 @@ public class StringFormatter {
 
         return textSpannable;
     }
-
     public SpannableString groupFormated (String text){
 
         mPattern = Pattern.compile("[А-Я]{1,4}([а-я]{1})?-\\d{1,2}([а-яА-Я]{1})?");
@@ -256,5 +254,4 @@ public class StringFormatter {
             ds.setColor(ds.linkColor);
         }
     }
-
 }

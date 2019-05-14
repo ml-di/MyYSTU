@@ -29,6 +29,9 @@
     <!-- Activity photoView -->
     <string name="photo_view_image_successfully_save">Изображение сохранено</string>
 
+    <!-- Activity профиль -->
+    <string name="activity_userFull_title">Профиль</string>
+
     <!-- Activity расписание -->
     <string name="tab_schedule_one">Очное</string>
     <string name="tab_schedule_two">Заочное</string>
@@ -83,6 +86,7 @@
     <string name="menu_copyLink">Скопировать ссылку</string>
     <string name="menu_copyText">Скопировать текст</string>
     <string name="menu_openAuthor">Открыть автора</string>
+    <string name="menu_search">Поиск</string>
 
     <!-- Toast -->
     <string name="toast_isCopyLink">Ссылка скопирована</string>
