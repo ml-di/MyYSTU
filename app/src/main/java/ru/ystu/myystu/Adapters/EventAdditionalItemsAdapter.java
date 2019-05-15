@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Additional;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Documents;
-import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
+import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
@@ -92,7 +92,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
             title = itemView.findViewById(R.id.itemEventDivider);
         }
 
-        void setTitle (EventItemsData_Divider dividerItem) {
+        void setTitle (StringData dividerItem) {
             title.setText(dividerItem.getTitle());
         }
     }
@@ -153,7 +153,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
                 ((DocumentViewHolder) holder).setDocument(document, mContext);
                 break;
             case ITEM_TITLE:
-                final EventItemsData_Divider title = (EventItemsData_Divider) mList.get(position);
+                final StringData title = (StringData) mList.get(position);
                 ((TitleViewHolder) holder).setTitle(title);
                 break;
         }
@@ -167,7 +167,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
             viewType = ITEM_ADDITIONAL;
         } else if (mList.get(position) instanceof EventAdditionalData_Documents) {
             viewType = ITEM_DOCUMENT;
-        } else if (mList.get(position) instanceof  EventItemsData_Divider) {
+        } else if (mList.get(position) instanceof StringData) {
             viewType = ITEM_TITLE;
         } else{
             viewType = -1;

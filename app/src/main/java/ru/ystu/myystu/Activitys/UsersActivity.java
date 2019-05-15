@@ -27,8 +27,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Menu;
-import android.widget.Adapter;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -175,7 +173,7 @@ public class UsersActivity extends AppCompatActivity {
                             if (mRecyclerViewAdapter == null) {
                                 mRecyclerViewAdapter = new UsersItemsAdapter(mList, getApplicationContext());
                                 mRecyclerViewAdapter.setHasStableIds(true);
-                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                mRecyclerView.swapAdapter(mRecyclerViewAdapter, true);
                             } else {
                                 mRecyclerViewAdapter.notifyItemRangeChanged(1, mList.size());
                             }

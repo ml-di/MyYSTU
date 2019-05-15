@@ -2,7 +2,6 @@ package ru.ystu.myystu.Network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -89,64 +88,62 @@ public class UpdateService {
 
                                                 if(els_title.get(i).text().contains(prefix_f[6])) {
                                                     id = 6;
-                                                }
+                                                } else {
+                                                    int index = els_title.get(i).elementSiblingIndex();
+                                                    final Elements el = doc.getElementsByClass("single-page-description").get(0).children();
 
-                                                int index = els_title.get(i).elementSiblingIndex();
-                                                final Elements el = doc.getElementsByClass("single-page-description").get(0).children();
-
-                                                Element temp;
-                                                while (true) {
-                                                    temp = el.get(index);
-                                                    if(temp.tagName().equals("div")){
-                                                        break;
+                                                    Element temp;
+                                                    while (true) {
+                                                        temp = el.get(index);
+                                                        if(temp.tagName().equals("div")){
+                                                            break;
+                                                        }
+                                                        index++;
                                                     }
-                                                    index++;
-                                                }
 
-                                                boolean isNextChange = false;
-                                                for (Element e : temp.children()) {
-                                                    if (e.tagName().equals("span") && e.select("span").attr("href").isEmpty()) {
+                                                    boolean isNextChange = false;
+                                                    for (Element e : temp.children()) {
+                                                        if (e.tagName().equals("span") && e.select("span").attr("href").isEmpty()) {
 
-                                                        if (isNextChange) {
+                                                            if (isNextChange) {
 
-                                                            if(e.select("span").text().contains(":")) {
-                                                                change.add(e.select("span").text());
+                                                                if(e.select("span").text().contains(":")) {
+                                                                    change.add(e.select("span").text());
+                                                                }
+
+                                                            } else if (e.select("span").text().equals("Изменения:")) {
+                                                                isNextChange = true;
                                                             }
-
-                                                        } else if (e.select("span").text().equals("Изменения:")) {
-                                                            isNextChange = true;
                                                         }
                                                     }
+
+
+                                                    String lastChange = change.get(change.size() - 1);
+
+                                                    lastChange = lastChange
+                                                            .replaceAll("&nbsp;", " ")
+                                                            .replaceAll("&bsp;", " ")
+                                                            .replaceAll("&sp;", " ")
+                                                            .replaceAll("&p;", " ")
+                                                            .replaceAll("&;", " ");
+
+                                                    if(!emitter.isDisposed() && isNew(0, id, lastChange)) {
+                                                        Date mDate = new Date();
+                                                        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd.MM HH:mm", Locale.getDefault());
+                                                        emitter.onNext(0 + "" + id + mSimpleDateFormat.format(mDate) + "*" + lastChange);
+
+                                                        final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
+                                                        final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+                                                        mEditor.putString(0 + "" + id, mSimpleDateFormat.format(mDate) + "*" + lastChange);
+                                                        mEditor.apply();
+                                                    }
+
+                                                    change.clear();
                                                 }
-
-
-                                                String lastChange = change.get(change.size() - 1);
-
-                                                lastChange = lastChange
-                                                        .replaceAll("&nbsp;", " ")
-                                                        .replaceAll("&bsp;", " ")
-                                                        .replaceAll("&sp;", " ")
-                                                        .replaceAll("&p;", " ")
-                                                        .replaceAll("&;", " ");
-
-                                                if(!emitter.isDisposed() && isNew(0, id, lastChange)) {
-                                                    Date mDate = new Date();
-                                                    SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd.MM HH:mm", Locale.getDefault());
-                                                    emitter.onNext(0 + "" + id + mSimpleDateFormat.format(mDate) + "*" + lastChange);
-
-                                                    final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
-                                                    final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-                                                    mEditor.putString(0 + "" + id, mSimpleDateFormat.format(mDate) + "*" + lastChange);
-                                                    mEditor.apply();
-                                                }
-
-                                                change.clear();
                                             }
                                         }
                                     }
                                 }
-
-
 
                                 if(!emitter.isDisposed()){
                                     emitter.onNext("end");

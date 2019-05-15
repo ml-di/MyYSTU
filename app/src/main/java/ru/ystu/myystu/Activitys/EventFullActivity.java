@@ -17,7 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.EventAdditionalItemsAdapter;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Additional;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Documents;
-import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
+import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.Network.GetFullEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
@@ -259,7 +259,7 @@ public class EventFullActivity extends AppCompatActivity {
 
                             if(additionalsList.size() == 0) {
                                 additionalsList.add(
-                                        new EventItemsData_Divider(mContext
+                                        new StringData(mContext
                                                 .getResources()
                                                 .getString(R.string.activity_eventFull_sitebar_title)));
                             }
@@ -284,7 +284,7 @@ public class EventFullActivity extends AppCompatActivity {
 
                             } else if (s.startsWith("doc_title: ")) {
 
-                                additionalsList.add(new EventItemsData_Divider(s.substring(s.indexOf(": ") + 2)));
+                                additionalsList.add(new StringData(s.substring(s.indexOf(": ") + 2)));
 
                             } else if (s.startsWith("doc_file: ")) {
 

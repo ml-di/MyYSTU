@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_search" />
-                            <entry key="sourceFile" value="E:\MyYSTU\icons\activity\bell_null.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_logo_min" />
+                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\vector.svg" />
                           </map>
                         </option>
                       </PersistentState>

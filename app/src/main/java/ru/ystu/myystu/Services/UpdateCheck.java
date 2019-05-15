@@ -124,6 +124,7 @@ public class UpdateCheck extends Service {
 
                     @Override
                     public void onComplete() {
+
                         if(isNew[0]){
 
                             final Intent intent = new Intent();
@@ -194,13 +195,13 @@ public class UpdateCheck extends Service {
             PendingIntent mPendingIntent = mTaskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
             final NotificationCompat.Builder mNotification = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_pin)
+                    .setSmallIcon(R.drawable.ic_logo_min)
                     .setContentTitle(title)
                     .setContentText(text)
                     .setWhen(System.currentTimeMillis())
                     .setPriority(priority)
                     .setLights(Color.parseColor("#4c6bb8"), 1, 0)
-                    .setColor(Color.argb(100, 255, 110, 0))
+                    .setColor(Color.argb(100, 76, 107, 184))
                     .setContentIntent(mPendingIntent)
                     .setDefaults(defaults)
                     .setNumber(count)

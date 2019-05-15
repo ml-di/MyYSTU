@@ -18,7 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.EventActivity;
 import ru.ystu.myystu.Activitys.EventFullActivity;
-import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
+import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
@@ -105,7 +105,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             divider = itemView.findViewById(R.id.eventItem_divider_title);
         }
 
-        void setDivider (EventItemsData_Divider dividerItem) {
+        void setDivider (StringData dividerItem) {
             divider.setText(dividerItem.getTitle());
         }
     }
@@ -224,7 +224,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ((HeaderViewHolder) holder).setHeader(header, mContext);
                 break;
             case ITEM_DIVIDER:
-                final EventItemsData_Divider divider = (EventItemsData_Divider) mList.get(position);
+                final StringData divider = (StringData) mList.get(position);
                 ((DividerViewHolder) holder).setDivider(divider);
                 break;
             case ITEM_EVENT:
@@ -244,7 +244,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if (mList.get(position) instanceof EventItemsData_Header) {
             viewType = ITEM_HEADER;
-        } else if (mList.get(position) instanceof EventItemsData_Divider) {
+        } else if (mList.get(position) instanceof StringData) {
             viewType = ITEM_DIVIDER;
         } else if (mList.get(position) instanceof EventItemsData_Event) {
             viewType = ITEM_EVENT;

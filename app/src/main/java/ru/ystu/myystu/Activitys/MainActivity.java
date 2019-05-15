@@ -59,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
         mSharedPreferences = getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
 
+        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        updateEnabled = sharedPrefs.getBoolean("preference_additional_update_enable", true);
+
         if (savedInstanceState == null) {
 
             updateList = new ArrayList<>();
@@ -78,9 +81,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         badgeChange(mSharedPreferences.getAll().size());
-
-        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        updateEnabled = sharedPrefs.getBoolean("preference_additional_update_enable", true);
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
 

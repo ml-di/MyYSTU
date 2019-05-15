@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Мой ЯГТУ</string>
 
+    <!-- Другие -->
+    <string name="other_search_results">Результаты поиска</string>
+
     <!-- Названия вкладок нижнего бара -->
     <string name="tab_news_text">Новости</string>
     <string name="tab_bell_text">Уведомления</string>

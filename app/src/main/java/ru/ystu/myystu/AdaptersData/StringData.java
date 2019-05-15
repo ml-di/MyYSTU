@@ -3,27 +3,27 @@ package ru.ystu.myystu.AdaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class EventItemsData_Divider implements Parcelable {
+public class StringData implements Parcelable {
 
     private final String title;
 
-    public EventItemsData_Divider(final String title) {
+    public StringData(final String title) {
         this.title = title;
     }
 
-    private EventItemsData_Divider(Parcel in){
+    private StringData(Parcel in){
         title = in.readString();
     }
 
-    public static final Creator<EventItemsData_Divider> CREATOR = new Creator<EventItemsData_Divider>() {
+    public static final Creator<StringData> CREATOR = new Creator<StringData>() {
         @Override
-        public EventItemsData_Divider createFromParcel(Parcel in) {
-            return new EventItemsData_Divider(in);
+        public StringData createFromParcel(Parcel in) {
+            return new StringData(in);
         }
 
         @Override
-        public EventItemsData_Divider[] newArray(int size) {
-            return new EventItemsData_Divider[size];
+        public StringData[] newArray(int size) {
+            return new StringData[size];
         }
     };
 

@@ -13,13 +13,13 @@ import android.widget.Filterable;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.UserFullActivity;
+import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
@@ -30,6 +30,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
     private static final int ITEM_HEADER = 1;
     private static final int ITEM_USER = 2;
+    private static final int ITEM_DIVIDER = 3;
 
     private ArrayList<Parcelable> mList;
     private ArrayList<Parcelable> mListFiltered;
@@ -92,6 +93,21 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    static class DividerViewHolder extends RecyclerView.ViewHolder {
+
+        private AppCompatTextView title;
+
+        public DividerViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            title = itemView.findViewById(R.id.itemUser_divider);
+        }
+
+        void setDivider (StringData divider) {
+            title.setText(divider.getTitle());
+        }
+    }
+
     public UsersItemsAdapter(ArrayList<Parcelable> mList, Context mContext) {
         this.mList = mList;
         this.mListFiltered = mList;
@@ -128,6 +144,11 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 mViewHolder = new UserViewHolder(viewUser);
                 break;
 
+            case ITEM_DIVIDER:
+                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_users_divider, parent, false);
+                mViewHolder = new DividerViewHolder(viewDivider);
+                break;
+
             default:
                 mViewHolder = null;
                 break;
@@ -155,6 +176,10 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 final UsersItemsData user = (UsersItemsData) mListFiltered.get(position);
                 ((UserViewHolder) holder).setUser(user, mContext);
                 break;
+            case ITEM_DIVIDER:
+                final StringData divider = (StringData) mListFiltered.get(position);
+                ((DividerViewHolder) holder).setDivider(divider);
+                break;
         }
     }
 
@@ -169,7 +194,9 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewType = ITEM_HEADER;
         } else if (mListFiltered.get(position) instanceof UsersItemsData) {
             viewType = ITEM_USER;
-        }  else {
+        } else if (mListFiltered.get(position) instanceof StringData) {
+            viewType = ITEM_DIVIDER;
+        } else {
             viewType = -1;
         }
 
@@ -183,7 +210,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public long getItemId(int position) {
-        return mList.get(position).hashCode();
+        return position;
     }
 
     @Override
@@ -216,6 +243,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     mListFiltered = resultList;
                     mListFiltered.add(0, new ToolbarPlaceholderData(0));
+                    mListFiltered.add(1, new StringData(mContext.getResources().getString(R.string.other_search_results)));
                 }
 
                 mFilterResults.values = mListFiltered;
@@ -226,7 +254,6 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-
                 mListFiltered = (ArrayList<Parcelable>) results.values;
                 notifyDataSetChanged();
             }

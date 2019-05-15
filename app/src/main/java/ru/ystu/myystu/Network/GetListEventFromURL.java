@@ -17,7 +17,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.ystu.myystu.AdaptersData.EventItemsData_Divider;
+import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
@@ -82,7 +82,7 @@ public class GetListEventFromURL {
 
                                 for (int l = 0; l < els_dividers.size(); l++) {
                                     final String divider = els_dividers.get(l).text();
-                                    mList.add(new EventItemsData_Divider(divider));
+                                    mList.add(new StringData(divider));
 
                                     for (Element el : els_links.get(l).children()) {
                                         final String link = "http://www.ystu.ru" + el.select("a").attr("href");
