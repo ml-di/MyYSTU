@@ -37,7 +37,6 @@ public class NewsFragment extends Fragment {
 
     private Context mContext;
     private CoordinatorLayout mainLayout;
-    private int PHOTO_SIZE = 100;                                                                   // Качество загружаемых картинок (50, 100, 200)
     private int OFFSET = 0;                                                                         // Смещение для следующей порции новостей (не менять)
     private int POST_COUNT_LOAD = 20;                                                               // Количество загружаемых постов за раз
     private String OWNER_ID = "-28414014";                                                          // id группы вуза через дефис

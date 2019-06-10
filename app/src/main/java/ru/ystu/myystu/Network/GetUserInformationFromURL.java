@@ -57,8 +57,12 @@ public class GetUserInformationFromURL {
                                 Elements user_detail = null;
 
                                 if (doc != null) {
-                                    user_contacts = doc.getElementsByClass("user-detail-contacts").get(0).children();
-                                    user_detail = doc.getElementsByClass("user-layout__page").get(0).children();
+                                    if (doc.getElementsByClass("user-detail-contacts") != null
+                                            && doc.getElementsByClass("user-detail-contacts").size() > 0)
+                                        user_contacts = doc.getElementsByClass("user-detail-contacts").get(0).children();
+                                    if (doc.getElementsByClass("user-layout__page") != null
+                                            && doc.getElementsByClass("user-layout__page").size() > 0)
+                                        user_detail = doc.getElementsByClass("user-layout__page").get(0).children();
                                 }
 
                                 if (!emitter.isDisposed()) {
@@ -86,12 +90,16 @@ public class GetUserInformationFromURL {
                                             if (user_detail.get(i).text().contains("О сотруднике")) {
                                                 int index = i + 1;
                                                 while (true) {
-                                                    if (user_detail.get(index).className().equals("user-detail__description")
-                                                            && user_detail.get(index).text().length() > 1) {
-                                                        emitter.onNext("userDetail:" + user_detail.get(index).text());
+                                                    if(index < user_detail.size()) {
+                                                        if (user_detail.get(index).className().equals("user-detail__description")
+                                                                && user_detail.get(index).text().length() > 1) {
+                                                            emitter.onNext("userDetail:" + user_detail.get(index).text());
+                                                            break;
+                                                        } else
+                                                            index++;
+                                                    }
+                                                    else
                                                         break;
-                                                    } else
-                                                        index++;
                                                 }
                                                 break;
                                             }
