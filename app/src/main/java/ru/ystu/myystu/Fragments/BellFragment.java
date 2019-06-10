@@ -235,8 +235,10 @@ public class BellFragment extends Fragment {
                 // Обновлено расписание
                 if(idType == 0){
                     title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
-                    if(subTitle.contains(":")) {
-                        subTitle = subTitle.substring(subTitle.indexOf(":") + 2);
+                    if(subTitle.contains(": ")) {
+                        subTitle = subTitle.substring(subTitle.indexOf(": ") + 2);
+                    } else if (subTitle.contains(":")) {
+                        subTitle = subTitle.substring(subTitle.indexOf(":") + 1);
                     }
                 }
 

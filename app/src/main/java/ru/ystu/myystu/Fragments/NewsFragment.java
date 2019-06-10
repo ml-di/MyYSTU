@@ -42,7 +42,7 @@ public class NewsFragment extends Fragment {
     private int POST_COUNT_LOAD = 20;                                                               // Количество загружаемых постов за раз
     private String OWNER_ID = "-28414014";                                                          // id группы вуза через дефис
     //private String OWNER_ID = "-178529732";                                                       // id группы тестовой
-    private String VK_API_VERSION = "5.92";                                                         // Версия API
+    private String VK_API_VERSION = "5.95";                                                         // Версия API
     private String SERVICE_KEY
             = "7c2b4e597c2b4e597c2b4e59ef7c43691577c2b7c2b4e5920683355158fece460f119b9";            // Сервисный ключ доступа
 
@@ -207,7 +207,7 @@ public class NewsFragment extends Fragment {
                 .append(OFFSET)
                 .append("&access_token=")
                 .append(SERVICE_KEY)
-                .append("&version=")
+                .append("&v=")
                 .append(VK_API_VERSION);
 
         return urlBuilder.toString();
@@ -261,7 +261,7 @@ public class NewsFragment extends Fragment {
                                 if(isOffset)
                                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 else {
-                                    if(e.getMessage().equals("Not found")){
+                                    if(e.getMessage() != null && e.getMessage().equals("Not found")){
                                         ErrorMessage.showToFragment(mainLayout, 1,
                                                 getResources().getString(R.string.error_message_news_not_found_post),
                                                 mContext, getTag());

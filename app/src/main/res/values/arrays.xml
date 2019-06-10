@@ -8,10 +8,10 @@
     </string-array>
 
     <string-array name="photoSize_Values">
-        <item>src_xxbig</item>
-        <item>src_xbig</item>
-        <item>src_big</item>
-        <item>src_small</item>
+        <item>max</item>
+        <item>high</item>
+        <item>mid</item>
+        <item>min</item>
     </string-array>
 
     <string-array name="type_Array">

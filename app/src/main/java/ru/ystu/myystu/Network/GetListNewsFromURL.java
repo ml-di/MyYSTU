@@ -70,8 +70,8 @@ public class GetListNewsFromURL {
                                     client.connectionPool().evictAll();
                                 }
 
-                                final JSONObject response_object = (JSONObject) obj;
-                                final JSONArray response_json = (JSONArray) response_object.get("response");
+                                final JSONObject response_object = (JSONObject) ((JSONObject) obj).get("response");
+                                final JSONArray response_json = (JSONArray) response_object.get("items");
 
                                 int id = 0;
 
@@ -94,7 +94,7 @@ public class GetListNewsFromURL {
                                     emitter.onError(new IllegalArgumentException("Not found"));
                                 }
 
-                                for (int i = 1; i < response_json.size(); i++) {
+                                for (int i = 0; i < response_json.size(); i++) {
 
                                     /*
                                      *   Выбор только главных новостей:
@@ -111,7 +111,7 @@ public class GetListNewsFromURL {
 
                                         final String typePost = (String) Objects.requireNonNull(item.get("post_type"));           // Тип поста
                                         // Запись не является репостом
-                                        if (Objects.equals(typePost, "post")) {
+                                        if (Objects.equals(typePost, "post") && item.get("copy_history") == null) {
 
                                             final String textPost = (String) Objects.requireNonNull(item.get("text"));            // Текст поста
                                             // Текст записи не является пустым
@@ -146,29 +146,83 @@ public class GetListNewsFromURL {
 
                                                             final JSONObject photo = (JSONObject) attachment.get("photo");
 
-                                                            final String urlFull;
-                                                            final String urlPreview;
-                                                            final int width = ((Long) Objects.requireNonNull(photo.get("width"))).intValue();
-                                                            final int height = ((Long) Objects.requireNonNull(photo.get("height"))).intValue();
+                                                            String urlFull = null;
+                                                            String urlPreview = null;
+                                                            int width = 0;
+                                                            int height = 0;
 
-                                                            // Получение превью
+                                                            final JSONArray photoSizes = (JSONArray) photo.get("sizes");
+
+                                                            /*
+                                                            *   Размеры фото
+                                                            *   min - m
+                                                            *   mid - x
+                                                            *   high - z
+                                                            *   max - w
+                                                            * */
+
                                                             final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-                                                            final String sizePhoto = sharedPrefs.getString("preference_general_photoSize", "src_big");
+                                                            final String sizePhoto = sharedPrefs.getString("preference_general_photoSize", "mid");
 
-                                                            if(photo.get(sizePhoto) != null)
-                                                                urlPreview = (String) Objects.requireNonNull(photo).get(sizePhoto);
-                                                            else
-                                                                urlPreview = (String) Objects.requireNonNull(photo).get("src_big");
+                                                            String sizePhotoType;
 
-                                                            // Получение оригинала
-                                                            if(photo.get("src_xxxbig") != null)
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxxbig");
-                                                            else if (photo.get("src_xxbig") != null)
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xxbig");
-                                                            else if (photo.get("src_xbig") != null)
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_xbig");
-                                                            else
-                                                                urlFull  = (String) Objects.requireNonNull(photo).get("src_big");
+                                                            switch (sizePhoto) {
+                                                                case "min":
+                                                                    sizePhotoType = "m";
+                                                                    break;
+                                                                case "mid":
+                                                                    sizePhotoType = "x";
+                                                                    break;
+                                                                case "high":
+                                                                    sizePhotoType = "z";
+                                                                    break;
+                                                                case "max":
+                                                                    sizePhotoType = "w";
+                                                                    break;
+                                                                default:
+                                                                    sizePhotoType = "x";
+                                                                    break;
+                                                            }
+
+                                                            // Все размеры для текущего изображения
+                                                            String sizes = null;
+                                                            for (Object sizeImage : photoSizes) {
+                                                                sizes += ((JSONObject) sizeImage).get("type").toString();
+                                                            }
+
+                                                            // Нет нужного размера
+                                                            if (!sizes.contains(sizePhotoType))
+                                                                sizePhotoType = "x";
+
+                                                            String sizePhotoTypeFull = "w";
+                                                            if(!sizes.contains(sizePhotoTypeFull)) {
+                                                                if (sizes.contains("z"))
+                                                                    sizePhotoTypeFull = "z";
+                                                                else if (sizes.contains("x"))
+                                                                    sizePhotoTypeFull = "x";
+                                                                else if (sizes.contains("m"))
+                                                                    sizePhotoTypeFull = "m";
+                                                            }
+
+                                                            // Получение превью и оригинала
+                                                            for (int p = 0; p < 2; p++) {
+                                                                for (Object sizeImage : photoSizes) {
+                                                                    final String sizeType = ((JSONObject) sizeImage).get("type").toString();
+                                                                    if (p == 0) {
+                                                                        if (sizeType.equals(sizePhotoType)) {
+                                                                            width = ((Long) ((JSONObject) sizeImage).get("width")).intValue();
+                                                                            height = ((Long) ((JSONObject) sizeImage).get("height")).intValue();
+                                                                            urlPreview = ((JSONObject) sizeImage).get("url").toString();
+                                                                            break;
+                                                                        }
+                                                                    } else {
+                                                                        if (sizeType.equals(sizePhotoTypeFull)) {
+                                                                            urlFull = ((JSONObject) sizeImage).get("url").toString();
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
 
                                                             photoList.add(new NewsItemsPhotoData(height, width, urlPreview, urlFull));
                                                         }

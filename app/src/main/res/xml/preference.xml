@@ -5,7 +5,7 @@
     <PreferenceCategory android:title="@string/settings_category_general">
 
         <ListPreference
-            android:defaultValue="src_big"
+            android:defaultValue="mid"
             android:entries="@array/photoSize_Array"
             android:entryValues="@array/photoSize_Values"
             android:icon="@drawable/ic_photo_size"
