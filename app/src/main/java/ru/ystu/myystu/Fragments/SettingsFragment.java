@@ -143,12 +143,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     // Включить / Отключить уведомления (Доступность view)
     private void notificationChange(SwitchPreference view){
+
+        // TODO Временно
+        findPreference("preference_notification_ringtone").setEnabled(false);
+
+
         if(view.isChecked()) {
             findPreference("preference_notification_type").setEnabled(true);
             findPreference("preference_notification_ringtone_enable").setEnabled(true);
 
-            if(((SwitchPreference)findPreference("preference_notification_ringtone_enable")).isChecked())
-                findPreference("preference_notification_ringtone").setEnabled(true);
+            /*if(((SwitchPreference)findPreference("preference_notification_ringtone_enable")).isChecked())
+                findPreference("preference_notification_ringtone").setEnabled(true);*/
 
             findPreference("preference_notification_vibration").setEnabled(true);
             findPreference("preference_notification_indicator").setEnabled(true);
@@ -156,7 +161,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         } else {
             findPreference("preference_notification_type").setEnabled(false);
             findPreference("preference_notification_ringtone_enable").setEnabled(false);
-            findPreference("preference_notification_ringtone").setEnabled(false);
+            //findPreference("preference_notification_ringtone").setEnabled(false);
             findPreference("preference_notification_vibration").setEnabled(false);
             findPreference("preference_notification_indicator").setEnabled(false);
             findPreference("preference_notification_push").setEnabled(false);
@@ -164,11 +169,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
     // Включить / Отключить звук уведомлений (Доступность view)
     private void notificationSongChange(SwitchPreference view) {
-        if(view.isChecked()) {
+        /*if(view.isChecked()) {
             findPreference("preference_notification_ringtone").setEnabled(true);
         } else {
             findPreference("preference_notification_ringtone").setEnabled(false);
-        }
+        }*/
     }
     // Включить / Отключить обновления (Доступность view)
     private void notificationUpdateChange(SwitchPreference view) {

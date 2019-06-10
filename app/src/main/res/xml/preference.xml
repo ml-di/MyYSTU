@@ -42,7 +42,7 @@
                 android:key="preference_notification_ringtone"
                 android:summary="По умолчанию (Rhea)"
                 android:title="@string/settings_general_notification_song"
-                app:iconSpaceReserved="false" />
+                app:iconSpaceReserved="false"/>
 
             <SwitchPreference
                 android:defaultValue="true"
