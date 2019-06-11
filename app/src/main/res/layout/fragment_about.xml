@@ -10,20 +10,22 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:paddingBottom="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:paddingBottom="50dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/about_background_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             app:cardCornerRadius="50dp"
             app:cardElevation="10dp"
-            app:cardUseCompatPadding="true">
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="-10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/about_icon"
@@ -36,23 +38,23 @@
             android:id="@+id/about_app_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/about_background_icon"
-            android:text="@string/app_name"
+            android:layout_marginTop="24dp"
             android:gravity="center"
+            android:text="@string/app_name"
             android:textColor="@color/colorPrimary"
             android:textSize="21sp"
-            android:layout_marginTop="24dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/about_background_icon" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/about_app_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/about_app_name"
-            android:text="@string/app_version"
-            android:gravity="center"
             android:layout_marginTop="8dp"
-            android:textSize="18sp"/>
+            android:gravity="center"
+            android:text="@string/app_version"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/about_app_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
