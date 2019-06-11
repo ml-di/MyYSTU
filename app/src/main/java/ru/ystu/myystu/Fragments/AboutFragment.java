@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -15,11 +17,21 @@ import java.util.Objects;
 import ru.ystu.myystu.Activitys.SettingsActivity;
 import ru.ystu.myystu.R;
 
-public class AboutUniversityFragment extends Fragment {
+public class AboutFragment extends Fragment {
+
+    private AppCompatImageView icon;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        icon.setImageTintList(null);
     }
 
     @Override
@@ -33,12 +45,17 @@ public class AboutUniversityFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_about_university, container, false);
+        final View mView = inflater.inflate(R.layout.fragment_about, container, false);
+        if (mView != null) {
+            icon = mView.findViewById(R.id.about_icon);
+        }
+        return mView;
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
     }
 
     @Override

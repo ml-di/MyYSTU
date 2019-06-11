@@ -9,6 +9,7 @@ import com.facebook.imagepipeline.core.ImagePipeline;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -136,7 +137,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (aboutUniversity != null) {
             aboutUniversity.setOnPreferenceClickListener(view -> {
                 AboutUniversityFragment aboutUniversityFragment = new AboutUniversityFragment();
-                ((SettingsActivity) getActivity()).startFragment(aboutUniversityFragment, view);
+                ((SettingsActivity) Objects.requireNonNull(getActivity())).startFragment(aboutUniversityFragment, view);
+                return true;
+            });
+        }
+
+        // О приложении
+        final Preference about = findPreference("preference_other_about");
+        if (about != null) {
+            about.setOnPreferenceClickListener(view -> {
+                AboutFragment aboutFragment = new AboutFragment();
+                ((SettingsActivity) Objects.requireNonNull(getActivity())).startFragment(aboutFragment, view);
                 return true;
             });
         }
