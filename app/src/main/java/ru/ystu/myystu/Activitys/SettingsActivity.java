@@ -3,6 +3,7 @@ package ru.ystu.myystu.Activitys;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 import ru.ystu.myystu.Fragments.SettingsFragment;
@@ -62,6 +63,21 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         mToolbar.setTitle(pref.getTitle());
 
         return true;
+    }
+
+    public void startFragment (Fragment fragment, Preference pref) {
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.activity_slide_right_show,
+                        R.anim.activity_slide_left_out,
+                        R.anim.activity_slide_right_show_reverse,
+                        R.anim.activity_slide_left_out_reverse)
+                .replace(R.id.settings_content, fragment, pref.getKey())
+                .addToBackStack(pref.getKey())
+                .commit();
+
+        mToolbar.setTitle(pref.getTitle());
     }
 
     public void setTitleToolBar (String title) {

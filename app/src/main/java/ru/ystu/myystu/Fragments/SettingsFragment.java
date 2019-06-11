@@ -130,6 +130,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
+
+        // О ВУЗе
+        final Preference aboutUniversity = findPreference("preference_other_about_university");
+        if (aboutUniversity != null) {
+            aboutUniversity.setOnPreferenceClickListener(view -> {
+                AboutUniversityFragment aboutUniversityFragment = new AboutUniversityFragment();
+                ((SettingsActivity) getActivity()).startFragment(aboutUniversityFragment, view);
+                return true;
+            });
+        }
     }
 
     @Override

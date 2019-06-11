@@ -152,10 +152,15 @@ public class ScheduleListActivity extends AppCompatActivity {
                         @Override
                         public void onComplete() {
 
-                            mSwipeRefreshLayout.setRefreshing(false);
-                            mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-
+                            if (mList.size() > 1) {
+                                mSwipeRefreshLayout.setRefreshing(false);
+                                mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
+                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            } else {
+                                ErrorMessage.show(mainLayout, 1,
+                                        getResources().getString(R.string.error_message_schedule_file_not_found),
+                                        mContext);
+                            }
                         }
 
                         @Override
