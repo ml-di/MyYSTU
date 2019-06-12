@@ -1,6 +1,5 @@
 package ru.ystu.myystu.Fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,16 +21,16 @@ public class AboutFragment extends Fragment {
     private AppCompatImageView icon;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         icon.setImageTintList(null);
+
+        if (savedInstanceState != null) {
+            ((SettingsActivity) Objects.requireNonNull(getActivity()))
+                    .setTitleToolBar(getResources()
+                            .getString(R.string.settings_category_other_about));
+        }
     }
 
     @Override
@@ -50,16 +49,5 @@ public class AboutFragment extends Fragment {
             icon = mView.findViewById(R.id.about_icon);
         }
         return mView;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 }

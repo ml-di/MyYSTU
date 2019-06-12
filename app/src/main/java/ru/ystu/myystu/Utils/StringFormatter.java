@@ -113,7 +113,7 @@ public class StringFormatter {
 
         return linkText;
     }
-    private SpannableStringBuilder getUrlLink (SpannableStringBuilder textSpannable){
+    public SpannableStringBuilder getUrlLink (SpannableStringBuilder textSpannable){
 
         text = textSpannable.toString();
 

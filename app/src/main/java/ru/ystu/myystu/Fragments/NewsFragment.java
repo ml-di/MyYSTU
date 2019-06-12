@@ -161,16 +161,6 @@ public class NewsFragment extends Fragment {
         return mView;
     }
 
-    @Override
-    public void onAttach(final Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     public void scrollTopRecyclerView() {
 
         if(mRecyclerView != null){

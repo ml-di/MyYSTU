@@ -151,6 +151,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
+
+        // Лицензии открытого ПО
+        final Preference aboutLic = findPreference("preference_other_library_about");
+        if (aboutLic != null) {
+            aboutLic.setOnPreferenceClickListener(view -> {
+                AboutLicensesFragment aboutLicensesFragment = new AboutLicensesFragment();
+                ((SettingsActivity) Objects.requireNonNull(getActivity())).startFragment(aboutLicensesFragment, view);
+                return true;
+            });
+        }
     }
 
     @Override
