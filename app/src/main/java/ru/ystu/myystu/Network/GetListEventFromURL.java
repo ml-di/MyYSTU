@@ -63,7 +63,7 @@ public class GetListEventFromURL {
 
                                 for (int i = 0; i < els_header.size(); i++) {
                                     titles[i] = "# " + els_header.get(i).text();
-                                    links[i] = "http://www.ystu.ru" + els_header.get(i).attr("href");
+                                    links[i] = "https://www.ystu.ru" + els_header.get(i).attr("href");
                                     if(url.equals(links[i])){
                                         selected_id = i;
                                     }
@@ -85,13 +85,13 @@ public class GetListEventFromURL {
                                     mList.add(new StringData(divider));
 
                                     for (Element el : els_links.get(l).children()) {
-                                        final String link = "http://www.ystu.ru" + el.select("a").attr("href");
+                                        final String link = "https://www.ystu.ru" + el.select("a").attr("href");
                                         final String title = el.getElementsByClass("doing-item__title").get(0).text();
                                         final String date = el.getElementsByClass("doing-item-image__text doing-item-image__text--date").get(0).text();
                                         final String location = el.getElementsByClass("doing-item-image__text doing-item-image__text--title").get(0).text();
 
                                         String photoUrl = el.getElementsByClass("doing-item-image").get(0).attr("style");
-                                        photoUrl = "http://www.ystu.ru" + photoUrl.substring(photoUrl.indexOf("url('") + 5, photoUrl.lastIndexOf("')"));
+                                        photoUrl = "https://www.ystu.ru" + photoUrl.substring(photoUrl.indexOf("url('") + 5, photoUrl.lastIndexOf("')"));
 
                                         mList.add(new EventItemsData_Event(link, title, date, location, photoUrl));
                                     }

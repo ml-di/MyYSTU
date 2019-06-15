@@ -74,11 +74,11 @@ public class GetListUsersFromURL {
                                 if (els != null) {
 
                                     for (Element el : els) {
-                                        url = "http://www.ystu.ru" + el.select("a").attr("href");
+                                        url = "https://www.ystu.ru" + el.select("a").attr("href");
 
                                         try {
                                             image = el.getElementsByClass("user__image").get(0).attr("style");
-                                            image = "http://www.ystu.ru" + image.substring(image.indexOf("url('") + 5, image.lastIndexOf("')"));
+                                            image = "https://www.ystu.ru" + image.substring(image.indexOf("url('") + 5, image.lastIndexOf("')"));
                                         } catch (Exception e) {
                                             image = null;
                                         }

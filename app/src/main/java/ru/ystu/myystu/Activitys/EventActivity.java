@@ -34,7 +34,7 @@ public class EventActivity extends AppCompatActivity {
 
     private Context mContext;
     private ConstraintLayout mainLayout;
-    private String url = "http://www.ystu.ru/events/";                                              // Url страницы событий сайта ЯГТУ
+    private String url = "https://www.ystu.ru/events/";                                             // Url страницы событий сайта ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;

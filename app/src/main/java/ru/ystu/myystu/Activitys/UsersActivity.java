@@ -34,7 +34,7 @@ public class UsersActivity extends AppCompatActivity {
 
     private Context mContext;
     private ConstraintLayout mainLayout;
-    private final String url = "http://www.ystu.ru/users/";                                         // Url страницы сотрудников и преподавателей ЯГТУ
+    private final String url = "https://www.ystu.ru/users/";                                        // Url страницы сотрудников и преподавателей ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -142,10 +142,11 @@ public class UsersActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (TextUtils.isEmpty(newText)) {
+                if (TextUtils.isEmpty(newText) && mRecyclerViewAdapter != null) {
                     ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter("");
                 } else {
-                    ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter(newText);
+                    if (mRecyclerViewAdapter != null)
+                        ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter(newText);
                 }
                 return true;
             }
