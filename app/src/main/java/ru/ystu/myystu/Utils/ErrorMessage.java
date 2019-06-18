@@ -36,7 +36,8 @@ public class ErrorMessage {
 
         if(mFragmentManager.getFragments().size() > 0){
             for(Fragment fragment : mFragmentManager.getFragments()){
-                mFragmentManager.beginTransaction().remove(fragment).commit();
+                if (fragment != null)
+                    mFragmentManager.beginTransaction().remove(fragment).commit();
             }
             mFragmentManager.getFragments().clear();
         }
@@ -45,10 +46,12 @@ public class ErrorMessage {
             ((ViewGroup)view).removeAllViews();
         }
 
-        mFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(view.getId(), mErrorMessageFragment, "ERROR_FRAGMENT")
-                .commit();
+        if (view != null) {
+            mFragmentManager
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(view.getId(), mErrorMessageFragment, "ERROR_FRAGMENT")
+                    .commit();
+        }
     }
 }
