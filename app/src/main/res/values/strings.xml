@@ -97,6 +97,7 @@
     <string name="toast_isCopyText">Текст скопирован</string>
     <string name="toast_errorDeleteFile">Не удалось удалить файл</string>
     <string name="toast_reloadApp">Требуется перезапуск приложения</string>
+    <string name="toast_no_connection_the_internet">Для обновления данных подключитесь к интернету</string>
 
     <!-- Settings -->
     <string name="settings_category_general">Основные</string>

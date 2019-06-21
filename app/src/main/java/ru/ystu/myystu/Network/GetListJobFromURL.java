@@ -8,9 +8,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
+
 import io.reactivex.Single;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,7 +23,7 @@ import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 
 public class GetListJobFromURL {
 
-    public Single<ArrayList<Parcelable>> getSingleJobList (String url, ArrayList<Parcelable> mList){
+    public Single<List<Parcelable>> getSingleJobList (String url, List<Parcelable> mList){
 
         return Single.create(emitter -> {
 
@@ -75,7 +76,7 @@ public class GetListJobFromURL {
 
                                 if (els != null) {
 
-                                    for(int i =0; i < els.size(); i++){
+                                    for(int i = 0; i < els.size(); i++){
 
                                         if(!els.get(i).text().equals("")){
 
@@ -103,7 +104,8 @@ public class GetListJobFromURL {
                                                 }
                                                 a++;
                                             }
-                                            mList.add(new JobItemsData(organization, post, url, fileType));
+                                            int dot = 0;
+                                            mList.add(new JobItemsData(i, organization, post, url, fileType));
                                         }
                                     }
                                 } else {

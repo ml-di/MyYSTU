@@ -2,13 +2,16 @@ package ru.ystu.myystu.Activitys;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,12 +20,20 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.snackbar.Snackbar;
+
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.AdaptersData.JobItemsData;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Network.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
@@ -39,11 +50,12 @@ public class JobActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<Parcelable> mList;
+    private List<Parcelable> mList;
     private Parcelable mRecyclerState;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CompositeDisposable mDisposables;
     private GetListJobFromURL getListJobFromURL;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +101,9 @@ public class JobActivity extends AppCompatActivity {
         mDisposables = new CompositeDisposable();
         getListJobFromURL = new GetListJobFromURL();
 
+        // TODO Открытие БД
+        db = Application.getInstance().getDatabase();
+
         if(savedInstanceState == null){
             getJob();
         } else{
@@ -111,6 +126,8 @@ public class JobActivity extends AppCompatActivity {
         super.onDestroy();
 
         mDisposables.dispose();
+        // TODO Закрытие БД
+        db.close();
     }
 
     @Override
@@ -136,7 +153,7 @@ public class JobActivity extends AppCompatActivity {
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
-        outState.putParcelableArrayList("mList", mList);
+        outState.putParcelableArrayList("mList", (ArrayList<? extends Parcelable>) mList);
     }
 
     @Override
@@ -148,23 +165,37 @@ public class JobActivity extends AppCompatActivity {
 
     // Загрузка html страницы и ее парсинг
     private void getJob(){
-        if(NetworkInformation.hasConnection(mContext)){
-            mList = new ArrayList<>();
-            mSwipeRefreshLayout.setRefreshing(true);
 
-            final Single<ArrayList<Parcelable>> mSingleJobList
-                    = getListJobFromURL.getSingleJobList(url, mList);
+        mList = new ArrayList<>();
+        mSwipeRefreshLayout.setRefreshing(true);
+
+        if (NetworkInformation.hasConnection(mContext)) {
+            Single<List<Parcelable>> mSingleJobList = getListJobFromURL.getSingleJobList(url, mList);
+
             mDisposables.add(mSingleJobList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>() {
+                    .subscribeWith(new DisposableSingleObserver<List<Parcelable>>() {
                         @Override
-                        public void onSuccess(ArrayList<Parcelable> jobItemsData) {
+                        public void onSuccess(List<Parcelable> jobItemsData) {
                             mList = jobItemsData;
-
                             mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
                             mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+                            // TODO Добавление в БД
+                            // Удаляем все записи, если они есть
+                            if (db.jobItemsDao().getCount() > 0) {
+                                db.jobItemsDao().deleteAll();
+                            }
+
+                            // Добавляем новые записи
+                            for (Parcelable parcelable : jobItemsData) {
+                                if (parcelable instanceof JobItemsData) {
+                                    db.jobItemsDao().insert((JobItemsData) parcelable);
+                                }
+                            }
+
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
 
@@ -183,8 +214,42 @@ public class JobActivity extends AppCompatActivity {
                         }
                     }));
         } else {
+            // TODO BD
+            if (db.jobItemsDao().getCount() > 0) {
+                // TODO Добавление из БД в mList
+                if (mList.size() > 0)
+                    mList.clear();
+
+                mList.add(new ToolbarPlaceholderData(0));
+                mList.addAll(db.jobItemsDao().getAllJobItems());
+                mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
+                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+                // SnackBar с предупреждением об отсутствие интернета
+                final Snackbar snackbar = Snackbar
+                        .make(
+                                mainLayout,
+                                getResources().getString(R.string.toast_no_connection_the_internet),
+                                Snackbar.LENGTH_INDEFINITE)
+                        .setAction(
+                                getResources().getString(R.string.error_message_refresh),
+                                view -> {
+                                    // Обновление данных
+                                    getJob();
+                        });
+
+                ((TextView)snackbar
+                        .getView()
+                        .findViewById(com.google.android.material.R.id.snackbar_text))
+                        .setTextColor(Color.BLACK);
+
+                snackbar.show();
+
+            } else {
+                ErrorMessage.show(mainLayout, 0, null, mContext);
+            }
+
             mSwipeRefreshLayout.setRefreshing(false);
-            ErrorMessage.show(mainLayout, 0, null, mContext);
         }
     }
 }

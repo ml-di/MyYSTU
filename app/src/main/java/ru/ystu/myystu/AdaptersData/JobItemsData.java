@@ -3,24 +3,46 @@ package ru.ystu.myystu.AdaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "job_items")
 public class JobItemsData implements Parcelable {
 
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private final int id;
+
+    @ColumnInfo(name = "organization")
     private final String organization;
+
+    @ColumnInfo(name = "post")
     private final String post;
+
+    @ColumnInfo(name = "url")
     private final String url;
+
+    @ColumnInfo(name = "fileType")
     private final String fileType;
 
-    public JobItemsData(final String organization,
+    public JobItemsData(final int id,
+                        final String organization,
                         final String post,
                         final String url,
                         final String fileType) {
+        this.id = id;
         this.organization = organization;
         this.post = post;
         this.url = url;
         this.fileType = fileType;
     }
 
+    @Ignore
     private JobItemsData(Parcel in) {
+        id = in.readInt();
         organization = in.readString();
         post = in.readString();
         url = in.readString();
@@ -46,12 +68,16 @@ public class JobItemsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(organization);
         parcel.writeString(post);
         parcel.writeString(url);
         parcel.writeString(fileType);
     }
 
+    public int getId() {
+        return id;
+    }
     public String getOrganization() {
         return organization;
     }
