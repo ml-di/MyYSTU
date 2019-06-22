@@ -28,14 +28,12 @@ public class Application extends android.app.Application {
                 .build();
 
         Fresco.initialize(context, config);
-
-        database = Room.databaseBuilder(this, AppDatabase.class, "myystudb").allowMainThreadQueries().build();
     }
 
     public static Application getInstance() {
         return instance;
     }
     public AppDatabase getDatabase() {
-        return database;
+        return database = Room.databaseBuilder(this, AppDatabase.class, "myystudb").build();
     }
 }

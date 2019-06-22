@@ -3,24 +3,45 @@ package ru.ystu.myystu.AdaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "users_items")
 public class UsersItemsData implements Parcelable {
 
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private final int id;
+
+    @ColumnInfo(name = "link")
     private final String link;
+
+    @ColumnInfo(name = "image")
     private final String image;
+
+    @ColumnInfo(name = "name")
     private final String name;
+
+    @ColumnInfo(name = "information")
     private final String information;
 
-    public UsersItemsData (final String link,
+    public UsersItemsData (final int id,
+                           final String link,
                            final String image,
                            final String name,
                            final String information) {
+        this.id = id;
         this.link = link;
         this.image = image;
         this.name = name;
         this.information = information;
     }
 
+    @Ignore
     private UsersItemsData (Parcel in) {
+        id = in.readInt();
         link = in.readString();
         image = in.readString();
         name = in.readString();
@@ -46,12 +67,16 @@ public class UsersItemsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(link);
         parcel.writeString(image);
         parcel.writeString(name);
         parcel.writeString(information);
     }
 
+    public int getId() {
+        return id;
+    }
     public String getLink() {
         return link;
     }

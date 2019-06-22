@@ -15,6 +15,10 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.UsersItemsAdapter;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
+import ru.ystu.myystu.AdaptersData.UsersItemsData;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Network.GetListUsersFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
@@ -23,12 +27,18 @@ import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.widget.TextView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UsersActivity extends AppCompatActivity {
 
@@ -38,11 +48,12 @@ public class UsersActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<Parcelable> mList;
+    private List<Parcelable> mList;
     private Parcelable mRecyclerState;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CompositeDisposable mDisposables;
     private GetListUsersFromURL getListUsersFromURL;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +100,9 @@ public class UsersActivity extends AppCompatActivity {
 
         getListUsersFromURL = new GetListUsersFromURL();
 
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
+
         if(savedInstanceState == null){
             getUsers();
         } else{
@@ -109,7 +123,11 @@ public class UsersActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        mDisposables.dispose();
+        if (mDisposables != null)
+            mDisposables.dispose();
+
+        if (db != null && db.isOpen())
+            db.close();
     }
 
     @Override
@@ -118,7 +136,7 @@ public class UsersActivity extends AppCompatActivity {
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
-        outState.putParcelableArrayList("mList", mList);
+        outState.putParcelableArrayList("mList", (ArrayList<? extends Parcelable>) mList);
     }
 
     @Override
@@ -157,17 +175,21 @@ public class UsersActivity extends AppCompatActivity {
 
     // Получение списка сотрудников и преподователей
     private void getUsers() {
+
+        mList = new ArrayList<>();
+        mSwipeRefreshLayout.setRefreshing(true);
+
         if (NetworkInformation.hasConnection(mContext)) {
-            mList = new ArrayList<>();
-            mSwipeRefreshLayout.setRefreshing(true);
-            final Single<ArrayList<Parcelable>> mSingleUsersList
+
+            final Single<List<Parcelable>> mSingleUsersList
                     = getListUsersFromURL.getSingleUsersList(url, mList);
+
             mDisposables.add(mSingleUsersList
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>() {
+                    .subscribeWith(new DisposableSingleObserver<List<Parcelable>>() {
                         @Override
-                        public void onSuccess(ArrayList<Parcelable> usersItemsData) {
+                        public void onSuccess(List<Parcelable> usersItemsData) {
 
                             mList = usersItemsData;
 
@@ -178,6 +200,20 @@ public class UsersActivity extends AppCompatActivity {
                             } else {
                                 mRecyclerViewAdapter.notifyItemRangeChanged(1, mList.size());
                             }
+
+                            new Thread(() -> {
+                                // Удаляем все записи, если они есть
+                                if (db.usersItemsDao().getCount() > 0) {
+                                    db.usersItemsDao().deleteAll();
+                                }
+
+                                // Добавляем новые записи
+                                for (Parcelable parcelable : usersItemsData) {
+                                    if (parcelable instanceof UsersItemsData) {
+                                        db.usersItemsDao().insert((UsersItemsData) parcelable);
+                                    }
+                                }
+                            }).start();
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -197,8 +233,48 @@ public class UsersActivity extends AppCompatActivity {
                         }
                     }));
         } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            ErrorMessage.show(mainLayout, 0, null, mContext);
+
+            new Thread(() -> {
+                if (db.usersItemsDao().getCount() > 0) {
+                    if (mList.size() > 0)
+                        mList.clear();
+
+                    mList.add(new ToolbarPlaceholderData(0));
+                    mList.addAll(db.usersItemsDao().getAllUsersItems());
+
+                    mRecyclerViewAdapter = new UsersItemsAdapter(mList, this);
+                    mRecyclerView.post(() -> {
+                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        // SnackBar с предупреждением об отсутствие интернета
+                        final Snackbar snackbar = Snackbar
+                                .make(
+                                        mainLayout,
+                                        getResources().getString(R.string.toast_no_connection_the_internet),
+                                        Snackbar.LENGTH_INDEFINITE)
+                                .setAction(
+                                        getResources().getString(R.string.error_message_refresh),
+                                        view -> {
+                                            // Обновление данных
+                                            getUsers();
+                                        });
+
+                        ((TextView)snackbar
+                                .getView()
+                                .findViewById(com.google.android.material.R.id.snackbar_text))
+                                .setTextColor(Color.BLACK);
+
+                        snackbar.show();
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+
+                } else {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, 0, null, mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
         }
     }
 }

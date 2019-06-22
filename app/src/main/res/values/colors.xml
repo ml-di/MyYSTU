@@ -33,6 +33,5 @@
     <color name="colorMf">#820061</color>
     <color name="colorHtf">#007579</color>
 
-    <color name="design_snackbar_background_color" tools:override="true">@android:color/white</color>
-    <color name="design_snackbar_text_color" tools:override="true">@color/colorPrimaryLight</color>
+    <color name="design_snackbar_background_color" tools:override="true">@color/colorToolBar</color>
 </resources>

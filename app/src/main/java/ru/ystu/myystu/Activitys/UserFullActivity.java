@@ -12,6 +12,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Database.Data.UserFullData;
 import ru.ystu.myystu.Network.GetUserInformationFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
@@ -22,6 +25,7 @@ import ru.ystu.myystu.Utils.StringFormatter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -30,8 +34,10 @@ import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.material.snackbar.Snackbar;
 
 public class UserFullActivity extends AppCompatActivity {
 
@@ -57,6 +63,9 @@ public class UserFullActivity extends AppCompatActivity {
     private GetUserInformationFromURL getUserInformationFromURL;
     private CompositeDisposable mDisposable;
 
+    private AppDatabase db;
+
+    private int id;
     private String url;
     private String image;
     private String name;
@@ -101,6 +110,7 @@ public class UserFullActivity extends AppCompatActivity {
         mToolbar.setOnClickListener(e -> scroll.smoothScrollTo(0, 0));
 
         if(getIntent().getExtras() != null) {
+            id = getIntent().getExtras().getInt("id");
             url = getIntent().getExtras().getString("link");
             image = getIntent().getExtras().getString("image");
             name = getIntent().getExtras().getString("name");
@@ -110,6 +120,9 @@ public class UserFullActivity extends AppCompatActivity {
         imageView.setImageURI(image);
         nameView.setText(name);
         informationView.setText(information);
+
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
 
         if(savedInstanceState == null) {
             getUserInfo();
@@ -136,9 +149,11 @@ public class UserFullActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if(mDisposable != null) {
+        if(mDisposable != null)
             mDisposable.dispose();
-        }
+
+        if (db != null && db.isOpen())
+            db.close();
     }
 
     @Override
@@ -220,6 +235,25 @@ public class UserFullActivity extends AppCompatActivity {
 
                         @Override
                         public void onComplete() {
+
+                            new Thread(() -> {
+                                // Удаляем запись, если она есть
+                                if (db.userFullDao().isExists(id)) {
+                                    db.userFullDao().delete(id);
+                                }
+
+                                // Добавляем новую запись
+                                final UserFullData userFullData = new UserFullData();
+                                userFullData.setId(id);
+                                userFullData.setPhone(phoneStr);
+                                userFullData.setEmail(emailStr);
+                                userFullData.setLocation(locationStr);
+                                userFullData.setDetail(detailStr);
+
+                                db.userFullDao().insert(userFullData);
+
+                            }).start();
+
                             setInformation();
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -235,10 +269,49 @@ public class UserFullActivity extends AppCompatActivity {
                                 ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                         }
                     }));
-
         } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            ErrorMessage.show(mainLayout, 0, null, mContext);
+
+            new Thread(() -> {
+                if (db.userFullDao().isExists(id)) {
+
+                    final UserFullData userFullData = db.userFullDao().getUserFull(id);
+                    phoneStr = userFullData.getPhone();
+                    emailStr = userFullData.getEmail();
+                    locationStr = userFullData.getLocation();
+                    detailStr = userFullData.getDetail();
+
+                    runOnUiThread(() -> {
+                        setInformation();
+                        // SnackBar с предупреждением об отсутствие интернета
+                        final Snackbar snackbar = Snackbar
+                                .make(
+                                        mainLayout,
+                                        getResources().getString(R.string.toast_no_connection_the_internet),
+                                        Snackbar.LENGTH_INDEFINITE)
+                                .setAction(
+                                        getResources().getString(R.string.error_message_refresh),
+                                        view -> {
+                                            // Обновление данных
+                                            getUserInfo();
+                                        });
+
+                        ((TextView)snackbar
+                                .getView()
+                                .findViewById(com.google.android.material.R.id.snackbar_text))
+                                .setTextColor(Color.BLACK);
+
+                        snackbar.show();
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+
+                } else {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, 0, null, mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
         }
     }
 

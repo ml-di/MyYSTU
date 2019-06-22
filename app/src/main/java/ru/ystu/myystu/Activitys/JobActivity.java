@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +24,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -101,8 +104,8 @@ public class JobActivity extends AppCompatActivity {
         mDisposables = new CompositeDisposable();
         getListJobFromURL = new GetListJobFromURL();
 
-        // TODO Открытие БД
-        db = Application.getInstance().getDatabase();
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
 
         if(savedInstanceState == null){
             getJob();
@@ -126,8 +129,9 @@ public class JobActivity extends AppCompatActivity {
         super.onDestroy();
 
         mDisposables.dispose();
-        // TODO Закрытие БД
-        db.close();
+
+        if (db != null && db.isOpen())
+            db.close();
     }
 
     @Override
@@ -183,18 +187,19 @@ public class JobActivity extends AppCompatActivity {
                             mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
-                            // TODO Добавление в БД
-                            // Удаляем все записи, если они есть
-                            if (db.jobItemsDao().getCount() > 0) {
-                                db.jobItemsDao().deleteAll();
-                            }
-
-                            // Добавляем новые записи
-                            for (Parcelable parcelable : jobItemsData) {
-                                if (parcelable instanceof JobItemsData) {
-                                    db.jobItemsDao().insert((JobItemsData) parcelable);
+                            new Thread(() -> {
+                                // Удаляем все записи, если они есть
+                                if (db.jobItemsDao().getCount() > 0) {
+                                    db.jobItemsDao().deleteAll();
                                 }
-                            }
+
+                                // Добавляем новые записи
+                                for (Parcelable parcelable : jobItemsData) {
+                                    if (parcelable instanceof JobItemsData) {
+                                        db.jobItemsDao().insert((JobItemsData) parcelable);
+                                    }
+                                }
+                            }).start();
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -214,42 +219,48 @@ public class JobActivity extends AppCompatActivity {
                         }
                     }));
         } else {
-            // TODO BD
-            if (db.jobItemsDao().getCount() > 0) {
-                // TODO Добавление из БД в mList
-                if (mList.size() > 0)
-                    mList.clear();
+            new Thread(() -> {
+                if (db.jobItemsDao().getCount() > 0) {
+                    if (mList.size() > 0)
+                        mList.clear();
 
-                mList.add(new ToolbarPlaceholderData(0));
-                mList.addAll(db.jobItemsDao().getAllJobItems());
-                mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
-                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                    mList.add(new ToolbarPlaceholderData(0));
+                    mList.addAll(db.jobItemsDao().getAllJobItems());
 
-                // SnackBar с предупреждением об отсутствие интернета
-                final Snackbar snackbar = Snackbar
-                        .make(
-                                mainLayout,
-                                getResources().getString(R.string.toast_no_connection_the_internet),
-                                Snackbar.LENGTH_INDEFINITE)
-                        .setAction(
-                                getResources().getString(R.string.error_message_refresh),
-                                view -> {
-                                    // Обновление данных
-                                    getJob();
-                        });
+                    mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
+                    mRecyclerView.post(() -> {
+                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        // SnackBar с предупреждением об отсутствие интернета
+                        final Snackbar snackbar = Snackbar
+                                .make(
+                                        mainLayout,
+                                        getResources().getString(R.string.toast_no_connection_the_internet),
+                                        Snackbar.LENGTH_INDEFINITE)
+                                .setAction(
+                                        getResources().getString(R.string.error_message_refresh),
+                                        view -> {
+                                            // Обновление данных
+                                            getJob();
+                                        });
 
-                ((TextView)snackbar
-                        .getView()
-                        .findViewById(com.google.android.material.R.id.snackbar_text))
-                        .setTextColor(Color.BLACK);
+                        ((TextView)snackbar
+                                .getView()
+                                .findViewById(com.google.android.material.R.id.snackbar_text))
+                                .setTextColor(Color.BLACK);
 
-                snackbar.show();
+                        snackbar.show();
 
-            } else {
-                ErrorMessage.show(mainLayout, 0, null, mContext);
-            }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
 
-            mSwipeRefreshLayout.setRefreshing(false);
+                } else {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, 0, null, mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+
+            }).start();
         }
     }
 }

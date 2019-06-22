@@ -8,7 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Single;
@@ -22,7 +22,7 @@ import ru.ystu.myystu.AdaptersData.UsersItemsData;
 
 public class GetListUsersFromURL {
 
-    public Single<ArrayList<Parcelable>> getSingleUsersList (String url, ArrayList<Parcelable> mList) {
+    public Single<List<Parcelable>> getSingleUsersList (String url, List<Parcelable> mList) {
         return Single.create(emitter -> {
             final OkHttpClient client = new OkHttpClient();
             final Request mRequest = new Request.Builder()
@@ -73,6 +73,7 @@ public class GetListUsersFromURL {
 
                                 if (els != null) {
 
+                                    int index = 0;
                                     for (Element el : els) {
                                         url = "https://www.ystu.ru" + el.select("a").attr("href");
 
@@ -87,7 +88,8 @@ public class GetListUsersFromURL {
                                         information = el.getElementsByClass("user-information__description user-information__description_color_black")
                                                 .get(0).text();
 
-                                        mList.add(new UsersItemsData(url, image, name, information));
+                                        mList.add(new UsersItemsData(index, url, image, name, information));
+                                        index++;
                                     }
 
                                 } else  {

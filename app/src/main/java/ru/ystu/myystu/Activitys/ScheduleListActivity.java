@@ -16,6 +16,9 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.ScheduleItemAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Database.Data.ScheduleChangeBDData;
 import ru.ystu.myystu.Network.GetSchedule;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
@@ -26,14 +29,16 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 
 public class ScheduleListActivity extends AppCompatActivity {
@@ -50,6 +55,7 @@ public class ScheduleListActivity extends AppCompatActivity {
     private int id;
     private ArrayList<Parcelable> mList;
     private ArrayList<String> changeList;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +97,9 @@ public class ScheduleListActivity extends AppCompatActivity {
 
         id = getIntent().getIntExtra("ID", 0);
 
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
+
         if(savedInstanceState == null){
             getSchedule();
         } else{
@@ -105,7 +114,10 @@ public class ScheduleListActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        mDisposables.dispose();
+        if (mDisposables != null)
+            mDisposables.dispose();
+        if (db != null && db.isOpen())
+            db.close();
     }
 
     @Override
@@ -127,11 +139,11 @@ public class ScheduleListActivity extends AppCompatActivity {
         }
 
         mList.add(new ToolbarPlaceholderData(0));
-
         mSwipeRefreshLayout.setRefreshing(true);
 
         if(NetworkInformation.hasConnection(this)){
 
+            final int[] index = {id * 100};
             final Observable<String> mObservable = getSchedule.getLink(id);
             mDisposables.add(mObservable
                     .subscribeOn(Schedulers.io())
@@ -145,7 +157,8 @@ public class ScheduleListActivity extends AppCompatActivity {
                             } else if (s.startsWith("links")) {
                                 final String link = s.substring(s.indexOf(":") + 1, s.lastIndexOf("*"));
                                 final String name = s.substring(s.lastIndexOf("*") + 1);
-                                mList.add(new ScheduleListItemData(id, name, link));
+                                mList.add(new ScheduleListItemData(index[0], id, name, link));
+                                index[0]++;
                             }
                         }
 
@@ -156,6 +169,33 @@ public class ScheduleListActivity extends AppCompatActivity {
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
                                 mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+                                // Добавляем в БД
+                                new Thread(() -> {
+                                    // Удаляем все записи, если они есть
+                                    if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
+                                        db.scheduleItemDao().deleteList(id);
+                                    }
+
+                                    if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
+                                        db.scheduleItemDao().deleteChange(id);
+                                    }
+
+                                    // Добавляем новые записи с расписанием
+                                    for (Parcelable parcelable : mList) {
+                                        if (parcelable instanceof ScheduleListItemData) {
+                                            db.scheduleItemDao().insertList((ScheduleListItemData) parcelable);
+                                        }
+                                    }
+                                    // Добавляем новые записи с изменениями
+                                    int index = id * 100;
+                                    for (String s : changeList) {
+                                        db.scheduleItemDao().insertChange(new ScheduleChangeBDData(index, id, s));
+                                        index++;
+                                    }
+
+                                }).start();
+
                             } else {
                                 ErrorMessage.show(mainLayout, 1,
                                         getResources().getString(R.string.error_message_schedule_file_not_found),
@@ -177,23 +217,58 @@ public class ScheduleListActivity extends AppCompatActivity {
 
         } else {
 
-            final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
-            final File dir = new File(Environment.getExternalStorageDirectory(),
-                    "/.MyYSTU/" + prefix[id]);
+            new Thread(() -> {
+                if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
+                    if (mList.size() > 0)
+                        mList.clear();
 
-            if(dir.list() != null) {
-                for (String name : dir.list()) {
-                    mList.add(new ScheduleListItemData(id, name.substring(0, name.lastIndexOf(".")), "http://www.ystu.ru/" + name));
+                    mList.add(new ToolbarPlaceholderData(0));
+                    mList.addAll(db.scheduleItemDao().getScheduleList(id));
+
+                    mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
+                    mRecyclerView.post(() -> {
+                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        // SnackBar с предупреждением об отсутствие интернета
+                        final Snackbar snackbar = Snackbar
+                                .make(
+                                        mainLayout,
+                                        getResources().getString(R.string.toast_no_connection_the_internet),
+                                        Snackbar.LENGTH_INDEFINITE)
+                                .setAction(
+                                        getResources().getString(R.string.error_message_refresh),
+                                        view -> {
+                                            // Обновление данных
+                                            getSchedule();
+                                        });
+
+                        ((TextView)snackbar
+                                .getView()
+                                .findViewById(com.google.android.material.R.id.snackbar_text))
+                                .setTextColor(Color.BLACK);
+
+                        snackbar.show();
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+
+                } else {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, 0, null, mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
                 }
+            }).start();
 
-                mSwipeRefreshLayout.setRefreshing(false);
-                mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
-                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+            new Thread(() -> {
+                if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
+                    if (changeList.size() > 0)
+                        changeList.clear();
 
-            } else {
-                mSwipeRefreshLayout.setRefreshing(false);
-                ErrorMessage.show(mainLayout, 0, null, this);
-            }
+                    for (int i = 0; i < db.scheduleItemDao().getCountScheduleChange(id); i++) {
+                        changeList.add(db.scheduleItemDao().getScheduleChange(id).get(i).getText());
+                    }
+                }
+            }).start();
         }
     }
 

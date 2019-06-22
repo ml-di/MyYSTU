@@ -13,6 +13,7 @@ import android.widget.Filterable;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -32,8 +33,8 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int ITEM_USER = 2;
     private static final int ITEM_DIVIDER = 3;
 
-    private ArrayList<Parcelable> mList;
-    private ArrayList<Parcelable> mListFiltered;
+    private List<Parcelable> mList;
+    private List<Parcelable> mListFiltered;
     private Context mContext;
 
     static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
@@ -81,6 +82,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mainLayout.setOnClickListener(view -> {
                 final Intent mIntent = new Intent(mContext, UserFullActivity.class);
                 mIntent
+                        .putExtra("id", user.getId())
                         .putExtra("link", user.getLink())
                         .putExtra("name", user.getName())
                         .putExtra("image", user.getImage())
@@ -97,7 +99,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         private AppCompatTextView title;
 
-        public DividerViewHolder(@NonNull View itemView) {
+        DividerViewHolder(@NonNull View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.itemUser_divider);
@@ -108,7 +110,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    public UsersItemsAdapter(ArrayList<Parcelable> mList, Context mContext) {
+    public UsersItemsAdapter(List<Parcelable> mList, Context mContext) {
         this.mList = mList;
         this.mListFiltered = mList;
         this.mContext = mContext;
@@ -232,12 +234,13 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             final String informationTemp = ((UsersItemsData) p).getInformation().toLowerCase();
 
                             if (nameTemp.contains(filter) || informationTemp.contains(filter)) {
+                                final int id = ((UsersItemsData) p).getId();
                                 final String link = ((UsersItemsData) p).getLink();
                                 final String image = ((UsersItemsData) p).getImage();
                                 final String name = ((UsersItemsData) p).getName();
                                 final String information = ((UsersItemsData) p).getInformation();
 
-                                resultList.add(new UsersItemsData(link, image, name, information));
+                                resultList.add(new UsersItemsData(id, link, image, name, information));
                             }
                         }
                     }
