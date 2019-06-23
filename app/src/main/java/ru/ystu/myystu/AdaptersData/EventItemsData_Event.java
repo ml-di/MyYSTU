@@ -3,19 +3,40 @@ package ru.ystu.myystu.AdaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "event_items")
 public class EventItemsData_Event implements Parcelable {
 
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private final int id;
+
+    @ColumnInfo(name = "link")
     private final String link;
+
+    @ColumnInfo(name = "title")
     private final String title;
+
+    @ColumnInfo(name = "date")
     private final String date;
+
+    @ColumnInfo(name = "location")
     private final String location;
+
+    @ColumnInfo(name = "photoUrl")
     private final String photoUrl;
 
-    public EventItemsData_Event(final String link,
+    public EventItemsData_Event(final int id,
+                                final String link,
                                 final String title,
                                 final String date,
                                 final String location,
                                 final String photoUrl) {
+        this.id = id;
         this.link = link;
         this.title = title;
         this.date = date;
@@ -23,7 +44,9 @@ public class EventItemsData_Event implements Parcelable {
         this.photoUrl = photoUrl;
     }
 
+    @Ignore
     private EventItemsData_Event(Parcel in){
+        id = in.readInt();
         link = in.readString();
         title = in.readString();
         date = in.readString();
@@ -50,6 +73,7 @@ public class EventItemsData_Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(link);
         parcel.writeString(title);
         parcel.writeString(date);
@@ -57,6 +81,9 @@ public class EventItemsData_Event implements Parcelable {
         parcel.writeString(photoUrl);
     }
 
+    public int getId() {
+        return id;
+    }
     public String getLink() {
         return link;
     }

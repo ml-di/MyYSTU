@@ -17,7 +17,10 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.EventAdditionalItemsAdapter;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Additional;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Documents;
-import ru.ystu.myystu.AdaptersData.StringData;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Database.Data.EventFullData;
+import ru.ystu.myystu.Database.Data.EventFullDivider;
 import ru.ystu.myystu.Network.GetFullEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
@@ -30,6 +33,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -39,9 +43,11 @@ import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -51,6 +57,7 @@ public class EventFullActivity extends AppCompatActivity {
     Context mContext;
     StringFormatter stringFormatter;
 
+    private int id;
     private String titleStr;
     private String url;
     private String urlPhoto;
@@ -78,6 +85,7 @@ public class EventFullActivity extends AppCompatActivity {
     private CompositeDisposable mDisposable;
 
     private ArrayList<Parcelable> additionalsList;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +123,7 @@ public class EventFullActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
         if(getIntent().getExtras() != null) {
+            id = getIntent().getExtras().getInt("id");
             titleStr = getIntent().getExtras().getString("title");
             url = getIntent().getExtras().getString("url");
             urlPhoto = getIntent().getExtras().getString("urlPhoto");
@@ -140,6 +149,9 @@ public class EventFullActivity extends AppCompatActivity {
             location.setText(locationStr);
         }
 
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
+
         if(savedInstanceState == null) {
             getEvent();
         } else {
@@ -162,9 +174,11 @@ public class EventFullActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if(mDisposable != null) {
+        if(mDisposable != null)
             mDisposable.dispose();
-        }
+
+        if (db != null && db.isOpen())
+            db.close();
     }
 
     @Override
@@ -179,9 +193,10 @@ public class EventFullActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putInt("id", id);
         outState.putInt("position", scroll.getScrollY());
         outState.putString("subTitle", (String) titleText.getText());
-        outState.putString("text", textTemp);
+        outState.putString("text", text.getText().toString());
         outState.putString("url", url);
         outState.putParcelableArrayList("aList", additionalsList);
     }
@@ -192,6 +207,7 @@ public class EventFullActivity extends AppCompatActivity {
 
         scroll.smoothScrollTo(0, savedInstanceState.getInt("position", 0));
         url = savedInstanceState.getString("url");
+        id = savedInstanceState.getInt("id");
     }
 
     @Override
@@ -210,18 +226,22 @@ public class EventFullActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_event_copyText:
-                final ClipboardManager mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                final String clipText = textTemp
-                        .replaceAll("<br>", "\n")
-                        .replaceAll("&nbsp;", " ")
-                        .replaceAll("<a href=\"", "")
-                        .replaceAll("\">", "")
-                        .replaceAll("</a>", "");
+                if (text != null && text.getText() != null && text.getText().length() > 0) {
+                    final ClipboardManager mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    final String clipText = text.getText().toString()
+                            .replaceAll("<br>", "\n")
+                            .replaceAll("&nbsp;", " ")
+                            .replaceAll("<a href=\"", "")
+                            .replaceAll("\">", "")
+                            .replaceAll("</a>", "");
 
-                final ClipData mClipData = ClipData.newPlainText("event_text", clipText);
-                mClipboardManager.setPrimaryClip(mClipData);
+                    final ClipData mClipData = ClipData.newPlainText("event_text", clipText);
+                    mClipboardManager.setPrimaryClip(mClipData);
 
-                Toast.makeText(this, getResources().getString(R.string.toast_isCopyText), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.toast_isCopyText), Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(this, getResources().getString(R.string.toast_dont_text), Toast.LENGTH_SHORT).show();
+
                 return true;
 
             case R.id.menu_event_shareLink:
@@ -236,6 +256,8 @@ public class EventFullActivity extends AppCompatActivity {
     }
 
     private void getEvent() {
+
+        final int[] index = {id * 100};
 
         getFullEventFromURL = new GetFullEventFromURL();
         mDisposable = new CompositeDisposable();
@@ -259,9 +281,11 @@ public class EventFullActivity extends AppCompatActivity {
 
                             if(additionalsList.size() == 0) {
                                 additionalsList.add(
-                                        new StringData(mContext
-                                                .getResources()
+                                        new EventFullDivider(index[0], id,
+                                                mContext.getResources()
                                                 .getString(R.string.activity_eventFull_sitebar_title)));
+
+                                index[0]++;
                             }
 
                             if (s.startsWith("title: ")) {
@@ -280,11 +304,12 @@ public class EventFullActivity extends AppCompatActivity {
 
                                 final String title = s.substring(s.indexOf(": ") + 2, s.indexOf("*"));
                                 final String description = s.substring(s.indexOf("*") + 1);
-                                additionalsList.add(new EventAdditionalData_Additional(title, description));
+                                additionalsList.add(new EventAdditionalData_Additional(index[0], id, title, description));
+                                index[0]++;
 
                             } else if (s.startsWith("doc_title: ")) {
-
-                                additionalsList.add(new StringData(s.substring(s.indexOf(": ") + 2)));
+                                additionalsList.add(new EventFullDivider(index[0], id, s.substring(s.indexOf(": ") + 2)));
+                                index[0]++;
 
                             } else if (s.startsWith("doc_file: ")) {
 
@@ -294,7 +319,8 @@ public class EventFullActivity extends AppCompatActivity {
                                 final String ext = info.substring(0, info.indexOf(", "));
                                 final String size = info.substring(info.indexOf(", ") + 2);
 
-                                additionalsList.add(new EventAdditionalData_Documents(name, link, ext, size));
+                                additionalsList.add(new EventAdditionalData_Documents(index[0], id, name, link, ext, size));
+                                index[0]++;
                             }
                         }
 
@@ -303,6 +329,36 @@ public class EventFullActivity extends AppCompatActivity {
                             mRecyclerViewAdapter = new EventAdditionalItemsAdapter(additionalsList, mContext);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             mSwipeRefreshLayout.setRefreshing(false);
+
+                            new Thread(() -> {
+                                // Удаляем все записи, если они есть
+                                if (db.eventFullDao().isExistsGeneral(id))
+                                    db.eventFullDao().deleteGeneral(id);
+                                if (db.eventFullDao().getCountAdditional(id) > 0)
+                                    db.eventFullDao().deleteAllAdditional(id);
+                                if (db.eventFullDao().getCountDocuments(id) > 0)
+                                    db.eventFullDao().deleteAllDocuments(id);
+                                if (db.eventFullDao().getCountDividers(id) > 0)
+                                    db.eventFullDao().deleteAllDividers(id);
+
+                                final EventFullData eventFullData = new EventFullData();
+                                eventFullData.setId(id);
+                                eventFullData.setUid(id);
+                                eventFullData.setTitle(titleText.getText().toString());
+                                eventFullData.setText(text.getText().toString());
+                                db.eventFullDao().insertGeneral(eventFullData);
+
+                                // Добавляем новые записи
+                                for (Parcelable parcelable : additionalsList) {
+                                    if (parcelable instanceof EventFullDivider) {
+                                        db.eventFullDao().insertDividers((EventFullDivider) parcelable);
+                                    } else if (parcelable instanceof EventAdditionalData_Additional) {
+                                        db.eventFullDao().insertAdditional((EventAdditionalData_Additional) parcelable);
+                                    } else if (parcelable instanceof EventAdditionalData_Documents) {
+                                        db.eventFullDao().insertDocuments((EventAdditionalData_Documents) parcelable);
+                                    }
+                                }
+                            }).start();
                         }
 
                         @Override
@@ -318,8 +374,70 @@ public class EventFullActivity extends AppCompatActivity {
                     }));
 
         } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            ErrorMessage.show(mainLayout, 0, null, mContext);
+            new Thread(() -> {
+
+                if (db.eventFullDao().isExistsGeneral(id)) {
+                    final EventFullData eventFullData = db.eventFullDao().getGeneral(id);
+                    titleText.setText(eventFullData.getTitle());
+
+                    Spanned spanText = Html.fromHtml(eventFullData.getText());
+                    spanText = stringFormatter.getFormattedString(spanText.toString());
+                    text.setText(spanText);
+                    text.setMovementMethod(LinkMovementMethod.getInstance());
+                }
+
+                final int pref = id * 100;
+                final int count = db.eventFullDao().getCountAdditional(id)
+                        + db.eventFullDao().getCountDocuments(id)
+                        + db.eventFullDao().getCountDividers(id);
+
+                if (count > 0) {
+                    if (additionalsList.size() > 0)
+                        additionalsList.clear();
+
+                    for (int i = 0; i < count; i++) {
+                        if (db.eventFullDao().isExistsAdditional(id, pref + i)) {
+                            additionalsList.add(db.eventFullDao().getAdditionals(id, pref + i));
+                        } else if (db.eventFullDao().isExistsDocuments(id, pref + i)) {
+                            additionalsList.add(db.eventFullDao().getDocuments(id, pref + i));
+                        } else if (db.eventFullDao().isExistsDividers(id, pref + i)) {
+                            additionalsList.add(db.eventFullDao().getDividers(id, pref + i));
+                        }
+                    }
+
+                    mRecyclerViewAdapter = new EventAdditionalItemsAdapter(additionalsList, this);
+                    mRecyclerView.post(() -> {
+                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        // SnackBar с предупреждением об отсутствие интернета
+                        final Snackbar snackbar = Snackbar
+                                .make(
+                                        mainLayout,
+                                        getResources().getString(R.string.toast_no_connection_the_internet),
+                                        Snackbar.LENGTH_INDEFINITE)
+                                .setAction(
+                                        getResources().getString(R.string.error_message_refresh),
+                                        view -> {
+                                            // Обновление данных
+                                            getEvent();
+                                        });
+
+                        ((TextView)snackbar
+                                .getView()
+                                .findViewById(com.google.android.material.R.id.snackbar_text))
+                                .setTextColor(Color.BLACK);
+
+                        snackbar.show();
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+
+                } else {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, 0, null, mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
         }
     }
 }

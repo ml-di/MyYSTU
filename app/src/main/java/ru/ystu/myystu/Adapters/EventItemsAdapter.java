@@ -145,6 +145,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 final Intent mIntent = new Intent(mContext, EventFullActivity.class);
                 mIntent
+                        .putExtra("id", eventItem.getId())
                         .putExtra("url", eventItem.getLink())
                         .putExtra("urlPhoto", eventItem.getPhotoUrl())
                         .putExtra("title", eventItem.getTitle())

@@ -2,11 +2,13 @@ package ru.ystu.myystu.Activitys;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -17,11 +19,20 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.snackbar.Snackbar;
+
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
+import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
+import ru.ystu.myystu.AdaptersData.StringData;
+import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Network.GetListEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
@@ -43,6 +54,7 @@ public class EventActivity extends AppCompatActivity {
     private Parcelable mRecyclerState;
     private CompositeDisposable mDisposables;
     private GetListEventFromURL getListEventFromURL;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +93,9 @@ public class EventActivity extends AppCompatActivity {
         mDisposables = new CompositeDisposable();
         getListEventFromURL = new GetListEventFromURL();
 
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
+
         if(savedInstanceState == null){
             getEvent(url);
         }
@@ -95,7 +110,12 @@ public class EventActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        mDisposables.dispose();
+        if (mDisposables != null)
+            mDisposables.dispose();
+
+        if (db != null && db.isOpen())
+            db.close();
+
     }
 
     @Override
@@ -138,14 +158,15 @@ public class EventActivity extends AppCompatActivity {
 
     // Загрузка html страницы и ее парсинг
     public void getEvent(String link){
-        if(NetworkInformation.hasConnection(mContext)){
-            if(mList == null) {
-                mList = new ArrayList<>();
-            } else {
-                mList.clear();
-            }
 
-            mSwipeRefreshLayout.setRefreshing(true);
+        if(mList == null)
+            mList = new ArrayList<>();
+        else
+            mList.clear();
+
+        mSwipeRefreshLayout.setRefreshing(true);
+
+        if(NetworkInformation.hasConnection(mContext)){
 
             final Single<ArrayList<Parcelable>> mSingleEventList
                     = getListEventFromURL.getSingleEventList(link, mList);
@@ -167,6 +188,27 @@ public class EventActivity extends AppCompatActivity {
                                 mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
                             }
 
+                            new Thread(() -> {
+                                // Удаляем все записи, если они есть
+                                if (db.eventsItemsDao().getCountEventHeader() > 0)
+                                    db.eventsItemsDao().deleteEventHeader();
+                                if (db.eventsItemsDao().getCountDividers() > 0)
+                                    db.eventsItemsDao().deleteAllDividers();
+                                if (db.eventsItemsDao().getCountEventItems() > 0)
+                                    db.eventsItemsDao().deleteAllEventItems();
+
+                                // Добавляем новые записи
+                                for (Parcelable parcelable : eventItemsData) {
+                                    if (parcelable instanceof StringData) {
+                                        db.eventsItemsDao().insertDividers((StringData) parcelable);
+                                    } else if (parcelable instanceof EventItemsData_Event) {
+                                        db.eventsItemsDao().insertEventItems((EventItemsData_Event) parcelable);
+                                    } else if (parcelable instanceof EventItemsData_Header) {
+                                        db.eventsItemsDao().insertEventHeader((EventItemsData_Header) parcelable);
+                                    }
+                                }
+                            }).start();
+
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
 
@@ -185,8 +227,58 @@ public class EventActivity extends AppCompatActivity {
                         }
                     }));
         } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            ErrorMessage.show(mainLayout, 0, null, mContext);
+            new Thread(() -> {
+                if (db.eventsItemsDao().getCountEventItems() > 0) {
+                    if (mList.size() > 0)
+                        mList.clear();
+
+                    mList.add(new ToolbarPlaceholderData(0));
+
+                    final int countListItems = db.eventsItemsDao().getCountDividers() + db.eventsItemsDao().getCountEventItems() + 2;
+
+                    for (int i = 0; i < countListItems; i++) {
+                        if (db.eventsItemsDao().isExistsDivider(i)) {
+                            mList.add(db.eventsItemsDao().getDividers(i));
+                        } else if (db.eventsItemsDao().isExistsEventItems(i)) {
+                            mList.add(db.eventsItemsDao().getEvents(i));
+                        } else if (db.eventsItemsDao().isExistsEventHeader(i)) {
+                            mList.add(db.eventsItemsDao().getEventHeader(i));
+                        }
+                    }
+
+                    mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
+                    mRecyclerView.post(() -> {
+                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        // SnackBar с предупреждением об отсутствие интернета
+                        final Snackbar snackbar = Snackbar
+                                .make(
+                                        mainLayout,
+                                        getResources().getString(R.string.toast_no_connection_the_internet),
+                                        Snackbar.LENGTH_INDEFINITE)
+                                .setAction(
+                                        getResources().getString(R.string.error_message_refresh),
+                                        view -> {
+                                            // Обновление данных
+                                            getEvent(url);
+                                        });
+
+                        ((TextView)snackbar
+                                .getView()
+                                .findViewById(com.google.android.material.R.id.snackbar_text))
+                                .setTextColor(Color.BLACK);
+
+                        snackbar.show();
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+
+                } else {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, 0, null, mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
         }
     }
 }

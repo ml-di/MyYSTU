@@ -69,9 +69,12 @@ public class GetListEventFromURL {
                                     }
                                 }
 
+                                int index = 1;
+
                                 // Добавление пустого пространства под toolbar и шапки
                                 mList.add(new ToolbarPlaceholderData(0));
-                                mList.add(new EventItemsData_Header(titles, links, selected_id));
+                                mList.add(new EventItemsData_Header(index, titles, links, selected_id));
+                                index++;
 
                                 /*
                                  *       Ссылки
@@ -82,7 +85,8 @@ public class GetListEventFromURL {
 
                                 for (int l = 0; l < els_dividers.size(); l++) {
                                     final String divider = els_dividers.get(l).text();
-                                    mList.add(new StringData(divider));
+                                    mList.add(new StringData(index, divider));
+                                    index++;
 
                                     for (Element el : els_links.get(l).children()) {
                                         final String link = "https://www.ystu.ru" + el.select("a").attr("href");
@@ -93,7 +97,8 @@ public class GetListEventFromURL {
                                         String photoUrl = el.getElementsByClass("doing-item-image").get(0).attr("style");
                                         photoUrl = "https://www.ystu.ru" + photoUrl.substring(photoUrl.indexOf("url('") + 5, photoUrl.lastIndexOf("')"));
 
-                                        mList.add(new EventItemsData_Event(link, title, date, location, photoUrl));
+                                        mList.add(new EventItemsData_Event(index, link, title, date, location, photoUrl));
+                                        index++;
                                     }
                                 }
 

@@ -246,7 +246,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     mListFiltered = resultList;
                     mListFiltered.add(0, new ToolbarPlaceholderData(0));
-                    mListFiltered.add(1, new StringData(mContext.getResources().getString(R.string.other_search_results)));
+                    mListFiltered.add(1, new StringData(-1, mContext.getResources().getString(R.string.other_search_results)));
                 }
 
                 mFilterResults.values = mListFiltered;
