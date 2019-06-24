@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 import io.reactivex.Single;
 import okhttp3.Call;
@@ -132,7 +131,7 @@ public class GetListNewsFromURL {
 
                                                 // List с фото
                                                 final ArrayList<NewsItemsPhotoData> photoList = new ArrayList<>();
-
+                                                int indexPhoto = 0;
                                                 // Фото записей
                                                 if(item.get("attachments") != null){
 
@@ -224,7 +223,8 @@ public class GetListNewsFromURL {
                                                                 }
                                                             }
 
-                                                            photoList.add(new NewsItemsPhotoData(height, width, urlPreview, urlFull));
+                                                            photoList.add(new NewsItemsPhotoData(indexPhoto, id, height, width, urlPreview, urlFull));
+                                                            indexPhoto++;
                                                         }
                                                     }
                                                 }

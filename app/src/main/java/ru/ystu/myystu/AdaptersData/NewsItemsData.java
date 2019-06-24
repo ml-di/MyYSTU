@@ -3,17 +3,43 @@ package ru.ystu.myystu.AdaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.Relation;
+import androidx.room.TypeConverters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ru.ystu.myystu.Database.Converters.ListJsonConverter;
+
+@Entity(tableName = "news_attach")
 public class NewsItemsData implements Parcelable {
 
+    @PrimaryKey
+    @ColumnInfo(name = "id")
     private final int id;
+
+    @ColumnInfo(name = "isPinned")
     private final int isPinned;
+
+    @ColumnInfo(name = "signer")
     private final int signer;
+
+    @ColumnInfo(name = "urlPost")
     private final String urlPost;
+
+    @ColumnInfo(name = "date")
     private final String date;
+
+    @ColumnInfo(name = "text")
     private final String text;
 
+    @ColumnInfo(name = "listPhoto")
+    @TypeConverters({ListJsonConverter.class})
     private final ArrayList<NewsItemsPhotoData> listPhoto;
 
     public NewsItemsData(final int id,
@@ -32,6 +58,7 @@ public class NewsItemsData implements Parcelable {
         this.listPhoto = listPhoto;
     }
 
+    @Ignore
     private NewsItemsData(Parcel in){
         id = in.readInt();
         isPinned = in.readInt();

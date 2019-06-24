@@ -1,15 +1,18 @@
 package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipeline;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -26,7 +29,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.AdaptersData.NewsItemsData;
+import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
+import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
+import ru.ystu.myystu.Application;
 import ru.ystu.myystu.DataFragments.DataFragment_News_List;
+import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.NewsItemsAdapter;
 import ru.ystu.myystu.Network.GetListNewsFromURL;
@@ -62,6 +70,7 @@ public class NewsFragment extends Fragment {
     private GetListNewsFromURL getListNewsFromURL;
 
     private DataFragment_News_List dataFragment_news_list;
+    private AppDatabase db;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -72,6 +81,9 @@ public class NewsFragment extends Fragment {
         mDisposables = new CompositeDisposable();
         getListNewsFromURL = new GetListNewsFromURL();
         final FragmentManager mFragmentManager = getFragmentManager();
+
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
 
         if (mFragmentManager != null) {
             dataFragment_news_list = (DataFragment_News_List) mFragmentManager.findFragmentByTag("news_list");
@@ -89,8 +101,13 @@ public class NewsFragment extends Fragment {
 
         isLoad = false;
         final ImagePipeline mImagePipeline = Fresco.getImagePipeline();
-        mDisposables.dispose();
         mImagePipeline.clearMemoryCaches();
+
+        if (mDisposables != null)
+            mDisposables.dispose();
+
+        if (db != null && db.isOpen())
+            db.close();
     }
 
     @Override
@@ -239,6 +256,26 @@ public class NewsFragment extends Fragment {
                                 else
                                     mRecyclerView.scheduleLayoutAnimation();
 
+                                new Thread(() -> {
+
+                                    // Удаляем все записи, если они есть
+                                    if (db.newsItemsDao().getCountNewsAttach() > 0)
+                                        db.newsItemsDao().deleteNewsAttach();
+                                    if (db.newsItemsDao().getCountNewsDontAttach() > 0)
+                                        db.newsItemsDao().deleteNewsDontAttach();
+                                    if (db.newsItemsDao().getCountPhotos() > 0)
+                                        db.newsItemsDao().deleteNewsAllPhotos();
+
+                                    // Добавляем новые записи
+                                    for (Parcelable p : parcelables) {
+                                        if (p instanceof NewsItemsData_DontAttach) {
+                                            db.newsItemsDao().insertNewsDontAttach((NewsItemsData_DontAttach) p);
+                                        } else if (p instanceof NewsItemsData) {
+                                            db.newsItemsDao().insertNewsAttach((NewsItemsData) p);
+                                        }
+                                    }
+                                }).start();
+
                             }
 
                             @Override
@@ -263,8 +300,62 @@ public class NewsFragment extends Fragment {
             }
         } else {
             if(!isOffset){
-                mSwipeRefreshLayout.setRefreshing(false);
-                ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+
+                new Thread(() -> {
+
+                    final int count = db.newsItemsDao().getCountNewsAttach() + db.newsItemsDao().getCountNewsDontAttach();
+
+                    if (count > 0) {
+                        if (mList.size() > 0)
+                            mList.clear();
+
+                        mList.add(new NewsItemsData_Header(-1, "Тестирую header"));
+
+                        for (int i = 0; i < count; i++) {
+
+                            if (db.newsItemsDao().isExistsDontAttach(i)) {
+                                mList.add(db.newsItemsDao().getNewsDontAttach(i));
+                            } else if (db.newsItemsDao().isExistsAttach(i)) {
+                                mList.add(db.newsItemsDao().getNewsAttach(i));
+                            }
+                        }
+
+                        mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                        mRecyclerViewAdapter.setHasStableIds(true);
+                        mRecyclerView.post(() -> {
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            // SnackBar с предупреждением об отсутствие интернета
+                            final Snackbar snackbar = Snackbar
+                                    .make(
+                                            mainLayout,
+                                            getResources().getString(R.string.toast_no_connection_the_internet),
+                                            Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(
+                                            getResources().getString(R.string.error_message_refresh),
+                                            view -> {
+                                                // Обновление данных
+                                                getNews(false);
+                                            });
+
+                            ((TextView)snackbar
+                                    .getView()
+                                    .findViewById(com.google.android.material.R.id.snackbar_text))
+                                    .setTextColor(Color.BLACK);
+
+                            snackbar.show();
+
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
+
+                    } else {
+                        if(isAdded() && getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            });
+                        }
+                    }
+                }).start();
             }
         }
     }

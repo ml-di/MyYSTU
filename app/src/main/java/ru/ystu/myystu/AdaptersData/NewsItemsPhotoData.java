@@ -3,24 +3,58 @@ package ru.ystu.myystu.AdaptersData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
+import io.reactivex.annotations.NonNull;
+
+import static androidx.room.ForeignKey.CASCADE;
+
+@Entity(tableName = "news_photos")
 public class NewsItemsPhotoData implements Parcelable {
 
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private final int id;
+
+    @NonNull
+    @ColumnInfo(name = "uid")
+    private final int uid;
+
+    @ColumnInfo(name = "height")
     private final int height;
+
+    @ColumnInfo(name = "width")
     private final int width;
+
+    @ColumnInfo(name = "urlPreview")
     private final String urlPreview;
+
+    @ColumnInfo(name = "urlFull")
     private final String urlFull;
 
-    public NewsItemsPhotoData(final int height,
+    public NewsItemsPhotoData(final int id,
+                              final int uid,
+                              final int height,
                               final int width,
                               final String urlPreview,
                               final String urlFull) {
+        this.id = id;
+        this.uid = uid;
         this.height = height;
         this.width = width;
         this.urlPreview = urlPreview;
         this.urlFull = urlFull;
     }
 
+    @Ignore
     private NewsItemsPhotoData(Parcel in){
+        id = in.readInt();
+        uid = in.readInt();
         height = in.readInt();
         width = in.readInt();
         urlPreview = in.readString();
@@ -46,12 +80,20 @@ public class NewsItemsPhotoData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(uid);
         parcel.writeInt(height);
         parcel.writeInt(width);
         parcel.writeString(urlPreview);
         parcel.writeString(urlFull);
     }
 
+    public int getId() {
+        return id;
+    }
+    public int getUid() {
+        return uid;
+    }
     public int getHeight() {
         return height;
     }
@@ -64,4 +106,5 @@ public class NewsItemsPhotoData implements Parcelable {
     public String getUrlFull() {
         return urlFull;
     }
+
 }
