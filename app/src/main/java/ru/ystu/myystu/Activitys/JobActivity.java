@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,19 +188,23 @@ public class JobActivity extends AppCompatActivity {
                             mRecyclerViewAdapter.setHasStableIds(true);
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
-                            new Thread(() -> {
-                                // Удаляем все записи, если они есть
-                                if (db.jobItemsDao().getCount() > 0) {
-                                    db.jobItemsDao().deleteAll();
-                                }
-
-                                // Добавляем новые записи
-                                for (Parcelable parcelable : jobItemsData) {
-                                    if (parcelable instanceof JobItemsData) {
-                                        db.jobItemsDao().insert((JobItemsData) parcelable);
+                            try {
+                                new Thread(() -> {
+                                    // Удаляем все записи, если они есть
+                                    if (db.jobItemsDao().getCount() > 0) {
+                                        db.jobItemsDao().deleteAll();
                                     }
-                                }
-                            }).start();
+
+                                    // Добавляем новые записи
+                                    for (Parcelable parcelable : jobItemsData) {
+                                        if (parcelable instanceof JobItemsData) {
+                                            db.jobItemsDao().insert((JobItemsData) parcelable);
+                                        }
+                                    }
+                                }).start();
+                            } catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -219,48 +224,53 @@ public class JobActivity extends AppCompatActivity {
                         }
                     }));
         } else {
-            new Thread(() -> {
-                if (db.jobItemsDao().getCount() > 0) {
-                    if (mList.size() > 0)
-                        mList.clear();
+            try {
+                new Thread(() -> {
+                    if (db.jobItemsDao().getCount() > 0) {
+                        if (mList.size() > 0)
+                            mList.clear();
 
-                    mList.add(new ToolbarPlaceholderData(0));
-                    mList.addAll(db.jobItemsDao().getAllJobItems());
+                        mList.add(new ToolbarPlaceholderData(0));
+                        mList.addAll(db.jobItemsDao().getAllJobItems());
 
-                    mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
-                    mRecyclerView.post(() -> {
-                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                        // SnackBar с предупреждением об отсутствие интернета
-                        final Snackbar snackbar = Snackbar
-                                .make(
-                                        mainLayout,
-                                        getResources().getString(R.string.toast_no_connection_the_internet),
-                                        Snackbar.LENGTH_INDEFINITE)
-                                .setAction(
-                                        getResources().getString(R.string.error_message_refresh),
-                                        view -> {
-                                            // Обновление данных
-                                            getJob();
-                                        });
+                        mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
+                        mRecyclerView.post(() -> {
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            // SnackBar с предупреждением об отсутствие интернета
+                            final Snackbar snackbar = Snackbar
+                                    .make(
+                                            mainLayout,
+                                            getResources().getString(R.string.toast_no_connection_the_internet),
+                                            Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(
+                                            getResources().getString(R.string.error_message_refresh),
+                                            view -> {
+                                                // Обновление данных
+                                                getJob();
+                                            });
 
-                        ((TextView)snackbar
-                                .getView()
-                                .findViewById(com.google.android.material.R.id.snackbar_text))
-                                .setTextColor(Color.BLACK);
+                            ((TextView)snackbar
+                                    .getView()
+                                    .findViewById(com.google.android.material.R.id.snackbar_text))
+                                    .setTextColor(Color.BLACK);
 
-                        snackbar.show();
+                            snackbar.show();
 
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
 
-                } else {
-                    runOnUiThread(() -> {
-                        ErrorMessage.show(mainLayout, 0, null, mContext);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
-                }
+                    } else {
+                        runOnUiThread(() -> {
+                            ErrorMessage.show(mainLayout, 0, null, mContext);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
+                    }
 
-            }).start();
+                }).start();
+            } catch (Exception e) {
+                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 }

@@ -16,16 +16,23 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 import ru.ystu.myystu.Activitys.SettingsActivity;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private String key;
+    private AppDatabase db;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preference, rootKey);
         this.key = rootKey;
+
+        if (db == null || !db.isOpen()) {
+            db = Application.getInstance().getDatabase();
+        }
 
         // Включить / Отключить уведомления
         final SwitchPreference enableNotification = findPreference("preference_notification_enable");
@@ -77,6 +84,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         }
 
+        // Размер загружаемых изображений
         final ListPreference photoSize = findPreference("preference_general_photoSize");
         if(photoSize != null) {
             photoSize.setSummary(photoSize.getEntry());
@@ -108,6 +116,28 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 imagePipeline.clearCaches();
                 cacheImage.setSummary(getResources().getString(R.string.settings_category_additional_cache_summary)
                     + " 0 B");
+                return true;
+            });
+        }
+
+        // Получение размер и очистка кеша данных
+        final Preference cacheApp = findPreference("preference_cache_app");
+        if (cacheApp != null) {
+
+            long sizeDb = 0;
+            if (getContext().getDatabasePath("myystudb") != null) {
+                sizeDb = getContext().getDatabasePath("myystudb").length();
+            }
+
+            cacheApp.setSummary(getResources().getString(R.string.settings_category_additional_cache_summary) + " " + getReadableSize(sizeDb));
+
+            cacheApp.setOnPreferenceClickListener(view -> {
+                new Thread(() -> {
+                    db.clearAllTables();
+                    db.close();
+                    getActivity().runOnUiThread(() -> cacheApp.setSummary(getResources().getString(R.string.settings_category_additional_cache_summary)
+                            + " " + getReadableSize(getContext().getDatabasePath("myystudb").length())));
+                }).start();
                 return true;
             });
         }
@@ -169,6 +199,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if(key != null) {
             ((SettingsActivity) getActivity()).setTitleToolBar(getContext()
                             .getResources().getString(R.string.menu_text_settings));
+        }
+        if (db != null && db.isOpen()) {
+            db.close();
         }
     }
 

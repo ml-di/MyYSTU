@@ -330,35 +330,39 @@ public class EventFullActivity extends AppCompatActivity {
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             mSwipeRefreshLayout.setRefreshing(false);
 
-                            new Thread(() -> {
-                                // Удаляем все записи, если они есть
-                                if (db.eventFullDao().isExistsGeneral(id))
-                                    db.eventFullDao().deleteGeneral(id);
-                                if (db.eventFullDao().getCountAdditional(id) > 0)
-                                    db.eventFullDao().deleteAllAdditional(id);
-                                if (db.eventFullDao().getCountDocuments(id) > 0)
-                                    db.eventFullDao().deleteAllDocuments(id);
-                                if (db.eventFullDao().getCountDividers(id) > 0)
-                                    db.eventFullDao().deleteAllDividers(id);
+                            try {
+                                new Thread(() -> {
+                                    // Удаляем все записи, если они есть
+                                    if (db.eventFullDao().isExistsGeneral(id))
+                                        db.eventFullDao().deleteGeneral(id);
+                                    if (db.eventFullDao().getCountAdditional(id) > 0)
+                                        db.eventFullDao().deleteAllAdditional(id);
+                                    if (db.eventFullDao().getCountDocuments(id) > 0)
+                                        db.eventFullDao().deleteAllDocuments(id);
+                                    if (db.eventFullDao().getCountDividers(id) > 0)
+                                        db.eventFullDao().deleteAllDividers(id);
 
-                                final EventFullData eventFullData = new EventFullData();
-                                eventFullData.setId(id);
-                                eventFullData.setUid(id);
-                                eventFullData.setTitle(titleText.getText().toString());
-                                eventFullData.setText(text.getText().toString());
-                                db.eventFullDao().insertGeneral(eventFullData);
+                                    final EventFullData eventFullData = new EventFullData();
+                                    eventFullData.setId(id);
+                                    eventFullData.setUid(id);
+                                    eventFullData.setTitle(titleText.getText().toString());
+                                    eventFullData.setText(text.getText().toString());
+                                    db.eventFullDao().insertGeneral(eventFullData);
 
-                                // Добавляем новые записи
-                                for (Parcelable parcelable : additionalsList) {
-                                    if (parcelable instanceof EventFullDivider) {
-                                        db.eventFullDao().insertDividers((EventFullDivider) parcelable);
-                                    } else if (parcelable instanceof EventAdditionalData_Additional) {
-                                        db.eventFullDao().insertAdditional((EventAdditionalData_Additional) parcelable);
-                                    } else if (parcelable instanceof EventAdditionalData_Documents) {
-                                        db.eventFullDao().insertDocuments((EventAdditionalData_Documents) parcelable);
+                                    // Добавляем новые записи
+                                    for (Parcelable parcelable : additionalsList) {
+                                        if (parcelable instanceof EventFullDivider) {
+                                            db.eventFullDao().insertDividers((EventFullDivider) parcelable);
+                                        } else if (parcelable instanceof EventAdditionalData_Additional) {
+                                            db.eventFullDao().insertAdditional((EventAdditionalData_Additional) parcelable);
+                                        } else if (parcelable instanceof EventAdditionalData_Documents) {
+                                            db.eventFullDao().insertDocuments((EventAdditionalData_Documents) parcelable);
+                                        }
                                     }
-                                }
-                            }).start();
+                                }).start();
+                            } catch (Exception e) {
+                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
@@ -374,70 +378,75 @@ public class EventFullActivity extends AppCompatActivity {
                     }));
 
         } else {
-            new Thread(() -> {
+            try {
+                new Thread(() -> {
 
-                if (db.eventFullDao().isExistsGeneral(id)) {
-                    final EventFullData eventFullData = db.eventFullDao().getGeneral(id);
-                    titleText.setText(eventFullData.getTitle());
+                    if (db.eventFullDao().isExistsGeneral(id)) {
+                        final EventFullData eventFullData = db.eventFullDao().getGeneral(id);
+                        titleText.setText(eventFullData.getTitle());
 
-                    Spanned spanText = Html.fromHtml(eventFullData.getText());
-                    spanText = stringFormatter.getFormattedString(spanText.toString());
-                    text.setText(spanText);
-                    text.setMovementMethod(LinkMovementMethod.getInstance());
-                }
-
-                final int pref = id * 100;
-                final int count = db.eventFullDao().getCountAdditional(id)
-                        + db.eventFullDao().getCountDocuments(id)
-                        + db.eventFullDao().getCountDividers(id);
-
-                if (count > 0) {
-                    if (additionalsList.size() > 0)
-                        additionalsList.clear();
-
-                    for (int i = 0; i < count; i++) {
-                        if (db.eventFullDao().isExistsAdditional(id, pref + i)) {
-                            additionalsList.add(db.eventFullDao().getAdditionals(id, pref + i));
-                        } else if (db.eventFullDao().isExistsDocuments(id, pref + i)) {
-                            additionalsList.add(db.eventFullDao().getDocuments(id, pref + i));
-                        } else if (db.eventFullDao().isExistsDividers(id, pref + i)) {
-                            additionalsList.add(db.eventFullDao().getDividers(id, pref + i));
-                        }
+                        Spanned spanText = Html.fromHtml(eventFullData.getText());
+                        spanText = stringFormatter.getFormattedString(spanText.toString());
+                        text.setText(spanText);
+                        text.setMovementMethod(LinkMovementMethod.getInstance());
                     }
 
-                    mRecyclerViewAdapter = new EventAdditionalItemsAdapter(additionalsList, this);
-                    mRecyclerView.post(() -> {
-                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                        // SnackBar с предупреждением об отсутствие интернета
-                        final Snackbar snackbar = Snackbar
-                                .make(
-                                        mainLayout,
-                                        getResources().getString(R.string.toast_no_connection_the_internet),
-                                        Snackbar.LENGTH_INDEFINITE)
-                                .setAction(
-                                        getResources().getString(R.string.error_message_refresh),
-                                        view -> {
-                                            // Обновление данных
-                                            getEvent();
-                                        });
+                    final int pref = id * 100;
+                    final int count = db.eventFullDao().getCountAdditional(id)
+                            + db.eventFullDao().getCountDocuments(id)
+                            + db.eventFullDao().getCountDividers(id);
 
-                        ((TextView)snackbar
-                                .getView()
-                                .findViewById(com.google.android.material.R.id.snackbar_text))
-                                .setTextColor(Color.BLACK);
+                    if (count > 0) {
+                        if (additionalsList.size() > 0)
+                            additionalsList.clear();
 
-                        snackbar.show();
+                        for (int i = 0; i < count; i++) {
+                            if (db.eventFullDao().isExistsAdditional(id, pref + i)) {
+                                additionalsList.add(db.eventFullDao().getAdditionals(id, pref + i));
+                            } else if (db.eventFullDao().isExistsDocuments(id, pref + i)) {
+                                additionalsList.add(db.eventFullDao().getDocuments(id, pref + i));
+                            } else if (db.eventFullDao().isExistsDividers(id, pref + i)) {
+                                additionalsList.add(db.eventFullDao().getDividers(id, pref + i));
+                            }
+                        }
 
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
+                        mRecyclerViewAdapter = new EventAdditionalItemsAdapter(additionalsList, this);
+                        mRecyclerView.post(() -> {
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            // SnackBar с предупреждением об отсутствие интернета
+                            final Snackbar snackbar = Snackbar
+                                    .make(
+                                            mainLayout,
+                                            getResources().getString(R.string.toast_no_connection_the_internet),
+                                            Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(
+                                            getResources().getString(R.string.error_message_refresh),
+                                            view -> {
+                                                // Обновление данных
+                                                getEvent();
+                                            });
 
-                } else {
-                    runOnUiThread(() -> {
-                        ErrorMessage.show(mainLayout, 0, null, mContext);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-            }).start();
+                            ((TextView)snackbar
+                                    .getView()
+                                    .findViewById(com.google.android.material.R.id.snackbar_text))
+                                    .setTextColor(Color.BLACK);
+
+                            snackbar.show();
+
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
+
+                    } else {
+                        runOnUiThread(() -> {
+                            ErrorMessage.show(mainLayout, 0, null, mContext);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
+                    }
+                }).start();
+            } catch (Exception e) {
+                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 }

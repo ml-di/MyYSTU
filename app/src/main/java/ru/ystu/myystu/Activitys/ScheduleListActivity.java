@@ -171,30 +171,35 @@ public class ScheduleListActivity extends AppCompatActivity {
                                 mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
                                 // Добавляем в БД
-                                new Thread(() -> {
-                                    // Удаляем все записи, если они есть
-                                    if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
-                                        db.scheduleItemDao().deleteList(id);
-                                    }
-
-                                    if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
-                                        db.scheduleItemDao().deleteChange(id);
-                                    }
-
-                                    // Добавляем новые записи с расписанием
-                                    for (Parcelable parcelable : mList) {
-                                        if (parcelable instanceof ScheduleListItemData) {
-                                            db.scheduleItemDao().insertList((ScheduleListItemData) parcelable);
+                                try {
+                                    new Thread(() -> {
+                                        // Удаляем все записи, если они есть
+                                        if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
+                                            db.scheduleItemDao().deleteList(id);
                                         }
-                                    }
-                                    // Добавляем новые записи с изменениями
-                                    int index = id * 100;
-                                    for (String s : changeList) {
-                                        db.scheduleItemDao().insertChange(new ScheduleChangeBDData(index, id, s));
-                                        index++;
-                                    }
 
-                                }).start();
+                                        if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
+                                            db.scheduleItemDao().deleteChange(id);
+                                        }
+
+                                        // Добавляем новые записи с расписанием
+                                        for (Parcelable parcelable : mList) {
+                                            if (parcelable instanceof ScheduleListItemData) {
+                                                db.scheduleItemDao().insertList((ScheduleListItemData) parcelable);
+                                            }
+                                        }
+                                        // Добавляем новые записи с изменениями
+                                        int index = id * 100;
+                                        for (String s : changeList) {
+                                            db.scheduleItemDao().insertChange(new ScheduleChangeBDData(index, id, s));
+                                            index++;
+                                        }
+
+                                    }).start();
+                                } catch (Exception e) {
+                                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+
 
                             } else {
                                 ErrorMessage.show(mainLayout, 1,
@@ -217,58 +222,64 @@ public class ScheduleListActivity extends AppCompatActivity {
 
         } else {
 
-            new Thread(() -> {
-                if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
-                    if (mList.size() > 0)
-                        mList.clear();
+            try {
+                new Thread(() -> {
+                    if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
+                        if (mList.size() > 0)
+                            mList.clear();
 
-                    mList.add(new ToolbarPlaceholderData(0));
-                    mList.addAll(db.scheduleItemDao().getScheduleList(id));
+                        mList.add(new ToolbarPlaceholderData(0));
+                        mList.addAll(db.scheduleItemDao().getScheduleList(id));
 
-                    mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
-                    mRecyclerView.post(() -> {
-                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                        // SnackBar с предупреждением об отсутствие интернета
-                        final Snackbar snackbar = Snackbar
-                                .make(
-                                        mainLayout,
-                                        getResources().getString(R.string.toast_no_connection_the_internet),
-                                        Snackbar.LENGTH_INDEFINITE)
-                                .setAction(
-                                        getResources().getString(R.string.error_message_refresh),
-                                        view -> {
-                                            // Обновление данных
-                                            getSchedule();
-                                        });
+                        mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
+                        mRecyclerView.post(() -> {
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            // SnackBar с предупреждением об отсутствие интернета
+                            final Snackbar snackbar = Snackbar
+                                    .make(
+                                            mainLayout,
+                                            getResources().getString(R.string.toast_no_connection_the_internet),
+                                            Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(
+                                            getResources().getString(R.string.error_message_refresh),
+                                            view -> {
+                                                // Обновление данных
+                                                getSchedule();
+                                            });
 
-                        ((TextView)snackbar
-                                .getView()
-                                .findViewById(com.google.android.material.R.id.snackbar_text))
-                                .setTextColor(Color.BLACK);
+                            ((TextView)snackbar
+                                    .getView()
+                                    .findViewById(com.google.android.material.R.id.snackbar_text))
+                                    .setTextColor(Color.BLACK);
 
-                        snackbar.show();
+                            snackbar.show();
 
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
 
-                } else {
-                    runOnUiThread(() -> {
-                        ErrorMessage.show(mainLayout, 0, null, mContext);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-            }).start();
-
-            new Thread(() -> {
-                if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
-                    if (changeList.size() > 0)
-                        changeList.clear();
-
-                    for (int i = 0; i < db.scheduleItemDao().getCountScheduleChange(id); i++) {
-                        changeList.add(db.scheduleItemDao().getScheduleChange(id).get(i).getText());
+                    } else {
+                        runOnUiThread(() -> {
+                            ErrorMessage.show(mainLayout, 0, null, mContext);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
                     }
-                }
-            }).start();
+                }).start();
+
+                new Thread(() -> {
+                    if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
+                        if (changeList.size() > 0)
+                            changeList.clear();
+
+                        for (int i = 0; i < db.scheduleItemDao().getCountScheduleChange(id); i++) {
+                            changeList.add(db.scheduleItemDao().getScheduleChange(id).get(i).getText());
+                        }
+                    }
+                }).start();
+
+            } catch (Exception e) {
+                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 

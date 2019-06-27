@@ -8,7 +8,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;

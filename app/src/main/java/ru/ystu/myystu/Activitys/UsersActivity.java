@@ -34,6 +34,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -201,19 +202,23 @@ public class UsersActivity extends AppCompatActivity {
                                 mRecyclerViewAdapter.notifyItemRangeChanged(1, mList.size());
                             }
 
-                            new Thread(() -> {
-                                // Удаляем все записи, если они есть
-                                if (db.usersItemsDao().getCount() > 0) {
-                                    db.usersItemsDao().deleteAll();
-                                }
-
-                                // Добавляем новые записи
-                                for (Parcelable parcelable : usersItemsData) {
-                                    if (parcelable instanceof UsersItemsData) {
-                                        db.usersItemsDao().insert((UsersItemsData) parcelable);
+                            try {
+                                new Thread(() -> {
+                                    // Удаляем все записи, если они есть
+                                    if (db.usersItemsDao().getCount() > 0) {
+                                        db.usersItemsDao().deleteAll();
                                     }
-                                }
-                            }).start();
+
+                                    // Добавляем новые записи
+                                    for (Parcelable parcelable : usersItemsData) {
+                                        if (parcelable instanceof UsersItemsData) {
+                                            db.usersItemsDao().insert((UsersItemsData) parcelable);
+                                        }
+                                    }
+                                }).start();
+                            } catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -234,47 +239,52 @@ public class UsersActivity extends AppCompatActivity {
                     }));
         } else {
 
-            new Thread(() -> {
-                if (db.usersItemsDao().getCount() > 0) {
-                    if (mList.size() > 0)
-                        mList.clear();
+            try {
+                new Thread(() -> {
+                    if (db.usersItemsDao().getCount() > 0) {
+                        if (mList.size() > 0)
+                            mList.clear();
 
-                    mList.add(new ToolbarPlaceholderData(0));
-                    mList.addAll(db.usersItemsDao().getAllUsersItems());
+                        mList.add(new ToolbarPlaceholderData(0));
+                        mList.addAll(db.usersItemsDao().getAllUsersItems());
 
-                    mRecyclerViewAdapter = new UsersItemsAdapter(mList, this);
-                    mRecyclerView.post(() -> {
-                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                        // SnackBar с предупреждением об отсутствие интернета
-                        final Snackbar snackbar = Snackbar
-                                .make(
-                                        mainLayout,
-                                        getResources().getString(R.string.toast_no_connection_the_internet),
-                                        Snackbar.LENGTH_INDEFINITE)
-                                .setAction(
-                                        getResources().getString(R.string.error_message_refresh),
-                                        view -> {
-                                            // Обновление данных
-                                            getUsers();
-                                        });
+                        mRecyclerViewAdapter = new UsersItemsAdapter(mList, this);
+                        mRecyclerView.post(() -> {
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            // SnackBar с предупреждением об отсутствие интернета
+                            final Snackbar snackbar = Snackbar
+                                    .make(
+                                            mainLayout,
+                                            getResources().getString(R.string.toast_no_connection_the_internet),
+                                            Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(
+                                            getResources().getString(R.string.error_message_refresh),
+                                            view -> {
+                                                // Обновление данных
+                                                getUsers();
+                                            });
 
-                        ((TextView)snackbar
-                                .getView()
-                                .findViewById(com.google.android.material.R.id.snackbar_text))
-                                .setTextColor(Color.BLACK);
+                            ((TextView)snackbar
+                                    .getView()
+                                    .findViewById(com.google.android.material.R.id.snackbar_text))
+                                    .setTextColor(Color.BLACK);
 
-                        snackbar.show();
+                            snackbar.show();
 
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
 
-                } else {
-                    runOnUiThread(() -> {
-                        ErrorMessage.show(mainLayout, 0, null, mContext);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-            }).start();
+                    } else {
+                        runOnUiThread(() -> {
+                            ErrorMessage.show(mainLayout, 0, null, mContext);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
+                    }
+                }).start();
+            } catch (Exception e) {
+                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 }

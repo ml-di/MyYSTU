@@ -103,8 +103,14 @@
 
             <Preference
                 android:key="preference_cache_photo"
-                android:summary="Занято: 0 Б"
+                android:summary="@string/settings_category_additional_cache_summary"
                 android:title="@string/settings_category_additional_cache_delete_photo"
+                app:iconSpaceReserved="false" />
+
+            <Preference
+                android:key="preference_cache_app"
+                android:summary="@string/settings_category_additional_cache_summary"
+                android:title="@string/settings_category_additional_cache_delete_app"
                 app:iconSpaceReserved="false" />
 
             <Preference

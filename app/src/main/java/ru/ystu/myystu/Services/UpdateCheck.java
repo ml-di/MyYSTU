@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Services;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -8,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,8 @@ import ru.ystu.myystu.Network.UpdateService;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.NetworkInformation;
 
+import static android.app.Notification.PRIORITY_MIN;
+
 public class UpdateCheck extends Service {
 
     // TODO интервал обновления
@@ -44,6 +49,7 @@ public class UpdateCheck extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         mContext = this;
         mUpdateService = new UpdateService(this);
         mDisposables = new CompositeDisposable();
@@ -56,8 +62,27 @@ public class UpdateCheck extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent != null && intent.getParcelableExtra("pending") != null){
-            mPendingIntent = intent.getParcelableExtra("pending");
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                String CHANNEL_ID = "update_check";
+                String CHANNEL_NAME = "Update channel";
+
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                        CHANNEL_NAME,NotificationManager.IMPORTANCE_NONE);
+                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+
+                Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setCategory(Notification.CATEGORY_SERVICE).setSmallIcon(R.drawable.ic_logo_min).setPriority(PRIORITY_MIN).build();
+
+                startForeground(101, notification);
+            }
+
+            if(intent != null && intent.getParcelableExtra("pending") != null){
+                mPendingIntent = intent.getParcelableExtra("pending");
+            }
+        } catch (Exception e) {
+            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         return START_REDELIVER_INTENT;
@@ -210,7 +235,7 @@ public class UpdateCheck extends Service {
             final NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            mNotificationManager.notify(idType, mNotification.build());
+            mNotificationManager.notify(idType + 1, mNotification.build());
         }
     }
 }

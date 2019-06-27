@@ -1,18 +1,15 @@
 package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipeline;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -256,26 +253,29 @@ public class NewsFragment extends Fragment {
                                 else
                                     mRecyclerView.scheduleLayoutAnimation();
 
-                                new Thread(() -> {
+                                try {
+                                    new Thread(() -> {
 
-                                    // Удаляем все записи, если они есть
-                                    if (db.newsItemsDao().getCountNewsAttach() > 0)
-                                        db.newsItemsDao().deleteNewsAttach();
-                                    if (db.newsItemsDao().getCountNewsDontAttach() > 0)
-                                        db.newsItemsDao().deleteNewsDontAttach();
-                                    if (db.newsItemsDao().getCountPhotos() > 0)
-                                        db.newsItemsDao().deleteNewsAllPhotos();
+                                        // Удаляем все записи, если они есть
+                                        if (db.newsItemsDao().getCountNewsAttach() > 0)
+                                            db.newsItemsDao().deleteNewsAttach();
+                                        if (db.newsItemsDao().getCountNewsDontAttach() > 0)
+                                            db.newsItemsDao().deleteNewsDontAttach();
+                                        if (db.newsItemsDao().getCountPhotos() > 0)
+                                            db.newsItemsDao().deleteNewsAllPhotos();
 
-                                    // Добавляем новые записи
-                                    for (Parcelable p : parcelables) {
-                                        if (p instanceof NewsItemsData_DontAttach) {
-                                            db.newsItemsDao().insertNewsDontAttach((NewsItemsData_DontAttach) p);
-                                        } else if (p instanceof NewsItemsData) {
-                                            db.newsItemsDao().insertNewsAttach((NewsItemsData) p);
+                                        // Добавляем новые записи
+                                        for (Parcelable p : parcelables) {
+                                            if (p instanceof NewsItemsData_DontAttach) {
+                                                db.newsItemsDao().insertNewsDontAttach((NewsItemsData_DontAttach) p);
+                                            } else if (p instanceof NewsItemsData) {
+                                                db.newsItemsDao().insertNewsAttach((NewsItemsData) p);
+                                            }
                                         }
-                                    }
-                                }).start();
-
+                                    }).start();
+                                } catch (Exception e) {
+                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
                             }
 
                             @Override
@@ -301,61 +301,47 @@ public class NewsFragment extends Fragment {
         } else {
             if(!isOffset){
 
-                new Thread(() -> {
+                try {
+                    new Thread(() -> {
 
-                    final int count = db.newsItemsDao().getCountNewsAttach() + db.newsItemsDao().getCountNewsDontAttach();
+                        final int count = db.newsItemsDao().getCountNewsAttach() + db.newsItemsDao().getCountNewsDontAttach();
 
-                    if (count > 0) {
-                        if (mList.size() > 0)
-                            mList.clear();
+                        if (count > 0) {
+                            if (mList.size() > 0)
+                                mList.clear();
 
-                        mList.add(new NewsItemsData_Header(-1, "Тестирую header"));
+                            mList.add(new NewsItemsData_Header(-1, "Тестирую header"));
 
-                        for (int i = 0; i < count; i++) {
+                            for (int i = 0; i < count; i++) {
 
-                            if (db.newsItemsDao().isExistsDontAttach(i)) {
-                                mList.add(db.newsItemsDao().getNewsDontAttach(i));
-                            } else if (db.newsItemsDao().isExistsAttach(i)) {
-                                mList.add(db.newsItemsDao().getNewsAttach(i));
+                                if (db.newsItemsDao().isExistsDontAttach(i)) {
+                                    mList.add(db.newsItemsDao().getNewsDontAttach(i));
+                                } else if (db.newsItemsDao().isExistsAttach(i)) {
+                                    mList.add(db.newsItemsDao().getNewsAttach(i));
+                                }
                             }
-                        }
 
-                        mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
-                        mRecyclerViewAdapter.setHasStableIds(true);
-                        mRecyclerView.post(() -> {
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                            // SnackBar с предупреждением об отсутствие интернета
-                            final Snackbar snackbar = Snackbar
-                                    .make(
-                                            mainLayout,
-                                            getResources().getString(R.string.toast_no_connection_the_internet),
-                                            Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(
-                                            getResources().getString(R.string.error_message_refresh),
-                                            view -> {
-                                                // Обновление данных
-                                                getNews(false);
-                                            });
-
-                            ((TextView)snackbar
-                                    .getView()
-                                    .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
-
-                            snackbar.show();
-
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        });
-
-                    } else {
-                        if(isAdded() && getActivity() != null) {
-                            getActivity().runOnUiThread(() -> {
-                                ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+                            mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                            mRecyclerViewAdapter.setHasStableIds(true);
+                            mRecyclerView.post(() -> {
+                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                Toast.makeText(getContext(), getResources().getString(R.string.toast_no_connection_the_internet), Toast.LENGTH_LONG).show();
                                 mSwipeRefreshLayout.setRefreshing(false);
                             });
+
+                        } else {
+                            if(isAdded() && getActivity() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                });
+                            }
                         }
-                    }
-                }).start();
+                    }).start();
+                } catch (Exception e) {
+                    ErrorMessage.showToFragment(mainLayout, -1, e.getMessage(), mContext, getTag());
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         }
     }

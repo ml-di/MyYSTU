@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -188,26 +189,31 @@ public class EventActivity extends AppCompatActivity {
                                 mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
                             }
 
-                            new Thread(() -> {
-                                // Удаляем все записи, если они есть
-                                if (db.eventsItemsDao().getCountEventHeader() > 0)
-                                    db.eventsItemsDao().deleteEventHeader();
-                                if (db.eventsItemsDao().getCountDividers() > 0)
-                                    db.eventsItemsDao().deleteAllDividers();
-                                if (db.eventsItemsDao().getCountEventItems() > 0)
-                                    db.eventsItemsDao().deleteAllEventItems();
+                            try {
+                                new Thread(() -> {
+                                    // Удаляем все записи, если они есть
+                                    if (db.eventsItemsDao().getCountEventHeader() > 0)
+                                        db.eventsItemsDao().deleteEventHeader();
+                                    if (db.eventsItemsDao().getCountDividers() > 0)
+                                        db.eventsItemsDao().deleteAllDividers();
+                                    if (db.eventsItemsDao().getCountEventItems() > 0)
+                                        db.eventsItemsDao().deleteAllEventItems();
 
-                                // Добавляем новые записи
-                                for (Parcelable parcelable : eventItemsData) {
-                                    if (parcelable instanceof StringData) {
-                                        db.eventsItemsDao().insertDividers((StringData) parcelable);
-                                    } else if (parcelable instanceof EventItemsData_Event) {
-                                        db.eventsItemsDao().insertEventItems((EventItemsData_Event) parcelable);
-                                    } else if (parcelable instanceof EventItemsData_Header) {
-                                        db.eventsItemsDao().insertEventHeader((EventItemsData_Header) parcelable);
+                                    // Добавляем новые записи
+                                    for (Parcelable parcelable : eventItemsData) {
+                                        if (parcelable instanceof StringData) {
+                                            db.eventsItemsDao().insertDividers((StringData) parcelable);
+                                        } else if (parcelable instanceof EventItemsData_Event) {
+                                            db.eventsItemsDao().insertEventItems((EventItemsData_Event) parcelable);
+                                        } else if (parcelable instanceof EventItemsData_Header) {
+                                            db.eventsItemsDao().insertEventHeader((EventItemsData_Header) parcelable);
+                                        }
                                     }
-                                }
-                            }).start();
+                                }).start();
+                            } catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -227,58 +233,63 @@ public class EventActivity extends AppCompatActivity {
                         }
                     }));
         } else {
-            new Thread(() -> {
-                if (db.eventsItemsDao().getCountEventItems() > 0) {
-                    if (mList.size() > 0)
-                        mList.clear();
+            try {
+                new Thread(() -> {
+                    if (db.eventsItemsDao().getCountEventItems() > 0) {
+                        if (mList.size() > 0)
+                            mList.clear();
 
-                    mList.add(new ToolbarPlaceholderData(0));
+                        mList.add(new ToolbarPlaceholderData(0));
 
-                    final int countListItems = db.eventsItemsDao().getCountDividers() + db.eventsItemsDao().getCountEventItems() + 2;
+                        final int countListItems = db.eventsItemsDao().getCountDividers() + db.eventsItemsDao().getCountEventItems() + 2;
 
-                    for (int i = 0; i < countListItems; i++) {
-                        if (db.eventsItemsDao().isExistsDivider(i)) {
-                            mList.add(db.eventsItemsDao().getDividers(i));
-                        } else if (db.eventsItemsDao().isExistsEventItems(i)) {
-                            mList.add(db.eventsItemsDao().getEvents(i));
-                        } else if (db.eventsItemsDao().isExistsEventHeader(i)) {
-                            mList.add(db.eventsItemsDao().getEventHeader(i));
+                        for (int i = 0; i < countListItems; i++) {
+                            if (db.eventsItemsDao().isExistsDivider(i)) {
+                                mList.add(db.eventsItemsDao().getDividers(i));
+                            } else if (db.eventsItemsDao().isExistsEventItems(i)) {
+                                mList.add(db.eventsItemsDao().getEvents(i));
+                            } else if (db.eventsItemsDao().isExistsEventHeader(i)) {
+                                mList.add(db.eventsItemsDao().getEventHeader(i));
+                            }
                         }
+
+                        mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
+                        mRecyclerView.post(() -> {
+                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            // SnackBar с предупреждением об отсутствие интернета
+                            final Snackbar snackbar = Snackbar
+                                    .make(
+                                            mainLayout,
+                                            getResources().getString(R.string.toast_no_connection_the_internet),
+                                            Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(
+                                            getResources().getString(R.string.error_message_refresh),
+                                            view -> {
+                                                // Обновление данных
+                                                getEvent(url);
+                                            });
+
+                            ((TextView)snackbar
+                                    .getView()
+                                    .findViewById(com.google.android.material.R.id.snackbar_text))
+                                    .setTextColor(Color.BLACK);
+
+                            snackbar.show();
+
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
+
+                    } else {
+                        runOnUiThread(() -> {
+                            ErrorMessage.show(mainLayout, 0, null, mContext);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
                     }
-
-                    mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
-                    mRecyclerView.post(() -> {
-                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                        // SnackBar с предупреждением об отсутствие интернета
-                        final Snackbar snackbar = Snackbar
-                                .make(
-                                        mainLayout,
-                                        getResources().getString(R.string.toast_no_connection_the_internet),
-                                        Snackbar.LENGTH_INDEFINITE)
-                                .setAction(
-                                        getResources().getString(R.string.error_message_refresh),
-                                        view -> {
-                                            // Обновление данных
-                                            getEvent(url);
-                                        });
-
-                        ((TextView)snackbar
-                                .getView()
-                                .findViewById(com.google.android.material.R.id.snackbar_text))
-                                .setTextColor(Color.BLACK);
-
-                        snackbar.show();
-
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
-
-                } else {
-                    runOnUiThread(() -> {
-                        ErrorMessage.show(mainLayout, 0, null, mContext);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-            }).start();
+                }).start();
+            } catch (Exception e) {
+                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 }

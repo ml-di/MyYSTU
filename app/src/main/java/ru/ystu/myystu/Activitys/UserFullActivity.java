@@ -35,6 +35,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.material.snackbar.Snackbar;
@@ -236,23 +237,27 @@ public class UserFullActivity extends AppCompatActivity {
                         @Override
                         public void onComplete() {
 
-                            new Thread(() -> {
-                                // Удаляем запись, если она есть
-                                if (db.userFullDao().isExists(id)) {
-                                    db.userFullDao().delete(id);
-                                }
+                            try {
+                                new Thread(() -> {
+                                    // Удаляем запись, если она есть
+                                    if (db.userFullDao().isExists(id)) {
+                                        db.userFullDao().delete(id);
+                                    }
 
-                                // Добавляем новую запись
-                                final UserFullData userFullData = new UserFullData();
-                                userFullData.setId(id);
-                                userFullData.setPhone(phoneStr);
-                                userFullData.setEmail(emailStr);
-                                userFullData.setLocation(locationStr);
-                                userFullData.setDetail(detailStr);
+                                    // Добавляем новую запись
+                                    final UserFullData userFullData = new UserFullData();
+                                    userFullData.setId(id);
+                                    userFullData.setPhone(phoneStr);
+                                    userFullData.setEmail(emailStr);
+                                    userFullData.setLocation(locationStr);
+                                    userFullData.setDetail(detailStr);
 
-                                db.userFullDao().insert(userFullData);
+                                    db.userFullDao().insert(userFullData);
 
-                            }).start();
+                                }).start();
+                            } catch (Exception e) {
+                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
 
                             setInformation();
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -271,47 +276,52 @@ public class UserFullActivity extends AppCompatActivity {
                     }));
         } else {
 
-            new Thread(() -> {
-                if (db.userFullDao().isExists(id)) {
+            try {
+                new Thread(() -> {
+                    if (db.userFullDao().isExists(id)) {
 
-                    final UserFullData userFullData = db.userFullDao().getUserFull(id);
-                    phoneStr = userFullData.getPhone();
-                    emailStr = userFullData.getEmail();
-                    locationStr = userFullData.getLocation();
-                    detailStr = userFullData.getDetail();
+                        final UserFullData userFullData = db.userFullDao().getUserFull(id);
+                        phoneStr = userFullData.getPhone();
+                        emailStr = userFullData.getEmail();
+                        locationStr = userFullData.getLocation();
+                        detailStr = userFullData.getDetail();
 
-                    runOnUiThread(() -> {
-                        setInformation();
-                        // SnackBar с предупреждением об отсутствие интернета
-                        final Snackbar snackbar = Snackbar
-                                .make(
-                                        mainLayout,
-                                        getResources().getString(R.string.toast_no_connection_the_internet),
-                                        Snackbar.LENGTH_INDEFINITE)
-                                .setAction(
-                                        getResources().getString(R.string.error_message_refresh),
-                                        view -> {
-                                            // Обновление данных
-                                            getUserInfo();
-                                        });
+                        runOnUiThread(() -> {
+                            setInformation();
+                            // SnackBar с предупреждением об отсутствие интернета
+                            final Snackbar snackbar = Snackbar
+                                    .make(
+                                            mainLayout,
+                                            getResources().getString(R.string.toast_no_connection_the_internet),
+                                            Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(
+                                            getResources().getString(R.string.error_message_refresh),
+                                            view -> {
+                                                // Обновление данных
+                                                getUserInfo();
+                                            });
 
-                        ((TextView)snackbar
-                                .getView()
-                                .findViewById(com.google.android.material.R.id.snackbar_text))
-                                .setTextColor(Color.BLACK);
+                            ((TextView)snackbar
+                                    .getView()
+                                    .findViewById(com.google.android.material.R.id.snackbar_text))
+                                    .setTextColor(Color.BLACK);
 
-                        snackbar.show();
+                            snackbar.show();
 
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
 
-                } else {
-                    runOnUiThread(() -> {
-                        ErrorMessage.show(mainLayout, 0, null, mContext);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-            }).start();
+                    } else {
+                        runOnUiThread(() -> {
+                            ErrorMessage.show(mainLayout, 0, null, mContext);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        });
+                    }
+                }).start();
+            } catch (Exception e) {
+                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 
