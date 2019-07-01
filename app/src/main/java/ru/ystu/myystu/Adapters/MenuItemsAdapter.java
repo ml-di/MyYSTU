@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobActivity;
 import ru.ystu.myystu.Activitys.MapActivity;
@@ -31,7 +31,7 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
         private int id;
         private final AppCompatTextView text;
         private final AppCompatImageView icon;
-        private final ConstraintLayout itemMenu;
+        private final CardView itemMenu;
 
         MenuItemsViewHolder(View itemView, final Context mContext) {
             super(itemView);

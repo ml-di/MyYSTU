@@ -183,14 +183,16 @@ public class MainActivity extends AppCompatActivity {
     }
     public void showBottomBar (boolean isShow) {
 
-        final CoordinatorLayout.LayoutParams paramsBottomBar = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-        final CoordinatorLayout.LayoutParams paramsMainLayout = (CoordinatorLayout.LayoutParams) mContentContainer.getLayoutParams();
-        if(isShow){
-            paramsBottomBar.setBehavior(null);
-            paramsMainLayout.setMargins(0, 0, 0, mBottomBar.getHeight());
-        } else {
-            paramsBottomBar.setBehavior(new HideBottomViewOnScrollBehavior());
-            paramsMainLayout.setMargins(0, 0, 0, 0);
+        if (mBottomBar != null && mContentContainer != null) {
+            final CoordinatorLayout.LayoutParams paramsBottomBar = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+            final CoordinatorLayout.LayoutParams paramsMainLayout = (CoordinatorLayout.LayoutParams) mContentContainer.getLayoutParams();
+            if(isShow){
+                paramsBottomBar.setBehavior(null);
+                paramsMainLayout.setMargins(0, 0, 0, mBottomBar.getHeight());
+            } else {
+                paramsBottomBar.setBehavior(new HideBottomViewOnScrollBehavior());
+                paramsMainLayout.setMargins(0, 0, 0, 0);
+            }
         }
     }
 
