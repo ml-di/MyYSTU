@@ -6,7 +6,7 @@
         <item name="colorPrimaryDark">@color/colorLightStatusBar</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorLightStatusBar</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorControlHighlight">@color/colorRipple</item>
     </style>
 
     <!-- Тема для photoView -->
@@ -26,15 +26,14 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorLightStatusBar</item>
         <item name="preferenceTheme">@style/PreferenceTheme</item>
+        <item name="android:colorControlHighlight">@color/colorRipple</item>
     </style>
 
     <!-- Тема для toolbar -->
     <style name="Toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
-        <!-- <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item> -->
         <item name="android:background">@color/colorToolBar</item>
-
     </style>
 
     <!-- Тема для tabLayout -->
@@ -47,40 +46,12 @@
 
     <!-- Тема для Bottom navigation -->
     <style name="BottomNavigation">
-        <item name="android:background">#fff</item>
+        <item name="android:background">@color/colorBackground</item>
         <item name="itemIconTint">@color/bottom_navigation_item_icon</item>
         <item name="itemTextColor">@color/bottom_navigation_item_text</item>
     </style>
 
-    <!-- Темы для Span -->
-    <!-- Счетчик -->
-    <style name="BellCountStyle" parent="@android:style/Widget.TextView">
-        <item name="android:textColor">@color/colorPrimaryLight</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">26sp</item>
-    </style>
-    <!-- Подпись к счетчику -->
-    <style name="BellTextStyle" parent="@android:style/Widget.TextView">
-        <item name="android:textColor">@color/colorPrimaryLightOpacity</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-    <!-- Остальные надписи -->
-    <style name="BellTextOtherStyle" parent="@android:style/Widget.TextView">
-        <item name="android:textColor">@color/colorPrimaryLight</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-    <!-- Дата в уведомлениях -->
-    <style name="BellItemCountStyle" parent="@android:style/Widget.TextView">
-        <item name="android:textColor">@color/colorTextSecondary</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">21sp</item>
-    </style>
-    <style name="BellItemTextStyle" parent="@android:style/Widget.TextView">
-        <item name="android:textColor">@color/colorTextSecondaryOpacity</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
+    <!-- Настройки приложения -->
     <style name="PreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
         <item name="android:tint">@color/colorSettingsIcon</item>
     </style>

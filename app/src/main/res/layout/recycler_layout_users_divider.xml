@@ -17,6 +17,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingBottom="8dp"
+        android:textColor="@color/colorTextSecondary"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

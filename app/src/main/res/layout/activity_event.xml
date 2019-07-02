@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/colorBackground"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".Activitys.EventActivity">
@@ -23,7 +23,7 @@
                 android:id="@+id/recycler_event_items"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white" />
+                android:background="@color/colorBackground" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

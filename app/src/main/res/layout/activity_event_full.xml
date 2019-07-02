@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/colorBackground"
     android:fitsSystemWindows="true"
     tools:context=".Activitys.EventFullActivity">
 
@@ -17,7 +17,7 @@
             android:id="@+id/eventFull_mainLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@android:color/white">
+            android:background="@color/colorBackground">
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/eventFull_scroll"

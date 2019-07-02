@@ -15,10 +15,10 @@
         android:backgroundTint="@color/colorAccent"
         android:gravity="center"
         android:padding="2dp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/colorTextAccent"
         android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         tools:text="9+" />
 </androidx.constraintlayout.widget.ConstraintLayout>

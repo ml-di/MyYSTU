@@ -27,7 +27,7 @@ public class BellHelper {
     public String getHalfYear(){
 
         final Calendar mCalendar = Calendar.getInstance();
-        final int month =  mCalendar.get(Calendar.MONTH);
+        final int month =  mCalendar.get(Calendar.MONTH) + 1;
 
         if(month > 1 && month < 6)
             return mContext.getResources().getString(R.string.bell_title_two);

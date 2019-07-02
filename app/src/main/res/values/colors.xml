@@ -1,30 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <color name="colorPrimary">#0A4188</color>
     <color name="colorPrimaryDark">#001c5a</color>
     <color name="colorPrimaryLight">#4c6bb8</color>
     <color name="colorAccent">#ec7200</color>
-
-    <color name="colorPrimaryLightOpacity">#B24C6BB8</color>
-
-    <color name="colorMenuItem">#fff</color>
-    <color name="colorToolBar">#F2FFFFFF</color>
-
-    <color name="colorTextPrimary">#424242</color>
-    <color name="colorTextSecondary">#616161</color>
-    <color name="colorTextTertiary">#a5a5a5</color>
-
-    <color name="colorTextSecondaryOpacity">#BF616161</color>
-
-    <color name="colorDivider">#DCDCDC</color>
-    <color name="colorPlaceHolderImage">#EEEEEE</color>
-    <color name="colorOverleyImage">#A6000000</color>
-    <color name="colorPhotoViewBackground">#000000</color>
-
-    <color name="colorSettingsIcon">#BBBBBB</color>
-
-    <color name="colorLightStatusBar">#C8C8C8</color>
-    <color name="colorLightBackgroundText">#E6FFFFFF</color>
 
     <!-- Цвета кафедр -->
     <color name="colorAsf">#710A0E</color>
@@ -34,4 +14,37 @@
     <color name="colorHtf">#007579</color>
 
     <color name="design_snackbar_background_color" tools:override="true">@color/colorToolBar</color>
+
+    <!-- StatusBar -->
+    <color name="colorLightStatusBar">#C8C8C8</color>
+
+    <color name="colorOverleyImage">#A6000000</color>
+    <color name="colorPhotoViewBackground">#000000</color>
+    <color name="colorTextSecondaryOpacity">#BF616161</color>
+
+    <color name="colorToolBar">#F2FFFFFF</color>
+    <color name="colorPlaceHolderImage">#EEEEEE</color>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorBackgroundTwo">#FFFFFF</color>
+
+    <color name="menuGradientStart">#0A4188</color>
+    <color name="menuGradientEnd">#D94C6BB8</color>
+
+    <color name="colorTextAccent">#ffffff</color>
+    <color name="colorTextMenu">#ffffff</color>
+    <color name="colorTextIcon">#ffffff</color>
+    <color name="colorTextPrimary">#424242</color>
+    <color name="colorTextSecondary">#616161</color>
+    <color name="colorTextTertiary">#a5a5a5</color>
+
+    <color name="colorButtonBackgroundError">#4c6bb8</color>
+    <color name="colorButtonTextError">#ffffff</color>
+    <color name="colorDivider">#DCDCDC</color>
+    <color name="colorMenuIcon">#DCDCDC</color>
+    <color name="colorBackgroundOpacityText">#E6FFFFFF</color>
+    <color name="colorSettingsIcon">#BBBBBB</color>
+    <color name="colorBottomNavigationNonActiveIcon">#DCDCDC</color>
+    <color name="colorBottomNavigationNonActiveText">#a5a5a5</color>
+    <color name="colorRipple">#40419AFF</color>
+
 </resources>

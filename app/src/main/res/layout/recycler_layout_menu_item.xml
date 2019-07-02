@@ -14,6 +14,7 @@
         android:id="@+id/itemMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorBackgroundTwo"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="26dp"
         app:cardElevation="5dp">
