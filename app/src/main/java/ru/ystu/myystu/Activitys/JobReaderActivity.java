@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 
 import android.content.ClipData;
@@ -62,7 +63,11 @@ public class JobReaderActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(isFinishing()) {
-            overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            if (SettingsController.isEnabledAnim(this)) {
+                overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            } else {
+                overridePendingTransition(0, 0);
+            }
         }
     }
 

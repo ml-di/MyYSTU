@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -25,6 +24,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 import android.content.Context;
 import android.content.Intent;
@@ -89,8 +89,6 @@ public class ScheduleListActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recycler_schedule_items);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL));
 
         mDisposables = new CompositeDisposable();
         getSchedule = new GetSchedule();
@@ -124,7 +122,11 @@ public class ScheduleListActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(isFinishing()) {
-            overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            if (SettingsController.isEnabledAnim(this)) {
+                overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            } else {
+                overridePendingTransition(0, 0);
+            }
         }
     }
 
@@ -173,28 +175,29 @@ public class ScheduleListActivity extends AppCompatActivity {
                                 // Добавляем в БД
                                 try {
                                     new Thread(() -> {
-                                        // Удаляем все записи, если они есть
-                                        if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
-                                            db.scheduleItemDao().deleteList(id);
-                                        }
+                                        if (db.isOpen()) {
+                                            // Удаляем все записи, если они есть
+                                            if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
+                                                db.scheduleItemDao().deleteList(id);
+                                            }
 
-                                        if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
-                                            db.scheduleItemDao().deleteChange(id);
-                                        }
+                                            if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
+                                                db.scheduleItemDao().deleteChange(id);
+                                            }
 
-                                        // Добавляем новые записи с расписанием
-                                        for (Parcelable parcelable : mList) {
-                                            if (parcelable instanceof ScheduleListItemData) {
-                                                db.scheduleItemDao().insertList((ScheduleListItemData) parcelable);
+                                            // Добавляем новые записи с расписанием
+                                            for (Parcelable parcelable : mList) {
+                                                if (parcelable instanceof ScheduleListItemData) {
+                                                    db.scheduleItemDao().insertList((ScheduleListItemData) parcelable);
+                                                }
+                                            }
+                                            // Добавляем новые записи с изменениями
+                                            int index = id * 100;
+                                            for (String s : changeList) {
+                                                db.scheduleItemDao().insertChange(new ScheduleChangeBDData(index, id, s));
+                                                index++;
                                             }
                                         }
-                                        // Добавляем новые записи с изменениями
-                                        int index = id * 100;
-                                        for (String s : changeList) {
-                                            db.scheduleItemDao().insertChange(new ScheduleChangeBDData(index, id, s));
-                                            index++;
-                                        }
-
                                     }).start();
                                 } catch (Exception e) {
                                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -224,7 +227,7 @@ public class ScheduleListActivity extends AppCompatActivity {
 
             try {
                 new Thread(() -> {
-                    if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
+                    if (db.isOpen() && db.scheduleItemDao().getCountScheduleList(id) > 0) {
                         if (mList.size() > 0)
                             mList.clear();
 
@@ -266,7 +269,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                 }).start();
 
                 new Thread(() -> {
-                    if (db.scheduleItemDao().getCountScheduleChange(id) > 0) {
+                    if (db.isOpen() && db.scheduleItemDao().getCountScheduleChange(id) > 0) {
                         if (changeList.size() > 0)
                             changeList.clear();
 
@@ -313,8 +316,11 @@ public class ScheduleListActivity extends AppCompatActivity {
             final Intent mIntent = new Intent(this, ScheduleChangeActivity.class);
             mIntent.putExtra("mList", changeList);
             startActivity(mIntent);
-            overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
-
+            if (SettingsController.isEnabledAnim(this)) {
+                overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+            } else {
+                overridePendingTransition(0, 0);
+            }
         }
 
         return true;

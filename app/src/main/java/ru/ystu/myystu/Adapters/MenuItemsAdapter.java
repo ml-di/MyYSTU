@@ -1,5 +1,6 @@
 package ru.ystu.myystu.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import ru.ystu.myystu.Activitys.UsersActivity;
 import ru.ystu.myystu.Activitys.ScheduleActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.MenuItemsData;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.MenuItemsViewHolder> {
 
@@ -66,6 +68,9 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                     case 4:
                         mContext.startActivity(new Intent(mContext, UsersActivity.class));
                         break;
+                }
+                if (!SettingsController.isEnabledAnim(mContext)) {
+                    ((Activity)mContext).overridePendingTransition(0, 0);
                 }
             });
         }

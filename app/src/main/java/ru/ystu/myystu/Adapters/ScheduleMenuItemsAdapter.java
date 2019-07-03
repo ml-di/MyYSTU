@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.ScheduleMenuItemsData;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuItemsAdapter.ScheduleMenuItemsViewHolder> {
 
@@ -47,7 +48,12 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
                 final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
                 mIntent.putExtra("ID", id);
                 mContext.startActivity(mIntent);
-                ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+                if (SettingsController.isEnabledAnim(mContext)) {
+                    ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+                }else {
+                    ((Activity)mContext).overridePendingTransition(0, 0);
+                }
+
             });
         }
     }

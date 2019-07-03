@@ -32,6 +32,7 @@ import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
@@ -248,7 +249,11 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             readIntent.putExtra("content", jobItem.getPost());
                             readIntent.putExtra("title", jobItem.getOrganization());
                             mContext.startActivity(readIntent);
-                            ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+                            if (SettingsController.isEnabledAnim(mContext)) {
+                                ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+                            } else {
+                                ((Activity)mContext).overridePendingTransition(0, 0);
+                            }
                         }
 
                         return true;

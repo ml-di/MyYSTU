@@ -41,6 +41,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class EventActivity extends AppCompatActivity {
 
@@ -104,6 +105,14 @@ public class EventActivity extends AppCompatActivity {
             mList = savedInstanceState.getParcelableArrayList("mList");
             mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && !SettingsController.isEnabledAnim(this)) {
+            overridePendingTransition(0, 0);
         }
     }
 
@@ -191,22 +200,24 @@ public class EventActivity extends AppCompatActivity {
 
                             try {
                                 new Thread(() -> {
-                                    // Удаляем все записи, если они есть
-                                    if (db.eventsItemsDao().getCountEventHeader() > 0)
-                                        db.eventsItemsDao().deleteEventHeader();
-                                    if (db.eventsItemsDao().getCountDividers() > 0)
-                                        db.eventsItemsDao().deleteAllDividers();
-                                    if (db.eventsItemsDao().getCountEventItems() > 0)
-                                        db.eventsItemsDao().deleteAllEventItems();
+                                    if (db.isOpen()) {
+                                        // Удаляем все записи, если они есть
+                                        if (db.eventsItemsDao().getCountEventHeader() > 0)
+                                            db.eventsItemsDao().deleteEventHeader();
+                                        if (db.eventsItemsDao().getCountDividers() > 0)
+                                            db.eventsItemsDao().deleteAllDividers();
+                                        if (db.eventsItemsDao().getCountEventItems() > 0)
+                                            db.eventsItemsDao().deleteAllEventItems();
 
-                                    // Добавляем новые записи
-                                    for (Parcelable parcelable : eventItemsData) {
-                                        if (parcelable instanceof StringData) {
-                                            db.eventsItemsDao().insertDividers((StringData) parcelable);
-                                        } else if (parcelable instanceof EventItemsData_Event) {
-                                            db.eventsItemsDao().insertEventItems((EventItemsData_Event) parcelable);
-                                        } else if (parcelable instanceof EventItemsData_Header) {
-                                            db.eventsItemsDao().insertEventHeader((EventItemsData_Header) parcelable);
+                                        // Добавляем новые записи
+                                        for (Parcelable parcelable : eventItemsData) {
+                                            if (parcelable instanceof StringData) {
+                                                db.eventsItemsDao().insertDividers((StringData) parcelable);
+                                            } else if (parcelable instanceof EventItemsData_Event) {
+                                                db.eventsItemsDao().insertEventItems((EventItemsData_Event) parcelable);
+                                            } else if (parcelable instanceof EventItemsData_Header) {
+                                                db.eventsItemsDao().insertEventHeader((EventItemsData_Header) parcelable);
+                                            }
                                         }
                                     }
                                 }).start();
@@ -233,9 +244,10 @@ public class EventActivity extends AppCompatActivity {
                         }
                     }));
         } else {
+
             try {
                 new Thread(() -> {
-                    if (db.eventsItemsDao().getCountEventItems() > 0) {
+                    if (db.isOpen() && db.eventsItemsDao().getCountEventItems() > 0) {
                         if (mList.size() > 0)
                             mList.clear();
 

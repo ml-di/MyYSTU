@@ -4,14 +4,17 @@
 
     <PreferenceCategory android:title="@string/settings_category_general">
 
-        <ListPreference
-            android:defaultValue="mid"
-            android:entries="@array/photoSize_Array"
-            android:entryValues="@array/photoSize_Values"
-            android:icon="@drawable/ic_photo_size"
-            android:key="preference_general_photoSize"
-            android:summary="Среднее"
-            android:title="@string/settings_general_photoSize" />
+        <PreferenceScreen
+            android:icon="@drawable/ic_ui"
+            android:key="preference_general_ui"
+            android:title="@string/settings_general_ui">
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="preference_ui_animation_enable"
+                android:title="@string/settings_general_ui_animation"
+                app:iconSpaceReserved="false" />
+        </PreferenceScreen>
 
         <PreferenceScreen
             android:icon="@drawable/ic_bell"
@@ -62,6 +65,15 @@
                 app:iconSpaceReserved="false" />
 
         </PreferenceScreen>
+
+        <ListPreference
+            android:defaultValue="mid"
+            android:entries="@array/photoSize_Array"
+            android:entryValues="@array/photoSize_Values"
+            android:icon="@drawable/ic_photo_size"
+            android:key="preference_general_photoSize"
+            android:summary="Среднее"
+            android:title="@string/settings_general_photoSize" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_category_additional">

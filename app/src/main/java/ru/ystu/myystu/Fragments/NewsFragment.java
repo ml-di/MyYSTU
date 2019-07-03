@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -37,6 +39,7 @@ import ru.ystu.myystu.Adapters.NewsItemsAdapter;
 import ru.ystu.myystu.Network.GetListNewsFromURL;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class NewsFragment extends Fragment {
 
@@ -245,6 +248,7 @@ public class NewsFragment extends Fragment {
                                     mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
                                     mRecyclerViewAdapter.setHasStableIds(true);
                                     mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                    setRecyclerViewAnim(mRecyclerView);
                                 }
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 // Конец списка новостей
@@ -255,21 +259,22 @@ public class NewsFragment extends Fragment {
 
                                 try {
                                     new Thread(() -> {
+                                        if (db.isOpen()) {
+                                            // Удаляем все записи, если они есть
+                                            if (db.newsItemsDao().getCountNewsAttach() > 0)
+                                                db.newsItemsDao().deleteNewsAttach();
+                                            if (db.newsItemsDao().getCountNewsDontAttach() > 0)
+                                                db.newsItemsDao().deleteNewsDontAttach();
+                                            if (db.newsItemsDao().getCountPhotos() > 0)
+                                                db.newsItemsDao().deleteNewsAllPhotos();
 
-                                        // Удаляем все записи, если они есть
-                                        if (db.newsItemsDao().getCountNewsAttach() > 0)
-                                            db.newsItemsDao().deleteNewsAttach();
-                                        if (db.newsItemsDao().getCountNewsDontAttach() > 0)
-                                            db.newsItemsDao().deleteNewsDontAttach();
-                                        if (db.newsItemsDao().getCountPhotos() > 0)
-                                            db.newsItemsDao().deleteNewsAllPhotos();
-
-                                        // Добавляем новые записи
-                                        for (Parcelable p : parcelables) {
-                                            if (p instanceof NewsItemsData_DontAttach) {
-                                                db.newsItemsDao().insertNewsDontAttach((NewsItemsData_DontAttach) p);
-                                            } else if (p instanceof NewsItemsData) {
-                                                db.newsItemsDao().insertNewsAttach((NewsItemsData) p);
+                                            // Добавляем новые записи
+                                            for (Parcelable p : parcelables) {
+                                                if (p instanceof NewsItemsData_DontAttach) {
+                                                    db.newsItemsDao().insertNewsDontAttach((NewsItemsData_DontAttach) p);
+                                                } else if (p instanceof NewsItemsData) {
+                                                    db.newsItemsDao().insertNewsAttach((NewsItemsData) p);
+                                                }
                                             }
                                         }
                                     }).start();
@@ -303,38 +308,40 @@ public class NewsFragment extends Fragment {
 
                 try {
                     new Thread(() -> {
+                        if (db.isOpen()) {
+                            final int count = db.newsItemsDao().getCountNewsAttach() + db.newsItemsDao().getCountNewsDontAttach();
 
-                        final int count = db.newsItemsDao().getCountNewsAttach() + db.newsItemsDao().getCountNewsDontAttach();
+                            if (count > 0) {
+                                if (mList.size() > 0)
+                                    mList.clear();
 
-                        if (count > 0) {
-                            if (mList.size() > 0)
-                                mList.clear();
+                                mList.add(new NewsItemsData_Header(-1, "Тестирую header"));
 
-                            mList.add(new NewsItemsData_Header(-1, "Тестирую header"));
+                                for (int i = 0; i < count; i++) {
 
-                            for (int i = 0; i < count; i++) {
-
-                                if (db.newsItemsDao().isExistsDontAttach(i)) {
-                                    mList.add(db.newsItemsDao().getNewsDontAttach(i));
-                                } else if (db.newsItemsDao().isExistsAttach(i)) {
-                                    mList.add(db.newsItemsDao().getNewsAttach(i));
+                                    if (db.newsItemsDao().isExistsDontAttach(i)) {
+                                        mList.add(db.newsItemsDao().getNewsDontAttach(i));
+                                    } else if (db.newsItemsDao().isExistsAttach(i)) {
+                                        mList.add(db.newsItemsDao().getNewsAttach(i));
+                                    }
                                 }
-                            }
 
-                            mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
-                            mRecyclerViewAdapter.setHasStableIds(true);
-                            mRecyclerView.post(() -> {
-                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                Toast.makeText(getContext(), getResources().getString(R.string.toast_no_connection_the_internet), Toast.LENGTH_LONG).show();
-                                mSwipeRefreshLayout.setRefreshing(false);
-                            });
-
-                        } else {
-                            if(isAdded() && getActivity() != null) {
-                                getActivity().runOnUiThread(() -> {
-                                    ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+                                mRecyclerViewAdapter = new NewsItemsAdapter(mList, getContext());
+                                mRecyclerViewAdapter.setHasStableIds(true);
+                                mRecyclerView.post(() -> {
+                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                    setRecyclerViewAnim(mRecyclerView);
+                                    Toast.makeText(getContext(), getResources().getString(R.string.toast_no_connection_the_internet), Toast.LENGTH_LONG).show();
                                     mSwipeRefreshLayout.setRefreshing(false);
                                 });
+
+                            } else {
+                                if(isAdded() && getActivity() != null) {
+                                    getActivity().runOnUiThread(() -> {
+                                        ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+                                        mSwipeRefreshLayout.setRefreshing(false);
+                                    });
+                                }
                             }
                         }
                     }).start();
@@ -343,6 +350,17 @@ public class NewsFragment extends Fragment {
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
+        }
+    }
+
+    private void setRecyclerViewAnim (final RecyclerView recyclerView) {
+        if (SettingsController.isEnabledAnim(mContext)) {
+            final Context context = recyclerView.getContext();
+            final LayoutAnimationController controller =
+                    AnimationUtils.loadLayoutAnimation(context, R.anim.layout_news_recyclerview_show);
+            recyclerView.setLayoutAnimation(controller);
+        } else {
+            recyclerView.clearAnimation();
         }
     }
 }

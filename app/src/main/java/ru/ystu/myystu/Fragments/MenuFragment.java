@@ -21,6 +21,7 @@ import ru.ystu.myystu.Activitys.SettingsActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.MenuItemsAdapter;
 import ru.ystu.myystu.AdaptersData.MenuItemsData;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class MenuFragment extends Fragment {
 
@@ -58,6 +59,9 @@ public class MenuFragment extends Fragment {
         menuBtn.setOnClickListener(view -> {
             final Intent mIntent = new Intent(getContext(), SettingsActivity.class);
             getContext().startActivity(mIntent);
+            if (!SettingsController.isEnabledAnim(getContext())) {
+                getActivity().overridePendingTransition(0, 0);
+            }
         });
     }
 

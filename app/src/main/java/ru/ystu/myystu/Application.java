@@ -13,7 +13,6 @@ import ru.ystu.myystu.Database.AppDatabase;
 
 public class Application extends android.app.Application {
 
-    private AppDatabase database;
     public static Application instance;
 
     @Override
@@ -34,6 +33,6 @@ public class Application extends android.app.Application {
         return instance;
     }
     public AppDatabase getDatabase() {
-        return database = Room.databaseBuilder(this, AppDatabase.class, "myystudb").build();
+        return Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "myystudb").build();
     }
 }

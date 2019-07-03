@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -25,6 +24,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -94,8 +94,6 @@ public class UsersActivity extends AppCompatActivity {
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL));
 
         mDisposables = new CompositeDisposable();
 
@@ -118,6 +116,14 @@ public class UsersActivity extends AppCompatActivity {
         super.onResume();
         if(mRecyclerState != null)
             mLayoutManager.onRestoreInstanceState(mRecyclerState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && !SettingsController.isEnabledAnim(this)) {
+            overridePendingTransition(0, 0);
+        }
     }
 
     @Override
@@ -204,15 +210,17 @@ public class UsersActivity extends AppCompatActivity {
 
                             try {
                                 new Thread(() -> {
-                                    // Удаляем все записи, если они есть
-                                    if (db.usersItemsDao().getCount() > 0) {
-                                        db.usersItemsDao().deleteAll();
-                                    }
+                                    if (db.isOpen()) {
+                                        // Удаляем все записи, если они есть
+                                        if (db.usersItemsDao().getCount() > 0) {
+                                            db.usersItemsDao().deleteAll();
+                                        }
 
-                                    // Добавляем новые записи
-                                    for (Parcelable parcelable : usersItemsData) {
-                                        if (parcelable instanceof UsersItemsData) {
-                                            db.usersItemsDao().insert((UsersItemsData) parcelable);
+                                        // Добавляем новые записи
+                                        for (Parcelable parcelable : usersItemsData) {
+                                            if (parcelable instanceof UsersItemsData) {
+                                                db.usersItemsDao().insert((UsersItemsData) parcelable);
+                                            }
                                         }
                                     }
                                 }).start();
@@ -241,7 +249,7 @@ public class UsersActivity extends AppCompatActivity {
 
             try {
                 new Thread(() -> {
-                    if (db.usersItemsDao().getCount() > 0) {
+                    if (db.isOpen() && db.usersItemsDao().getCount() > 0) {
                         if (mList.size() > 0)
                             mList.clear();
 

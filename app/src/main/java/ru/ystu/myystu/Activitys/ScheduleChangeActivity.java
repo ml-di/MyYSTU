@@ -10,6 +10,7 @@ import ru.ystu.myystu.AdaptersData.ScheduleChangeData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.SettingsController;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -90,15 +91,14 @@ public class ScheduleChangeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         if(isFinishing()) {
-            overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            if (SettingsController.isEnabledAnim(this)) {
+                overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            } else {
+                overridePendingTransition(0, 0);
+            }
         }
     }
 

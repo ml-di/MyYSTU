@@ -1,5 +1,6 @@
 package ru.ystu.myystu.Adapters;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -33,6 +34,7 @@ import ru.ystu.myystu.AdaptersData.NewsItemsData;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
+import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 import ru.ystu.myystu.Utils.UnixToString;
 
@@ -530,6 +532,9 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             mIntent.putExtra("list", mList);
             mContext.startActivity(mIntent);
+            if (!SettingsController.isEnabledAnim(mContext)) {
+                ((Activity) mContext).overridePendingTransition(0, 0);
+            }
         }
     }
 }

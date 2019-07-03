@@ -17,6 +17,7 @@ import ru.ystu.myystu.Adapters.NewsPhotoViewPagerAdapter;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 import ru.ystu.myystu.Utils.MultiTouchViewPager;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 import android.Manifest;
 import android.content.Intent;
@@ -85,6 +86,14 @@ public class ViewPhotoActivity extends AppCompatActivity {
                     }
                 });
             }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && !SettingsController.isEnabledAnim(this)) {
+            overridePendingTransition(0, 0);
         }
     }
 

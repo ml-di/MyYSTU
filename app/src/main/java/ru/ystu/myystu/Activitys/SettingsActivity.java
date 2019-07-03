@@ -3,12 +3,14 @@ package ru.ystu.myystu.Activitys;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 import ru.ystu.myystu.Fragments.SettingsFragment;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.SettingsController;
 
 import android.os.Bundle;
 
@@ -42,6 +44,14 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && !SettingsController.isEnabledAnim(this)) {
+            overridePendingTransition(0, 0);
+        }
+    }
+
+    @Override
     public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
 
         final SettingsFragment fragment = new SettingsFragment();
@@ -50,12 +60,24 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey());
         fragment.setArguments(args);
 
+        int mEnterAnim = R.anim.activity_slide_right_show;
+        int mExitAnim = R.anim.activity_slide_left_out;
+        int mPopEnterAnim = R.anim.activity_slide_right_show_reverse;
+        int mPopExitAnim = R.anim.activity_slide_left_out_reverse;
+
+        if (!SettingsController.isEnabledAnim(this)) {
+            mEnterAnim = 0;
+            mExitAnim = 0;
+            mPopEnterAnim = 0;
+            mPopExitAnim = 0;
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.activity_slide_right_show,
-                                     R.anim.activity_slide_left_out,
-                                     R.anim.activity_slide_right_show_reverse,
-                                     R.anim.activity_slide_left_out_reverse)
+                .setCustomAnimations(mEnterAnim,
+                        mExitAnim,
+                        mPopEnterAnim,
+                        mPopExitAnim)
                 .replace(R.id.settings_content, fragment, pref.getKey())
                 .addToBackStack(pref.getKey())
                 .commit();
@@ -67,12 +89,23 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
 
     public void startFragment (Fragment fragment, Preference pref) {
 
+        int mEnterAnim = R.anim.activity_slide_right_show;
+        int mExitAnim = R.anim.activity_slide_left_out;
+        int mPopEnterAnim = R.anim.activity_slide_right_show_reverse;
+        int mPopExitAnim = R.anim.activity_slide_left_out_reverse;
+
+        if (!SettingsController.isEnabledAnim(this)) {
+            mEnterAnim = 0;
+            mExitAnim = 0;
+            mPopEnterAnim = 0;
+            mPopExitAnim = 0;
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.activity_slide_right_show,
-                        R.anim.activity_slide_left_out,
-                        R.anim.activity_slide_right_show_reverse,
-                        R.anim.activity_slide_left_out_reverse)
+                .setTransition(FragmentTransaction.TRANSIT_NONE)
+                .setCustomAnimations(mEnterAnim, mExitAnim,
+                        mPopEnterAnim, mPopExitAnim)
                 .replace(R.id.settings_content, fragment, pref.getKey())
                 .addToBackStack(pref.getKey())
                 .commit();

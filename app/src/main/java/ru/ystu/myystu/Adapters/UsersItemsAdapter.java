@@ -25,6 +25,7 @@ import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
@@ -89,7 +90,11 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         .putExtra("information", user.getInformation());
 
                 mContext.startActivity(mIntent);
-                ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+                if (SettingsController.isEnabledAnim(mContext)) {
+                    ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+                } else {
+                    ((Activity)mContext).overridePendingTransition(0, 0);
+                }
             });
 
         }

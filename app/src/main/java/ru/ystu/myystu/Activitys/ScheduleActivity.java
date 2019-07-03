@@ -2,12 +2,15 @@ package ru.ystu.myystu.Activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 import ru.ystu.myystu.Adapters.SchedulePagerAdapter;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.SettingsController;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,7 +29,6 @@ public class ScheduleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
-
         LightStatusBar.setLight(true, this);
 
         final Toolbar mToolBar = findViewById(R.id.toolBar_schedule);
@@ -40,6 +42,14 @@ public class ScheduleActivity extends AppCompatActivity {
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && !SettingsController.isEnabledAnim(this)) {
+            overridePendingTransition(0, 0);
+        }
     }
 
     @Override

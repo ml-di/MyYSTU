@@ -19,7 +19,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.preference.PreferenceManager;
 import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
@@ -27,6 +26,7 @@ import ru.ystu.myystu.R;
 import ru.ystu.myystu.Services.UpdateCheck;
 import ru.ystu.myystu.Utils.BottomBarHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mBellFragment;
     private Fragment mMenuFragment;
     private CoordinatorLayout mContentContainer;
-
-    private boolean updateEnabled;
+    private int fragmentAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
         mSharedPreferences = getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
 
-        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        updateEnabled = sharedPrefs.getBoolean("preference_additional_update_enable", true);
-
         if (savedInstanceState == null) {
 
             updateList = new ArrayList<>();
             mFragmentManager.beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .setTransition(fragmentAnimation)
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
+
             LightStatusBar.setLight(true, this);
             startService();
         }
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                     mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .setTransition(fragmentAnimation)
                             .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
 
@@ -102,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                     mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .setTransition(fragmentAnimation)
                             .replace(R.id.contentContainer, mBellFragment, "BELL_FRAGMENT")
                             .commit();
 
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     mContentContainer.setFitsSystemWindows(false);
                     mContentContainer.setPadding(0, 0, 0, 0);
                     mFragmentManager.beginTransaction()
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .setTransition(fragmentAnimation)
                             .replace(R.id.contentContainer, mMenuFragment, "MENU_FRAGMENT")
                             .commit();
 
@@ -132,6 +129,17 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Подгружаем настройки
+        if (SettingsController.isEnabledAnim(this)) {
+            fragmentAnimation = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+        } else {
+            fragmentAnimation = FragmentTransaction.TRANSIT_NONE;
+        }
     }
 
     @Override
@@ -197,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startService() {
-        if(updateEnabled) {
+        if(SettingsController.isEnabledUpdate(this)) {
             // Запуск сервиса для проверки обновлений
             final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
             final Intent mIntent = new Intent(this, UpdateCheck.class)

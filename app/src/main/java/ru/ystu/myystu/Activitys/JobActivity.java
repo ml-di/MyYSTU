@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,14 +13,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -45,6 +40,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class JobActivity extends AppCompatActivity {
 
@@ -99,8 +95,6 @@ public class JobActivity extends AppCompatActivity {
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL));
 
         mDisposables = new CompositeDisposable();
         getListJobFromURL = new GetListJobFromURL();
@@ -123,6 +117,14 @@ public class JobActivity extends AppCompatActivity {
 
         if(mRecyclerState != null)
             mLayoutManager.onRestoreInstanceState(mRecyclerState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && !SettingsController.isEnabledAnim(this)) {
+            overridePendingTransition(0, 0);
+        }
     }
 
     @Override
@@ -190,15 +192,17 @@ public class JobActivity extends AppCompatActivity {
 
                             try {
                                 new Thread(() -> {
-                                    // Удаляем все записи, если они есть
-                                    if (db.jobItemsDao().getCount() > 0) {
-                                        db.jobItemsDao().deleteAll();
-                                    }
+                                    if (db.isOpen()) {
+                                        // Удаляем все записи, если они есть
+                                        if (db.jobItemsDao().getCount() > 0) {
+                                            db.jobItemsDao().deleteAll();
+                                        }
 
-                                    // Добавляем новые записи
-                                    for (Parcelable parcelable : jobItemsData) {
-                                        if (parcelable instanceof JobItemsData) {
-                                            db.jobItemsDao().insert((JobItemsData) parcelable);
+                                        // Добавляем новые записи
+                                        for (Parcelable parcelable : jobItemsData) {
+                                            if (parcelable instanceof JobItemsData) {
+                                                db.jobItemsDao().insert((JobItemsData) parcelable);
+                                            }
                                         }
                                     }
                                 }).start();
@@ -226,7 +230,7 @@ public class JobActivity extends AppCompatActivity {
         } else {
             try {
                 new Thread(() -> {
-                    if (db.jobItemsDao().getCount() > 0) {
+                    if (db.isOpen() && db.jobItemsDao().getCount() > 0) {
                         if (mList.size() > 0)
                             mList.clear();
 

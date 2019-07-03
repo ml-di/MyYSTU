@@ -105,6 +105,8 @@
     <string name="settings_category_additional">Дополнительные</string>
     <string name="settings_category_other">Другое</string>
 
+    <string name="settings_general_ui">Интерфейс</string>
+    <string name="settings_general_ui_animation">Анимации приложения</string>
     <string name="settings_general_photoSize">Размер загружаемых фото</string>
     <string name="settings_general_notification">Уведомления</string>
     <string name="settings_general_notification_on">Включить уведомления</string>

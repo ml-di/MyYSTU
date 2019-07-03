@@ -6,72 +6,87 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="12dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/itemJob_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:alpha="0.05"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="@color/colorPrimary"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemJob_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:padding="10dp"
+            android:tint="@color/colorPrimaryLight"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_document" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemJob_fileType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:alpha="0.98"
+            android:textAllCaps="true"
+            android:textColor="@color/colorTextIcon"
+            android:textSize="7sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/itemJob_icon"
+            app:layout_constraintEnd_toEndOf="@id/itemJob_icon"
+            app:layout_constraintStart_toStartOf="@id/itemJob_icon"
+            app:layout_constraintTop_toTopOf="@id/itemJob_icon"
+            tools:text="DOC" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemJob_organization"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:alpha="0.7"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="21sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/itemJob_menu"
+            app:layout_constraintStart_toEndOf="@id/itemJob_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Название организации" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemJob_menu"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="13dp"
+            android:scaleType="fitStart"
+            android:tint="@color/colorMenuIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_expand" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.ContentFrameLayout
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:alpha="0.05"
-        android:background="@drawable/shape_circle"
-        android:backgroundTint="@color/colorPrimary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/itemJob_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:padding="10dp"
-        android:tint="@color/colorPrimaryLight"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_document" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemJob_fileType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:alpha="0.98"
-        android:textAllCaps="true"
-        android:textColor="@color/colorTextIcon"
-        android:textSize="7sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/itemJob_icon"
-        app:layout_constraintEnd_toEndOf="@id/itemJob_icon"
-        app:layout_constraintStart_toStartOf="@id/itemJob_icon"
-        app:layout_constraintTop_toTopOf="@id/itemJob_icon"
-        tools:text="DOC" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemJob_organization"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:alpha="0.7"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="21sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/itemJob_menu"
-        app:layout_constraintStart_toEndOf="@id/itemJob_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Название организации" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/itemJob_menu"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="13dp"
-        android:scaleType="fitStart"
-        android:tint="@color/colorMenuIcon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_expand" />
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="82dp"
+        android:layout_marginTop="12dp"
+        android:alpha="0.5"
+        android:background="@color/colorDivider"
+        app:layout_constraintTop_toBottomOf="@id/itemJob_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

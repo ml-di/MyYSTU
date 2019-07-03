@@ -9,6 +9,7 @@ import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
@@ -55,6 +56,14 @@ public class MapActivity extends AppCompatActivity {
         } else
             mWebView.restoreState(savedInstanceState);
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && !SettingsController.isEnabledAnim(this)) {
+            overridePendingTransition(0, 0);
+        }
     }
 
     @Override

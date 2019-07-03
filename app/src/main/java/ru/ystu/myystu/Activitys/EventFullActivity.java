@@ -27,6 +27,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 
 import android.content.ClipData;
@@ -185,7 +186,11 @@ public class EventFullActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (isFinishing()){
-            overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            if (SettingsController.isEnabledAnim(this)) {
+                overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            } else {
+                overridePendingTransition(0, 0);
+            }
         }
     }
 
@@ -332,31 +337,33 @@ public class EventFullActivity extends AppCompatActivity {
 
                             try {
                                 new Thread(() -> {
-                                    // Удаляем все записи, если они есть
-                                    if (db.eventFullDao().isExistsGeneral(id))
-                                        db.eventFullDao().deleteGeneral(id);
-                                    if (db.eventFullDao().getCountAdditional(id) > 0)
-                                        db.eventFullDao().deleteAllAdditional(id);
-                                    if (db.eventFullDao().getCountDocuments(id) > 0)
-                                        db.eventFullDao().deleteAllDocuments(id);
-                                    if (db.eventFullDao().getCountDividers(id) > 0)
-                                        db.eventFullDao().deleteAllDividers(id);
+                                    if (db.isOpen()) {
+                                        // Удаляем все записи, если они есть
+                                        if (db.eventFullDao().isExistsGeneral(id))
+                                            db.eventFullDao().deleteGeneral(id);
+                                        if (db.eventFullDao().getCountAdditional(id) > 0)
+                                            db.eventFullDao().deleteAllAdditional(id);
+                                        if (db.eventFullDao().getCountDocuments(id) > 0)
+                                            db.eventFullDao().deleteAllDocuments(id);
+                                        if (db.eventFullDao().getCountDividers(id) > 0)
+                                            db.eventFullDao().deleteAllDividers(id);
 
-                                    final EventFullData eventFullData = new EventFullData();
-                                    eventFullData.setId(id);
-                                    eventFullData.setUid(id);
-                                    eventFullData.setTitle(titleText.getText().toString());
-                                    eventFullData.setText(text.getText().toString());
-                                    db.eventFullDao().insertGeneral(eventFullData);
+                                        final EventFullData eventFullData = new EventFullData();
+                                        eventFullData.setId(id);
+                                        eventFullData.setUid(id);
+                                        eventFullData.setTitle(titleText.getText().toString());
+                                        eventFullData.setText(text.getText().toString());
+                                        db.eventFullDao().insertGeneral(eventFullData);
 
-                                    // Добавляем новые записи
-                                    for (Parcelable parcelable : additionalsList) {
-                                        if (parcelable instanceof EventFullDivider) {
-                                            db.eventFullDao().insertDividers((EventFullDivider) parcelable);
-                                        } else if (parcelable instanceof EventAdditionalData_Additional) {
-                                            db.eventFullDao().insertAdditional((EventAdditionalData_Additional) parcelable);
-                                        } else if (parcelable instanceof EventAdditionalData_Documents) {
-                                            db.eventFullDao().insertDocuments((EventAdditionalData_Documents) parcelable);
+                                        // Добавляем новые записи
+                                        for (Parcelable parcelable : additionalsList) {
+                                            if (parcelable instanceof EventFullDivider) {
+                                                db.eventFullDao().insertDividers((EventFullDivider) parcelable);
+                                            } else if (parcelable instanceof EventAdditionalData_Additional) {
+                                                db.eventFullDao().insertAdditional((EventAdditionalData_Additional) parcelable);
+                                            } else if (parcelable instanceof EventAdditionalData_Documents) {
+                                                db.eventFullDao().insertDocuments((EventAdditionalData_Documents) parcelable);
+                                            }
                                         }
                                     }
                                 }).start();
@@ -381,7 +388,7 @@ public class EventFullActivity extends AppCompatActivity {
             try {
                 new Thread(() -> {
 
-                    if (db.eventFullDao().isExistsGeneral(id)) {
+                    if (db.isOpen() && db.eventFullDao().isExistsGeneral(id)) {
                         final EventFullData eventFullData = db.eventFullDao().getGeneral(id);
                         titleText.setText(eventFullData.getTitle());
 

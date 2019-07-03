@@ -21,6 +21,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 
 import android.content.Context;
@@ -142,7 +143,11 @@ public class UserFullActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (isFinishing()) {
-            overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            if (SettingsController.isEnabledAnim(this)) {
+                overridePendingTransition(R.anim.activity_slide_right_show_reverse, R.anim.activity_slide_left_out_reverse);
+            } else {
+                overridePendingTransition(0, 0);
+            }
         }
     }
 
@@ -239,21 +244,22 @@ public class UserFullActivity extends AppCompatActivity {
 
                             try {
                                 new Thread(() -> {
-                                    // Удаляем запись, если она есть
-                                    if (db.userFullDao().isExists(id)) {
-                                        db.userFullDao().delete(id);
+                                    if (db.isOpen()) {
+                                        // Удаляем запись, если она есть
+                                        if (db.userFullDao().isExists(id)) {
+                                            db.userFullDao().delete(id);
+                                        }
+
+                                        // Добавляем новую запись
+                                        final UserFullData userFullData = new UserFullData();
+                                        userFullData.setId(id);
+                                        userFullData.setPhone(phoneStr);
+                                        userFullData.setEmail(emailStr);
+                                        userFullData.setLocation(locationStr);
+                                        userFullData.setDetail(detailStr);
+
+                                        db.userFullDao().insert(userFullData);
                                     }
-
-                                    // Добавляем новую запись
-                                    final UserFullData userFullData = new UserFullData();
-                                    userFullData.setId(id);
-                                    userFullData.setPhone(phoneStr);
-                                    userFullData.setEmail(emailStr);
-                                    userFullData.setLocation(locationStr);
-                                    userFullData.setDetail(detailStr);
-
-                                    db.userFullDao().insert(userFullData);
-
                                 }).start();
                             } catch (Exception e) {
                                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -278,7 +284,7 @@ public class UserFullActivity extends AppCompatActivity {
 
             try {
                 new Thread(() -> {
-                    if (db.userFullDao().isExists(id)) {
+                    if (db.isOpen() && db.userFullDao().isExists(id)) {
 
                         final UserFullData userFullData = db.userFullDao().getUserFull(id);
                         phoneStr = userFullData.getPhone();

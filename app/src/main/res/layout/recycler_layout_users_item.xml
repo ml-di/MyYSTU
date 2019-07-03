@@ -6,58 +6,74 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="12dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/itemUser_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.ContentFrameLayout
+            android:id="@+id/itemUser_imageBackground"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="16dp"
+            android:alpha="0.05"
+            android:background="@drawable/shape_image_user_background"
+            android:backgroundTint="@color/colorPrimaryLight"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/itemUser_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="10dp"
+            app:actualImageScaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:placeholderImage="@color/colorPlaceHolderImage"
+            app:roundedCornerRadius="26dp"
+            tools:src="@color/colorPrimary" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemUser_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:alpha="0.7"
+            android:textColor="@color/colorPrimaryLight"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/itemUser_imageBackground"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Новикова Анна Николаевна" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemUser_information"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:alpha="0.9"
+            android:textColor="@color/colorTextSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/itemUser_name"
+            app:layout_constraintTop_toBottomOf="@id/itemUser_name"
+            tools:text="Заведующий кафедрой Технология строительного производства, к.т.н." />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.ContentFrameLayout
-        android:id="@+id/itemUser_imageBackground"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="16dp"
-        android:alpha="0.05"
-        android:background="@drawable/shape_image_user_background"
-        android:backgroundTint="@color/colorPrimaryLight"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="12dp"
+        android:alpha="0.5"
+        android:background="@color/colorDivider"
+        app:layout_constraintTop_toBottomOf="@id/itemUser_content" />
 
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/itemUser_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="10dp"
-        app:actualImageScaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:placeholderImage="@color/colorPlaceHolderImage"
-        app:roundedCornerRadius="26dp"
-        tools:src="@color/colorPrimary" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemUser_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:alpha="0.7"
-        android:textColor="@color/colorPrimaryLight"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/itemUser_imageBackground"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Новикова Анна Николаевна" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemUser_information"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:alpha="0.9"
-        android:textColor="@color/colorTextSecondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/itemUser_name"
-        app:layout_constraintTop_toBottomOf="@id/itemUser_name"
-        tools:text="Заведующий кафедрой Технология строительного производства, к.т.н." />
 </androidx.constraintlayout.widget.ConstraintLayout>
