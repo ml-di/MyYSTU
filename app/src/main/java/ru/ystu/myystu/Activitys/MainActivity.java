@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -19,6 +20,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
@@ -129,6 +132,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Application.getInstance().getDatabase().close();
     }
 
     @Override

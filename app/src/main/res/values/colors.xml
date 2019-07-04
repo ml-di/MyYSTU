@@ -45,6 +45,6 @@
     <color name="colorSettingsIcon">#BBBBBB</color>
     <color name="colorBottomNavigationNonActiveIcon">#DCDCDC</color>
     <color name="colorBottomNavigationNonActiveText">#a5a5a5</color>
-    <color name="colorRipple">#40419AFF</color>
+    <color name="colorRipple">#261884FF</color>
 
 </resources>

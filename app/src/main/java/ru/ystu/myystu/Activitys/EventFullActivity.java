@@ -34,6 +34,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -177,9 +178,6 @@ public class EventFullActivity extends AppCompatActivity {
 
         if(mDisposable != null)
             mDisposable.dispose();
-
-        if (db != null && db.isOpen())
-            db.close();
     }
 
     @Override
@@ -335,9 +333,9 @@ public class EventFullActivity extends AppCompatActivity {
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             mSwipeRefreshLayout.setRefreshing(false);
 
-                            try {
-                                new Thread(() -> {
-                                    if (db.isOpen()) {
+                            new Thread(() -> {
+                                try {
+                                    if (db.getOpenHelper().getWritableDatabase().isOpen()) {
                                         // Удаляем все записи, если они есть
                                         if (db.eventFullDao().isExistsGeneral(id))
                                             db.eventFullDao().deleteGeneral(id);
@@ -366,10 +364,10 @@ public class EventFullActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
-                                }).start();
-                            } catch (Exception e) {
-                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
+                                } catch (SQLiteException e) {
+                                    runOnUiThread(() -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show());
+                                }
+                            }).start();
                         }
 
                         @Override
@@ -383,12 +381,10 @@ public class EventFullActivity extends AppCompatActivity {
                                 ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                         }
                     }));
-
         } else {
-            try {
-                new Thread(() -> {
-
-                    if (db.isOpen() && db.eventFullDao().isExistsGeneral(id)) {
+            new Thread(() -> {
+                try {
+                    if (db.getOpenHelper().getReadableDatabase().isOpen() && db.eventFullDao().isExistsGeneral(id)) {
                         final EventFullData eventFullData = db.eventFullDao().getGeneral(id);
                         titleText.setText(eventFullData.getTitle());
 
@@ -449,11 +445,13 @@ public class EventFullActivity extends AppCompatActivity {
                             mSwipeRefreshLayout.setRefreshing(false);
                         });
                     }
-                }).start();
-            } catch (Exception e) {
-                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
+                } catch (SQLiteException e) {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
         }
     }
 }

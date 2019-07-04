@@ -14,11 +14,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class ErrorMessageFragment extends Fragment {
 
@@ -51,45 +50,46 @@ public class ErrorMessageFragment extends Fragment {
         super.onStart();
 
         // Анимация пульсации фона
-        if(scaleDown == null) {
-            scaleDown = ObjectAnimator.ofPropertyValuesHolder(
-                    iconBackground,
-                    PropertyValuesHolder.ofFloat("scaleX", 0.85f),
-                    PropertyValuesHolder.ofFloat("scaleY", 0.85f),
-                    PropertyValuesHolder.ofFloat("alpha", 0.02f));
-            scaleDown.setDuration(2000);
-            scaleDown.setRepeatCount(ObjectAnimator.INFINITE);
-            scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
-            scaleDown.setInterpolator(new FastOutSlowInInterpolator());
-            scaleDown.start();
-        } else {
-            if (scaleDown.isPaused())
+        if(SettingsController.isEnabledAnim(getContext())) {
+            if(scaleDown == null) {
+                scaleDown = ObjectAnimator.ofPropertyValuesHolder(
+                        iconBackground,
+                        PropertyValuesHolder.ofFloat("scaleX", 0.85f),
+                        PropertyValuesHolder.ofFloat("scaleY", 0.85f),
+                        PropertyValuesHolder.ofFloat("alpha", 0.02f));
+                scaleDown.setDuration(2000);
+                scaleDown.setRepeatCount(ObjectAnimator.INFINITE);
+                scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
+                scaleDown.setInterpolator(new FastOutSlowInInterpolator());
                 scaleDown.start();
+            } else {
+                if (scaleDown.isPaused())
+                    scaleDown.start();
+            }
         }
-
         // Лютый костыль :)
         refreshBtn.setOnClickListener(view -> {
-            if(getActivity().getSupportFragmentManager() != null){
-                    getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-                    // Для фрагментов
-                    if(fragment_tag != null){
-                        Fragment mFragment = null;
+            if(isAdded() && getActivity() != null){
+                getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+                // Для фрагментов
+                if(fragment_tag != null){
+                    Fragment mFragment = null;
 
-                        if(fragment_tag.equals("NEWS_FRAGMENT"))
-                            mFragment = new NewsFragment();
+                    if(fragment_tag.equals("NEWS_FRAGMENT"))
+                        mFragment = new NewsFragment();
 
-                        if (mFragment != null) {
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(layout_id, mFragment, fragment_tag)
-                                    .commit();
-                        }
-                    } else {
-                        // Для активити
-                        getActivity().finish();
-                        getActivity().overridePendingTransition(0, 0);
-                        startActivity(getActivity().getIntent());
-                        getActivity().overridePendingTransition(0, 0);
+                    if (mFragment != null) {
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(layout_id, mFragment, fragment_tag)
+                                .commit();
                     }
+                } else {
+                    // Для активити
+                    getActivity().finish();
+                    getActivity().overridePendingTransition(0, 0);
+                    startActivity(getActivity().getIntent());
+                    getActivity().overridePendingTransition(0, 0);
+                }
             }
         });
     }
@@ -97,7 +97,7 @@ public class ErrorMessageFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(scaleDown.isRunning()) {
+        if(scaleDown != null && scaleDown.isRunning()) {
             scaleDown.pause();
         }
     }
@@ -105,7 +105,7 @@ public class ErrorMessageFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (scaleDown.isRunning()) {
+        if (scaleDown != null && scaleDown.isRunning()) {
             scaleDown.cancel();
         }
     }

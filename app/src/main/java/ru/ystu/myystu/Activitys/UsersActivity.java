@@ -27,12 +27,14 @@ import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -132,9 +134,6 @@ public class UsersActivity extends AppCompatActivity {
 
         if (mDisposables != null)
             mDisposables.dispose();
-
-        if (db != null && db.isOpen())
-            db.close();
     }
 
     @Override
@@ -204,13 +203,15 @@ public class UsersActivity extends AppCompatActivity {
                                 mRecyclerViewAdapter = new UsersItemsAdapter(mList, getApplicationContext());
                                 mRecyclerViewAdapter.setHasStableIds(true);
                                 mRecyclerView.swapAdapter(mRecyclerViewAdapter, true);
+                                setRecyclerViewAnim(mRecyclerView);
                             } else {
                                 mRecyclerViewAdapter.notifyItemRangeChanged(1, mList.size());
+                                setRecyclerViewAnim(mRecyclerView);
                             }
 
-                            try {
-                                new Thread(() -> {
-                                    if (db.isOpen()) {
+                            new Thread(() -> {
+                                try {
+                                    if (db.getOpenHelper().getWritableDatabase().isOpen()) {
                                         // Удаляем все записи, если они есть
                                         if (db.usersItemsDao().getCount() > 0) {
                                             db.usersItemsDao().deleteAll();
@@ -223,10 +224,10 @@ public class UsersActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
-                                }).start();
-                            } catch (Exception e) {
-                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
+                                } catch (SQLiteException e) {
+                                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show());
+                                }
+                            }).start();
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -246,10 +247,9 @@ public class UsersActivity extends AppCompatActivity {
                         }
                     }));
         } else {
-
-            try {
-                new Thread(() -> {
-                    if (db.isOpen() && db.usersItemsDao().getCount() > 0) {
+            new Thread(() -> {
+                try {
+                    if (db.getOpenHelper().getReadableDatabase().isOpen() && db.usersItemsDao().getCount() > 0) {
                         if (mList.size() > 0)
                             mList.clear();
 
@@ -259,6 +259,7 @@ public class UsersActivity extends AppCompatActivity {
                         mRecyclerViewAdapter = new UsersItemsAdapter(mList, this);
                         mRecyclerView.post(() -> {
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            setRecyclerViewAnim(mRecyclerView);
                             // SnackBar с предупреждением об отсутствие интернета
                             final Snackbar snackbar = Snackbar
                                     .make(
@@ -288,11 +289,24 @@ public class UsersActivity extends AppCompatActivity {
                             mSwipeRefreshLayout.setRefreshing(false);
                         });
                     }
-                }).start();
-            } catch (Exception e) {
-                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
+                } catch (SQLiteException e) {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
+        }
+    }
+
+    private void setRecyclerViewAnim (final RecyclerView recyclerView) {
+        if (SettingsController.isEnabledAnim(this)) {
+            final Context context = recyclerView.getContext();
+            final LayoutAnimationController controller =
+                    AnimationUtils.loadLayoutAnimation(context, R.anim.layout_main_recyclerview_show);
+            recyclerView.setLayoutAnimation(controller);
+        } else {
+            recyclerView.clearAnimation();
         }
     }
 }

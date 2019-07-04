@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -105,9 +106,6 @@ public class NewsFragment extends Fragment {
 
         if (mDisposables != null)
             mDisposables.dispose();
-
-        if (db != null && db.isOpen())
-            db.close();
     }
 
     @Override
@@ -257,9 +255,9 @@ public class NewsFragment extends Fragment {
                                 else
                                     mRecyclerView.scheduleLayoutAnimation();
 
-                                try {
-                                    new Thread(() -> {
-                                        if (db.isOpen()) {
+                                new Thread(() -> {
+                                    try {
+                                        if (db.getOpenHelper().getWritableDatabase().isOpen()) {
                                             // Удаляем все записи, если они есть
                                             if (db.newsItemsDao().getCountNewsAttach() > 0)
                                                 db.newsItemsDao().deleteNewsAttach();
@@ -277,10 +275,12 @@ public class NewsFragment extends Fragment {
                                                 }
                                             }
                                         }
-                                    }).start();
-                                } catch (Exception e) {
-                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                }
+                                    } catch (SQLiteException e) {
+                                        if (isAdded() && getActivity() != null) {
+                                            getActivity().runOnUiThread(() -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
+                                        }
+                                    }
+                                }).start();
                             }
 
                             @Override
@@ -305,10 +305,9 @@ public class NewsFragment extends Fragment {
             }
         } else {
             if(!isOffset){
-
-                try {
-                    new Thread(() -> {
-                        if (db.isOpen()) {
+                new Thread(() -> {
+                    try {
+                        if (db.getOpenHelper().getReadableDatabase().isOpen()) {
                             final int count = db.newsItemsDao().getCountNewsAttach() + db.newsItemsDao().getCountNewsDontAttach();
 
                             if (count > 0) {
@@ -334,7 +333,6 @@ public class NewsFragment extends Fragment {
                                     Toast.makeText(getContext(), getResources().getString(R.string.toast_no_connection_the_internet), Toast.LENGTH_LONG).show();
                                     mSwipeRefreshLayout.setRefreshing(false);
                                 });
-
                             } else {
                                 if(isAdded() && getActivity() != null) {
                                     getActivity().runOnUiThread(() -> {
@@ -343,12 +341,23 @@ public class NewsFragment extends Fragment {
                                     });
                                 }
                             }
+                        } else {
+                            if(isAdded() && getActivity() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    ErrorMessage.showToFragment(mainLayout, 0, null, mContext, getTag());
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                });
+                            }
                         }
-                    }).start();
-                } catch (Exception e) {
-                    ErrorMessage.showToFragment(mainLayout, -1, e.getMessage(), mContext, getTag());
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
+                    } catch (SQLiteException e) {
+                        if(isAdded() && getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                ErrorMessage.showToFragment(mainLayout, -1, e.getMessage(), mContext, getTag());
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            });
+                        }
+                    }
+                }).start();
             }
         }
     }

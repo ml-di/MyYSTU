@@ -26,6 +26,7 @@ import ru.ystu.myystu.Utils.StringFormatter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -157,9 +158,6 @@ public class UserFullActivity extends AppCompatActivity {
 
         if(mDisposable != null)
             mDisposable.dispose();
-
-        if (db != null && db.isOpen())
-            db.close();
     }
 
     @Override
@@ -241,10 +239,9 @@ public class UserFullActivity extends AppCompatActivity {
 
                         @Override
                         public void onComplete() {
-
-                            try {
-                                new Thread(() -> {
-                                    if (db.isOpen()) {
+                            new Thread(() -> {
+                                try {
+                                    if (db.getOpenHelper().getWritableDatabase().isOpen()) {
                                         // Удаляем запись, если она есть
                                         if (db.userFullDao().isExists(id)) {
                                             db.userFullDao().delete(id);
@@ -260,10 +257,10 @@ public class UserFullActivity extends AppCompatActivity {
 
                                         db.userFullDao().insert(userFullData);
                                     }
-                                }).start();
-                            } catch (Exception e) {
-                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
+                                } catch (SQLiteException e) {
+                                    runOnUiThread(() -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show());
+                                }
+                            }).start();
 
                             setInformation();
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -281,10 +278,9 @@ public class UserFullActivity extends AppCompatActivity {
                         }
                     }));
         } else {
-
-            try {
-                new Thread(() -> {
-                    if (db.isOpen() && db.userFullDao().isExists(id)) {
+            new Thread(() -> {
+                try {
+                    if (db.getOpenHelper().getReadableDatabase().isOpen() && db.userFullDao().isExists(id)) {
 
                         final UserFullData userFullData = db.userFullDao().getUserFull(id);
                         phoneStr = userFullData.getPhone();
@@ -323,11 +319,13 @@ public class UserFullActivity extends AppCompatActivity {
                             mSwipeRefreshLayout.setRefreshing(false);
                         });
                     }
-                }).start();
-            } catch (Exception e) {
-                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
+                } catch (SQLiteException e) {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
         }
     }
 

@@ -29,11 +29,14 @@ import ru.ystu.myystu.Utils.SettingsController;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -114,8 +117,6 @@ public class ScheduleListActivity extends AppCompatActivity {
 
         if (mDisposables != null)
             mDisposables.dispose();
-        if (db != null && db.isOpen())
-            db.close();
     }
 
     @Override
@@ -171,11 +172,12 @@ public class ScheduleListActivity extends AppCompatActivity {
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
                                 mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                setRecyclerViewAnim(mRecyclerView);
 
                                 // Добавляем в БД
-                                try {
-                                    new Thread(() -> {
-                                        if (db.isOpen()) {
+                                new Thread(() -> {
+                                    try {
+                                        if (db.getOpenHelper().getWritableDatabase().isOpen()) {
                                             // Удаляем все записи, если они есть
                                             if (db.scheduleItemDao().getCountScheduleList(id) > 0) {
                                                 db.scheduleItemDao().deleteList(id);
@@ -198,12 +200,10 @@ public class ScheduleListActivity extends AppCompatActivity {
                                                 index++;
                                             }
                                         }
-                                    }).start();
-                                } catch (Exception e) {
-                                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-
-
+                                    } catch (SQLiteException e) {
+                                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show());
+                                    }
+                                }).start();
                             } else {
                                 ErrorMessage.show(mainLayout, 1,
                                         getResources().getString(R.string.error_message_schedule_file_not_found),
@@ -224,10 +224,10 @@ public class ScheduleListActivity extends AppCompatActivity {
                     }));
 
         } else {
-
-            try {
-                new Thread(() -> {
-                    if (db.isOpen() && db.scheduleItemDao().getCountScheduleList(id) > 0) {
+            // Подгрузка списка файлов с расписанием
+            new Thread(() -> {
+                try {
+                    if (db.getOpenHelper().getReadableDatabase().isOpen() && db.scheduleItemDao().getCountScheduleList(id) > 0) {
                         if (mList.size() > 0)
                             mList.clear();
 
@@ -237,6 +237,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                         mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
                         mRecyclerView.post(() -> {
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                            setRecyclerViewAnim(mRecyclerView);
                             // SnackBar с предупреждением об отсутствие интернета
                             final Snackbar snackbar = Snackbar
                                     .make(
@@ -259,17 +260,24 @@ public class ScheduleListActivity extends AppCompatActivity {
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         });
-
                     } else {
                         runOnUiThread(() -> {
                             ErrorMessage.show(mainLayout, 0, null, mContext);
                             mSwipeRefreshLayout.setRefreshing(false);
                         });
                     }
-                }).start();
+                } catch (SQLiteException e) {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
 
-                new Thread(() -> {
-                    if (db.isOpen() && db.scheduleItemDao().getCountScheduleChange(id) > 0) {
+            // Подгрузка изменений в расписании
+            new Thread(() -> {
+                try {
+                    if (db.getOpenHelper().getReadableDatabase().isOpen() && db.scheduleItemDao().getCountScheduleChange(id) > 0) {
                         if (changeList.size() > 0)
                             changeList.clear();
 
@@ -277,12 +285,13 @@ public class ScheduleListActivity extends AppCompatActivity {
                             changeList.add(db.scheduleItemDao().getScheduleChange(id).get(i).getText());
                         }
                     }
-                }).start();
-
-            } catch (Exception e) {
-                ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
+                } catch (SQLiteException e) {
+                    runOnUiThread(() -> {
+                        ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
+                }
+            }).start();
         }
     }
 
@@ -341,6 +350,17 @@ public class ScheduleListActivity extends AppCompatActivity {
 
             default:
                 break;
+        }
+    }
+
+    private void setRecyclerViewAnim (final RecyclerView recyclerView) {
+        if (SettingsController.isEnabledAnim(this)) {
+            final Context context = recyclerView.getContext();
+            final LayoutAnimationController controller =
+                    AnimationUtils.loadLayoutAnimation(context, R.anim.layout_main_recyclerview_show);
+            recyclerView.setLayoutAnimation(controller);
+        } else {
+            recyclerView.clearAnimation();
         }
     }
 }
