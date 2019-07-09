@@ -204,7 +204,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                         if(jobItem.getFileType().equals("FILE")){
                             // Скачать
-                            if(NetworkInformation.hasConnection(mContext)){
+                            if(NetworkInformation.hasConnection()){
 
                                 if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                     ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);

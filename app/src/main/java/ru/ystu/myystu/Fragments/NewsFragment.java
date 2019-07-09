@@ -218,7 +218,7 @@ public class NewsFragment extends Fragment {
     }
 
     private void getNews(final boolean isOffset){
-        if(NetworkInformation.hasConnection(mContext)){
+        if(NetworkInformation.hasConnection()){
 
             final String url = getUrl(isOffset);
             int listCount = mList.size();

@@ -233,7 +233,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static void downloadFile(File file, String link, Context mContext, int position, int id) {
 
-        if(NetworkInformation.hasConnection(mContext)){
+        if(NetworkInformation.hasConnection()){
 
             if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);

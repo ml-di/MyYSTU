@@ -112,7 +112,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
             // Сохранить изображение на устройство
             case R.id.menu_photo_view_save:
 
-                if(NetworkInformation.hasConnection(this)){
+                if(NetworkInformation.hasConnection()){
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                     } else {

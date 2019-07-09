@@ -49,7 +49,7 @@ public class MapActivity extends AppCompatActivity {
         mToolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         if(savedInstanceState == null){
-            if(NetworkInformation.hasConnection(this)){
+            if(NetworkInformation.hasConnection()){
                 mWebView.loadUrl(url);
             } else
                 ErrorMessage.show(mainLayout, 0, null, this);

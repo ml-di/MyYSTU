@@ -185,7 +185,7 @@ public class UsersActivity extends AppCompatActivity {
         mList = new ArrayList<>();
         mSwipeRefreshLayout.setRefreshing(true);
 
-        if (NetworkInformation.hasConnection(mContext)) {
+        if (NetworkInformation.hasConnection()) {
 
             final Single<List<Parcelable>> mSingleUsersList
                     = getListUsersFromURL.getSingleUsersList(url, mList);

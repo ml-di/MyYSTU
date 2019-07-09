@@ -1,34 +1,37 @@
 package ru.ystu.myystu.Utils;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.AsyncTask;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.concurrent.ExecutionException;
 
 public class NetworkInformation {
 
-    public static boolean hasConnection(final Context context)
-    {
-        final ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiInfo = null;
-        if (cm != null) {
-            wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    public static boolean hasConnection() {
+        try {
+            return new ConnectWebsite().execute().get();
+        } catch (ExecutionException e) {
+            return false;
+        } catch (InterruptedException e) {
+            return false;
         }
-        if (wifiInfo != null && wifiInfo.isConnected())
-            return true;
-
-        if (cm != null) {
-            wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        }
-        if (wifiInfo != null && wifiInfo.isConnected())
-            return true;
-
-        if (cm != null) {
-            wifiInfo = cm.getActiveNetworkInfo();
-        }
-        if (wifiInfo != null && wifiInfo.isConnected())
-            return true;
-
-        return false;
     }
 
+    static class ConnectWebsite extends AsyncTask<Void, Boolean, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+                socket.close();
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        }
+    }
 }
+

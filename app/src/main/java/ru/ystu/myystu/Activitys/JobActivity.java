@@ -177,7 +177,7 @@ public class JobActivity extends AppCompatActivity {
         mList = new ArrayList<>();
         mSwipeRefreshLayout.setRefreshing(true);
 
-        if (NetworkInformation.hasConnection(mContext)) {
+        if (NetworkInformation.hasConnection()) {
             Single<List<Parcelable>> mSingleJobList = getListJobFromURL.getSingleJobList(url, mList);
 
             mDisposables.add(mSingleJobList

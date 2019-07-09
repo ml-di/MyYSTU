@@ -144,7 +144,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         mList.add(new ToolbarPlaceholderData(0));
         mSwipeRefreshLayout.setRefreshing(true);
 
-        if(NetworkInformation.hasConnection(this)){
+        if(NetworkInformation.hasConnection()){
 
             final int[] index = {id * 100};
             final Observable<String> mObservable = getSchedule.getLink(id);

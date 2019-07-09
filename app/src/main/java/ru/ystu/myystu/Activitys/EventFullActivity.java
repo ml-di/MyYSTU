@@ -271,7 +271,7 @@ public class EventFullActivity extends AppCompatActivity {
         else
             additionalsList.clear();
 
-        if(NetworkInformation.hasConnection(this)){
+        if(NetworkInformation.hasConnection()){
 
             final Observable<String> mObservable = getFullEventFromURL.getObservableEventFull(url);
             mDisposable.add(mObservable
@@ -386,12 +386,13 @@ public class EventFullActivity extends AppCompatActivity {
                 try {
                     if (db.getOpenHelper().getReadableDatabase().isOpen() && db.eventFullDao().isExistsGeneral(id)) {
                         final EventFullData eventFullData = db.eventFullDao().getGeneral(id);
-                        titleText.setText(eventFullData.getTitle());
-
-                        Spanned spanText = Html.fromHtml(eventFullData.getText());
-                        spanText = stringFormatter.getFormattedString(spanText.toString());
-                        text.setText(spanText);
-                        text.setMovementMethod(LinkMovementMethod.getInstance());
+                        titleText.post(() -> titleText.setText(eventFullData.getTitle()));
+                        final Spanned spanText = Html.fromHtml(eventFullData.getText());
+                        final Spanned finalSpanText = stringFormatter.getFormattedString(spanText.toString());
+                        text.post(() -> {
+                            text.setText(finalSpanText);
+                            text.setMovementMethod(LinkMovementMethod.getInstance());
+                        });
                     }
 
                     final int pref = id * 100;

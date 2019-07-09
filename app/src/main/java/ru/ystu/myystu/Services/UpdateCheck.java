@@ -114,14 +114,14 @@ public class UpdateCheck extends Service {
         mDisposables.add(mObservable
                 .subscribeOn(Schedulers.io())
                 .repeatWhen(objectObservable -> {
-                    if(NetworkInformation.hasConnection(mContext)) {
+                    if(NetworkInformation.hasConnection()) {
                         return objectObservable.delay(DELAY_UPDATE_SEC, TimeUnit.SECONDS);
                     } else {
                         return objectObservable.delay(DELAY_WAIT_CONNECT, TimeUnit.SECONDS);
                     }
                 })
                 .retryWhen(throwableObservable -> {
-                    if(NetworkInformation.hasConnection(mContext)){
+                    if(NetworkInformation.hasConnection()){
                         return throwableObservable.delay(DELAY_UPDATE_SEC, TimeUnit.SECONDS);
                     } else {
                         return throwableObservable.delay(DELAY_WAIT_CONNECT, TimeUnit.SECONDS);

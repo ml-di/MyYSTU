@@ -213,7 +213,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
                     // Скачать файл
                     case R.id.menu_event_full_download:
 
-                        if(NetworkInformation.hasConnection(mContext)){
+                        if(NetworkInformation.hasConnection()){
 
                             if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                 ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);

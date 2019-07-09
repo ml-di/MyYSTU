@@ -213,7 +213,7 @@ public class UserFullActivity extends AppCompatActivity {
         mDisposable = new CompositeDisposable();
         mSwipeRefreshLayout.setRefreshing(true);
 
-        if(NetworkInformation.hasConnection(this)) {
+        if(NetworkInformation.hasConnection()) {
 
             final Observable<String> mObservable = getUserInformationFromURL.getObservableUserInformation(url);
             mDisposable.add(mObservable

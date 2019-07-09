@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.material.snackbar.Snackbar;
 
 import io.reactivex.Single;
@@ -80,7 +81,6 @@ public class EventActivity extends AppCompatActivity {
                     mRecyclerView.smoothScrollToPosition(0);
                 else
                     mRecyclerView.scrollToPosition(0);
-
             }
         });
 
@@ -175,7 +175,7 @@ public class EventActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout.setRefreshing(true);
 
-        if(NetworkInformation.hasConnection(mContext)){
+        if(NetworkInformation.hasConnection()){
 
             final Single<ArrayList<Parcelable>> mSingleEventList
                     = getListEventFromURL.getSingleEventList(link, mList);
