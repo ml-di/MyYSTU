@@ -1,39 +1,25 @@
 package ru.ystu.myystu.Activitys;
-
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
-
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import java.util.ArrayList;
-import java.util.Map;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
 import ru.ystu.myystu.R;
-import ru.ystu.myystu.Services.UpdateCheck;
 import ru.ystu.myystu.Utils.BottomBarHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences mSharedPreferences;
     private ArrayList<String> updateList;
 
     private BottomNavigationView mBottomBar;
@@ -43,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mMenuFragment;
     private CoordinatorLayout mContentContainer;
     private int fragmentAnimation;
+    private int countUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
         mBellFragment = new BellFragment();
         mMenuFragment = new MenuFragment();
 
-        mSharedPreferences = getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
-
         if (savedInstanceState == null) {
 
             updateList = new ArrayList<>();
@@ -69,18 +54,23 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
 
-            LightStatusBar.setLight(true, this);
-            startService();
+            LightStatusBar.setLight(true, true, this);
+
+            // TODO Получить кол-во обновлений
+            countUpdate = 0;
+            /*
+             *   countUpdate = N;
+             * */
         }
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
                 || mBottomBar.getSelectedItemId() == R.id.tab_bell){
-            LightStatusBar.setLight(true, this);
+            LightStatusBar.setLight(true, true, this);
         } else if (mBottomBar.getSelectedItemId() == R.id.tab_menu){
-            LightStatusBar.setLight(false, this);
+            LightStatusBar.setLight(false, true, this);
         }
 
-        badgeChange(mSharedPreferences.getAll().size());
+        badgeChange(countUpdate);
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
 
@@ -94,11 +84,13 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(true, this);
+                    LightStatusBar.setLight(true, true, this);
 
                     break;
                 // Уведомления
                 case R.id.tab_bell:
+
+                    // TODO передеать аргумент countUpdate
 
                     mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
@@ -106,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mBellFragment, "BELL_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(true, this);
+                    LightStatusBar.setLight(true, true, this);
 
                     break;
                 // Меню
@@ -118,13 +110,12 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mMenuFragment, "MENU_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(false, this);
+                    LightStatusBar.setLight(false, true, this);
                     break;
             }
 
             return true;
         });
-
         mBottomBar.setOnNavigationItemReselectedListener(menuItem -> {
             switch (menuItem.getItemId()){
                 case R.id.tab_news:
@@ -152,32 +143,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-
-            badgeChange(mSharedPreferences.getAll().size());
-            // Обновить уведомления если вкладка с ними открыта
-            if(mBottomBar.getSelectedItemId() == R.id.tab_bell){
-                if(mSharedPreferences.getAll().size() > 0){
-
-                    for(Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
-                        final int type = Integer.parseInt(entry.getKey().substring(0, 1));
-                        final int id = Integer.parseInt(entry.getKey().substring(1, 2));
-                        final String text = (String) entry.getValue();
-                        updateList.add(type + "" + id + "" + text);
-                    }
-
-                    ((BellFragment) mBellFragment).updateRecycler(updateList);
-                }
-            }
-        }
-    }
-
-    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
         outState.putInt("selItemId", mBottomBar.getSelectedItemId());
+        outState.putInt("countUpdate", countUpdate);
 
         super.onSaveInstanceState(outState);
     }
@@ -185,8 +154,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-        badgeChange(mSharedPreferences.getAll().size());
         mBottomBar.setSelectedItemId(savedInstanceState.getInt("selItemId"));
+        countUpdate = savedInstanceState.getInt("countUpdate");
+        badgeChange(countUpdate);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -210,17 +180,6 @@ public class MainActivity extends AppCompatActivity {
                 paramsBottomBar.setBehavior(new HideBottomViewOnScrollBehavior());
                 paramsMainLayout.setMargins(0, 0, 0, 0);
             }
-        }
-    }
-
-    private void startService() {
-        if(SettingsController.isEnabledUpdate(this)) {
-            // Запуск сервиса для проверки обновлений
-            final PendingIntent mPendingIntent = createPendingResult(1, new Intent(), 0);
-            final Intent mIntent = new Intent(this, UpdateCheck.class)
-                    .putExtra("pending", mPendingIntent);
-
-            startService(mIntent);
         }
     }
 }

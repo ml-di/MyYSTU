@@ -23,7 +23,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
 
         mToolbar = findViewById(R.id.toolBar_settings);
         setSupportActionBar(mToolbar);

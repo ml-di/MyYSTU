@@ -5,7 +5,8 @@
     android:id="@+id/constraint_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activitys.MainActivity">
+    tools:context=".Activitys.MainActivity"
+    android:background="@color/colorBackground">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

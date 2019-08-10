@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Мой ЯГТУ</string>
-    <string name="app_version">Версия 1.1.5 (Beta)</string>
+    <string name="app_version">Версия 1.1.6 (Beta)</string>
 
     <!-- Другие -->
     <string name="other_search_results">Результаты поиска</string>
 
     <!-- Названия вкладок нижнего бара -->
     <string name="tab_news_text">Новости</string>
-    <string name="tab_bell_text">Уведомления</string>
+    <string name="tab_bell_text">Обновления</string>
     <string name="tab_menu_text">Меню</string>
 
     <!-- Названия кнопок в меню -->
@@ -62,6 +62,7 @@
     <string name="bell_break_two">БП</string>
     <string name="bell_day_off">В</string>
     <string name="bell_item_title_schedule">Обновление в расписании</string>
+    <string name="bell_placeholder_text">Обновлений нет 😴</string>
 
     <!-- ErrorMessage -->
     <string name="error_message_title">Что-то пошло не так…</string>
@@ -108,19 +109,6 @@
     <string name="settings_general_ui">Интерфейс</string>
     <string name="settings_general_ui_animation">Анимации приложения</string>
     <string name="settings_general_photoSize">Размер загружаемых фото</string>
-    <string name="settings_general_notification">Уведомления</string>
-    <string name="settings_general_notification_on">Включить уведомления</string>
-    <string name="settings_general_notification_type">Тип уведомлений</string>
-    <string name="settings_general_notification_song">Звук</string>
-    <string name="settings_general_notification_song_on">Включить звук</string>
-    <string name="settings_general_notification_vibration">Вибрация</string>
-    <string name="settings_general_notification_indicator">Индикатор</string>
-    <string name="settings_general_notification_push">Всплывающие уведомления</string>
-
-    <string name="settings_category_additional_update">Обновления</string>
-    <string name="settings_category_additional_update_enable">Обновлять данные</string>
-    <string name="settings_category_additional_update_delay">Частота обновления</string>
-    <string name="settings_category_additional_update_type">Тип обновлений</string>
 
     <string name="settings_category_additional_cache">Данные</string>
     <string name="settings_category_additional_cache_delete_photo">Удалить кеш фото</string>

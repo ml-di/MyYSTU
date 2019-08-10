@@ -65,7 +65,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_list);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_schedule_list);
 

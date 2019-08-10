@@ -2,8 +2,6 @@ package ru.ystu.myystu.Fragments;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.widget.Toast;
-
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipeline;
 
@@ -14,7 +12,6 @@ import java.util.Objects;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
 import ru.ystu.myystu.Activitys.SettingsActivity;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
@@ -32,56 +29,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         if (db == null || !db.isOpen()) {
             db = Application.getInstance().getDatabase();
-        }
-
-        // Включить / Отключить уведомления
-        final SwitchPreference enableNotification = findPreference("preference_notification_enable");
-        if (enableNotification != null) {
-            notificationChange(enableNotification);
-            enableNotification.setOnPreferenceClickListener(view -> {
-                notificationChange(enableNotification);
-                return true;
-            });
-        }
-
-        // Включить / Отключить звук уведомлений
-        final SwitchPreference songNotification = findPreference("preference_notification_ringtone_enable");
-        if(songNotification != null) {
-            notificationSongChange(songNotification);
-            songNotification.setOnPreferenceClickListener(view -> {
-                notificationSongChange(songNotification);
-                return true;
-            });
-        }
-
-        // Включить / Отключить обновления
-        final SwitchPreference enableUpdate = findPreference("preference_additional_update_enable");
-        if(enableUpdate != null) {
-            notificationUpdateChange(enableUpdate);
-            enableUpdate.setOnPreferenceClickListener(view -> {
-                notificationUpdateChange(enableUpdate);
-                Toast.makeText(getContext(), getResources().getString(R.string.toast_reloadApp), Toast.LENGTH_SHORT).show();
-                return true;
-            });
-        }
-
-        // Описание частоте обновления
-        final ListPreference delayUpdate = findPreference("preference_additional_update_delay");
-        if(delayUpdate != null) {
-            delayUpdate.setSummary(delayUpdate.getEntry());
-            delayUpdate.setOnPreferenceChangeListener((preference, newValue) -> {
-                int index = 0;
-                for(String s : getResources().getStringArray(R.array.delay_Values)) {
-                    if(s.equals(newValue)) {
-                        preference.setSummary(getResources().getStringArray(R.array.delay_Array)[index]);
-                    }
-                    index++;
-                }
-
-                Toast.makeText(getContext(), getResources().getString(R.string.toast_reloadApp), Toast.LENGTH_SHORT).show();
-
-                return true;
-            });
         }
 
         // Размер загружаемых изображений
@@ -202,51 +149,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
         if (db != null && db.isOpen()) {
             db.close();
-        }
-    }
-
-    // Включить / Отключить уведомления (Доступность view)
-    private void notificationChange(SwitchPreference view){
-
-        // TODO Временно
-        findPreference("preference_notification_ringtone").setEnabled(false);
-
-
-        if(view.isChecked()) {
-            findPreference("preference_notification_type").setEnabled(true);
-            findPreference("preference_notification_ringtone_enable").setEnabled(true);
-
-            /*if(((SwitchPreference)findPreference("preference_notification_ringtone_enable")).isChecked())
-                findPreference("preference_notification_ringtone").setEnabled(true);*/
-
-            findPreference("preference_notification_vibration").setEnabled(true);
-            findPreference("preference_notification_indicator").setEnabled(true);
-            findPreference("preference_notification_push").setEnabled(true);
-        } else {
-            findPreference("preference_notification_type").setEnabled(false);
-            findPreference("preference_notification_ringtone_enable").setEnabled(false);
-            //findPreference("preference_notification_ringtone").setEnabled(false);
-            findPreference("preference_notification_vibration").setEnabled(false);
-            findPreference("preference_notification_indicator").setEnabled(false);
-            findPreference("preference_notification_push").setEnabled(false);
-        }
-    }
-    // Включить / Отключить звук уведомлений (Доступность view)
-    private void notificationSongChange(SwitchPreference view) {
-        /*if(view.isChecked()) {
-            findPreference("preference_notification_ringtone").setEnabled(true);
-        } else {
-            findPreference("preference_notification_ringtone").setEnabled(false);
-        }*/
-    }
-    // Включить / Отключить обновления (Доступность view)
-    private void notificationUpdateChange(SwitchPreference view) {
-        if(view.isChecked()) {
-            findPreference("preference_additional_update_delay").setEnabled(true);
-            findPreference("preference_additional_update_type").setEnabled(true);
-        } else {
-            findPreference("preference_additional_update_delay").setEnabled(false);
-            findPreference("preference_additional_update_type").setEnabled(false);
         }
     }
 

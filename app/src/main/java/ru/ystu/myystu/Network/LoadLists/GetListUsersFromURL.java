@@ -1,4 +1,4 @@
-package ru.ystu.myystu.Network;
+package ru.ystu.myystu.Network.LoadLists;
 
 import android.os.Parcelable;
 

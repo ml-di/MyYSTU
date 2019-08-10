@@ -13,10 +13,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -36,7 +34,7 @@ import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
-import ru.ystu.myystu.Network.GetListJobFromURL;
+import ru.ystu.myystu.Network.LoadLists.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
 import ru.ystu.myystu.Utils.Converter;
@@ -68,7 +66,7 @@ public class JobActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_job);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_job);
         setSupportActionBar(mToolbar);

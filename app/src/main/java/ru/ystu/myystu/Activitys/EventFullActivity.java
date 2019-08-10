@@ -94,7 +94,7 @@ public class EventFullActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_full);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
         mContext = this;
         stringFormatter = new StringFormatter();
 

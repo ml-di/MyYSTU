@@ -29,7 +29,7 @@ public class ScheduleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
 
         final Toolbar mToolBar = findViewById(R.id.toolBar_schedule);
         setSupportActionBar(mToolBar);

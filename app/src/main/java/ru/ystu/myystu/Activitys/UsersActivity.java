@@ -18,7 +18,7 @@ import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
-import ru.ystu.myystu.Network.GetListUsersFromURL;
+import ru.ystu.myystu.Network.LoadLists.GetListUsersFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
@@ -66,7 +66,7 @@ public class UsersActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_users);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_users);
         setSupportActionBar(mToolbar);

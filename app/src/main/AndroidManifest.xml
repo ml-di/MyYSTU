@@ -41,12 +41,6 @@
             android:name=".Activitys.ViewPhotoActivity"
             android:theme="@style/PhotoViewTheme" />
 
-        <receiver android:name=".BootIntentReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
         <service android:name=".Services.UpdateCheck" />
     </application>
 

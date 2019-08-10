@@ -1,7 +1,6 @@
 package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -28,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import ru.ystu.myystu.Activitys.MainActivity;
 import ru.ystu.myystu.Adapters.BellItemsAdapter;
-import ru.ystu.myystu.AdaptersData.BellItemsData;
+import ru.ystu.myystu.AdaptersData.UpdateData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BellHelper;
 
@@ -47,13 +45,12 @@ public class BellFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<BellItemsData> mList;
+    private ArrayList<UpdateData> mList;
     private Parcelable mRecyclerState;
     private Context mContext;
 
     private BellHelper bellHelper;
-
-    private ArrayList<String> update;
+    private int countUpdate;
 
 
     @Override
@@ -61,13 +58,14 @@ public class BellFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
 
+        // TODO Получить аргумент countUpdate
+
         mContext = getActivity();
         bellHelper = new BellHelper(mContext);
 
         if(savedInstanceState == null) {
             ((MainActivity) Objects.requireNonNull(getActivity())).showBottomBar(true);
         }
-
     }
 
     @Override
@@ -81,31 +79,15 @@ public class BellFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        update = new ArrayList<>();
         update();
 
-        // Получить значения уведомлений
-        SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
-        if(mSharedPreferences.getAll().size() > 0){
-
-            for(Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
-                final int type = Integer.parseInt(entry.getKey().substring(0, 1));
-                final int id = Integer.parseInt(entry.getKey().substring(1, 2));
-                final String text = (String) entry.getValue();
-                update.add(type + "" + id + "" + text);
-            }
-        }
-
-        // Отрисовать RecyclerView при уведомлениях
-        // или placeholder при их отсутствии
-        if(mSharedPreferences.getAll().size() > 0){
+        if(countUpdate > 0){
             showPlaceHolder(false);
         } else {
             showPlaceHolder(true);
         }
 
         if(savedInstanceState == null){
-            // Заполнить RecyclerView
             formattingList();
         } else {
             mList = savedInstanceState.getParcelableArrayList("mList");
@@ -139,8 +121,6 @@ public class BellFragment extends Fragment {
             timeLayout = mView.findViewById(R.id.time_layout);
             mainLayout = mView.findViewById(R.id.main_layout_bell);
 
-            //mRecyclerView = mView.findViewById(R.id.recycler_bell_items);
-
             mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                     R.color.colorPrimary);
 
@@ -149,16 +129,6 @@ public class BellFragment extends Fragment {
         }
 
         return mView;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context mContext) {
-        super.onAttach(mContext);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override
@@ -214,35 +184,21 @@ public class BellFragment extends Fragment {
 
     private void formattingList() {
 
-        if(update.size() > 0){
-            if(mList == null)
+        if(countUpdate > 0){
+            if(mList == null) {
                 mList = new ArrayList<>();
-            else
+            } else {
                 mList.clear();
+            }
 
+            // TODO заполнить List с обновлениями
 
-            final String[] prefix = new String[]{"АСФ", "ИЭФ", "АФ", "МСФ", "ХТФ", "ЗФ", "ОУОП ЗФ"};
+            for (int i = 0; i < countUpdate; i++){
 
-            for(int i = 0; i < update.size(); i++){
+                /*
+                *   Заполнение обновлений
+                * */
 
-                String temp = update.get(i);
-                final int idType = Integer.parseInt(temp.substring(0, 1));
-                final int idSubType = Integer.parseInt(temp.substring(1, 2));
-                final String date = temp.substring(2, temp.indexOf("*"));
-                String subTitle = temp.substring(temp.indexOf("*") + 1);
-
-                String title = null;
-                // Обновлено расписание
-                if(idType == 0){
-                    title = getResources().getString(R.string.bell_item_title_schedule) + " " + prefix[idSubType];
-                    if(subTitle.contains(": ")) {
-                        subTitle = subTitle.substring(subTitle.indexOf(": ") + 2);
-                    } else if (subTitle.contains(":")) {
-                        subTitle = subTitle.substring(subTitle.indexOf(":") + 1);
-                    }
-                }
-
-                mList.add(new BellItemsData(idType, idSubType, title, subTitle, date, null));
             }
 
             mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
@@ -266,12 +222,12 @@ public class BellFragment extends Fragment {
 
         if(isShow) {
             final AppCompatTextView placeHolder = new AppCompatTextView(Objects.requireNonNull(getContext()));
-            placeHolder.setText("Уведомлений нет");
+            placeHolder.setText(getResources().getString(R.string.bell_placeholder_text));
             params = new ContentFrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             ((FrameLayout.LayoutParams) params).gravity = Gravity.CENTER;
             placeHolder.setTextSize(21);
-            placeHolder.setAlpha(0.35f);
+            placeHolder.setTextColor(getResources().getColor(R.color.colorTextTertiary));
             placeHolder.setTypeface(placeHolder.getTypeface(), Typeface.BOLD);
 
             placeHolder.setLayoutParams(params);
@@ -293,13 +249,6 @@ public class BellFragment extends Fragment {
             mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,
                     DividerItemDecoration.VERTICAL));
         }
-
-    }
-
-    public void updateRecycler(ArrayList<String> updateList){
-        showPlaceHolder(false);
-        update = updateList;
-        formattingList();
     }
 
     private ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -311,21 +260,19 @@ public class BellFragment extends Fragment {
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
+            // TODO свайп обновлений
+
             int pos = viewHolder.getAdapterPosition();
 
-            final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
+            /*
+            *   Изменение настроек
+            * */
 
-            final String link = ((BellItemsAdapter) mRecyclerViewAdapter).getLink(pos);
-            final int id = ((BellItemsAdapter) mRecyclerViewAdapter).getSubId(pos);
-            final int type = ((BellItemsAdapter) mRecyclerViewAdapter).getType(pos);
-
-            final SharedPreferences mSharedPreferences = mContext.getSharedPreferences("UPDATE_LIST", Context.MODE_PRIVATE);
-            final SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-            mEditor.remove(type + "" + id);
-            mEditor.apply();
+            // Кол-во обновлений
+            int sizeBandage = 0;
 
             ((BellItemsAdapter) mRecyclerViewAdapter).removeItem(pos);
-            ((MainActivity) Objects.requireNonNull(getActivity())).badgeChange(mSharedPreferences.getAll().size());
+            ((MainActivity) Objects.requireNonNull(getActivity())).badgeChange(sizeBandage);
             mRecyclerViewAdapter.notifyItemRemoved(pos);
 
             if(mRecyclerViewAdapter.getItemCount() <= 0){

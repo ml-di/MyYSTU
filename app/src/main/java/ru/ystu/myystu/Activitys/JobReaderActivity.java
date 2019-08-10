@@ -34,7 +34,7 @@ public class JobReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_reader);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
 
         Bundle mBundle = getIntent().getExtras();
         if(mBundle != null){

@@ -31,7 +31,7 @@ public class ScheduleChangeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_change);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_schedule_change);
         setSupportActionBar(mToolbar);

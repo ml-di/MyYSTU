@@ -37,7 +37,7 @@ import ru.ystu.myystu.DataFragments.DataFragment_News_List;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.NewsItemsAdapter;
-import ru.ystu.myystu.Network.GetListNewsFromURL;
+import ru.ystu.myystu.Network.LoadLists.GetListNewsFromURL;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;

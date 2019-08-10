@@ -84,7 +84,7 @@ public class UserFullActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_full);
 
         mContext = this;
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
 
         mainLayout = findViewById(R.id.main_layout_userFull);
         mSwipeRefreshLayout = findViewById(R.id.refresh_userFull);

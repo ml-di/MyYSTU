@@ -13,9 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,10 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.snackbar.Snackbar;
-
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -38,7 +33,7 @@ import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
-import ru.ystu.myystu.Network.GetListEventFromURL;
+import ru.ystu.myystu.Network.LoadLists.GetListEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
 import ru.ystu.myystu.Utils.Converter;
@@ -67,7 +62,7 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        LightStatusBar.setLight(true, this);
+        LightStatusBar.setLight(true, true, this);
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_event);
 
