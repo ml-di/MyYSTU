@@ -9,13 +9,22 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
+import ru.ystu.myystu.Network.UpdateCount.GetCountEvent;
+import ru.ystu.myystu.Network.UpdateCount.GetCountJob;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomBarHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private CoordinatorLayout mContentContainer;
     private int fragmentAnimation;
     private int countUpdate;
+    private CompositeDisposable mDisposables;
+    private GetCountEvent getCountEvent;
+    private GetCountJob getCountJob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
         mBottomBar = findViewById(R.id.bottomBar);
         mContentContainer = findViewById(R.id.contentContainer);
         mContentContainer.setFitsSystemWindows(true);
+
+        mDisposables = new CompositeDisposable();
+        getCountEvent = new GetCountEvent();
+        getCountJob = new GetCountJob();
 
         mFragmentManager = getSupportFragmentManager();
 
@@ -55,12 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
 
             LightStatusBar.setLight(true, true, this);
-
-            // TODO Получить кол-во обновлений
-            countUpdate = 0;
-            /*
-             *   countUpdate = N;
-             * */
+            checkUpdate();
         }
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
@@ -69,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (mBottomBar.getSelectedItemId() == R.id.tab_menu){
             LightStatusBar.setLight(false, true, this);
         }
-
-        badgeChange(countUpdate);
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
 
@@ -129,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Application.getInstance().getDatabase().close();
+        if (mDisposables != null)
+            mDisposables.dispose();
     }
 
     @Override
@@ -181,5 +192,56 @@ public class MainActivity extends AppCompatActivity {
                 paramsMainLayout.setMargins(0, 0, 0, 0);
             }
         }
+    }
+
+    private void checkUpdate(){
+
+        if (NetworkInformation.hasConnection()) {
+
+            final String urlEvent = "https://www.ystu.ru/events/";
+            final String urlJob = "https://www.ystu.ru/information/students/trudoustroystvo/";
+
+            final Single<Integer> mSingleCountEvent = getCountEvent.getCountEvent(urlEvent);
+            final Single<Integer> mSingleCountJob = getCountJob.getCountJob(urlJob);
+
+            mDisposables.add(mSingleCountEvent
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<Integer>() {
+                        @Override
+                        public void onSuccess(Integer integer) {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+                    }));
+
+            mDisposables.add(mSingleCountJob
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<Integer>() {
+                        @Override
+                        public void onSuccess(Integer integer) {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+                    }));
+
+        }
+
+
+        // TODO Получить кол-во обновлений
+        countUpdate = 29;
+        /*
+         *   countUpdate = N;
+         * */
+        badgeChange(countUpdate);
     }
 }

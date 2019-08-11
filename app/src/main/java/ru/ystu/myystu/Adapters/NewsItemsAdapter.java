@@ -27,6 +27,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Activitys.ViewPhotoActivity;
@@ -71,7 +72,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private int id;
         private AppCompatTextView postDate;
         private AppCompatTextView postText;
-        private AppCompatImageView postPin;
+        private ConstraintLayout postPin;
         private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();
@@ -108,7 +109,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private AppCompatTextView postDate;
         private AppCompatTextView postText;
         private SimpleDraweeView postPhoto;
-        private AppCompatImageView postPin;
+        private ConstraintLayout postPin;
         private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();
@@ -165,7 +166,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private AppCompatTextView postText;
         private SimpleDraweeView postPhoto_1;
         private SimpleDraweeView postPhoto_2;
-        private AppCompatImageView postPin;
+        private ConstraintLayout postPin;
         private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();
@@ -262,7 +263,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private SimpleDraweeView postPhoto_3;
         private LinearLayoutCompat photoCountFrame;
         private AppCompatTextView photoCountText;
-        private AppCompatImageView postPin;
+        private ConstraintLayout postPin;
         private AppCompatImageView menuNewsItem;
 
         private UnixToString unixToString = new UnixToString();

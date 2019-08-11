@@ -104,7 +104,6 @@ public class GetListJobFromURL {
                                                 }
                                                 a++;
                                             }
-                                            int dot = 0;
                                             mList.add(new JobItemsData(i, organization, post, url, fileType));
                                         }
                                     }
