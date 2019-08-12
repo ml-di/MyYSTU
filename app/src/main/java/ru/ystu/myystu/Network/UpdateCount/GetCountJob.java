@@ -14,7 +14,7 @@ import okhttp3.Response;
 
 public class GetCountJob {
 
-    public Single<Integer> getCountJob (String url){
+    public Single<String> getCountJob (String url){
 
         return Single.create(emitter -> {
 
@@ -43,7 +43,7 @@ public class GetCountJob {
                                 final Elements jobs = doc.select(".page-main-content__spoiler.js-spoiler");
 
                                 if(!emitter.isDisposed()){
-                                    emitter.onSuccess(jobs.size()); //41
+                                    emitter.onSuccess("JOB:" + jobs.size() + 6);
                                 }
 
                             } catch (Exception e){

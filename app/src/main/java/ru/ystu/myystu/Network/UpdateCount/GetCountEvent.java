@@ -14,7 +14,7 @@ import okhttp3.Response;
 
 public class GetCountEvent {
 
-    public Single<Integer> getCountEvent (String url){
+    public Single<String> getCountEvent (String url){
 
         return Single.create(emitter -> {
 
@@ -43,7 +43,7 @@ public class GetCountEvent {
                                 final Elements events = doc.getElementsByClass("doing-item doing-item--page");
 
                                 if(!emitter.isDisposed()){
-                                    emitter.onSuccess(events.size());
+                                    emitter.onSuccess("EVENT:" + events.size() + 2);
                                 }
 
                             } catch (Exception e){

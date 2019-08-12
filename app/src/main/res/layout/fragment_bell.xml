@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@color/colorBackgroundBell"
     tools:context=".Fragments.BellFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -16,7 +16,7 @@
         android:id="@+id/bell_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_rectangle_bottom_rounded"
+        android:background="@drawable/shape_rectangle_bottom_rounded_20dp"
         android:backgroundTint="@color/colorBackground"
         android:elevation="10dp"
         android:paddingBottom="20dp"

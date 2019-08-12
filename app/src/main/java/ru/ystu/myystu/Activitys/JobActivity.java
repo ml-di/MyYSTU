@@ -176,7 +176,7 @@ public class JobActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setRefreshing(true);
 
         if (NetworkInformation.hasConnection()) {
-            Single<List<Parcelable>> mSingleJobList = getListJobFromURL.getSingleJobList(url, mList);
+            final Single<List<Parcelable>> mSingleJobList = getListJobFromURL.getSingleJobList(url, mList);
 
             mDisposables.add(mSingleJobList
                     .subscribeOn(Schedulers.io())

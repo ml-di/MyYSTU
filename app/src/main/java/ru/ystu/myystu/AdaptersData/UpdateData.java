@@ -2,36 +2,20 @@ package ru.ystu.myystu.AdaptersData;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 
-@Entity(tableName = "updates")
 public class UpdateData implements Parcelable {
 
-    @PrimaryKey
-    @ColumnInfo(name = "id")
-    private final int id;
-
-    @ColumnInfo(name = "typeId")
-    private final int typeId;
-
-    @ColumnInfo(name = "count")
+    private final String type;
     private final int count;
 
-    public UpdateData(final int id,
-                      final int typeId,
+    public UpdateData(final String type,
                       final int count) {
-        this.id = id;
-        this.typeId = typeId;
+        this.type = type;
         this.count = count;
     }
 
-    @Ignore
     private UpdateData (Parcel in) {
-        id = in.readInt();
-        typeId = in.readInt();
+        type = in.readString();
         count = in.readInt();
     }
 
@@ -54,16 +38,12 @@ public class UpdateData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeInt(id);
-        parcel.writeInt(typeId);
+        parcel.writeString(type);
         parcel.writeInt(count);
     }
 
-    public int getId() {
-        return id;
-    }
-    public int getTypeId() {
-        return typeId;
+    public String getType() {
+        return type;
     }
     public int getCount() {
         return count;

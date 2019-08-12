@@ -27,6 +27,7 @@
     <color name="colorPlaceHolderImage">#EEEEEE</color>
     <color name="colorBackground">#FFFFFF</color>
     <color name="colorBackgroundTwo">#FFFFFF</color>
+    <color name="colorBackgroundBell">#F5F5F5</color>
 
     <color name="menuGradientStart">#0A4188</color>
     <color name="menuGradientEnd">#D94C6BB8</color>
@@ -37,6 +38,7 @@
     <color name="colorTextPrimary">#424242</color>
     <color name="colorTextSecondary">#616161</color>
     <color name="colorTextTertiary">#a5a5a5</color>
+    <color name="colorTextBlack">#000000</color>
 
     <color name="colorButtonBackgroundError">#4c6bb8</color>
     <color name="colorButtonTextError">#ffffff</color>

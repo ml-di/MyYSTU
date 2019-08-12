@@ -1,8 +1,13 @@
 package ru.ystu.myystu.Activitys;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -13,9 +18,11 @@ import androidx.fragment.app.FragmentTransaction;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import ru.ystu.myystu.AdaptersData.UpdateData;
 import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Database.Data.CountersData;
 import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.Fragments.MenuFragment;
 import ru.ystu.myystu.Fragments.NewsFragment;
@@ -29,7 +36,7 @@ import ru.ystu.myystu.Utils.SettingsController;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<String> updateList;
+    private ArrayList<UpdateData> updateList;
 
     private BottomNavigationView mBottomBar;
     private FragmentManager mFragmentManager;
@@ -38,10 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mMenuFragment;
     private CoordinatorLayout mContentContainer;
     private int fragmentAnimation;
-    private int countUpdate;
+    private AtomicInteger countUpdate;
     private CompositeDisposable mDisposables;
     private GetCountEvent getCountEvent;
     private GetCountJob getCountJob;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
         mBellFragment = new BellFragment();
         mMenuFragment = new MenuFragment();
 
-        if (savedInstanceState == null) {
+        if (db == null || !db.isOpen())
+            db = Application.getInstance().getDatabase();
 
+        if (savedInstanceState == null) {
+            countUpdate = new AtomicInteger();
             updateList = new ArrayList<>();
             mFragmentManager.beginTransaction()
                     .setTransition(fragmentAnimation)
@@ -98,9 +109,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 // Уведомления
                 case R.id.tab_bell:
-
-                    // TODO передеать аргумент countUpdate
-
                     mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(fragmentAnimation)
@@ -157,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
         outState.putInt("selItemId", mBottomBar.getSelectedItemId());
-        outState.putInt("countUpdate", countUpdate);
+        outState.putInt("countUpdate", countUpdate.get());
 
         super.onSaveInstanceState(outState);
     }
@@ -166,10 +174,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
         mBottomBar.setSelectedItemId(savedInstanceState.getInt("selItemId"));
-        countUpdate = savedInstanceState.getInt("countUpdate");
-        badgeChange(countUpdate);
+        countUpdate.set(savedInstanceState.getInt("countUpdate"));
+        badgeChange(countUpdate.get());
 
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    public int getCountUpdate() {
+        return countUpdate.get();
+    }
+    public ArrayList<UpdateData> getUpdateList() {
+        return updateList;
     }
 
     public void badgeChange (int count){
@@ -198,50 +213,64 @@ public class MainActivity extends AppCompatActivity {
 
         if (NetworkInformation.hasConnection()) {
 
+            countUpdate.set(0);
+            if (updateList.size() > 0) {
+                updateList.clear();
+            }
+
             final String urlEvent = "https://www.ystu.ru/events/";
             final String urlJob = "https://www.ystu.ru/information/students/trudoustroystvo/";
 
-            final Single<Integer> mSingleCountEvent = getCountEvent.getCountEvent(urlEvent);
-            final Single<Integer> mSingleCountJob = getCountJob.getCountJob(urlJob);
+            final Single<String> mSingleCountEvent = getCountEvent.getCountEvent(urlEvent);
+            final Single<String> mSingleCountJob = getCountJob.getCountJob(urlJob);
 
-            mDisposables.add(mSingleCountEvent
+            mDisposables.add(Single.merge(mSingleCountEvent, mSingleCountJob)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<Integer>() {
-                        @Override
-                        public void onSuccess(Integer integer) {
+                    .toList()
+                    .subscribe(countersList -> {
 
-                        }
+                        /*
+                        *       1. Если нет записей в БД то создаем
+                        *       2. Если есть записи то поучаем из БД и сравниваем с результатом
+                        *       3. Если отличается, заполняем лист и +1 к счетчику
+                        *       4. Дальнейшее обновление данных в БД через сами вкладки
+                        * */
 
-                        @Override
-                        public void onError(Throwable e) {
+                        new Thread(() -> {
 
-                        }
+                            try {
+                                if (db.getOpenHelper().getWritableDatabase().isOpen()) {
+
+                                    for (String s : countersList) {
+
+                                        final String type = s.substring(0, s.indexOf(":"));
+                                        final int count = Integer.valueOf(s.substring(s.indexOf(":") + 1));
+
+                                        // Если нет счетчика, создаем
+                                        if (!db.countersDao().isExistsCounter(type)) {
+                                            final CountersData countersData = new CountersData();
+                                            countersData.setType(type);
+                                            countersData.setCount(count);
+                                            db.countersDao().insertCounter(countersData);
+                                        } else {
+                                            final int oldCount = db.countersDao().getCountCounter(type);
+                                            if (count != oldCount) {
+                                                final int countUpdates = Math.abs(count - oldCount);
+                                                updateList.add(new UpdateData(type, countUpdates));
+                                                countUpdate.getAndIncrement();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Обновляем Bandage
+                                runOnUiThread(() -> badgeChange(countUpdate.get()));
+                            } catch (SQLiteException e) {
+                                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }).start();
                     }));
-
-            mDisposables.add(mSingleCountJob
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<Integer>() {
-                        @Override
-                        public void onSuccess(Integer integer) {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-                    }));
-
         }
-
-
-        // TODO Получить кол-во обновлений
-        countUpdate = 29;
-        /*
-         *   countUpdate = N;
-         * */
-        badgeChange(countUpdate);
     }
 }

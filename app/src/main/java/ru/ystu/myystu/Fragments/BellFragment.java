@@ -58,7 +58,7 @@ public class BellFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
 
-        // TODO Получить аргумент countUpdate
+        countUpdate = ((MainActivity) Objects.requireNonNull(getActivity())).getCountUpdate();
 
         mContext = getActivity();
         bellHelper = new BellHelper(mContext);
@@ -185,22 +185,7 @@ public class BellFragment extends Fragment {
     private void formattingList() {
 
         if(countUpdate > 0){
-            if(mList == null) {
-                mList = new ArrayList<>();
-            } else {
-                mList.clear();
-            }
-
-            // TODO заполнить List с обновлениями
-
-            for (int i = 0; i < countUpdate; i++){
-
-                /*
-                *   Заполнение обновлений
-                * */
-
-            }
-
+            mList = ((MainActivity) Objects.requireNonNull(getActivity())).getUpdateList();
             mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
             mRecyclerViewAdapter.setHasStableIds(true);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);

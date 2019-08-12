@@ -23,26 +23,22 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
 
     static class BellItemsViewHolder extends RecyclerView.ViewHolder {
 
-        private int idType;
-        private int idSubType;
-        final private AppCompatTextView date;
-        final private AppCompatTextView title;
-        final private AppCompatTextView subTitle;
         final private AppCompatTextView type;
+        final private AppCompatTextView text;
+        final private AppCompatTextView bandage;
         final private AppCompatImageView icon;
         final private ConstraintLayout item;
 
         BellItemsViewHolder(@NonNull View itemView, final List<UpdateData> mList, final Context mContext) {
             super(itemView);
 
-            date = itemView.findViewById(R.id.itemBell_date);
-            title = itemView.findViewById(R.id.itemBell_title);
-            subTitle = itemView.findViewById(R.id.itemBell_subTitle);
             type = itemView.findViewById(R.id.itemBell_type);
+            text = itemView.findViewById(R.id.itemBell_text);
+            bandage = itemView.findViewById(R.id.itemBell_bandage);
             icon = itemView.findViewById(R.id.itemBell_icon);
             item = itemView.findViewById(R.id.itemBell);
 
-            item.setOnClickListener(view -> {
+            /*item.setOnClickListener(view -> {
 
                 switch (idType){
                     // Расписание
@@ -56,14 +52,14 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
                         // TODO Удаление элемента из BellFragment
                         /*
                         *   Обновить БД
-                        * */
+                        *
 
                         mList.remove(position);
                         ((MainActivity) mContext).badgeChange(mList.size());
 
                         break;
                 }
-            });
+            });*/
         }
     }
 
@@ -91,6 +87,18 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
 
         // TODO заолнить итем обновления
 
+        if (mList.get(position).getType().equals("EVENT")) {
+            holder.type.setText("События");
+            holder.text.setText("Обновлен раздел с событиями");
+            holder.icon.setImageResource(R.drawable.ic_bell);
+        } else if (mList.get(position).getType().equals("JOB")) {
+            holder.type.setText("Вакансии");
+            holder.text.setText("Добавлены новые вакансии");
+            holder.icon.setImageResource(R.drawable.ic_bell);
+        }
+
+        // TODO int to String
+        holder.bandage.setText(mList.get(position).getCount());
     }
 
     @Override
@@ -110,10 +118,5 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
 
     public void removeItem (int position) {
         mList.remove(position);
-    }
-
-    // TODO Получить тип обновления (Возможно не нужно)
-    public int getType(int position) {
-        return mList.get(position).getTypeId();
     }
 }

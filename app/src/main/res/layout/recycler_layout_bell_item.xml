@@ -6,78 +6,78 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:minHeight="60dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp">
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="8dp">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/itemBell_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="16dp"
-        android:padding="2dp"
-        android:tint="@color/colorPrimaryLight"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/ic_document_text" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemBell_type"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="8dp"
-        android:gravity="center_vertical"
-        android:textAllCaps="true"
-        android:textColor="@color/colorPrimaryLight"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@id/itemBell_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Расписание" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemBell_date"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="4dp"
-        android:alpha="0.75"
-        android:gravity="center_vertical"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@id/itemBell_type"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="• 17.02 15:38" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemBell_title"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        android:alpha="0.8"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@id/itemBell_subTitle"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/shape_rectangle_rounded_24dp"
+        android:backgroundTint="@color/colorBackground"
+        android:padding="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemBell_icon"
-        app:textAllCaps="true"
-        tools:text="Обновлено расписание АСФ" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemBell_subTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemBell_title"
-        tools:text="Внесены изменения в расписание групп ЭПИ-41, ЭИС-45" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemBell_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:alpha="0.85"
+            android:padding="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_document_text" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemBell_type"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:alpha="0.90"
+            android:gravity="center_vertical"
+            android:textAllCaps="true"
+            android:textColor="@color/colorTextBlack"
+            android:textSize="21sp"
+            app:layout_constraintStart_toEndOf="@id/itemBell_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="События" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemBell_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:alpha="0.80"
+            android:textColor="@color/colorTextBlack"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/itemBell_type"
+            tools:text="Обновлен раздел с событиями" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/itemBell_bandage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorTextIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

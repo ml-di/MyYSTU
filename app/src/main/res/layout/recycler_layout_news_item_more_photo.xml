@@ -20,7 +20,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:alpha="0.15"
-            android:background="@drawable/shape_rectangle_right_rounded"
+            android:background="@drawable/shape_rectangle_right_rounded_20dp"
             android:backgroundTint="@color/colorPrimaryLight"
             app:layout_constraintEnd_toEndOf="@id/post_date"
             app:layout_constraintStart_toStartOf="parent" />
