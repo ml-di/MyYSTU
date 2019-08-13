@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -19,20 +21,19 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import ru.ystu.myystu.Activitys.MainActivity;
 import ru.ystu.myystu.Adapters.BellItemsAdapter;
 import ru.ystu.myystu.AdaptersData.UpdateData;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BellHelper;
 
 public class BellFragment extends Fragment {
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private AppCompatTextView title;
     private AppCompatTextView countWeek;
     private AppCompatTextView countLesson;
@@ -50,15 +51,12 @@ public class BellFragment extends Fragment {
     private Context mContext;
 
     private BellHelper bellHelper;
-    private int countUpdate;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
-
-        countUpdate = ((MainActivity) Objects.requireNonNull(getActivity())).getCountUpdate();
 
         mContext = getActivity();
         bellHelper = new BellHelper(mContext);
@@ -81,24 +79,24 @@ public class BellFragment extends Fragment {
 
         update();
 
-        if(countUpdate > 0){
-            showPlaceHolder(false);
-        } else {
-            showPlaceHolder(true);
-        }
-
         if(savedInstanceState == null){
             formattingList();
         } else {
             mList = savedInstanceState.getParcelableArrayList("mList");
-            mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
-            if (mRecyclerState != null) {
-                mLayoutManager.onRestoreInstanceState(mRecyclerState);
-            }
-            mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
-            if (mRecyclerView != null) {
-                mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
+
+            if (mList != null && mList.size() > 0) {
+                showPlaceHolder(false);
+                mRecyclerState = savedInstanceState.getParcelable("recyclerViewState");
+                if (mRecyclerState != null) {
+                    mLayoutManager.onRestoreInstanceState(mRecyclerState);
+                }
+                mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
+                if (mRecyclerView != null) {
+                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                    new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
+                } else {
+                    showPlaceHolder(true);
+                }
             }
         }
     }
@@ -110,7 +108,6 @@ public class BellFragment extends Fragment {
         final View mView = inflater.inflate(R.layout.fragment_bell, container, false);
 
         if(mView != null){
-            mSwipeRefreshLayout = mView.findViewById(R.id.refresh_bell);
             title = mView.findViewById(R.id.bell_title);
             countWeek = mView.findViewById(R.id.bell_count_week);
             countLesson = mView.findViewById(R.id.bell_count_lesson);
@@ -120,12 +117,6 @@ public class BellFragment extends Fragment {
             lessonLayout = mView.findViewById(R.id.lesson_layout);
             timeLayout = mView.findViewById(R.id.time_layout);
             mainLayout = mView.findViewById(R.id.main_layout_bell);
-
-            mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
-                    R.color.colorPrimary);
-
-            mSwipeRefreshLayout.setOnRefreshListener(this::update);
-            mSwipeRefreshLayout.setEnabled(false);
         }
 
         return mView;
@@ -183,9 +174,9 @@ public class BellFragment extends Fragment {
     }
 
     private void formattingList() {
-
-        if(countUpdate > 0){
-            mList = ((MainActivity) Objects.requireNonNull(getActivity())).getUpdateList();
+        mList = ((MainActivity) Objects.requireNonNull(getActivity())).getUpdateList();
+        if(mList.size() > 0){
+            showPlaceHolder(false);
             mRecyclerViewAdapter = new BellItemsAdapter(mList, mContext);
             mRecyclerViewAdapter.setHasStableIds(true);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
@@ -200,7 +191,6 @@ public class BellFragment extends Fragment {
 
         final DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        final float logicalDensity = metrics.density;
 
         mainLayout.removeAllViews();
         ViewGroup.LayoutParams params;
@@ -221,18 +211,12 @@ public class BellFragment extends Fragment {
         } else {
             params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRecyclerView = new RecyclerView(mainLayout.getContext());
+            mRecyclerView.setBackgroundColor(getResources().getColor(R.color.colorBackgroundBell));
             mainLayout.addView(mRecyclerView, 0 , params);
-
-            params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) Math.ceil(12 * logicalDensity));
-            final FrameLayout mContentFrameLayout = new FrameLayout(mainLayout.getContext());
-            mContentFrameLayout.setBackground(getResources().getDrawable(R.drawable.recyclerview_grandient));
-            mainLayout.addView(mContentFrameLayout, 1 , params);
 
             mLayoutManager = new LinearLayoutManager(mContext);
             mRecyclerView.setHasFixedSize(true);
             mRecyclerView.setLayoutManager(mLayoutManager);
-            mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,
-                    DividerItemDecoration.VERTICAL));
         }
     }
 
@@ -244,25 +228,32 @@ public class BellFragment extends Fragment {
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-            // TODO свайп обновлений
-
-            int pos = viewHolder.getAdapterPosition();
-
-            /*
-            *   Изменение настроек
-            * */
-
-            // Кол-во обновлений
-            int sizeBandage = 0;
-
-            ((BellItemsAdapter) mRecyclerViewAdapter).removeItem(pos);
-            ((MainActivity) Objects.requireNonNull(getActivity())).badgeChange(sizeBandage);
-            mRecyclerViewAdapter.notifyItemRemoved(pos);
-
-            if(mRecyclerViewAdapter.getItemCount() <= 0){
-                showPlaceHolder(true);
-            }
+            final int pos = viewHolder.getAdapterPosition();
+            removeItem(pos);
+            new Thread(() -> {
+                try {
+                    AppDatabase db = Application.getInstance().getDatabase();
+                    if (db.getOpenHelper().getWritableDatabase().isOpen()) {
+                        db.countersDao().setCount(mList.get(pos).getType(), mList.get(pos).getCountItem());
+                    }
+                } catch (SQLiteException e) {
+                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show());
+                }
+            }).start();
         }
     };
+
+    public void removeItem (int pos) {
+        ((BellItemsAdapter) mRecyclerViewAdapter).removeItem(pos);
+
+        final int sizeBandage = mRecyclerViewAdapter.getItemCount();
+        ((MainActivity) Objects.requireNonNull(getActivity())).badgeChange(sizeBandage);
+
+        mRecyclerViewAdapter.notifyItemRemoved(pos);
+        ((MainActivity) getActivity()).countUpdateDecrement();
+
+        if(mRecyclerViewAdapter.getItemCount() <= 0){
+            showPlaceHolder(true);
+        }
+    }
 }

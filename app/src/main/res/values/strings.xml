@@ -64,6 +64,9 @@
     <string name="bell_item_title_schedule">Обновление в расписании</string>
     <string name="bell_placeholder_text">Обновлений нет 😴</string>
 
+    <string name="bell_update_event_text">Обновлен раздел с событиями</string>
+    <string name="bell_update_job_text">Добавлены новые вакансии</string>
+
     <!-- ErrorMessage -->
     <string name="error_message_title">Что-то пошло не так…</string>
     <string name="error_message_refresh">Обновить</string>

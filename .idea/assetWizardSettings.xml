@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_ui" />
-                            <entry key="sourceFile" value="E:\project\Android\MyYSTU\icons\ic_launcher\project\ic_launcher.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_bell" />
+                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\outline-notifications_active-24px.svg" />
                           </map>
                         </option>
                       </PersistentState>

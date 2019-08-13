@@ -73,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
         if (db == null || !db.isOpen())
             db = Application.getInstance().getDatabase();
 
+        countUpdate = new AtomicInteger();
+
         if (savedInstanceState == null) {
-            countUpdate = new AtomicInteger();
             updateList = new ArrayList<>();
             mFragmentManager.beginTransaction()
                     .setTransition(fragmentAnimation)
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
 
             LightStatusBar.setLight(true, true, this);
             checkUpdate();
+        } else {
+            updateList = savedInstanceState.getParcelableArrayList("updateList");
         }
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
@@ -134,10 +137,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         mBottomBar.setOnNavigationItemReselectedListener(menuItem -> {
-            switch (menuItem.getItemId()){
-                case R.id.tab_news:
-                    ((NewsFragment) mNewsFragment).scrollTopRecyclerView();
-                    break;
+            if (menuItem.getItemId() == R.id.tab_news) {
+                ((NewsFragment) mNewsFragment).scrollTopRecyclerView();
             }
         });
     }
@@ -166,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
         outState.putInt("selItemId", mBottomBar.getSelectedItemId());
         outState.putInt("countUpdate", countUpdate.get());
+        outState.putParcelableArrayList("updateList", updateList);
 
         super.onSaveInstanceState(outState);
     }
@@ -180,11 +182,14 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    public int getCountUpdate() {
-        return countUpdate.get();
-    }
     public ArrayList<UpdateData> getUpdateList() {
         return updateList;
+    }
+    public Fragment getmBellFragment() {
+        return mBellFragment;
+    }
+    public void countUpdateDecrement () {
+        countUpdate.getAndDecrement();
     }
 
     public void badgeChange (int count){
@@ -230,13 +235,6 @@ public class MainActivity extends AppCompatActivity {
                     .toList()
                     .subscribe(countersList -> {
 
-                        /*
-                        *       1. Если нет записей в БД то создаем
-                        *       2. Если есть записи то поучаем из БД и сравниваем с результатом
-                        *       3. Если отличается, заполняем лист и +1 к счетчику
-                        *       4. Дальнейшее обновление данных в БД через сами вкладки
-                        * */
-
                         new Thread(() -> {
 
                             try {
@@ -257,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                                             final int oldCount = db.countersDao().getCountCounter(type);
                                             if (count != oldCount) {
                                                 final int countUpdates = Math.abs(count - oldCount);
-                                                updateList.add(new UpdateData(type, countUpdates));
+                                                updateList.add(new UpdateData(type, countUpdates, count));
                                                 countUpdate.getAndIncrement();
                                             }
                                         }

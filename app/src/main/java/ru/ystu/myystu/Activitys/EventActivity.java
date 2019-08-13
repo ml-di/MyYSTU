@@ -33,6 +33,7 @@ import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Database.Data.CountersData;
 import ru.ystu.myystu.Network.LoadLists.GetListEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
@@ -205,15 +206,29 @@ public class EventActivity extends AppCompatActivity {
                                         if (db.eventsItemsDao().getCountEventItems() > 0)
                                             db.eventsItemsDao().deleteAllEventItems();
 
+                                        int count = 0;
+
                                         // Добавляем новые записи
                                         for (Parcelable parcelable : eventItemsData) {
                                             if (parcelable instanceof StringData) {
                                                 db.eventsItemsDao().insertDividers((StringData) parcelable);
                                             } else if (parcelable instanceof EventItemsData_Event) {
                                                 db.eventsItemsDao().insertEventItems((EventItemsData_Event) parcelable);
+                                                count++;
                                             } else if (parcelable instanceof EventItemsData_Header) {
                                                 db.eventsItemsDao().insertEventHeader((EventItemsData_Header) parcelable);
                                             }
+                                        }
+
+                                        // Обновляем счетчики
+                                        // Если нет счетчика, создаем
+                                        if (!db.countersDao().isExistsCounter("EVENT")) {
+                                            final CountersData countersData = new CountersData();
+                                            countersData.setType("EVENT");
+                                            countersData.setCount(count);
+                                            db.countersDao().insertCounter(countersData);
+                                        } else {
+                                            db.countersDao().setCount("EVENT", count);
                                         }
                                     }
                                 } catch (SQLiteException e) {

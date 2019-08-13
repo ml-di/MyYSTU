@@ -34,6 +34,7 @@ import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Database.Data.CountersData;
 import ru.ystu.myystu.Network.LoadLists.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
@@ -198,11 +199,25 @@ public class JobActivity extends AppCompatActivity {
                                             db.jobItemsDao().deleteAll();
                                         }
 
+                                        int count = 0;
+
                                         // Добавляем новые записи
                                         for (Parcelable parcelable : jobItemsData) {
                                             if (parcelable instanceof JobItemsData) {
                                                 db.jobItemsDao().insert((JobItemsData) parcelable);
+                                                count++;
                                             }
+                                        }
+
+                                        // Обновляем счетчики
+                                        // Если нет счетчика, создаем
+                                        if (!db.countersDao().isExistsCounter("JOB")) {
+                                            final CountersData countersData = new CountersData();
+                                            countersData.setType("JOB");
+                                            countersData.setCount(count);
+                                            db.countersDao().insertCounter(countersData);
+                                        } else {
+                                            db.countersDao().setCount("JOB", count);
                                         }
                                     }
                                 } catch (SQLiteException e) {

@@ -11,9 +11,12 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import ru.ystu.myystu.Activitys.EventActivity;
+import ru.ystu.myystu.Activitys.JobActivity;
 import ru.ystu.myystu.Activitys.MainActivity;
-import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.UpdateData;
+import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.R;
 
 public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.BellItemsViewHolder> {
@@ -38,28 +41,25 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
             icon = itemView.findViewById(R.id.itemBell_icon);
             item = itemView.findViewById(R.id.itemBell);
 
-            /*item.setOnClickListener(view -> {
-
-                switch (idType){
+            item.setOnClickListener(view -> {
+                final int position = getAdapterPosition();
+                final String type = mList.get(position).getType();
+                Intent mIntent = null;
+                switch (type){
                     // Расписание
-                    case 0:
+                    case "EVENT":
+                        mIntent = new Intent(mContext, EventActivity.class);
+                        break;
 
-                        final int position = getAdapterPosition();
-                        final Intent mIntent = new Intent(mContext, ScheduleListActivity.class);
-                        mIntent.putExtra("ID", idSubType);
-                        mContext.startActivity(mIntent);
-
-                        // TODO Удаление элемента из BellFragment
-                        /*
-                        *   Обновить БД
-                        *
-
-                        mList.remove(position);
-                        ((MainActivity) mContext).badgeChange(mList.size());
-
+                    case "JOB":
+                        mIntent = new Intent(mContext, JobActivity.class);
                         break;
                 }
-            });*/
+                if (mIntent != null) {
+                    mContext.startActivity(mIntent);
+                    ((BellFragment) ((MainActivity) mContext).getmBellFragment()).removeItem(position);
+                }
+            });
         }
     }
 
@@ -85,20 +85,17 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
     @Override
     public void onBindViewHolder(@NonNull BellItemsViewHolder holder, int position) {
 
-        // TODO заолнить итем обновления
-
         if (mList.get(position).getType().equals("EVENT")) {
-            holder.type.setText("События");
-            holder.text.setText("Обновлен раздел с событиями");
-            holder.icon.setImageResource(R.drawable.ic_bell);
+            holder.type.setText(mContext.getResources().getString(R.string.activity_event_title));
+            holder.text.setText(mContext.getResources().getString(R.string.bell_update_event_text));
+            holder.icon.setImageResource(R.drawable.ic_event_outline);
         } else if (mList.get(position).getType().equals("JOB")) {
-            holder.type.setText("Вакансии");
-            holder.text.setText("Добавлены новые вакансии");
-            holder.icon.setImageResource(R.drawable.ic_bell);
+            holder.type.setText(mContext.getResources().getString(R.string.activity_job_title));
+            holder.text.setText(mContext.getResources().getString(R.string.bell_update_job_text));
+            holder.icon.setImageResource(R.drawable.ic_job_outline);
         }
 
-        // TODO int to String
-        holder.bandage.setText(mList.get(position).getCount());
+        holder.bandage.setText(String.valueOf(mList.get(position).getCount()));
     }
 
     @Override
