@@ -234,7 +234,9 @@ public class BellFragment extends Fragment {
                 try {
                     AppDatabase db = Application.getInstance().getDatabase();
                     if (db.getOpenHelper().getWritableDatabase().isOpen()) {
-                        db.countersDao().setCount(mList.get(pos).getType(), mList.get(pos).getCountItem());
+                        if (mList.size() > 0 && db.countersDao().isExistsCounter(mList.get(pos).getType())) {
+                            db.countersDao().setCount(mList.get(pos).getType(), mList.get(pos).getCountItem());
+                        }
                     }
                 } catch (SQLiteException e) {
                     Objects.requireNonNull(getActivity()).runOnUiThread(() -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show());

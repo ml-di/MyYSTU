@@ -1,7 +1,12 @@
 package ru.ystu.myystu.Fragments;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.widget.Toast;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipeline;
 
@@ -9,6 +14,9 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -17,7 +25,7 @@ import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.R;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private String key;
     private AppDatabase db;
@@ -102,7 +110,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
 
             cacheSchedule.setOnPreferenceClickListener(view -> {
-                folderDelete(scheduleCache);
+                folderDelete(scheduleCache, getActivity());
                 cacheSchedule.setSummary(getResources().getString(R.string.settings_category_additional_cache_summary)
                         + " 0 B");
                 return true;
@@ -164,13 +172,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         return length;
     }
     // Удаление всех файлов из каталога
-    private static void folderDelete(File directory) {
-        for (File file : directory.listFiles()) {
-            if (file.isFile())
-                file.delete();
-            else {
-                folderDelete(file);
-                file.delete();
+    private static void folderDelete(File directory, Context mContext) {
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(mContext), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((SettingsActivity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        } else {
+            for (File file : directory.listFiles()) {
+                if (file.isFile())
+                    file.delete();
+                else {
+                    folderDelete(file, mContext);
+                    file.delete();
+                }
             }
         }
     }
@@ -181,5 +193,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups))
                 + " " + units[digitGroups];
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(getActivity(), "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/menu_schedule_item_download"
-        android:title="@string/menu_download" />
+        android:title="@string/menu_download"
+        android:icon="@drawable/ic_download"/>
     <item
         android:id="@+id/menu_schedule_item_openInBrowser"
-        android:title="@string/menu_openInBrowser" />
+        android:title="@string/menu_openInBrowser"
+        android:icon="@drawable/ic_browser"/>
     <item
         android:id="@+id/menu_schedule_item_shareFile"
-        android:title="@string/menu_shareFile" />
+        android:title="@string/menu_shareFile"
+        android:icon="@drawable/ic_share"/>
     <item
         android:id="@+id/menu_schedule_item_shareLink"
-        android:title="@string/menu_shareLink" />
+        android:title="@string/menu_shareLink"
+        android:icon="@drawable/ic_share"/>
 </menu>

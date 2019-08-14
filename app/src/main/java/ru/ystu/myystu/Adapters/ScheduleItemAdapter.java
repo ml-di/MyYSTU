@@ -12,6 +12,7 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -28,6 +29,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import org.michaelbel.bottomsheet.BottomSheet;
+
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -132,8 +135,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 final String ext_menu = link.substring(link.lastIndexOf("."));
                 final File file_menu = new File(dir_menu, fileName + ext_menu);
 
-                new MenuItem().showMenu(view, mContext, file_menu, link, fileName, getAdapterPosition());
-
+                showMenu(fileName, getAdapterPosition(), mContext, file, link);
             });
         }
     }
@@ -219,15 +221,10 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 0:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            default:
-                break;
+        if (requestCode == 0) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -338,82 +335,81 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private static class MenuItem {
-        private void showMenu (View mView, Context mContext, File file, String link, String name, int position){
+    private static void showMenu (String title, int pos, Context mContext, File file, String link) {
 
-            final PopupMenu itemMenu = new PopupMenu(mView.getContext(), mView);
-            itemMenu.inflate(R.menu.menu_schedule_item);
+        final View view = new View(mContext);
+        final PopupMenu itemMenu = new PopupMenu(mContext, view);
+        itemMenu.inflate(R.menu.menu_schedule_item);
+        final Menu mMenu = itemMenu.getMenu();
 
-            final Menu mMenu = itemMenu.getMenu();
-            if(file.exists()){
-                mMenu.getItem(0).setTitle(R.string.menu_delete);
-            } else {
-                mMenu.getItem(0).setTitle(R.string.menu_download);
-            }
+        if(file.exists()){
+            mMenu.getItem(0).setTitle(R.string.menu_delete);
+            mMenu.getItem(0).setIcon(R.drawable.ic_delete);
+        } else {
+            mMenu.getItem(0).setTitle(R.string.menu_download);
+            mMenu.getItem(0).setIcon(R.drawable.ic_download);
+        }
+        final BottomSheet.Builder builder = new BottomSheet.Builder(mContext);
+        builder
+                .setTitle(title)
+                .setMenu(mMenu, (dialog, which) -> {
 
-            itemMenu.setOnMenuItemClickListener(item -> {
+                    MenuItem item = mMenu.getItem(which);
 
-                switch (item.getItemId()){
+                    switch (item.getItemId()) {
 
-                    case R.id.menu_schedule_item_download:
+                        case R.id.menu_schedule_item_download:
 
-                        if(file.exists()) {
-                            // Удалить
-                            if(file.delete()) {
-                                ((ScheduleListActivity) mContext).updateItem(position);
+                            if (file.exists()) {
+                                // Удалить
+                                if (file.delete()) {
+                                    ((ScheduleListActivity) mContext).updateItem(pos);
+                                } else {
+                                    Toast.makeText(mContext, mContext
+                                            .getResources()
+                                            .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
                             } else {
-                                Toast.makeText(mContext, mContext
-                                                .getResources()
-                                                .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
-                                        .show();
+                                // Скачать
+                                downloadFile(file, link, mContext, pos, -1);
                             }
 
-                        } else {
-                            // Скачать
-                            downloadFile(file, link, mContext, position, -1);
-                        }
+                            break;
 
-                        break;
+                        // Открыть в браузере
+                        case R.id.menu_schedule_item_openInBrowser:
 
-                    // Открыть в браузере
-                    case R.id.menu_schedule_item_openInBrowser:
+                            final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                            mContext.startActivity(openLink);
 
-                        final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                        mContext.startActivity(openLink);
+                        // Поделиться файлом
+                        case R.id.menu_schedule_item_shareFile:
 
-                        return true;
+                            if (file.exists()) {
+                                final Intent mIntent = new Intent(Intent.ACTION_SEND);
+                                mIntent.setType("application/msword");
+                                mIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file));
+                                mContext.startActivity(Intent.createChooser(mIntent,
+                                        mContext.getResources()
+                                                .getString(R.string.intent_schedule_share_doc)));
+                            } else {
+                                downloadFile(file, link, mContext, pos, 1);
+                            }
 
-                    // Поделиться файлом
-                    case R.id.menu_schedule_item_shareFile:
+                        // Поделиться ссылкой
+                        case R.id.menu_schedule_item_shareLink:
 
-                        if(file.exists()){
-                            final Intent mIntent = new Intent(Intent.ACTION_SEND);
-                            mIntent.setType("application/msword");
-                            mIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file));
-                            mContext.startActivity(Intent.createChooser(mIntent,
-                                    mContext.getResources()
-                                            .getString(R.string.intent_schedule_share_doc)));
-                        } else {
-                            downloadFile(file, link, mContext, position, 1);
-                        }
-                        return true;
+                            final Intent shareLink = new Intent();
+                            shareLink
+                                    .setAction(Intent.ACTION_SEND)
+                                    .putExtra(Intent.EXTRA_TEXT, title + "\n\n" + link)
+                                    .setType("text/plain");
+                            mContext.startActivity(shareLink);
 
-                    // Поделиться ссылкой
-                    case R.id.menu_schedule_item_shareLink:
-
-                        final Intent shareLink = new Intent();
-                        shareLink
-                                .setAction(Intent.ACTION_SEND)
-                                .putExtra(Intent.EXTRA_TEXT, name + "\n\n" + link)
-                                .setType("text/plain");
-                        mContext.startActivity(shareLink);
-
-                        return true;
-                }
-                return false;
-            });
-            itemMenu.show();
-        }
+                    }
+                })
+                .show();
     }
-
 }

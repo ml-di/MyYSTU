@@ -43,7 +43,6 @@ public class GetCountJob {
                                 final Elements jobs = doc.select(".page-main-content__spoiler.js-spoiler");
 
                                 if(!emitter.isDisposed()){
-                                    //emitter.onSuccess("JOB:" + (jobs.size() + 6));
                                     emitter.onSuccess("JOB:" + jobs.size());
                                 }
 

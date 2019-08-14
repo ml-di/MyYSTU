@@ -339,20 +339,6 @@ public class ScheduleListActivity extends AppCompatActivity {
         mRecyclerViewAdapter.notifyItemChanged(position);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 0:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            default:
-                break;
-        }
-    }
-
     private void setRecyclerViewAnim (final RecyclerView recyclerView) {
         if (SettingsController.isEnabledAnim(this)) {
             final Context context = recyclerView.getContext();

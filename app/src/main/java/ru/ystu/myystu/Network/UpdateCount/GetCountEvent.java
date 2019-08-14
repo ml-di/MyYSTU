@@ -43,7 +43,6 @@ public class GetCountEvent {
                                 final Elements events = doc.getElementsByClass("doing-item doing-item--page");
 
                                 if(!emitter.isDisposed()){
-                                    //emitter.onSuccess("EVENT:" + (events.size() + 2));
                                     emitter.onSuccess("EVENT:" + events.size());
                                 }
 
