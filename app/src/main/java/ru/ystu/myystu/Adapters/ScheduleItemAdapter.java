@@ -3,9 +3,7 @@ package ru.ystu.myystu.Adapters;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -29,6 +27,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import org.michaelbel.bottomsheet.BottomSheet;
 
 import io.reactivex.Completable;
@@ -42,6 +41,7 @@ import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Network.LoadScheduleFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.IntentHelper;
 
 public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -135,7 +135,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 final String ext_menu = link.substring(link.lastIndexOf("."));
                 final File file_menu = new File(dir_menu, fileName + ext_menu);
 
-                showMenu(fileName, getAdapterPosition(), mContext, file, link);
+                showMenu(fileName, getAdapterPosition(), mContext, file_menu, link);
             });
         }
     }
@@ -262,12 +262,9 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                             case 1:
                                 if(file.exists()){
-                                    final Intent mIntent = new Intent(Intent.ACTION_SEND);
-                                    mIntent.setType("application/msword");
-                                    mIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file));
-                                    mContext.startActivity(Intent.createChooser(mIntent,
-                                            mContext.getResources()
-                                                    .getString(R.string.intent_schedule_share_doc)));
+                                    final String titleIntent = mContext.getResources().getString(R.string.intent_schedule_share_doc);
+                                    final String subject = mContext.getResources().getString(R.string.menu_text_schedule);
+                                    IntentHelper.shareFile(mContext, file, titleIntent, subject, file.getName());
                                 }
                                 break;
 
@@ -311,13 +308,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
                 }
 
-                final Intent intent = new Intent();
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags (Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setAction(Intent.ACTION_VIEW);
-                final String type = "application/msword";
-                intent.setDataAndType(Uri.fromFile(file), type);
-                mContext.startActivity(intent);
+                IntentHelper.openFile(mContext, file);
 
             } catch (Exception e){
                 if(e.getMessage().startsWith("No Activity found to handle")){
@@ -349,13 +340,13 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mMenu.getItem(0).setTitle(R.string.menu_download);
             mMenu.getItem(0).setIcon(R.drawable.ic_download);
         }
+
         final BottomSheet.Builder builder = new BottomSheet.Builder(mContext);
         builder
                 .setTitle(title)
                 .setMenu(mMenu, (dialog, which) -> {
 
-                    MenuItem item = mMenu.getItem(which);
-
+                    final MenuItem item = mMenu.getItem(which);
                     switch (item.getItemId()) {
 
                         case R.id.menu_schedule_item_download:
@@ -370,7 +361,6 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                             .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
                                             .show();
                                 }
-
                             } else {
                                 // Скачать
                                 downloadFile(file, link, mContext, pos, -1);
@@ -380,34 +370,23 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                         // Открыть в браузере
                         case R.id.menu_schedule_item_openInBrowser:
-
-                            final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                            mContext.startActivity(openLink);
-
+                            IntentHelper.openInBrowser(mContext, link);
+                            break;
                         // Поделиться файлом
                         case R.id.menu_schedule_item_shareFile:
 
                             if (file.exists()) {
-                                final Intent mIntent = new Intent(Intent.ACTION_SEND);
-                                mIntent.setType("application/msword");
-                                mIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file));
-                                mContext.startActivity(Intent.createChooser(mIntent,
-                                        mContext.getResources()
-                                                .getString(R.string.intent_schedule_share_doc)));
+                                final String titleIntent = mContext.getResources().getString(R.string.intent_schedule_share_doc);
+                                final String subject = mContext.getResources().getString(R.string.menu_text_schedule);
+                                IntentHelper.shareFile(mContext, file, titleIntent, subject, title);
                             } else {
                                 downloadFile(file, link, mContext, pos, 1);
                             }
-
+                            break;
                         // Поделиться ссылкой
                         case R.id.menu_schedule_item_shareLink:
-
-                            final Intent shareLink = new Intent();
-                            shareLink
-                                    .setAction(Intent.ACTION_SEND)
-                                    .putExtra(Intent.EXTRA_TEXT, title + "\n\n" + link)
-                                    .setType("text/plain");
-                            mContext.startActivity(shareLink);
-
+                            IntentHelper.shareText(mContext, title + "\n\n" + link);
+                            break;
                     }
                 })
                 .show();

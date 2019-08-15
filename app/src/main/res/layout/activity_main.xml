@@ -28,4 +28,5 @@
             app:menu="@menu/navigation_view_item" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
