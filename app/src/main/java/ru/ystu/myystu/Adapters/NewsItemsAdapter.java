@@ -1,8 +1,6 @@
 package ru.ystu.myystu.Adapters;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,16 +9,13 @@ import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -31,24 +26,17 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Visibility;
 
-import org.michaelbel.bottomsheet.BottomSheet;
-
-import ru.ystu.myystu.Activitys.MainActivity;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Activitys.ViewPhotoActivity;
 import ru.ystu.myystu.AdaptersData.NewsItemsData;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
-import ru.ystu.myystu.Utils.BottomSheetMenu;
-import ru.ystu.myystu.Utils.IntentHelper;
+import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 import ru.ystu.myystu.Utils.UnixToString;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -493,9 +481,9 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final Menu mMenu = itemMenu.getMenu();
 
         if(signer > 0)
-            itemMenu.getMenu().findItem(R.id.menu_news_item_openAuthor).setVisible(true);
+            itemMenu.getMenu().findItem(R.id.menu_news_item_openAuthor).setEnabled(true);
         else
-            itemMenu.getMenu().findItem(R.id.menu_news_item_openAuthor).setVisible(false);
+            itemMenu.getMenu().findItem(R.id.menu_news_item_openAuthor).setEnabled(false);
 
         BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
         bottomSheetMenu.setTitle(title);
