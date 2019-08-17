@@ -56,4 +56,12 @@
         <item name="android:tint">@color/colorSettingsIcon</item>
     </style>
 
+    <!-- BottomSheetDialog -->
+    <style name="SheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/colorLightStatusBar</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
 </resources>

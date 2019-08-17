@@ -67,6 +67,9 @@
     <string name="bell_update_event_text">Обновлен раздел с событиями</string>
     <string name="bell_update_job_text">Добавлены новые вакансии</string>
 
+    <!-- NewsFragment -->
+    <string name="news_bottomsheetmenu_title">Запись на стене</string>
+
     <!-- ErrorMessage -->
     <string name="error_message_title">Что-то пошло не так…</string>
     <string name="error_message_refresh">Обновить</string>
