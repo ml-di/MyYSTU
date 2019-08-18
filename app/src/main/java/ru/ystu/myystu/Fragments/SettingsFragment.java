@@ -152,7 +152,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     public void onDestroy() {
         super.onDestroy();
         if(key != null) {
-            ((SettingsActivity) getActivity()).setTitleToolBar(getContext()
+            ((SettingsActivity) getActivity()).setTitleToolBar(getActivity()
                             .getResources().getString(R.string.menu_text_settings));
         }
         if (db != null && db.isOpen()) {

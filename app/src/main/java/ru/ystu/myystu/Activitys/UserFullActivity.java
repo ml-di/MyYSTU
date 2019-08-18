@@ -19,16 +19,14 @@ import ru.ystu.myystu.Network.GetUserInformationFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
-
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -49,10 +47,6 @@ public class UserFullActivity extends AppCompatActivity {
     private ConstraintLayout mainLayout;
 
     private Context mContext;
-
-    private SimpleDraweeView imageView;
-    private AppCompatTextView nameView;
-    private AppCompatTextView informationView;
 
     private ConstraintLayout location;
     private ConstraintLayout phone;
@@ -89,9 +83,9 @@ public class UserFullActivity extends AppCompatActivity {
         mainLayout = findViewById(R.id.main_layout_userFull);
         mSwipeRefreshLayout = findViewById(R.id.refresh_userFull);
         scroll = findViewById(R.id.userFull_scroll);
-        imageView = findViewById(R.id.userFull_image);
-        nameView = findViewById(R.id.userFull_name);
-        informationView = findViewById(R.id.userFull_information);
+        SimpleDraweeView imageView = findViewById(R.id.userFull_image);
+        AppCompatTextView nameView = findViewById(R.id.userFull_name);
+        AppCompatTextView informationView = findViewById(R.id.userFull_information);
         location = findViewById(R.id.userFull_location);
         locationText = findViewById(R.id.userFull_location_text);
         phone = findViewById(R.id.userFull_phone);
@@ -192,15 +186,11 @@ public class UserFullActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_user_full_openInBrowser:
-                final Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(mIntent);
+                IntentHelper.openInBrowser(mContext, url);
                 return true;
 
             case R.id.menu_user_full_shareLink:
-                final Intent shareLink = new Intent(Intent.ACTION_SEND)
-                        .putExtra(Intent.EXTRA_TEXT, name + "\n\n" + url)
-                        .setType("text/plain");
-                startActivity(shareLink);
+                IntentHelper.shareText(mContext, name + "\n\n" + url);
                 return true;
         }
 

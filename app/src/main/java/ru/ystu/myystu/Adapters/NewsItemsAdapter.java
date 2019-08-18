@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -492,7 +493,11 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
         bottomSheetMenu.setTitle(R.string.news_bottomsheetmenu_title);
         bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
-        bottomSheetMenu.setTheme(true, R.color.colorBackground);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
+        }
+
         bottomSheetMenu.setOnItemClickListener(itemId -> {
             final ClipboardManager mClipboardManager = (ClipboardManager) mContext.getSystemService(CLIPBOARD_SERVICE);
             final ClipData mClipData;

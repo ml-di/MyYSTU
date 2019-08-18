@@ -4,22 +4,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +24,10 @@ import ru.ystu.myystu.AdaptersData.EventAdditionalData_Additional;
 import ru.ystu.myystu.AdaptersData.EventAdditionalData_Documents;
 import ru.ystu.myystu.Database.Data.EventFullDivider;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
+import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
@@ -52,7 +52,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
 
         }
 
-        void setAdditional (EventAdditionalData_Additional additionalItem, Context mContext) {
+        void setAdditional (EventAdditionalData_Additional additionalItem) {
             title.setText(additionalItem.getTitle());
             description.setText(additionalItem.getDescription());
         }
@@ -75,10 +75,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
         void setDocument (EventAdditionalData_Documents documentItem, Context mContext) {
             name.setText(documentItem.getTitle());
             ext.setText(documentItem.getExt());
-
-            menu.setOnClickListener(View -> {
-                new MenuItem().showMenu(View, mContext, documentItem.getLink(), documentItem.getTitle(), documentItem.getExt());
-            });
+            menu.setOnClickListener(View -> showMenu(mContext, documentItem.getLink(), documentItem.getTitle(), documentItem.getExt()));
         }
     }
 
@@ -146,7 +143,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (viewType) {
             case ITEM_ADDITIONAL:
                 final EventAdditionalData_Additional additional = (EventAdditionalData_Additional) mList.get(position);
-                ((AdditionalViewHolder) holder).setAdditional(additional, mContext);
+                ((AdditionalViewHolder) holder).setAdditional(additional);
                 break;
             case ITEM_DOCUMENT:
                 final EventAdditionalData_Documents document = (EventAdditionalData_Documents) mList.get(position);
@@ -188,87 +185,69 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 0:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            default:
-                break;
+        if (requestCode == 0) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    private static class MenuItem {
-        private void showMenu (View mView, Context mContext, String url, String name, String ext){
+    private static void showMenu (Context mContext, String url, String name, String ext) {
+        final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, R.menu.menu_event_full_document);
+        bottomSheetMenu.setTitle(name);
+        bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
+        }
+        bottomSheetMenu.setOnItemClickListener(itemId -> {
+            switch (itemId) {
+                // Скачать файл
+                case R.id.menu_event_full_download:
 
-            final PopupMenu itemMenu = new PopupMenu(mView.getContext(), mView);
-            itemMenu.inflate(R.menu.menu_event_full_document);
+                    if(NetworkInformation.hasConnection()){
 
-            itemMenu.setOnMenuItemClickListener(item -> {
-
-                switch (item.getItemId()){
-
-                    // Скачать файл
-                    case R.id.menu_event_full_download:
-
-                        if(NetworkInformation.hasConnection()){
-
-                            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                            } else {
-
-                                new Thread(() -> {
-
-                                    final String fileName = name + "." + ext;
-                                    final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(url));
-                                    mRequest
-                                            .setTitle(fileName)
-                                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-                                            .allowScanningByMediaScanner();
-
-                                    final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-                                    if (mDownloadManager != null) {
-                                        mDownloadManager.enqueue(mRequest);
-                                    }
-
-                                }).start();
-                            }
-
+                        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                         } else {
-                            Toast.makeText(mContext,
-                                    mContext.getResources()
-                                            .getString(R.string.error_message_internet_error),
-                                    Toast.LENGTH_SHORT).show();
+
+                            new Thread(() -> {
+
+                                final String fileName = name + "." + ext;
+                                final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(url));
+                                mRequest
+                                        .setTitle(fileName)
+                                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                                        .allowScanningByMediaScanner();
+
+                                final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                                if (mDownloadManager != null) {
+                                    mDownloadManager.enqueue(mRequest);
+                                }
+
+                            }).start();
                         }
 
-                        return true;
+                    } else {
+                        Toast.makeText(mContext,
+                                mContext.getResources()
+                                        .getString(R.string.error_message_internet_error),
+                                Toast.LENGTH_SHORT).show();
+                    }
 
-                    // Открыть в браузере
-                    case R.id.menu_event_full_openLinkInBrowser:
+                    break;
 
-                        final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        mContext.startActivity(openLink);
+                // Открыть в браузере
+                case R.id.menu_event_full_openLinkInBrowser:
+                    IntentHelper.openInBrowser(mContext, url);
+                    break;
 
-                        return true;
-
-                    // Поделиться ссылкой
-                    case R.id.menu_event_full_share:
-
-                        final Intent shareLink = new Intent();
-                        shareLink
-                                .setAction(Intent.ACTION_SEND)
-                                .putExtra(Intent.EXTRA_TEXT, name + "\n\n" + url)
-                                .setType("text/plain");
-                        mContext.startActivity(shareLink);
-
-                        return true;
-                }
-                return false;
-            });
-            itemMenu.show();
-        }
+                // Поделиться ссылкой
+                case R.id.menu_event_full_share:
+                    IntentHelper.shareText(mContext, name + "\n\n" + url);
+                    break;
+            }
+        });
     }
 }

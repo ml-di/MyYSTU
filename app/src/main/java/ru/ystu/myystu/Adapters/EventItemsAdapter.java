@@ -7,11 +7,8 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.facebook.drawee.view.SimpleDraweeView;
-
 import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -165,7 +162,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
-        public PlaceholderViewHolder(@NonNull View itemView) {
+        PlaceholderViewHolder(@NonNull View itemView) {
             super(itemView);
         }
 

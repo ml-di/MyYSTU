@@ -1,10 +1,8 @@
 package ru.ystu.myystu.Activitys;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,6 +37,7 @@ import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -132,8 +131,7 @@ public class EventActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_event_openInBrowser) {
-            final Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(mIntent);
+            IntentHelper.openInBrowser(this, url);
         }
 
         return true;

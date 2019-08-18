@@ -5,8 +5,10 @@
         android:title="@string/menu_openOriginal"/>
     <item
         android:id="@+id/menu_job_item_openLinkInBrowser"
-        android:title="@string/menu_openInBrowser" />
+        android:title="@string/menu_openInBrowser"
+        android:icon="@drawable/ic_browser"/>
     <item
         android:id="@+id/menu_job_item_share"
-        android:title="@string/menu_share" />
+        android:title="@string/menu_share"
+        android:icon="@drawable/ic_share"/>
 </menu>

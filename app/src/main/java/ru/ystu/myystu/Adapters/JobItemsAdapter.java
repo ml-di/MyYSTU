@@ -7,23 +7,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
-
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +31,8 @@ import ru.ystu.myystu.Activitys.JobReaderActivity;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
+import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
+import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
 
@@ -82,9 +84,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 fileType.setText("");
             }
 
-            menu.setOnClickListener(view -> {
-                new MenuItem().showMenu(view, mContext, jobItem);
-            });
+            menu.setOnClickListener(view -> showMenu(mContext, jobItem, organization.getText().toString()));
         }
     }
 
@@ -169,123 +169,112 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 0:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            default:
-                break;
+        if (requestCode == 0) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    private static class MenuItem {
-        private void showMenu (View mView, Context mContext, JobItemsData jobItem){
+    private static void showMenu (Context mContext, JobItemsData jobItem, String title) {
 
-            final PopupMenu itemMenu = new PopupMenu(mView.getContext(), mView);
-            itemMenu.inflate(R.menu.menu_job_item);
+        final Menu mMenu = new MenuBuilder(mContext);
+        new MenuInflater(mContext).inflate(R.menu.menu_job_item, mMenu);
 
-            final Menu mMenu = itemMenu.getMenu();
-            if(jobItem.getFileType().equals("FILE")){
-                mMenu.getItem(0).setTitle(R.string.menu_download);
-                mMenu.getItem(1).setVisible(true);
-            } else {
-                mMenu.getItem(0).setTitle(R.string.menu_detail);
-                mMenu.getItem(1).setVisible(false);
-            }
-
-            itemMenu.setOnMenuItemClickListener(item -> {
-
-                switch (item.getItemId()){
-                    // Скачать / Читать
-                    case R.id.menu_job_item_openLink:
-
-                        if(jobItem.getFileType().equals("FILE")){
-                            // Скачать
-                            if(NetworkInformation.hasConnection()){
-
-                                if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                                } else {
-
-                                    new Thread(() -> {
-
-                                        String fileName = null;
-                                        try {
-                                            fileName = URLDecoder.decode(jobItem.getPost(), "UTF-8");
-                                            fileName = fileName.replaceAll(" ", "_");
-                                        } catch (UnsupportedEncodingException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        if(fileName != null){
-                                            final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(jobItem.getUrl()));
-                                            mRequest
-                                                    .setTitle(fileName)
-                                                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-                                                    .allowScanningByMediaScanner();
-
-                                            final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-                                            if (mDownloadManager != null) {
-                                                mDownloadManager.enqueue(mRequest);
-                                            }
-                                        }
-                                    }).start();
-                                }
-
-                            } else {
-                                Toast.makeText(mContext,
-                                        mContext.getResources()
-                                                .getString(R.string.error_message_internet_error),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // Прочитать
-
-                            final Intent readIntent = new Intent(mContext, JobReaderActivity.class);
-                            readIntent.putExtra("content", jobItem.getPost());
-                            readIntent.putExtra("title", jobItem.getOrganization());
-                            mContext.startActivity(readIntent);
-                            if (SettingsController.isEnabledAnim(mContext)) {
-                                ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
-                            } else {
-                                ((Activity)mContext).overridePendingTransition(0, 0);
-                            }
-                        }
-
-                        return true;
-                    // Открыть в бразуере, если файл
-                    case R.id.menu_job_item_openLinkInBrowser:
-
-                        final Intent openLink = new Intent(Intent.ACTION_VIEW, Uri.parse(jobItem.getUrl()));
-                        mContext.startActivity(openLink);
-
-                        return true;
-                    // Поделиться
-                    case R.id.menu_job_item_share:
-
-                        final String shareText;
-                        if(jobItem.getFileType().equals("FILE")){
-                            shareText = jobItem.getUrl();
-                        } else {
-                            shareText = Html.fromHtml(jobItem.getPost()).toString();
-                        }
-
-                        final Intent sharePost = new Intent();
-                        sharePost
-                                .setAction(Intent.ACTION_SEND)
-                                .putExtra(Intent.EXTRA_TEXT, jobItem.getOrganization() + "\n\n" + shareText)
-                                .setType("text/plain");
-                        mContext.startActivity(sharePost);
-
-                        return true;
-                }
-                return false;
-            });
-            itemMenu.show();
+        if(jobItem.getFileType().equals("FILE")){
+            mMenu.getItem(0).setTitle(R.string.menu_download);
+            mMenu.getItem(1).setVisible(true);
+            mMenu.getItem(0).setIcon(R.drawable.ic_download);
+        } else {
+            mMenu.getItem(0).setTitle(R.string.menu_detail);
+            mMenu.getItem(1).setVisible(false);
+            mMenu.getItem(0).setIcon(R.drawable.ic_detail);
         }
+
+        final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
+        bottomSheetMenu.setTitle(title);
+        bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
+        }
+        bottomSheetMenu.setOnItemClickListener(itemId -> {
+            switch (itemId) {
+                // Скачать / Читать
+                case R.id.menu_job_item_openLink:
+
+                    if(jobItem.getFileType().equals("FILE")){
+                        // Скачать
+                        if(NetworkInformation.hasConnection()){
+
+                            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                            } else {
+
+                                new Thread(() -> {
+
+                                    String fileName = null;
+                                    try {
+                                        fileName = URLDecoder.decode(jobItem.getPost(), "UTF-8");
+                                        fileName = fileName.replaceAll(" ", "_");
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    if(fileName != null){
+                                        final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(jobItem.getUrl()));
+                                        mRequest
+                                                .setTitle(fileName)
+                                                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                                                .allowScanningByMediaScanner();
+
+                                        final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                                        if (mDownloadManager != null) {
+                                            mDownloadManager.enqueue(mRequest);
+                                        }
+                                    }
+                                }).start();
+                            }
+
+                        } else {
+                            Toast.makeText(mContext,
+                                    mContext.getResources()
+                                            .getString(R.string.error_message_internet_error),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Прочитать
+
+                        final Intent readIntent = new Intent(mContext, JobReaderActivity.class);
+                        readIntent.putExtra("content", jobItem.getPost());
+                        readIntent.putExtra("title", jobItem.getOrganization());
+                        mContext.startActivity(readIntent);
+                        if (SettingsController.isEnabledAnim(mContext)) {
+                            ((Activity)mContext).overridePendingTransition(R.anim.activity_slide_right_show, R.anim.activity_slide_left_out);
+                        } else {
+                            ((Activity)mContext).overridePendingTransition(0, 0);
+                        }
+                    }
+
+                    break;
+                // Открыть в бразуере, если файл
+                case R.id.menu_job_item_openLinkInBrowser:
+                    IntentHelper.openInBrowser(mContext, jobItem.getUrl());
+                    break;
+                // Поделиться
+                case R.id.menu_job_item_share:
+
+                    final String shareText;
+                    if(jobItem.getFileType().equals("FILE")){
+                        shareText = jobItem.getUrl();
+                    } else {
+                        shareText = Html.fromHtml(jobItem.getPost()).toString();
+                    }
+
+                    IntentHelper.shareText(mContext, jobItem.getOrganization() + "\n\n" + shareText);
+                    break;
+            }
+        });
     }
 }

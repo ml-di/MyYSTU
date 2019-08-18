@@ -10,7 +10,7 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -20,16 +20,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.michaelbel.bottomsheet.BottomSheet;
-
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,8 +37,10 @@ import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Network.LoadScheduleFromURL;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.IntentHelper;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -328,10 +327,8 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static void showMenu (String title, int pos, Context mContext, File file, String link) {
 
-        final View view = new View(mContext);
-        final PopupMenu itemMenu = new PopupMenu(mContext, view);
-        itemMenu.inflate(R.menu.menu_schedule_item);
-        final Menu mMenu = itemMenu.getMenu();
+        final Menu mMenu = new MenuBuilder(mContext);
+        new MenuInflater(mContext).inflate(R.menu.menu_schedule_item, mMenu);
 
         if(file.exists()){
             mMenu.getItem(0).setTitle(R.string.menu_delete);
@@ -341,54 +338,54 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mMenu.getItem(0).setIcon(R.drawable.ic_download);
         }
 
-        final BottomSheet.Builder builder = new BottomSheet.Builder(mContext);
-        builder
-                .setTitle(title)
-                .setMenu(mMenu, (dialog, which) -> {
+        final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
+        bottomSheetMenu.setTitle(title);
+        bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
+        }
+        bottomSheetMenu.setOnItemClickListener(itemId -> {
+            switch (itemId) {
+                case R.id.menu_schedule_item_download:
 
-                    final MenuItem item = mMenu.getItem(which);
-                    switch (item.getItemId()) {
-
-                        case R.id.menu_schedule_item_download:
-
-                            if (file.exists()) {
-                                // Удалить
-                                if (file.delete()) {
-                                    ((ScheduleListActivity) mContext).updateItem(pos);
-                                } else {
-                                    Toast.makeText(mContext, mContext
-                                            .getResources()
-                                            .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            } else {
-                                // Скачать
-                                downloadFile(file, link, mContext, pos, -1);
-                            }
-
-                            break;
-
-                        // Открыть в браузере
-                        case R.id.menu_schedule_item_openInBrowser:
-                            IntentHelper.openInBrowser(mContext, link);
-                            break;
-                        // Поделиться файлом
-                        case R.id.menu_schedule_item_shareFile:
-
-                            if (file.exists()) {
-                                final String titleIntent = mContext.getResources().getString(R.string.intent_schedule_share_doc);
-                                final String subject = mContext.getResources().getString(R.string.menu_text_schedule);
-                                IntentHelper.shareFile(mContext, file, titleIntent, subject, title);
-                            } else {
-                                downloadFile(file, link, mContext, pos, 1);
-                            }
-                            break;
-                        // Поделиться ссылкой
-                        case R.id.menu_schedule_item_shareLink:
-                            IntentHelper.shareText(mContext, title + "\n\n" + link);
-                            break;
+                    if (file.exists()) {
+                        // Удалить
+                        if (file.delete()) {
+                            ((ScheduleListActivity) mContext).updateItem(pos);
+                        } else {
+                            Toast.makeText(mContext, mContext
+                                    .getResources()
+                                    .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    } else {
+                        // Скачать
+                        downloadFile(file, link, mContext, pos, -1);
                     }
-                })
-                .show();
+
+                    break;
+
+                // Открыть в браузере
+                case R.id.menu_schedule_item_openInBrowser:
+                    IntentHelper.openInBrowser(mContext, link);
+                    break;
+                // Поделиться файлом
+                case R.id.menu_schedule_item_shareFile:
+
+                    if (file.exists()) {
+                        final String titleIntent = mContext.getResources().getString(R.string.intent_schedule_share_doc);
+                        final String subject = mContext.getResources().getString(R.string.menu_text_schedule);
+                        IntentHelper.shareFile(mContext, file, titleIntent, subject, title);
+                    } else {
+                        downloadFile(file, link, mContext, pos, 1);
+                    }
+                    break;
+                // Поделиться ссылкой
+                case R.id.menu_schedule_item_shareLink:
+                    IntentHelper.shareText(mContext, title + "\n\n" + link);
+                    break;
+            }
+        });
     }
 }

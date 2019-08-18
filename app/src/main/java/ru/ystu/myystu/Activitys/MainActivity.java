@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -38,7 +37,6 @@ import ru.ystu.myystu.Utils.SettingsController;
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<UpdateData> updateList;
-    private CoordinatorLayout rootLayout;
     private BottomNavigationView mBottomBar;
     private FragmentManager mFragmentManager;
     private Fragment mNewsFragment;
@@ -60,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         mBottomBar = findViewById(R.id.bottomBar);
         mContentContainer = findViewById(R.id.contentContainer);
         mContentContainer.setFitsSystemWindows(true);
-        rootLayout = findViewById(R.id.constraint_main);
         mDisposables = new CompositeDisposable();
         getCountEvent = new GetCountEvent();
         getCountJob = new GetCountJob();

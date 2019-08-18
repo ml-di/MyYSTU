@@ -5,13 +5,12 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.text.Html;
@@ -107,13 +106,11 @@ public class JobReaderActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_job_reader_share:
-
-                final Intent shareText = new Intent(Intent.ACTION_SEND)
-                        .putExtra(Intent.EXTRA_TEXT, getSupportActionBar().getTitle().toString()
-                                + "\n\n" + text.getText().toString())
-                        .setType("text/plain");
-                startActivity(shareText);
-
+                CharSequence title = "";
+                if (getSupportActionBar() != null) {
+                    title = getSupportActionBar().getTitle();
+                }
+                IntentHelper.shareText(this, title + "\n\n" + text.getText().toString());
                 return true;
         }
 

@@ -1,6 +1,5 @@
 package ru.ystu.myystu.Adapters;
 
-import android.content.Context;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +21,6 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int ITEM_CHANGE = 1;
 
     private ArrayList<Parcelable> mList;
-    private Context mContext;
 
     static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
 
@@ -53,16 +51,8 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    public ScheduleChangeAdapter(ArrayList<Parcelable> mList, Context mContext) {
+    public ScheduleChangeAdapter(ArrayList<Parcelable> mList) {
         this.mList = mList;
-        this.mContext = mContext;
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-
-        mContext = recyclerView.getContext();
     }
 
     @NonNull

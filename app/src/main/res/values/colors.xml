@@ -21,6 +21,7 @@
     <color name="colorOverleyImage">#A6000000</color>
     <color name="colorPhotoViewBackground">#000000</color>
     <color name="colorTextSecondaryOpacity">#BF616161</color>
+    <color name="colorTransparent">#00000000</color>
 
     <color name="colorToolBar">#F2FFFFFF</color>
     <color name="colorToolbarPhotoView">#66000000</color>

@@ -2,6 +2,8 @@ package ru.ystu.myystu.Utils.BottomSheetMenu;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcelable;
@@ -11,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
@@ -26,6 +29,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.util.ArrayList;
+import java.util.Objects;
+
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Data.DividerData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Data.IconsAndTextData;
@@ -33,6 +38,7 @@ import ru.ystu.myystu.Utils.BottomSheetMenu.Data.NullIconsAndTextData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Data.OnlyTextData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Interface.BottomSheetMenuInterface;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Interface.OnItemClickListener;
+import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.LightStatusBar;
 
 public class BottomSheetMenu implements BottomSheetMenuInterface {
@@ -84,9 +90,8 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
             titleTextView.setVisibility(View.GONE);
         }
 
-        setTheme(dialog, view);
-
         dialog.setContentView(view);
+        setTheme(dialog, view);
         dialog.show();
 
         ((BottomSheetMenuAdapter) mRecyclerViewAdapter).setOnItemClickListener(itemId -> {
@@ -170,16 +175,26 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
     }
 
     private void setTheme (BottomSheetDialog dialog, View view) {
+
         final Window win = dialog.getWindow();
-        if (isLight && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-            if (win != null) {
+
+        if (mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+            if (isLight && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+            }
+
+            if (win != null && navigationBarColorRes != 0) {
                 win.setNavigationBarColor(ContextCompat.getColor(mContext, navigationBarColorRes));
             }
-        } else {
+        } else if (mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (win != null) {
-                win.setNavigationBarColor(ContextCompat.getColor(mContext, navigationBarColorRes));
+                win.setNavigationBarColor(ContextCompat.getColor(mContext, R.color.colorTransparent));
             }
+
+            final BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
+            mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            mBehavior.setSkipCollapsed(true);
         }
     }
 
@@ -190,8 +205,12 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
     }
 
     @Override
-    public void setTheme(boolean light, int navigationBarColorRes) {
+    public void setLightNavigationBar(boolean light) {
         this.isLight = light;
+    }
+
+    @Override
+    public void setColorNavigationBar(int navigationBarColorRes) {
         this.navigationBarColorRes = navigationBarColorRes;
     }
 

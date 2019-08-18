@@ -25,6 +25,7 @@ import ru.ystu.myystu.Network.GetFullEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -33,10 +34,8 @@ import ru.ystu.myystu.Utils.StringFormatter;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Html;
@@ -68,11 +67,6 @@ public class EventFullActivity extends AppCompatActivity {
 
     private String textTemp;
 
-    private SimpleDraweeView image;
-    private AppCompatTextView date;
-    private AppCompatTextView location;
-    private AppCompatTextView title;
-    private AppCompatTextView locationTitle;
     private AppCompatTextView text;
     private AppCompatTextView titleText;
 
@@ -98,11 +92,11 @@ public class EventFullActivity extends AppCompatActivity {
         mContext = this;
         stringFormatter = new StringFormatter();
 
-        image = findViewById(R.id.eventFull_image);
-        date = findViewById(R.id.eventFull_date);
-        location = findViewById(R.id.eventFull_location);
-        title = findViewById(R.id.eventFull_title);
-        locationTitle = findViewById(R.id.eventFull_locationTitle);
+        SimpleDraweeView image = findViewById(R.id.eventFull_image);
+        AppCompatTextView date = findViewById(R.id.eventFull_date);
+        AppCompatTextView location = findViewById(R.id.eventFull_location);
+        AppCompatTextView title = findViewById(R.id.eventFull_title);
+        AppCompatTextView locationTitle = findViewById(R.id.eventFull_locationTitle);
         text = findViewById(R.id.eventFull_text);
         titleText = findViewById(R.id.eventFull_titleText);
         mSwipeRefreshLayout = findViewById(R.id.refresh_eventFull);
@@ -224,8 +218,7 @@ public class EventFullActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_event_openInBrowser:
-                final Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(mIntent);
+                IntentHelper.openInBrowser(this, url);
                 return true;
 
             case R.id.menu_event_copyText:
@@ -248,10 +241,7 @@ public class EventFullActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_event_shareLink:
-                final Intent shareLink = new Intent(Intent.ACTION_SEND)
-                        .putExtra(Intent.EXTRA_TEXT, titleStr + "\n\n" + url)
-                        .setType("text/plain");
-                startActivity(shareLink);
+                IntentHelper.shareText(this, titleStr + "\n\n" + url);
                 return true;
         }
 

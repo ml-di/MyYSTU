@@ -8,6 +8,9 @@
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_skipCollapsed="true"
+
+    android:paddingStart="100dp"
+    android:paddingEnd="100dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -15,18 +15,16 @@ import ru.ystu.myystu.Network.LoadImageFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.NewsPhotoViewPagerAdapter;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
+import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.MultiTouchViewPager;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
-
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -146,12 +144,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
                 break;
             // Отправить ссылку на изображение
             case R.id.menu_photo_view_share_link:
-
-                final Intent shareLink = new Intent(Intent.ACTION_SEND)
-                        .putExtra(Intent.EXTRA_TEXT, url)
-                        .setType("text/plain");;
-                startActivity(shareLink);
-
+                IntentHelper.shareText(this, url);
                 break;
         }
 
@@ -160,15 +153,10 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 0:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            default:
-                break;
+        if (requestCode == 0) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(this, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

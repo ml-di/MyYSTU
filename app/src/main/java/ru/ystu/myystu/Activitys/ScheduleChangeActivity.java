@@ -21,7 +21,6 @@ import java.util.Collections;
 public class ScheduleChangeActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Parcelable> mList;
     private Parcelable mRecyclerState;
@@ -63,20 +62,22 @@ public class ScheduleChangeActivity extends AppCompatActivity {
             else
                 mList.clear();
 
-            for (String temp : tempList) {
+            if (tempList != null) {
+                for (String temp : tempList) {
 
-                if(temp.contains(": ")) {
-                    final String date = temp.substring(0, temp.lastIndexOf(": "));
-                    final String text = temp.substring(temp.lastIndexOf(": ") + 2);
+                    if(temp.contains(": ")) {
+                        final String date = temp.substring(0, temp.lastIndexOf(": "));
+                        final String text = temp.substring(temp.lastIndexOf(": ") + 2);
 
-                    mList.add(new ScheduleChangeData(date, text));
+                        mList.add(new ScheduleChangeData(date, text));
+                    }
                 }
             }
 
             mList.add(new ToolbarPlaceholderData(0));
             Collections.reverse(mList);
 
-            mRecyclerViewAdapter = new ScheduleChangeAdapter(mList, getApplicationContext());
+            RecyclerView.Adapter mRecyclerViewAdapter = new ScheduleChangeAdapter(mList);
             mRecyclerViewAdapter.setHasStableIds(true);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }

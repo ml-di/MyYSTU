@@ -2,28 +2,21 @@ package ru.ystu.myystu.Activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 import ru.ystu.myystu.Adapters.SchedulePagerAdapter;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.SettingsController;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.google.android.material.tabs.TabLayout;
 
 public class ScheduleActivity extends AppCompatActivity {
 
     private String url = "https://www.ystu.ru/learning/schedule/";
-    private ViewPager mViewPager;
-    private SchedulePagerAdapter mAdapter;
-    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +29,9 @@ public class ScheduleActivity extends AppCompatActivity {
         mToolBar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         mToolBar.setNavigationOnClickListener(view -> onBackPressed());
 
-        mViewPager = findViewById(R.id.schedule_viewPager);
-        mTabLayout = findViewById(R.id.tabLayout_schedule);
-        mAdapter = new SchedulePagerAdapter(getSupportFragmentManager(), this);
+        final ViewPager mViewPager = findViewById(R.id.schedule_viewPager);
+        final TabLayout mTabLayout = findViewById(R.id.tabLayout_schedule);
+        final SchedulePagerAdapter mAdapter = new SchedulePagerAdapter(getSupportFragmentManager(), this);
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 

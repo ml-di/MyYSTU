@@ -17,5 +17,6 @@ public interface BottomSheetMenuInterface {
     void setClosable(boolean closable);
     void setIcons(boolean icons);
     void setDividers(boolean dividers);
-    void setTheme(boolean light, @ColorRes int navigationBarColorRes);
+    void setLightNavigationBar(boolean light);
+    void setColorNavigationBar(@ColorRes int navigationBarColorRes);
 }

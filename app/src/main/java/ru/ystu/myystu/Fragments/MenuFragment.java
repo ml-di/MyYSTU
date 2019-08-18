@@ -58,7 +58,7 @@ public class MenuFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         menuBtn.setOnClickListener(view -> {
             final Intent mIntent = new Intent(getContext(), SettingsActivity.class);
-            getContext().startActivity(mIntent);
+            getActivity().startActivity(mIntent);
             if (!SettingsController.isEnabledAnim(getContext())) {
                 getActivity().overridePendingTransition(0, 0);
             }
