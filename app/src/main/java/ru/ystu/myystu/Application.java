@@ -33,6 +33,8 @@ public class Application extends android.app.Application {
         return instance;
     }
     public AppDatabase getDatabase() {
-        return Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "myystudb").build();
+        return Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "myystudb")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 }
