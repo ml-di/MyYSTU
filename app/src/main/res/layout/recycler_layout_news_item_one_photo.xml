@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/post_constaint"
+    android:id="@+id/post_constraint"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="8dp"
@@ -12,6 +12,7 @@
         android:id="@+id/contentFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="34dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -19,8 +20,8 @@
             android:id="@+id/post_date_background"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:alpha="0.15"
-            android:background="@drawable/shape_rectangle_right_rounded_20dp"
+            android:alpha="0.125"
+            android:background="@drawable/shape_rectangle_rounded_24dp"
             android:backgroundTint="@color/colorPrimaryLight"
             app:layout_constraintEnd_toEndOf="@id/post_date"
             app:layout_constraintStart_toStartOf="parent" />
@@ -35,11 +36,11 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textColor="@color/colorPrimaryLight"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="28 декабря | 15:38" />
+            tools:text="28 декабря, 15:38" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/post_pin"
@@ -75,7 +76,7 @@
         android:id="@+id/menu_news_item"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="6dp"
         android:tint="@color/colorMenuIcon"
@@ -90,7 +91,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:paddingTop="16dp"
-        android:textColor="@color/colorTextSecondary"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/contentFrameLayout"
         tools:text="Текст записи" />
@@ -105,15 +105,5 @@
         app:layout_constraintTop_toBottomOf="@id/post_text"
         app:placeholderImage="@color/colorPlaceHolderImage"
         app:roundedCornerRadius="15dp" />
-
-    <androidx.appcompat.widget.ContentFrameLayout
-        android:id="@+id/news_item_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="60dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@id/post_photo_1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,26 @@
 <resources>
     <string name="app_name">Мой ЯГТУ</string>
-    <string name="app_version">Версия 1.2.0</string>
+    <string name="app_version">Версия 1.2.1</string>
 
     <!-- Другие -->
     <string name="other_search_results">Результаты поиска</string>
+    <string name="other_of">из</string>
+
+    <!-- Time -->
+    <string name="time_jan">января</string>
+    <string name="time_feb">февраля</string>
+    <string name="time_mar">марта</string>
+    <string name="time_apr">апреля</string>
+    <string name="time_may">мая</string>
+    <string name="time_jun">июня</string>
+    <string name="time_jul">июля</string>
+    <string name="time_aug">августа</string>
+    <string name="time_sep">сентября</string>
+    <string name="time_oct">октября</string>
+    <string name="time_nov">ноября</string>
+    <string name="time_dec">декабря</string>
+    <string name="time_today">Сегодня</string>
+    <string name="time_yesterday">Вчера</string>
 
     <!-- Названия вкладок нижнего бара -->
     <string name="tab_news_text">Новости</string>

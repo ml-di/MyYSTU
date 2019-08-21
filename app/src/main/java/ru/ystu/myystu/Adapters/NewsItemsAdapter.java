@@ -94,7 +94,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             postText.setText(stringFormatter.getFormattedString(dontAttach.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
-            postDate.setText(unixToString.setUnixToString(dontAttach.getDate()));
+            postDate.setText(unixToString.setUnixToString(dontAttach.getDate(), mContext));
 
             if(Objects.equals(dontAttach.getIsPinned(), 1))
                 postPin.setVisibility(View.VISIBLE);
@@ -129,7 +129,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             postText.setText(stringFormatter.getFormattedString(onePhoto.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
-            postDate.setText(unixToString.setUnixToString(onePhoto.getDate()));
+            postDate.setText(unixToString.setUnixToString(onePhoto.getDate(), mContext));
 
             if(Objects.equals(onePhoto.getIsPinned(), 1))
                 postPin.setVisibility(View.VISIBLE);
@@ -187,7 +187,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             postText.setText(stringFormatter.getFormattedString(twoPhoto.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
-            postDate.setText(unixToString.setUnixToString(twoPhoto.getDate()));
+            postDate.setText(unixToString.setUnixToString(twoPhoto.getDate(), mContext));
 
             if(Objects.equals(twoPhoto.getIsPinned(), 1))
                 postPin.setVisibility(View.VISIBLE);
@@ -282,7 +282,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             postText.setText(stringFormatter.getFormattedString(morePhoto.getText()));
             postText.setMovementMethod(LinkMovementMethod.getInstance());
-            postDate.setText(unixToString.setUnixToString(morePhoto.getDate()));
+            postDate.setText(unixToString.setUnixToString(morePhoto.getDate(), mContext));
 
             if(Objects.equals(morePhoto.getIsPinned(), 1))
                 postPin.setVisibility(View.VISIBLE);

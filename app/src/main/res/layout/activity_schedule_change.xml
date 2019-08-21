@@ -29,7 +29,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar_schedule_change"
             style="@style/Toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:theme="@style/Toolbar"
+            app:popupTheme="@style/ToolBar_Popup"
             app:title="@string/menu_change" />
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

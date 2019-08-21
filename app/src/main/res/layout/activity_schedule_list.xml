@@ -36,7 +36,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar_scheduleList"
             style="@style/Toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:theme="@style/Toolbar"
+            app:popupTheme="@style/ToolBar_Popup"
             app:title="@string/menu_text_schedule" />
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

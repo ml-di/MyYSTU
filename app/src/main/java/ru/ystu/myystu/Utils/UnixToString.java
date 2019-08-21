@@ -1,5 +1,7 @@
 package ru.ystu.myystu.Utils;
 
+import android.content.Context;
+
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -8,11 +10,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import ru.ystu.myystu.R;
+
 public class UnixToString {
 
     private String monthStr;
 
-    public String setUnixToString(String unixTime) {
+    public String setUnixToString(String unixTime, Context mContext) {
 
         //Время записи
         final long timeTemp = Long.parseLong(unixTime);
@@ -50,55 +54,55 @@ public class UnixToString {
         // Строковый месяц
         switch (month){
             case 1:
-                monthStr = "января";
+                monthStr = mContext.getResources().getString(R.string.time_jan);
                 break;
             case 2:
-                monthStr = "февраля";
+                monthStr = mContext.getResources().getString(R.string.time_feb);
                 break;
             case 3:
-                monthStr = "марта";
+                monthStr = mContext.getResources().getString(R.string.time_mar);
                 break;
             case 4:
-                monthStr = "апреля";
+                monthStr = mContext.getResources().getString(R.string.time_apr);
                 break;
             case 5:
-                monthStr = "мая";
+                monthStr = mContext.getResources().getString(R.string.time_may);
                 break;
             case 6:
-                monthStr = "июня";
+                monthStr = mContext.getResources().getString(R.string.time_jun);
                 break;
             case 7:
-                monthStr = "июля";
+                monthStr = mContext.getResources().getString(R.string.time_jul);
                 break;
             case 8:
-                monthStr = "августа";
+                monthStr = mContext.getResources().getString(R.string.time_aug);
                 break;
             case 9:
-                monthStr = "сентября";
+                monthStr = mContext.getResources().getString(R.string.time_sep);
                 break;
             case 10:
-                monthStr = "октября";
+                monthStr = mContext.getResources().getString(R.string.time_oct);
                 break;
             case 11:
-                monthStr = "ноября";
+                monthStr = mContext.getResources().getString(R.string.time_nov);
                 break;
             case 12:
-                monthStr = "декабря";
+                monthStr = mContext.getResources().getString(R.string.time_dec);
                 break;
         }
 
 
         String stringTime;
         if(Objects.equals(day, thisDay) && Objects.equals(month, thisMonth) && Objects.equals(year, thisYear))
-            stringTime = "Сегодня | " + hour + ":" + minutes;
+            stringTime = mContext.getResources().getString(R.string.time_today) + ", " + hour + ":" + minutes;
         else
         if(Objects.equals(day, thisDay -1) && Objects.equals(month, thisMonth) && Objects.equals(year, thisYear))
-            stringTime = "Вчера | " + hour + ":" + minutes;
+            stringTime = mContext.getResources().getString(R.string.time_yesterday) + "а, " + hour + ":" + minutes;
         else
         if(Objects.equals(year, thisYear))
-            stringTime = day + " " + monthStr + " | " + hour + ":" + minutes;
+            stringTime = day + " " + monthStr + ", " + hour + ":" + minutes;
         else
-            stringTime = day + " " + monthStr + ", " + year + " | " + hour + ":" + minutes;
+            stringTime = day + " " + monthStr + ", " + year + ", " + hour + ":" + minutes;
 
         return stringTime;
     }

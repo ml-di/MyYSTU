@@ -35,7 +35,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar_jobReader"
             style="@style/Toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:theme="@style/Toolbar"
+            app:popupTheme="@style/ToolBar_Popup"
             app:title="@string/activity_job_title" />
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,9 +1,7 @@
 package ru.ystu.myystu.Utils.BottomSheetMenu;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcelable;
@@ -13,14 +11,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
 import androidx.annotation.AnimRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.MenuRes;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
@@ -29,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Data.DividerData;
@@ -38,14 +33,11 @@ import ru.ystu.myystu.Utils.BottomSheetMenu.Data.NullIconsAndTextData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Data.OnlyTextData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Interface.BottomSheetMenuInterface;
 import ru.ystu.myystu.Utils.BottomSheetMenu.Interface.OnItemClickListener;
-import ru.ystu.myystu.Utils.Converter;
-import ru.ystu.myystu.Utils.LightStatusBar;
 
 public class BottomSheetMenu implements BottomSheetMenuInterface {
 
     private OnItemClickListener onItemClickListener;
 
-    private BottomSheetBehavior bottomSheetBehavior;
     private Context mContext;
     private Menu menu;
     private CharSequence title;

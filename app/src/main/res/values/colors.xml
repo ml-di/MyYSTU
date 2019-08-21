@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <color name="colorPrimary">#0039cb</color>
+    <color name="colorPrimaryDark">#012AAF</color>
+    <color name="colorPrimaryLight">#2962ff</color>
+    <color name="colorAccent">#ff5722</color>
+
+    <!--
     <color name="colorPrimary">#0A4188</color>
     <color name="colorPrimaryDark">#001c5a</color>
     <color name="colorPrimaryLight">#4c6bb8</color>
     <color name="colorAccent">#ec7200</color>
+    -->
 
     <!-- Цвета кафедр -->
     <color name="colorAsf">#710A0E</color>

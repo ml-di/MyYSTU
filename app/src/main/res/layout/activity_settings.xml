@@ -24,7 +24,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar_settings"
             style="@style/Toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:theme="@style/Toolbar"
+            app:popupTheme="@style/ToolBar_Popup"
             app:title="@string/menu_text_settings" />
     </com.google.android.material.appbar.AppBarLayout>
 
