@@ -29,36 +29,6 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="24dp">
 
-                    <androidx.appcompat.widget.ContentFrameLayout
-                        android:id="@+id/userFull_toolbarPlaceholder"
-                        android:layout_width="match_parent"
-                        android:layout_height="?actionBarSize"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.appcompat.widget.ContentFrameLayout
-                        android:id="@+id/userFull_imageBackground"
-                        android:layout_width="170dp"
-                        android:layout_height="170dp"
-                        android:layout_marginTop="16dp"
-                        android:alpha="0.05"
-                        android:background="@drawable/shape_circle"
-                        android:backgroundTint="@color/colorPrimaryLight"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_toolbarPlaceholder" />
-
-                    <com.facebook.drawee.view.SimpleDraweeView
-                        android:id="@+id/userFull_image"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:layout_marginTop="26dp"
-                        android:scaleType="centerCrop"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_toolbarPlaceholder"
-                        app:placeholderImage="@color/colorPlaceHolderImage"
-                        app:roundAsCircle="true" />
-
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/userFull_name"
                         android:layout_width="match_parent"
@@ -67,8 +37,8 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
                         android:gravity="center_horizontal"
-                        android:textColor="@color/colorPrimaryLight"
-                        android:textSize="18sp"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toBottomOf="@id/userFull_imageBackground"
                         tools:text="Антонова Татьяна Николаевна" />
@@ -80,12 +50,31 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="16dp"
-                        android:alpha="0.7"
+                        android:alpha="0.5"
                         android:gravity="center_horizontal"
                         android:paddingBottom="24dp"
+                        android:textColor="@color/colorTextBlack"
                         android:textSize="16sp"
                         app:layout_constraintTop_toBottomOf="@id/userFull_name"
                         tools:text="Профессор кафедры Общая и физическая химия, д.х.н." />
+
+                    <androidx.appcompat.widget.ContentFrameLayout
+                        android:id="@+id/userFull_toolbarPlaceholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="?actionBarSize"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.ContentFrameLayout
+                        android:id="@+id/userFull_imageBackground"
+                        android:layout_width="170dp"
+                        android:layout_height="170dp"
+                        android:layout_marginTop="16dp"
+                        android:alpha="0.025"
+                        android:background="@drawable/shape_circle"
+                        android:backgroundTint="@color/colorPrimaryLight"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/userFull_toolbarPlaceholder" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/userFull_location"
@@ -94,16 +83,6 @@
                         android:layout_marginTop="16dp"
                         android:visibility="gone"
                         app:layout_constraintTop_toBottomOf="@id/userFull_information">
-
-                        <androidx.appcompat.widget.ContentFrameLayout
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_marginStart="16dp"
-                            android:alpha="0.05"
-                            android:background="@drawable/shape_circle"
-                            android:backgroundTint="@color/colorPrimary"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/userFull_location_icon"
@@ -122,21 +101,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="16dp"
-                            android:textSize="18sp"
+                            android:alpha="0.75"
+                            android:textColor="@color/colorTextBlack"
+                            android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/userFull_location_icon"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="150023, г. Ярославль, Московский проспект, 88а; корпус «Б», второй и третий этаж, Б-212, Б-308" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/userFull_phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_location">
 
                         <androidx.appcompat.widget.ContentFrameLayout
                             android:layout_width="40dp"
@@ -147,6 +119,15 @@
                             android:backgroundTint="@color/colorPrimary"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/userFull_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/userFull_location">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/userFull_phone_icon"
@@ -165,21 +146,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="16dp"
-                            android:textSize="18sp"
+                            android:alpha="0.75"
+                            android:textColor="@color/colorTextBlack"
+                            android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/userFull_phone_icon"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="+7 (4852) 44-35-47, 44-13-69" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/userFull_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_phone">
 
                         <androidx.appcompat.widget.ContentFrameLayout
                             android:layout_width="40dp"
@@ -190,6 +164,15 @@
                             android:backgroundTint="@color/colorPrimary"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/userFull_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/userFull_phone">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/userFull_email_icon"
@@ -208,21 +191,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="16dp"
-                            android:textSize="18sp"
+                            android:alpha="0.75"
+                            android:textColor="@color/colorTextBlack"
+                            android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/userFull_email_icon"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="antonovatn@ystu.ru" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/userFull_detail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_email">
 
                         <androidx.appcompat.widget.ContentFrameLayout
                             android:layout_width="40dp"
@@ -233,6 +209,15 @@
                             android:backgroundTint="@color/colorPrimary"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/userFull_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/userFull_email">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/userFull_detail_icon"
@@ -251,13 +236,37 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="16dp"
-                            android:textSize="18sp"
+                            android:alpha="0.75"
+                            android:textColor="@color/colorTextBlack"
+                            android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/userFull_detail_icon"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="В 1969 году окончила Ярославский технологический институт по специальности «Технология основного органического и нефтехимического синтеза», продолжила работу в вузе в должности инженера, младшего научного сотрудника." />
+
+                        <androidx.appcompat.widget.ContentFrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="16dp"
+                            android:alpha="0.05"
+                            android:background="@drawable/shape_circle"
+                            android:backgroundTint="@color/colorPrimary"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/userFull_image"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="26dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/userFull_toolbarPlaceholder"
+                        app:placeholderImage="@color/colorPlaceHolderImage"
+                        app:roundAsCircle="true" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

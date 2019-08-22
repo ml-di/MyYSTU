@@ -43,11 +43,10 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:alpha="0.8"
                         android:gravity="fill_horizontal"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="21sp"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toBottomOf="@id/eventFull_toolbarPlaceholder"
                         tools:text="Конференция Лингводидактика в неязыковом вузе" />
@@ -88,16 +87,16 @@
                                 android:alpha="0.75"
                                 android:text="@string/activity_eventFull_dateTitle"
                                 android:textSize="16sp"
+                                android:textColor="@color/colorTextBlack"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/eventFull_date"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:alpha="0.75"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:textColor="@color/colorPrimaryLight"
+                                android:textColor="@color/colorTextBlack"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 app:layout_constraintTop_toBottomOf="@id/eventFull_dateTitle"
@@ -111,16 +110,16 @@
                                 android:alpha="0.75"
                                 android:text="@string/activity_eventFull_locationTitle"
                                 android:textSize="16sp"
+                                android:textColor="@color/colorTextBlack"
                                 app:layout_constraintTop_toBottomOf="@id/eventFull_date" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/eventFull_location"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:alpha="0.75"
                                 android:ellipsize="middle"
                                 android:maxLines="4"
-                                android:textColor="@color/colorPrimaryLight"
+                                android:textColor="@color/colorTextBlack"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 app:layout_constraintTop_toBottomOf="@id/eventFull_locationTitle"
@@ -136,8 +135,8 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="24dp"
                         android:layout_marginEnd="16dp"
-                        android:alpha="0.75"
-                        android:textSize="21sp"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="18sp"
                         app:layout_constraintTop_toBottomOf="@id/eventFull_linear"
                         tools:text="В ЯГТУ пройдет Международная научно-практическая конференция Лингводидактика в неязыковом вузе: традиционные и инновационные подходы" />
 
@@ -148,7 +147,9 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:textSize="18sp"
+                        android:alpha="0.75"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="16sp"
                         app:layout_constraintTop_toBottomOf="@id/eventFull_titleText"
                         tools:text="Конференция состоится 17-18 мая 2019 года и будет направлена на развитие сотрудничества в области образования и науки, создания условий для обмена опытом научных и педагогических работников ЯГТУ с ведущими учеными и практиками." />
 
@@ -160,7 +161,6 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

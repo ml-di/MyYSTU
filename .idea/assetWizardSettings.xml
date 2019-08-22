@@ -3,6 +3,11 @@
   <component name="WizardSettings">
     <option name="children">
       <map>
+        <entry key="imageWizard">
+          <value>
+            <PersistentState />
+          </value>
+        </entry>
         <entry key="vectorWizard">
           <value>
             <PersistentState>
@@ -29,8 +34,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_detail" />
-                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\outline-chevron_right-24px.svg" />
+                            <entry key="outputName" value="ic_launcher_rounded" />
+                            <entry key="sourceFile" value="E:\project\Android\MyYSTU\icons\ic_launcher\project\ic_launcher_rounded.svg" />
                           </map>
                         </option>
                       </PersistentState>

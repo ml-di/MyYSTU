@@ -17,24 +17,12 @@
         android:background="@color/colorBackgroundTwo"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="26dp"
-        app:cardElevation="5dp">
+        app:cardElevation="4dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
-
-            <androidx.appcompat.widget.ContentFrameLayout
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginBottom="16dp"
-                android:alpha="0.05"
-                android:background="@drawable/shape_circle"
-                android:backgroundTint="@color/colorPrimary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/itemMenu_icon"
@@ -42,7 +30,7 @@
                 android:layout_height="70dp"
                 android:layout_marginBottom="16dp"
                 android:padding="16dp"
-                android:tint="@color/colorPrimaryLight"
+                android:tint="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -58,15 +46,25 @@
                 android:layout_marginEnd="16dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/colorPrimaryLight"
+                android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/itemMenu_icon"
                 tools:text="Расписание" />
 
+            <androidx.appcompat.widget.ContentFrameLayout
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginBottom="16dp"
+                android:alpha="0.05"
+                android:background="@drawable/shape_circle"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

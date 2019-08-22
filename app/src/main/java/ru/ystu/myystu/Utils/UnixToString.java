@@ -97,7 +97,7 @@ public class UnixToString {
             stringTime = mContext.getResources().getString(R.string.time_today) + ", " + hour + ":" + minutes;
         else
         if(Objects.equals(day, thisDay -1) && Objects.equals(month, thisMonth) && Objects.equals(year, thisYear))
-            stringTime = mContext.getResources().getString(R.string.time_yesterday) + "а, " + hour + ":" + minutes;
+            stringTime = mContext.getResources().getString(R.string.time_yesterday) + ", " + hour + ":" + minutes;
         else
         if(Objects.equals(year, thisYear))
             stringTime = day + " " + monthStr + ", " + hour + ":" + minutes;

@@ -2,7 +2,6 @@ package ru.ystu.myystu.Fragments;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.DisplayMetrics;
@@ -201,9 +200,9 @@ public class BellFragment extends Fragment {
             params = new ContentFrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             ((FrameLayout.LayoutParams) params).gravity = Gravity.CENTER;
-            placeHolder.setTextSize(21);
-            placeHolder.setTextColor(getResources().getColor(R.color.colorTextTertiary));
-            placeHolder.setTypeface(placeHolder.getTypeface(), Typeface.BOLD);
+            placeHolder.setTextSize(20);
+            placeHolder.setTextColor(getResources().getColor(R.color.colorTextBlack));
+            placeHolder.setAlpha(0.5f);
 
             placeHolder.setLayoutParams(params);
             mainLayout.addView(placeHolder, 0 , params);

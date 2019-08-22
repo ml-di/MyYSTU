@@ -7,6 +7,16 @@
     android:background="@color/colorBackgroundBell"
     tools:context=".Fragments.BellFragment">
 
+    <androidx.appcompat.widget.ContentFrameLayout
+        android:id="@+id/main_layout_bell"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bell_layout">
+
+    </androidx.appcompat.widget.ContentFrameLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bell_layout"
         android:layout_width="match_parent"
@@ -28,8 +38,8 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:textColor="@color/colorPrimaryLight"
-            android:textSize="21sp"
+            android:textColor="@color/colorTextBlack"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:textAllCaps="true"
@@ -62,8 +72,8 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center|top"
                     android:gravity="center_vertical"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:textSize="26sp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     tools:text="14" />
 
@@ -73,10 +83,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|bottom"
                     android:layout_marginTop="30dp"
-                    android:alpha="0.7"
+                    android:alpha="0.75"
                     android:gravity="center_vertical"
                     android:text="@string/bell_text_week"
-                    android:textColor="@color/colorPrimaryLight"
+                    android:textColor="@color/colorTextBlack"
                     android:textSize="16sp" />
 
             </androidx.appcompat.widget.ContentFrameLayout>
@@ -97,8 +107,8 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center|top"
                     android:gravity="center_vertical"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:textSize="26sp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     tools:text="2" />
 
@@ -108,10 +118,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|bottom"
                     android:layout_marginTop="30dp"
-                    android:alpha="0.7"
+                    android:alpha="0.75"
                     android:gravity="center_vertical"
                     android:text="@string/bell_text_lesson"
-                    android:textColor="@color/colorPrimaryLight"
+                    android:textColor="@color/colorTextBlack"
                     android:textSize="16sp" />
 
             </androidx.appcompat.widget.ContentFrameLayout>
@@ -132,8 +142,8 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center|top"
                     android:gravity="center_vertical"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:textSize="26sp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     tools:text="12:30" />
 
@@ -143,23 +153,13 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|bottom"
                     android:layout_marginTop="30dp"
-                    android:alpha="0.7"
+                    android:alpha="0.75"
                     android:gravity="center_vertical"
                     android:text="@string/bell_text_time"
-                    android:textColor="@color/colorPrimaryLight"
+                    android:textColor="@color/colorTextBlack"
                     android:textSize="16sp" />
 
             </androidx.appcompat.widget.ContentFrameLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.ContentFrameLayout
-        android:id="@+id/main_layout_bell"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bell_layout">
-
-    </androidx.appcompat.widget.ContentFrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
