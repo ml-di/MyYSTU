@@ -23,7 +23,7 @@
                 android:id="@+id/error_message_icon_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:alpha="0.075"
+                android:alpha="0.05"
                 android:background="@drawable/shape_circle"
                 android:backgroundTint="@color/colorPrimaryLight" />
 
@@ -43,22 +43,24 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
-            android:alpha="0.5"
+            android:textColor="@color/colorTextBlack"
             android:ellipsize="end"
             android:gravity="center"
+            android:alpha="0.5"
             android:maxLines="1"
             android:text="@string/error_message_title"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:textSize="24sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/error_message_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
+            android:textSize="16sp"
+            android:textColor="@color/colorTextBlack"
             android:gravity="center"
             android:maxLines="5"
             tools:text="@string/error_message_internet_error" />
@@ -68,17 +70,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="32dp">
+            android:layout_marginTop="24dp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/shape_rectangle_rounded_15dp"
                 android:backgroundTint="@color/colorButtonBackgroundError"
-                android:elevation="6dp"
+                android:elevation="4dp"
                 android:paddingStart="32dp"
                 android:paddingTop="6dp"
                 android:paddingEnd="32dp"

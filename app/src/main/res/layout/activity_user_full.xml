@@ -40,7 +40,7 @@
                         android:textColor="@color/colorTextBlack"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_imageBackground"
+                        app:layout_constraintTop_toBottomOf="@id/userFull_image"
                         tools:text="Антонова Татьяна Николаевна" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -64,17 +64,6 @@
                         android:layout_height="?actionBarSize"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.ContentFrameLayout
-                        android:id="@+id/userFull_imageBackground"
-                        android:layout_width="170dp"
-                        android:layout_height="170dp"
-                        android:layout_marginTop="16dp"
-                        android:alpha="0.025"
-                        android:background="@drawable/shape_circle"
-                        android:backgroundTint="@color/colorPrimaryLight"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_toolbarPlaceholder" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/userFull_location"
@@ -228,7 +217,7 @@
                             android:tint="@color/colorPrimaryLight"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_library_about" />
+                            app:srcCompat="@drawable/ic_about" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/userFull_detail_text"
@@ -261,7 +250,10 @@
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_marginTop="26dp"
+                        android:background="@drawable/shape_circle"
+                        android:elevation="10dp"
                         android:scaleType="centerCrop"
+                        android:translationZ="15dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/userFull_toolbarPlaceholder"

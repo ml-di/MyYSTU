@@ -16,6 +16,7 @@
         android:layout_height="match_parent"
         android:background="@color/colorBackgroundTwo"
         android:foreground="?android:attr/selectableItemBackground"
+        android:translationZ="2dp"
         app:cardCornerRadius="26dp"
         app:cardElevation="4dp">
 

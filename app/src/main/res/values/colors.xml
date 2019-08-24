@@ -6,13 +6,6 @@
     <color name="colorPrimaryLight">#2962ff</color>
     <color name="colorAccent">#ff5722</color>
 
-    <!--
-    <color name="colorPrimary">#0A4188</color>
-    <color name="colorPrimaryDark">#001c5a</color>
-    <color name="colorPrimaryLight">#4c6bb8</color>
-    <color name="colorAccent">#ec7200</color>
-    -->
-
     <!-- Цвета кафедр -->
     <color name="colorAsf">#710A0E</color>
     <color name="colorIef">#007100</color>
@@ -37,8 +30,8 @@
     <color name="colorBackgroundTwo">#FFFFFF</color>
     <color name="colorBackgroundBell">#F5F5F5</color>
 
-    <color name="menuGradientStart">#0A4188</color>
-    <color name="menuGradientEnd">#D94C6BB8</color>
+    <color name="menuGradientStart">#012AAF</color>
+    <color name="menuGradientEnd">#802962FF</color>
 
     <color name="colorTextAccent">#ffffff</color>
     <color name="colorTextMenu">#ffffff</color>
@@ -48,7 +41,7 @@
     <color name="colorTextTertiary">#a5a5a5</color>
     <color name="colorTextBlack">#000000</color>
 
-    <color name="colorButtonBackgroundError">#4c6bb8</color>
+    <color name="colorButtonBackgroundError">#0039cb</color>
     <color name="colorButtonTextError">#ffffff</color>
     <color name="colorDivider">#DCDCDC</color>
     <color name="colorMenuIcon">#DCDCDC</color>

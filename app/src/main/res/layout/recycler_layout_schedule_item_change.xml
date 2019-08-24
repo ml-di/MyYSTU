@@ -49,8 +49,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.ContentFrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
             android:alpha="0.05"
             android:background="@drawable/shape_circle"
             android:backgroundTint="@color/colorPrimary" />

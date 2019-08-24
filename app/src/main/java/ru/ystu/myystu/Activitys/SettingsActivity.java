@@ -88,6 +88,14 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     }
 
     public void startFragment (Fragment fragment, Preference pref) {
+        openFragment(fragment, pref.getKey(), pref.getTitle().toString());
+    }
+
+    public void startFragment (Fragment fragment, String TAG, String title) {
+        openFragment(fragment, TAG, title);
+    }
+
+    private void openFragment(Fragment fragment, String TAG, String title) {
 
         int mEnterAnim = R.anim.activity_slide_right_show;
         int mExitAnim = R.anim.activity_slide_left_out;
@@ -106,11 +114,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .setCustomAnimations(mEnterAnim, mExitAnim,
                         mPopEnterAnim, mPopExitAnim)
-                .replace(R.id.settings_content, fragment, pref.getKey())
-                .addToBackStack(pref.getKey())
+                .replace(R.id.settings_content, fragment, TAG)
+                .addToBackStack(TAG)
                 .commit();
 
-        mToolbar.setTitle(pref.getTitle());
+        mToolbar.setTitle(title);
     }
 
     public void setTitleToolBar (String title) {

@@ -57,19 +57,9 @@
     <PreferenceCategory android:title="@string/settings_category_other">
 
         <Preference
-            android:icon="@drawable/ic_university"
-            android:key="preference_other_about_university"
-            android:title="@string/settings_category_other_about_university" />
-
-        <Preference
             android:icon="@drawable/ic_about"
             android:key="preference_other_about"
             android:title="@string/settings_category_other_about" />
-
-        <Preference
-            android:icon="@drawable/ic_library_about"
-            android:key="preference_other_library_about"
-            android:title="@string/settings_category_other_library_about" />
 
     </PreferenceCategory>
 </PreferenceScreen>

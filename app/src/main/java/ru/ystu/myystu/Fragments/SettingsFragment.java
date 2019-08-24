@@ -117,32 +117,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             });
         }
 
-        // О ВУЗе
-        final Preference aboutUniversity = findPreference("preference_other_about_university");
-        if (aboutUniversity != null) {
-            aboutUniversity.setOnPreferenceClickListener(view -> {
-                AboutUniversityFragment aboutUniversityFragment = new AboutUniversityFragment();
-                ((SettingsActivity) Objects.requireNonNull(getActivity())).startFragment(aboutUniversityFragment, view);
-                return true;
-            });
-        }
-
         // О приложении
         final Preference about = findPreference("preference_other_about");
         if (about != null) {
             about.setOnPreferenceClickListener(view -> {
                 AboutFragment aboutFragment = new AboutFragment();
                 ((SettingsActivity) Objects.requireNonNull(getActivity())).startFragment(aboutFragment, view);
-                return true;
-            });
-        }
-
-        // Лицензии открытого ПО
-        final Preference aboutLic = findPreference("preference_other_library_about");
-        if (aboutLic != null) {
-            aboutLic.setOnPreferenceClickListener(view -> {
-                AboutLicensesFragment aboutLicensesFragment = new AboutLicensesFragment();
-                ((SettingsActivity) Objects.requireNonNull(getActivity())).startFragment(aboutLicensesFragment, view);
                 return true;
             });
         }
