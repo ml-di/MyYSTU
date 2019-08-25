@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_about" />
-                            <entry key="sourceFile" value="E:\project\Android\MyYSTU\icons\ic_launcher\project\ic_launcher_rounded.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_about_app" />
+                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\about.svg" />
                           </map>
                         </option>
                       </PersistentState>

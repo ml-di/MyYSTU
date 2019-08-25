@@ -9,7 +9,7 @@
             android:key="preference_general_ui"
             android:title="@string/settings_general_ui">
 
-            <SwitchPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="true"
                 android:key="preference_ui_animation_enable"
                 android:title="@string/settings_general_ui_animation"
@@ -52,12 +52,33 @@
                 app:iconSpaceReserved="false" />
 
         </PreferenceScreen>
+
+        <PreferenceScreen
+            android:icon="@drawable/ic_experimental"
+            android:key="preference_additional_experimental"
+            android:title="@string/settings_category_additional_experimental">
+
+            <SwitchPreferenceCompat
+                android:key="preference_experimental_image_cache_ram"
+                android:title="@string/settings_category_additional_experimental_cache_ram_title"
+                android:summary="@string/settings_category_additional_experimental_cache_ram_summary"
+                app:iconSpaceReserved="false"
+                android:defaultValue="true"/>
+
+            <SwitchPreferenceCompat
+                android:key="preference_experimental_image_enable"
+                android:title="@string/settings_category_additional_experimental_image_enable"
+                android:summary="@string/settings_category_additional_experimental_image_enable_summary"
+                app:iconSpaceReserved="false"
+                android:defaultValue="false"/>
+
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_category_other">
 
         <Preference
-            android:icon="@drawable/ic_about"
+            android:icon="@drawable/ic_about_app"
             android:key="preference_other_about"
             android:title="@string/settings_category_other_about" />
 

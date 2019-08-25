@@ -39,6 +39,7 @@ import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
+import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
@@ -140,20 +141,13 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final float h = (float)onePhoto.getListPhoto().get(0).getHeight();
             final float aspectRatio = w / h;
 
-            final ImageRequest mImageRequest =
-                    ImageRequestBuilder.newBuilderWithSource(Uri.parse(onePhoto.getListPhoto().get(0).getUrlPreview()))
-                            .disableMemoryCache()
-                            .setProgressiveRenderingEnabled(true)
-                            .build();
-
             postPhoto.setAspectRatio(aspectRatio);
-            postPhoto.setImageRequest(mImageRequest);
+            if (SettingsController.isImageDownload(mContext)) {
+                postPhoto.setImageRequest(FrescoHelper.getImageRequest(mContext, onePhoto.getListPhoto().get(0).getUrlPreview()));
+                postPhoto.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, onePhoto.getListPhoto(), 0));
+            }
 
             menuNewsItem.setOnClickListener(e -> showMenu(mContext, onePhoto.getSigner(), onePhoto.getUrlPost(), postText.getText().toString()));
-            postPhoto.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(mContext, onePhoto.getListPhoto(), 0);
-            });
-
         }
 
     }
@@ -217,35 +211,29 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 params.weight = layout_weight;
 
-                final ImageRequest mImageRequest =
-                        ImageRequestBuilder.newBuilderWithSource(Uri.parse(twoPhoto.getListPhoto().get(i).getUrlPreview()))
-                                .disableMemoryCache()
-                                .setProgressiveRenderingEnabled(true)
-                                .build();
-
                 switch (i){
                     case 0:
                         params.setMarginEnd(margin);
                         postPhoto_1.setAspectRatio(aspectRatio);
-                        postPhoto_1.setImageRequest(mImageRequest);
+                        if (SettingsController.isImageDownload(mContext)) {
+                            postPhoto_1.setImageRequest(FrescoHelper.getImageRequest(mContext, twoPhoto.getListPhoto().get(i).getUrlPreview()));
+                            postPhoto_1.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 0));
+                        }
                         postPhoto_1.setLayoutParams(params);
                         break;
                     case 1:
                         params.setMarginStart(margin);
                         postPhoto_2.setAspectRatio(aspectRatio);
-                        postPhoto_2.setImageRequest(mImageRequest);
+                        if (SettingsController.isImageDownload(mContext)) {
+                            postPhoto_2.setImageRequest(FrescoHelper.getImageRequest(mContext, twoPhoto.getListPhoto().get(i).getUrlPreview()));
+                            postPhoto_2.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 1));
+                        }
                         postPhoto_2.setLayoutParams(params);
                         break;
                 }
             }
 
             menuNewsItem.setOnClickListener(e -> showMenu(mContext, twoPhoto.getSigner(), twoPhoto.getUrlPost(), postText.getText().toString()));
-            postPhoto_1.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 0);
-            });
-            postPhoto_2.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 1);
-            });
         }
     }
 
@@ -295,24 +283,27 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 final float h = (float)morePhoto.getListPhoto().get(i).getHeight();
                 final float aspectRatio = w / h;
 
-                final ImageRequest mImageRequest =
-                        ImageRequestBuilder.newBuilderWithSource(Uri.parse(morePhoto.getListPhoto().get(i).getUrlPreview()))
-                                .disableMemoryCache()
-                                .setProgressiveRenderingEnabled(true)
-                                .build();
-
                 switch (i){
                     case 0:
                         postPhoto_1.setAspectRatio(aspectRatio);
-                        postPhoto_1.setImageRequest(mImageRequest);
+                        if (SettingsController.isImageDownload(mContext)) {
+                            postPhoto_1.setImageRequest(FrescoHelper.getImageRequest(mContext, morePhoto.getListPhoto().get(i).getUrlPreview()));
+                            postPhoto_1.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 0));
+                        }
                         break;
                     case 1:
                         postPhoto_2.setAspectRatio(aspectRatio);
-                        postPhoto_2.setImageRequest(mImageRequest);
+                        if (SettingsController.isImageDownload(mContext)) {
+                            postPhoto_2.setImageRequest(FrescoHelper.getImageRequest(mContext, morePhoto.getListPhoto().get(i).getUrlPreview()));
+                            postPhoto_2.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 1));
+                        }
                         break;
                     case 2:
                         postPhoto_3.setAspectRatio(aspectRatio);
-                        postPhoto_3.setImageRequest(mImageRequest);
+                        if (SettingsController.isImageDownload(mContext)) {
+                            postPhoto_3.setImageRequest(FrescoHelper.getImageRequest(mContext, morePhoto.getListPhoto().get(i).getUrlPreview()));
+                            postPhoto_3.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 2));
+                        }
                         break;
                 }
 
@@ -331,15 +322,6 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             menuNewsItem.setOnClickListener(e -> showMenu(mContext, morePhoto.getSigner(), morePhoto.getUrlPost(), postText.getText().toString()));
-            postPhoto_1.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 0);
-            });
-            postPhoto_2.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 1);
-            });
-            postPhoto_3.setOnClickListener(e -> {
-                new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 2);
-            });
         }
     }
 

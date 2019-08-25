@@ -190,7 +190,6 @@ public class EventActivity extends AppCompatActivity {
                                 setRecyclerViewAnim(mRecyclerView);
                             } else {
                                 mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
-                                setRecyclerViewAnim(mRecyclerView);
                             }
 
                             new Thread(() -> {

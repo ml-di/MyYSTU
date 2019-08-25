@@ -25,6 +25,7 @@ import ru.ystu.myystu.Network.GetFullEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
@@ -134,7 +135,9 @@ public class EventFullActivity extends AppCompatActivity {
         mToolbar.setOnClickListener(e -> scroll.smoothScrollTo(0, 0));
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.activity_event_title);
 
-        image.setImageURI(urlPhoto);
+        if (SettingsController.isImageDownload(mContext)) {
+            image.setImageRequest(FrescoHelper.getImageRequest(mContext, urlPhoto));
+        }
         date.setText(dateStr);
         title.setText(titleStr);
 

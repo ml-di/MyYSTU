@@ -25,6 +25,7 @@ import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
@@ -76,7 +77,10 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         void setUser (UsersItemsData user, Context mContext) {
 
-            image.setImageURI(user.getImage());
+            if (SettingsController.isImageDownload(mContext)) {
+                image.setImageRequest(FrescoHelper.getImageRequest(mContext, user.getImage()));
+            }
+
             name.setText(user.getName());
             information.setText(user.getInformation());
 

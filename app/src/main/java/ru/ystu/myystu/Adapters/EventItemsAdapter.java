@@ -3,6 +3,7 @@ package ru.ystu.myystu.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -48,48 +50,39 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         void setHeader (EventItemsData_Header headerItem, Context mContext) {
 
-            chip1.setText(headerItem.getTitle()[0]);
-            chip2.setText(headerItem.getTitle()[1]);
-            chip3.setText(headerItem.getTitle()[2]);
+            View[] chips = new View[]{chip1, chip2, chip3};
 
-            if(headerItem.getSelected_id() == 0){
-                chip1.setAlpha(1);
-            } else if (headerItem.getSelected_id() == 1){
-                chip2.setAlpha(1);
-            } else if (headerItem.getSelected_id() == 2){
-                chip3.setAlpha(1);
+            for (int i = 0; i < chips.length; i++) {
+                ((AppCompatTextView) chips[i]).setText(headerItem.getTitle()[i]);
+                if (headerItem.getSelected_id() == i) {
+                    selectedChip(chips[i], mContext);
+                }
+
+                int finalI = i;
+                chips[i].setOnClickListener(v -> {
+                    if(headerItem.getSelected_id() != finalI){
+                        ((EventActivity) mContext).getEvent(headerItem.getUrl()[finalI]);
+                        ((EventActivity) mContext).setUrl(headerItem.getUrl()[finalI]);
+                        resetChip(chips, mContext);
+                        selectedChip(v, mContext);
+                    }
+                });
             }
-
-            chip1.setOnClickListener(View -> {
-                if(headerItem.getSelected_id() != 0){
-                    ((EventActivity) mContext).getEvent(headerItem.getUrl()[0]);
-                    ((EventActivity) mContext).setUrl(headerItem.getUrl()[0]);
-                    resetChip();
-                    View.setAlpha(1);
-                }
-            });
-            chip2.setOnClickListener(View -> {
-                if(headerItem.getSelected_id() != 1){
-                    ((EventActivity) mContext).getEvent(headerItem.getUrl()[1]);
-                    ((EventActivity) mContext).setUrl(headerItem.getUrl()[1]);
-                    resetChip();
-                    View.setAlpha(1);
-                }
-            });
-            chip3.setOnClickListener(View -> {
-                if(headerItem.getSelected_id() != 2){
-                    ((EventActivity) mContext).getEvent(headerItem.getUrl()[2]);
-                    ((EventActivity) mContext).setUrl(headerItem.getUrl()[2]);
-                    resetChip();
-                    View.setAlpha(1);
-                }
-            });
         }
 
-        private void resetChip () {
-            chip1.setAlpha(0.6f);
-            chip2.setAlpha(0.6f);
-            chip3.setAlpha(0.6f);
+        private void resetChip (View[] chips, Context mContext) {
+
+            for (View chip : chips) {
+                chip.setAlpha(0.6f);
+                chip.setBackgroundTintList(null);
+                ((AppCompatTextView) chip).setTextColor(mContext.getResources().getColor(R.color.colorTextBlack));
+            }
+        }
+
+        private void selectedChip (View chip, Context mContext) {
+            chip.setAlpha(1);
+            chip.setBackgroundTintList(ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorPrimary)));
+            ((AppCompatTextView) chip).setTextColor(mContext.getResources().getColor(R.color.colorBackground));
         }
     }
 
@@ -128,7 +121,10 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         void setViewItem(EventItemsData_Event eventItem, Context mContext){
 
-            image.setImageURI(eventItem.getPhotoUrl());
+            if (SettingsController.isImageDownload(mContext)) {
+                image.setImageRequest(FrescoHelper.getImageRequest(mContext, eventItem.getPhotoUrl()));
+            }
+
             date.setText(eventItem.getDate());
             location.setText(eventItem.getLocation());
             title.setText(eventItem.getTitle());

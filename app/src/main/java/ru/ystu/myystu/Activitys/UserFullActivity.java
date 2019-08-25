@@ -19,6 +19,7 @@ import ru.ystu.myystu.Network.GetUserInformationFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
+import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
@@ -114,7 +115,10 @@ public class UserFullActivity extends AppCompatActivity {
             information = getIntent().getExtras().getString("information");
         }
 
-        imageView.setImageURI(image);
+        if (SettingsController.isImageDownload(mContext)) {
+            imageView.setImageRequest(FrescoHelper.getImageRequest(mContext, image));
+        }
+
         nameView.setText(name);
         informationView.setText(information);
 

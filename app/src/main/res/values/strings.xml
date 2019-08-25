@@ -134,10 +134,16 @@
     <string name="settings_general_photoSize">Размер загружаемых фото</string>
 
     <string name="settings_category_additional_cache">Данные</string>
-    <string name="settings_category_additional_cache_delete_photo">Удалить кеш фото</string>
+    <string name="settings_category_additional_cache_delete_photo">Удалить кэш фото</string>
     <string name="settings_category_additional_cache_delete_schedule">Удалить файлы расписания</string>
-    <string name="settings_category_additional_cache_delete_app">Удалить кеш данных</string>
+    <string name="settings_category_additional_cache_delete_app">Удалить кэш данных</string>
     <string name="settings_category_additional_cache_summary">Занято:</string>
+
+    <string name="settings_category_additional_experimental">Экспериментальные</string>
+    <string name="settings_category_additional_experimental_cache_ram_title">Кэшировать изображения в ОЗУ</string>
+    <string name="settings_category_additional_experimental_cache_ram_summary">Рекомендуется использовать при 3гб ОЗУ или больше</string>
+    <string name="settings_category_additional_experimental_image_enable">Не загружать изображения</string>
+    <string name="settings_category_additional_experimental_image_enable_summary">Сильно снижает использование трафика</string>
 
     <string name="settings_category_other_about_university">О ВУЗе</string>
     <string name="settings_category_other_about">О программе</string>
