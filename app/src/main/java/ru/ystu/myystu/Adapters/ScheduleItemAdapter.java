@@ -63,7 +63,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class ScheduleItemViewHolder extends RecyclerView.ViewHolder {
 
-        final String[] prefix = new String[]{"asf", "ief", "af", "mf", "htf", "zf", "ozf"};
+        final String[] prefix = new String[]{"asf_ist", "asf_ad", "ief", "af", "mf", "htf", "zf", "ozf"};
 
         private int id;
         private String fileName;

@@ -27,11 +27,12 @@ public class ScheduleTabOneFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mList.add(new ScheduleMenuItemsData(0, R.drawable.ic_schedule_asf, R.color.colorAsf, getResources().getString(R.string.schedule_item_asf)));
-        mList.add(new ScheduleMenuItemsData(1, R.drawable.ic_schedule_ief, R.color.colorIef, getResources().getString(R.string.schedule_item_ief)));
-        mList.add(new ScheduleMenuItemsData(2, R.drawable.ic_schedule_af, R.color.colorAf, getResources().getString(R.string.schedule_item_af)));
-        mList.add(new ScheduleMenuItemsData(3, R.drawable.ic_schedule_mf, R.color.colorMf, getResources().getString(R.string.schedule_item_mf)));
-        mList.add(new ScheduleMenuItemsData(4, R.drawable.ic_schedule_htf, R.color.colorHtf, getResources().getString(R.string.schedule_item_htf)));
+        mList.add(new ScheduleMenuItemsData(0, R.drawable.ic_schedule_asf, R.color.colorAsf, getResources().getString(R.string.schedule_item_asf_one)));
+        mList.add(new ScheduleMenuItemsData(1, R.drawable.ic_schedule_asf, R.color.colorAsf, getResources().getString(R.string.schedule_item_asf_two)));
+        mList.add(new ScheduleMenuItemsData(2, R.drawable.ic_schedule_ief, R.color.colorIef, getResources().getString(R.string.schedule_item_ief)));
+        mList.add(new ScheduleMenuItemsData(3, R.drawable.ic_schedule_af, R.color.colorAf, getResources().getString(R.string.schedule_item_af)));
+        mList.add(new ScheduleMenuItemsData(4, R.drawable.ic_schedule_mf, R.color.colorMf, getResources().getString(R.string.schedule_item_mf)));
+        mList.add(new ScheduleMenuItemsData(5, R.drawable.ic_schedule_htf, R.color.colorHtf, getResources().getString(R.string.schedule_item_htf)));
 
         RecyclerView.Adapter mRecyclerViewAdapter = new ScheduleMenuItemsAdapter(mList, getContext());
         mRecyclerViewAdapter.setHasStableIds(true);

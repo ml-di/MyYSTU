@@ -27,8 +27,8 @@ public class ScheduleTabTwoFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mList.add(new ScheduleMenuItemsData(5, R.drawable.ic_schedule_zf, R.color.colorPrimary, getResources().getString(R.string.schedule_item_zf)));
-        mList.add(new ScheduleMenuItemsData(6, R.drawable.ic_schedule_zf, R.color.colorPrimary, getResources().getString(R.string.schedule_item_ozf)));
+        mList.add(new ScheduleMenuItemsData(6, R.drawable.ic_schedule_zf, R.color.colorPrimary, getResources().getString(R.string.schedule_item_zf)));
+        mList.add(new ScheduleMenuItemsData(7, R.drawable.ic_schedule_zf, R.color.colorPrimary, getResources().getString(R.string.schedule_item_ozf)));
 
         RecyclerView.Adapter mRecyclerViewAdapter = new ScheduleMenuItemsAdapter(mList, getContext());
         mRecyclerViewAdapter.setHasStableIds(true);

@@ -23,14 +23,10 @@ public class SchedulePagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        switch (position){
-            case 0:
-                return new ScheduleTabOneFragment();
-            case 1:
-                return new ScheduleTabTwoFragment();
-            default:
-                return new ScheduleTabOneFragment();
+        if (position == 1) {
+            return new ScheduleTabTwoFragment();
         }
+        return new ScheduleTabOneFragment();
     }
 
     @Override

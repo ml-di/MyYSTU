@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Observable;
@@ -26,7 +27,7 @@ public class GetSchedule {
         return Observable.create(emitter -> {
 
             final OkHttpClient client = new OkHttpClient();
-            final String[] prefix_f = new String[]{"Архитектурно", "Инженерно", "Автомеханический",
+            final String[] prefix_f = new String[]{"строительства и транспорта", "архитектуры и дизайна", "Инженерно", "Автомеханический",
                     "Машиностроительный", "Химико", "Заочный факультет", "Отделение ускоренных"};
 
             final Request mRequest = new Request.Builder()
@@ -66,59 +67,58 @@ public class GetSchedule {
                                 }
 
                                 if (els != null) {
-                                    for(int i = 0; i < els.size(); i++){
-                                        if(els.get(i).text().contains(prefix_f[id])){
+                                    for (int i = 0; i < els.size(); i++) {
+                                        if (els.get(i).text().contains(prefix_f[id])) {
                                             int index = els.get(i).elementSiblingIndex();
                                             final Elements el = doc.getElementsByClass("single-page-description").get(0).children();
 
                                             Element temp;
                                             while (true) {
                                                 temp = el.get(index);
-                                                if(temp.tagName().equals("div")){
+                                                if (temp.tagName().equals("div") && temp.text().length() > 3) {
                                                     break;
                                                 }
                                                 index++;
                                             }
 
-                                            boolean isNextChange = false;
-                                            for (Element e : temp.children()){
-                                                if(e.tagName().equals("span") && e.select("span").attr("href").isEmpty()) {
-                                                    // Изменения
-                                                    if(isNextChange){
-                                                        if(!emitter.isDisposed()) {
-                                                            emitter.onNext("change:" + e.select("span").text());
-                                                        }
-                                                    } else if(e.select("span").text().equals("Изменения:")){
-                                                        isNextChange = true;
-                                                    }
-                                                } else if (!e.select("a").isEmpty() && isNextChange){
-                                                    // Ссылки
-                                                    Elements links = e.select("a");
+                                            final Elements files = temp.getAllElements().select("a");
+                                            final Elements changes = temp.getAllElements().select("span");
 
-                                                    for (Element lin : links) {
-                                                        String link = lin.attr("href");
+                                            // Ссылки
+                                            for (Element lin : files) {
+                                                String link = lin.attr("href");
 
-                                                        if(link.startsWith("/")){
-                                                            link = "https://www.ystu.ru" + link;
-                                                        }
+                                                if (link.startsWith("/")) {
+                                                    link = "https://www.ystu.ru" + link;
+                                                }
 
-                                                        final String text = lin.select("a").text();
+                                                final String text = lin.select("a").text();
 
-                                                        if(!emitter.isDisposed() && !text.equals("")) {
-                                                            emitter.onNext("links:" + link + "*" + text);
-                                                        }
+                                                if (!emitter.isDisposed() && !text.equals("")) {
+                                                    emitter.onNext("links:" + link + "*" + text);
+                                                }
+                                            }
+
+                                            // Изменения
+                                            for (Element change : changes) {
+                                                if (change.text().length() > 9
+                                                        && change.text().contains(".")
+                                                        && change.attr("href").isEmpty()) {
+
+                                                    if (!emitter.isDisposed()) {
+                                                        emitter.onNext("change:" + change.select("span").text());
                                                     }
                                                 }
                                             }
+
                                             break;
                                         }
                                     }
-                                }
 
-                                if(!emitter.isDisposed()){
+                                    if (!emitter.isDisposed()) {
                                         emitter.onComplete();
+                                    }
                                 }
-
                             } catch (Exception e){
                                 if(!emitter.isDisposed())
                                     emitter.onError(e);
