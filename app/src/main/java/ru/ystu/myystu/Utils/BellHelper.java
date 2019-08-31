@@ -86,7 +86,7 @@ public class BellHelper {
                 else
                     mCalendar.set(Calendar.WEEK_OF_MONTH, 0);
 
-                final int oldWeekOfYear = mCalendar.get(Calendar.WEEK_OF_YEAR);
+                final int oldWeekOfYear = mCalendar.get(Calendar.WEEK_OF_YEAR) - 1;
                 mCalendar.clear(Calendar.WEEK_OF_MONTH);
 
                 mCalendar.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH));
@@ -113,8 +113,8 @@ public class BellHelper {
         if (month > 6 && month < 9) {
             return "-";
         } else {
-            // 1 - Воскресенье
-            if(mCalendar.get(Calendar.DAY_OF_WEEK) != 1){
+            // Воскресенье
+            if(mCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY){
 
                 final int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
                 final int minute = mCalendar.get(Calendar.MINUTE);
@@ -155,8 +155,8 @@ public class BellHelper {
         if (month > 6 && month < 9) {
             return "-";
         } else {
-            // 1 - Воскресенье
-            if(mCalendar.get(Calendar.DAY_OF_WEEK) != 1){
+            // Воскресенье
+            if(mCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY){
 
                 final int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
                 final int minute = mCalendar.get(Calendar.MINUTE);

@@ -65,9 +65,14 @@ public class ScheduleChangeActivity extends AppCompatActivity {
             if (tempList != null) {
                 for (String temp : tempList) {
 
-                    if(temp.contains(": ")) {
-                        final String date = temp.substring(0, temp.lastIndexOf(": "));
-                        final String text = temp.substring(temp.lastIndexOf(": ") + 2);
+                    if(temp.contains(" ") && temp.length() > 9) {
+                        String date = temp.substring(0, temp.indexOf(" "));
+
+                        if (date.substring(date.length() - 1).equals(".")) {
+                            date = date.substring(0, date.length() - 1);
+                        }
+
+                        final String text = temp.substring(temp.indexOf(" ") + 1);
 
                         mList.add(new ScheduleChangeData(date, text));
                     }

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Мой ЯГТУ</string>
-    <string name="app_version">Версия 1.3.0</string>
+    <string name="app_version">Версия 1.3.1</string>
 
     <!-- Другие -->
     <string name="other_search_results">Результаты поиска</string>
@@ -78,7 +78,7 @@
     <string name="bell_text_time">звонок</string>
     <string name="bell_break_one">П</string>
     <string name="bell_break_two">БП</string>
-    <string name="bell_day_off">В</string>
+    <string name="bell_day_off">ВЫХ</string>
     <string name="bell_item_title_schedule">Обновление в расписании</string>
     <string name="bell_placeholder_text">Обновлений нет 😴</string>
 
