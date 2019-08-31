@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobActivity;
 import ru.ystu.myystu.Activitys.MapActivity;
 import ru.ystu.myystu.Activitys.EventActivity;
+import ru.ystu.myystu.Activitys.StoActivity;
 import ru.ystu.myystu.Activitys.UsersActivity;
 import ru.ystu.myystu.Activitys.ScheduleActivity;
 import ru.ystu.myystu.R;
@@ -67,6 +68,10 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                     // Сотрудники и преподаватели
                     case 4:
                         mContext.startActivity(new Intent(mContext, UsersActivity.class));
+                        break;
+                    // Стандарты оформления работ
+                    case 5:
+                        mContext.startActivity(new Intent(mContext, StoActivity.class));
                         break;
                 }
                 if (!SettingsController.isEnabledAnim(mContext)) {

@@ -34,6 +34,7 @@
     <string name="menu_text_job">Вакансии</string>
     <string name="menu_text_users">Сотрудники</string>
     <string name="menu_text_settings">Настройки</string>
+    <string name="menu_text_sto">Стандарты</string>
 
     <!-- Activity вакансии -->
     <string name="activity_job_title">Вакансии</string>
@@ -100,6 +101,7 @@
     <string name="error_message_event_not_found">События не найдены</string>
     <string name="error_message_job_not_found">Вакансии не найдены</string>
     <string name="error_message_news_not_found_post">Записи не найдены</string>
+    <string name="error_message_sto_not_found_post">Стандарты не найдены</string>
     <string name="error_message_schedule_not_update">Не удалось проверить обновление</string>
 
     <!-- Menu -->
@@ -124,6 +126,7 @@
     <string name="toast_reloadApp">Требуется перезапуск приложения</string>
     <string name="toast_no_connection_the_internet">Для обновления данных подключитесь к интернету</string>
     <string name="toast_dont_text">Текст не найден</string>
+    <string name="toast_permission_ok">Разрешение успешно получено, повторите действие</string>
 
     <!-- Settings -->
     <string name="settings_category_general">Основные</string>

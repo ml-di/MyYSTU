@@ -104,7 +104,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        RecyclerView.ViewHolder mViewHolder;
+        final RecyclerView.ViewHolder mViewHolder;
 
         switch (viewType) {
             case ITEM_TOOLBAR_PLACEHOLDER:

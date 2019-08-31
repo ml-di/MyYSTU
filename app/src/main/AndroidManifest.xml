@@ -2,13 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.ystu.myystu">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <application
         android:name=".Application"
         android:allowBackup="true"
@@ -17,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ToolBar">
-        <activity android:name=".Activitys.UserFullActivity"></activity>
+        <activity android:name=".Activitys.StoActivity"></activity>
+        <activity android:name=".Activitys.UserFullActivity" />
         <activity android:name=".Activitys.UsersActivity" />
         <activity android:name=".Activitys.SettingsActivity" />
         <activity android:name=".Activitys.EventFullActivity" />
@@ -40,15 +34,23 @@
         <activity
             android:name=".Activitys.ViewPhotoActivity"
             android:theme="@style/PhotoViewTheme" />
+
         <provider
-            android:authorities="ru.ystu.myystu.provider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="ru.ystu.myystu.provider"
             android:exported="false"
             android:grantUriPermissions="true">
-                <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/file_paths">
-                </meta-data>
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
         </provider>
     </application>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

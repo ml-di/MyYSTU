@@ -59,19 +59,32 @@ public class FileInformation {
     private static String parseType(String fileType, int id){
 
         String result = null;
-
+        // application/pdf
         if(!Objects.equals(fileType, null)){
-            int startIndex = fileType.indexOf("name=") + 6;
-            result = fileType.substring(startIndex, fileType.length() - 1);
-            startIndex = result.lastIndexOf(".");
+
+            int startIndex = 0;
+            if (fileType.contains("name=")) {
+                startIndex = fileType.indexOf("name=") + 6;
+                result = fileType.substring(startIndex, fileType.length() - 1);
+                startIndex = result.lastIndexOf(".");
+            } else if (fileType.contains("/")) {
+                startIndex = fileType.lastIndexOf("/") + 1;
+            }
+
             switch (id){
                 // Получить расширение
                 case 0:
-                    result = result.substring(startIndex);
+                    if (result != null) {
+                        result = result.substring(startIndex);
+                    } else {
+                        result = fileType.substring(startIndex);
+                    }
                     break;
                 // Поулчить имя файла
                 case 1:
-                    result = result.substring(0, startIndex);
+                    if (result != null && fileType.contains("name=")) {
+                        result = result.substring(0, startIndex);
+                    }
                     break;
             }
         }

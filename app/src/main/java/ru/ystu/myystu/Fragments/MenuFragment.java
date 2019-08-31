@@ -43,11 +43,12 @@ public class MenuFragment extends Fragment {
         if(mList.size() > 0)
             mList.clear();
 
-        mList.add(new MenuItemsData(0, R.drawable.ic_schedule, getResources().getString(R.string.menu_text_schedule)));
-        mList.add(new MenuItemsData(2, R.drawable.ic_event, getResources().getString(R.string.menu_text_event)));
-        mList.add(new MenuItemsData(4, R.drawable.ic_person, getResources().getString(R.string.menu_text_users)));
-        mList.add(new MenuItemsData(3, R.drawable.ic_job, getResources().getString(R.string.menu_text_job)));
-        mList.add(new MenuItemsData(1, R.drawable.ic_map, getResources().getString(R.string.menu_text_map)));
+        mList.add(new MenuItemsData(0, R.drawable.ic_schedule, getString(R.string.menu_text_schedule)));
+        mList.add(new MenuItemsData(2, R.drawable.ic_event, getString(R.string.menu_text_event)));
+        mList.add(new MenuItemsData(4, R.drawable.ic_person, getString(R.string.menu_text_users)));
+        mList.add(new MenuItemsData(3, R.drawable.ic_job, getString(R.string.menu_text_job)));
+        mList.add(new MenuItemsData(5, R.drawable.ic_document_text, getString(R.string.menu_text_sto)));
+        mList.add(new MenuItemsData(1, R.drawable.ic_map, getString(R.string.menu_text_map)));
 
         final RecyclerView.Adapter mRecyclerViewAdapter = new MenuItemsAdapter(mList, getContext());
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
