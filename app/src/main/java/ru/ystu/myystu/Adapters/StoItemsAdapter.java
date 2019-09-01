@@ -1,22 +1,46 @@
 package ru.ystu.myystu.Adapters;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
+
+import ru.ystu.myystu.Activitys.StoActivity;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
+import ru.ystu.myystu.Utils.IntentHelper;
+import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.SettingsController;
 
 public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -63,6 +87,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         AppCompatTextView fileName;
         AppCompatTextView fileExt;
         AppCompatTextView summary;
+        AppCompatImageView downloadIcon;
 
         DocViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,9 +96,19 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileName = itemView.findViewById(R.id.itemStoDoc_name);
             fileExt = itemView.findViewById(R.id.itemStoDoc_fileType);
             summary = itemView.findViewById(R.id.itemStoDoc_summary);
+            downloadIcon = itemView.findViewById(R.id.itemStoDoc_download_icon);
         }
 
         void setDoc (StoItemsData_Doc docItem, Context mContext) {
+
+            final String fileNamePath = docItem.getFileName().replaceAll(" ", "_") + "." + docItem.getFileExt();
+            final File file = new File(Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS, fileNamePath);
+
+            if (file.exists()) {
+                downloadIcon.setVisibility(View.VISIBLE);
+            } else {
+                downloadIcon.setVisibility(View.GONE);
+            }
 
             fileName.setText(docItem.getFileName());
             fileExt.setText(docItem.getFileExt());
@@ -84,7 +119,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 summary.setVisibility(View.GONE);
             }
 
-            item.setOnClickListener(v -> Toast.makeText(mContext, docItem.getUrl(), Toast.LENGTH_SHORT).show());
+            item.setOnClickListener(v -> showMenu(mContext, docItem, fileNamePath, file, getAdapterPosition()));
         }
     }
 
@@ -171,6 +206,126 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 Toast.makeText(mContext, mContext.getString(R.string.toast_permission_ok), Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private static void showMenu (Context mContext, StoItemsData_Doc docData, String fileName, File file, int pos) {
+
+        final Menu mMenu = new MenuBuilder(mContext);
+        new MenuInflater(mContext).inflate(R.menu.menu_sto_item, mMenu);
+        if(file.exists()){
+            mMenu.findItem(R.id.menu_sto_item_open).setVisible(true);
+            mMenu.findItem(R.id.menu_sto_item_download).setTitle(R.string.menu_delete);
+            mMenu.findItem(R.id.menu_sto_item_download).setIcon(R.drawable.ic_delete);
+        } else {
+            mMenu.findItem(R.id.menu_sto_item_open).setVisible(false);
+            mMenu.findItem(R.id.menu_sto_item_download).setTitle(R.string.menu_download);
+            mMenu.findItem(R.id.menu_sto_item_download).setIcon(R.drawable.ic_download);
+        }
+
+        final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
+        bottomSheetMenu.setTitle(docData.getFileName());
+        bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
+        }
+        bottomSheetMenu.setOnItemClickListener(itemId -> {
+            switch (itemId) {
+                // Открыть
+                case R.id.menu_sto_item_open:
+                    IntentHelper.openFile(mContext, file);
+                    break;
+                // Скачать / Удалить
+                case R.id.menu_sto_item_download:
+                    if(NetworkInformation.hasConnection()){
+                        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                        } else {
+
+                            if (file.exists()) {
+                                // Удалить
+                                if (file.delete()) {
+                                    ((StoActivity) mContext).updateItem(pos);
+                                } else {
+                                    Toast.makeText(mContext, mContext
+                                            .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            } else {
+                                // Скачать
+                                downloadFile(mContext, fileName, docData.getUrl(), pos, false, file, docData);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(mContext,
+                                mContext.getResources()
+                                        .getString(R.string.error_message_internet_error),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                // Открыть в браузере
+                case R.id.menu_sto_item_openLinkInBrowser:
+                    IntentHelper.openInBrowser(mContext, docData.getUrl());
+                    break;
+                // Поделиться ссылкой
+                case R.id.menu_sto_item_shareLink:
+                    IntentHelper.shareText(mContext, docData.getFileName() + "\n\n" + docData.getUrl());
+                    break;
+                // Поделиться файлом
+                case R.id.menu_sto_item_shareFile:
+                    if (file.exists()) {
+                        final String titleIntent = mContext.getString(R.string.intent_schedule_share_doc);
+                        IntentHelper.shareFile(mContext, file, titleIntent, docData.getFileName(), docData.getSummary());
+                    } else {
+                        downloadFile(mContext, fileName, docData.getUrl(), pos, true, file, docData);
+                    }
+                    break;
+            }
+        });
+    }
+
+    private static void downloadFile(Context mContext, String fileName, String url, int pos, boolean isShare, File file, StoItemsData_Doc docData) {
+
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        } else {
+            new Thread(() -> {
+                if(url != null){
+
+                    BroadcastReceiver onComplete = null;
+                    try {
+                        final DownloadManager.Request mRequest = new DownloadManager.Request(Uri.parse(url));
+                        mRequest
+                                .setTitle(fileName)
+                                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                                .allowScanningByMediaScanner();
+
+                        final DownloadManager mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                        if (mDownloadManager != null) {
+                            mDownloadManager.enqueue(mRequest);
+                        }
+
+                        // Завершение загрузки
+                        onComplete = new BroadcastReceiver() {
+                            @Override
+                            public void onReceive(Context context, Intent intent) {
+                                ((StoActivity) mContext).updateItem(pos);
+                                if (isShare) {
+                                    final String titleIntent = mContext.getString(R.string.intent_schedule_share_doc);
+                                    IntentHelper.shareFile(mContext, file, titleIntent, docData.getFileName(), docData.getSummary());
+                                }
+                                context.unregisterReceiver(this);
+                            }
+                        };
+                        mContext.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                    } catch (Exception e) {
+                        if(onComplete != null)
+                            mContext.unregisterReceiver(onComplete);
+                    }
+                }
+            }).start();
         }
     }
 }

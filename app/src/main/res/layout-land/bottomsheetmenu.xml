@@ -25,7 +25,7 @@
         android:background="@color/colorBackground">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="50dp"
+            android:layout_width="30dp"
             android:layout_height="4dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

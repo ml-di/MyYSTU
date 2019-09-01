@@ -120,7 +120,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     downloadFile(file_item, link, mContext, getAdapterPosition(), 0);
                 } else {
                     // Открыть файл
-                    openFile(file_item, mContext);
+                    IntentHelper.openFile(mContext, file);
                 }
 
             });
@@ -256,7 +256,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         switch (id) {
 
                             case 0:
-                                openFile(file, mContext);
+                                IntentHelper.openFile(mContext, file);
                                 break;
 
                             case 1:
@@ -291,37 +291,6 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     mContext.getResources()
                             .getString(R.string.error_message_internet_error),
                     Toast.LENGTH_SHORT).show();
-        }
-    }
-    private static void openFile(File file, Context mContext) {
-
-        if(file.exists()){
-            try{
-
-                if(Build.VERSION.SDK_INT >= 24){
-                    try{
-                        Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                        m.invoke(null);
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-                }
-
-                IntentHelper.openFile(mContext, file);
-
-            } catch (Exception e){
-                if(e.getMessage().startsWith("No Activity found to handle")){
-                    Toast.makeText(mContext, mContext.getResources()
-                                    .getString(R.string.schedule_file_not_open),
-                            Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        } else {
-            Toast.makeText(mContext, mContext.getResources()
-                    .getString(R.string.error_message_schedule_file_not_found), Toast.LENGTH_SHORT).show();
         }
     }
 

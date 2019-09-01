@@ -1,5 +1,6 @@
 package ru.ystu.myystu.Activitys;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -100,8 +101,13 @@ public class StoActivity extends AppCompatActivity {
             getSto();
         } else{
             mList = savedInstanceState.getParcelableArrayList("mList");
-            mRecyclerViewAdapter = new StoItemsAdapter(mList);
-            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+            if (mList != null) {
+                mRecyclerViewAdapter = new StoItemsAdapter(mList);
+                mRecyclerViewAdapter.setHasStableIds(true);
+                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+            } else {
+                getSto();
+            }
         }
     }
 
@@ -131,12 +137,12 @@ public class StoActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
-        outState.putParcelableArrayList("mList", (ArrayList<? extends Parcelable>) mList);
+        outState.putParcelableArrayList("mList", mList);
     }
 
     @Override
@@ -210,5 +216,9 @@ public class StoActivity extends AppCompatActivity {
         } else {
             recyclerView.clearAnimation();
         }
+    }
+
+    public void updateItem (int pos) {
+        mRecyclerViewAdapter.notifyItemChanged(pos);
     }
 }

@@ -97,7 +97,6 @@
     <string name="error_message_schedule_change_not_found">Изменения не найдены</string>
     <string name="error_message_schedule_network_download_error">Ошибка скачивания документа</string>
     <string name="error_message_schedule_dir_create_error">Ошибка создания директории</string>
-    <string name="error_message_schedule_file_not_found">Расписание не найдено</string>
     <string name="error_message_event_not_found">События не найдены</string>
     <string name="error_message_job_not_found">Вакансии не найдены</string>
     <string name="error_message_news_not_found_post">Записи не найдены</string>
@@ -118,6 +117,7 @@
     <string name="menu_copyText">Скопировать текст</string>
     <string name="menu_openAuthor">Открыть автора</string>
     <string name="menu_search">Поиск</string>
+    <string name="menu_open">Открыть</string>
 
     <!-- Toast -->
     <string name="toast_isCopyLink">Ссылка скопирована</string>

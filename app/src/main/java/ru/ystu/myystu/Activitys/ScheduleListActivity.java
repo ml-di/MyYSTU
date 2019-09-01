@@ -205,7 +205,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                                 }).start();
                             } else {
                                 ErrorMessage.show(mainLayout, 1,
-                                        getResources().getString(R.string.error_message_schedule_file_not_found),
+                                        getResources().getString(R.string.error_message_file_not_found),
                                         mContext);
                             }
                         }
@@ -215,7 +215,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                             mSwipeRefreshLayout.setRefreshing(false);
                             if(e.getMessage().equals("Not found")){
                                 ErrorMessage.show(mainLayout, 1,
-                                        getResources().getString(R.string.error_message_schedule_file_not_found),
+                                        getResources().getString(R.string.error_message_file_not_found),
                                         mContext);
                             } else
                                 ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
