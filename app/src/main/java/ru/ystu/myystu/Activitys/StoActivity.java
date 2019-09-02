@@ -10,6 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import ru.ystu.myystu.Adapters.StoItemsAdapter;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Network.LoadLists.GetListDocFromURL;
 import ru.ystu.myystu.Network.LoadLists.GetListStoFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.Converter;
@@ -42,7 +44,8 @@ public class StoActivity extends AppCompatActivity {
 
     private Context mContext;
     private ConstraintLayout mainLayout;
-    private final String url = "https://www.ystu.ru/information/students/standart/";         // Url страницы трудоустройство сайта ЯГТУ
+    private final String url_sto_doc = "https://www.ystu.ru/information/students/standart/";
+    private final String url_other_doc = "https://www.ystu.ru/information/students/normativnye-dokumenty-po-obucheniyu/";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -51,6 +54,7 @@ public class StoActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CompositeDisposable mDisposables;
     private GetListStoFromURL getListStoFromURL;
+    private GetListDocFromURL getListDocFromURL;
     private AppDatabase db;
 
     @Override
@@ -93,6 +97,7 @@ public class StoActivity extends AppCompatActivity {
 
         mDisposables = new CompositeDisposable();
         getListStoFromURL = new GetListStoFromURL();
+        getListDocFromURL = new GetListDocFromURL();
 
         if (db == null || !db.isOpen())
             db = Application.getInstance().getDatabase();
@@ -161,7 +166,8 @@ public class StoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_sto_openInBrowser) {
-            IntentHelper.openInBrowser(mContext, url);
+            // TODO Выбрать URL
+            IntentHelper.openInBrowser(mContext, url_sto_doc);
         }
 
         return true;
@@ -173,12 +179,22 @@ public class StoActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setRefreshing(true);
 
         if (NetworkInformation.hasConnection()) {
-            final Single<ArrayList<Parcelable>> mSingleStoList = getListStoFromURL.getSingleStoList(url, mList);
+            final Single<ArrayList<Parcelable>> mSingleStoList = getListStoFromURL.getSingleStoList(url_sto_doc, mList);
+            final Single<ArrayList<Parcelable>> mSingleDocList = getListDocFromURL.getSingleDocList(url_other_doc, mList);
 
-            mDisposables.add(mSingleStoList
+            mDisposables.add(Single.merge(mSingleStoList, mSingleDocList)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>() {
+                    .subscribe(docList -> {
+                        mList = docList;
+                        mRecyclerViewAdapter = new StoItemsAdapter(mList);
+                        mRecyclerViewAdapter.setHasStableIds(true);
+                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                        setRecyclerViewAnim(mRecyclerView);
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }));
+                    /*.subscribeWith(new DisposableSingleObserver<ArrayList<Parcelable>>() {
                         @Override
                         public void onSuccess(ArrayList<Parcelable> parcelables) {
 
@@ -203,7 +219,7 @@ public class StoActivity extends AppCompatActivity {
                                 ErrorMessage.show(mainLayout, -1, e.getMessage(), mContext);
                             }
                         }
-                    }));
+                    }));*/
         }
     }
 

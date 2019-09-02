@@ -39,6 +39,6 @@
             style="@style/Toolbar"
             android:theme="@style/Toolbar"
             app:popupTheme="@style/ToolBar_Popup"
-            app:title="@string/menu_text_sto" />
+            app:title="@string/menu_text_documents" />
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

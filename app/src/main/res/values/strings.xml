@@ -34,7 +34,7 @@
     <string name="menu_text_job">Вакансии</string>
     <string name="menu_text_users">Сотрудники</string>
     <string name="menu_text_settings">Настройки</string>
-    <string name="menu_text_sto">Стандарты</string>
+    <string name="menu_text_documents">Документы</string>
 
     <!-- Activity вакансии -->
     <string name="activity_job_title">Вакансии</string>

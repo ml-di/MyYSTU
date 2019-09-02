@@ -1,7 +1,9 @@
 package ru.ystu.myystu.Network.LoadLists;
 
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,9 +21,9 @@ import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
 
-public class GetListStoFromURL {
+public class GetListDocFromURL {
 
-    public Single<ArrayList<Parcelable>> getSingleStoList (String url, ArrayList<Parcelable> mList) {
+    public Single<ArrayList<Parcelable>> getSingleDocList (String url, ArrayList<Parcelable> mList) {
 
         return Single.create(emitter -> {
 
@@ -54,49 +56,52 @@ public class GetListStoFromURL {
                                     mList.add(new StoItemsData_Title(els.select("h4.detail-danger").first().text()));
                                 }
 
-                                int index = 0;
                                 for (Element el : els) {
                                     // SUBTITLE
-                                    if (el.is("h4") && !el.hasClass("detail-danger")) {
-                                        mList.add(new StoItemsData_Subtitle(el.select("h4").first().text()));
+                                    if (el.is("p")
+                                            && el.text().length() > 5) {
+                                        mList.add(new StoItemsData_Subtitle(el.text()));
                                     }
 
-                                    if (el.is("span")) {
-                                        if (el.is("span")) {
-                                            for (Element e : el.getAllElements()) {
-                                                if (e.is("a")) {
-                                                    el = e;
-                                                    break;
+                                    // DOCUMENTS
+                                    if (el.is("div.page-main-content__spoiler.js-spoiler")) {
+
+                                        for (Element e : el.children()) {
+
+                                            if (e.is("p") && !e.children().isEmpty()) {
+                                                String url = "https://www.ystu.ru";
+                                                String summary = null;
+                                                String fileName = "";
+                                                String fileExt = null;
+
+                                                for (Element doc_e : e.getAllElements()) {
+
+                                                    // URL
+                                                    if (doc_e.is("a") && doc_e.attr("href").length() > 1) {
+                                                        url += doc_e.attr("href");
+                                                        fileExt = url.substring(url.lastIndexOf(".") + 1);
+
+                                                        if (doc_e.text().length() > 1) {
+                                                            fileName = doc_e.text().replaceAll("&nbsp;", "");
+                                                        }
+                                                    }
                                                 }
+
+                                                for (Element doc_e : e.children()) {
+                                                    // SUMMARY
+                                                    if (doc_e.is("span")
+                                                            && doc_e.children().isEmpty()
+                                                            && doc_e.text().length() > 1) {
+                                                        summary = doc_e.text();
+                                                    }
+                                                }
+
+                                                mList.add(new StoItemsData_Doc(fileName, fileExt, summary, url));
+
+                                                int test = 0;
                                             }
                                         }
                                     }
-
-                                    if (el.is("a")  && el.attr("href").length() > 1) {
-
-                                        // DOCUMENT
-                                        String fileName = null;
-                                        String summary = null;
-                                        final Elements el_childrens = el.getAllElements();
-
-                                        for (Element e : el_childrens) {
-                                            if (e.is("span") && e.text().length() > 1) {
-                                                fileName = e.text();
-                                                break;
-                                            }
-                                        }
-                                        final String url = "https://www.ystu.ru" + el.attr("href");
-                                        final String fileExt = url.substring(url.lastIndexOf(".") + 1);
-
-                                        // SUMMARY DOC
-                                        if (els.get(index + 1).is("span") && els.get(index + 1).text().length() > 1) {
-                                            summary = els.get(index + 1).text();
-                                        }
-
-                                        mList.add(new StoItemsData_Doc(fileName, fileExt, summary, url));
-                                    }
-
-                                    index++;
                                 }
 
                                 if(!emitter.isDisposed()){
@@ -117,4 +122,5 @@ public class GetListStoFromURL {
                     });
         });
     }
+
 }
