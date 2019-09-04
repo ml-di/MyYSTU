@@ -7,6 +7,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.app.AlertDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
@@ -169,8 +171,20 @@ public class StoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_sto_openInBrowser) {
+
             // TODO Выбрать URL
-            IntentHelper.openInBrowser(mContext, url_sto_doc);
+            final String[] url_titles = new String[]{getString(R.string.menu_url_titles_sto), getString(R.string.menu_url_titles_doc)};
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.menu_openInBrowser));
+            builder.setItems(url_titles, (dialog, which) -> {
+                if (which == 0) {
+                    IntentHelper.openInBrowser(mContext, url_sto_doc);
+                } else if (which == 1) {
+                    IntentHelper.openInBrowser(mContext, url_other_doc);
+                }
+            });
+            builder.setCancelable(true);
+            builder.show();
         }
 
         return true;

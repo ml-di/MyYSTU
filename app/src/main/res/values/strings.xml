@@ -119,6 +119,9 @@
     <string name="menu_search">Поиск</string>
     <string name="menu_open">Открыть</string>
 
+    <string name="menu_url_titles_sto">Стандарты оформления работ</string>
+    <string name="menu_url_titles_doc">Полезные документы</string>
+
     <!-- Toast -->
     <string name="toast_isCopyLink">Ссылка скопирована</string>
     <string name="toast_isCopyText">Текст скопирован</string>
