@@ -228,7 +228,6 @@ public class BellFragment extends Fragment {
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             final int pos = viewHolder.getAdapterPosition();
-            removeItem(pos);
             new Thread(() -> {
                 try {
                     AppDatabase db = Application.getInstance().getDatabase();
@@ -240,6 +239,7 @@ public class BellFragment extends Fragment {
                 } catch (SQLiteException e) {
                     Objects.requireNonNull(getActivity()).runOnUiThread(() -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show());
                 }
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> removeItem(pos));
             }).start();
         }
     };

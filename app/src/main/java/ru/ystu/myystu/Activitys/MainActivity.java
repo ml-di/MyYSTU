@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
             final Single<String> mSingleCountEvent = getCountEvent.getCountEvent(urlEvent);
             final Single<String> mSingleCountJob = getCountJob.getCountJob(urlJob);
 
-            mDisposables.add(Single.merge(mSingleCountEvent, mSingleCountJob)
+            mDisposables.add(Single.concat(mSingleCountEvent, mSingleCountJob)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .toList()

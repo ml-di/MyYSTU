@@ -236,30 +236,30 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     break;
                 // Скачать / Удалить
                 case R.id.menu_sto_item_download:
-                    if(NetworkInformation.hasConnection()){
-                        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                        } else {
 
-                            if (file.exists()) {
-                                // Удалить
-                                if (file.delete()) {
-                                    ((StoActivity) mContext).updateItem(pos);
-                                } else {
-                                    Toast.makeText(mContext, mContext
-                                            .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            } else {
-                                // Скачать
-                                downloadFile(mContext, fileName, docData.getUrl(), pos, false, file, docData);
-                            }
+                    if (file.exists()) {
+                        // Удалить
+                        if (file.delete()) {
+                            ((StoActivity) mContext).updateItem(pos);
+                        } else {
+                            Toast.makeText(mContext, mContext
+                                    .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
+                                    .show();
                         }
                     } else {
-                        Toast.makeText(mContext,
-                                mContext.getResources()
-                                        .getString(R.string.error_message_internet_error),
-                                Toast.LENGTH_SHORT).show();
+                        // Скачать
+                        if(NetworkInformation.hasConnection()) {
+                            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                            } else {
+                                downloadFile(mContext, fileName, docData.getUrl(), pos, false, file, docData);
+                            }
+                        } else {
+                            Toast.makeText(mContext,
+                                    mContext.getResources()
+                                            .getString(R.string.error_message_internet_error),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                     break;
                 // Открыть в браузере
@@ -276,7 +276,18 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         final String titleIntent = mContext.getString(R.string.intent_schedule_share_doc);
                         IntentHelper.shareFile(mContext, file, titleIntent, docData.getFileName(), docData.getSummary());
                     } else {
-                        downloadFile(mContext, fileName, docData.getUrl(), pos, true, file, docData);
+                        if(NetworkInformation.hasConnection()) {
+                            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                            } else {
+                                downloadFile(mContext, fileName, docData.getUrl(), pos, true, file, docData);
+                            }
+                        } else {
+                            Toast.makeText(mContext,
+                                    mContext.getResources()
+                                            .getString(R.string.error_message_internet_error),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                     break;
             }

@@ -10,8 +10,9 @@ import androidx.room.PrimaryKey;
 @Entity (tableName = "sto_doc")
 public class StoItemsData_Doc implements Parcelable {
 
-    @PrimaryKey (autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    @ColumnInfo(name = "pos")
+    private int position;
 
     @ColumnInfo (name = "fileName")
     private final String fileName;
@@ -68,9 +69,6 @@ public class StoItemsData_Doc implements Parcelable {
         parcel.writeString(url);
     }
 
-    public int getId() {
-        return id;
-    }
     public String getFileName() {
         return fileName;
     }
@@ -82,5 +80,12 @@ public class StoItemsData_Doc implements Parcelable {
     }
     public String getUrl() {
         return url;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

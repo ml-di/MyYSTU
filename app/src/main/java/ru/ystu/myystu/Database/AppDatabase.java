@@ -13,6 +13,9 @@ import ru.ystu.myystu.AdaptersData.NewsItemsData;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
+import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
+import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
+import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
 import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.Database.Converters.ListJsonConverter;
@@ -23,6 +26,7 @@ import ru.ystu.myystu.Database.Dao.EventsItemsDao;
 import ru.ystu.myystu.Database.Dao.JobItemsDao;
 import ru.ystu.myystu.Database.Dao.NewsItemsDao;
 import ru.ystu.myystu.Database.Dao.ScheduleItemDao;
+import ru.ystu.myystu.Database.Dao.StoItemsDao;
 import ru.ystu.myystu.Database.Dao.UserFullDao;
 import ru.ystu.myystu.Database.Dao.UsersItemsDao;
 import ru.ystu.myystu.Database.Data.CountersData;
@@ -47,8 +51,11 @@ import ru.ystu.myystu.Database.Data.UserFullData;
         NewsItemsData.class,
         NewsItemsData_DontAttach.class,
         NewsItemsPhotoData.class,
-        CountersData.class},
-        version = 2, exportSchema = false)
+        CountersData.class,
+        StoItemsData_Title.class,
+        StoItemsData_Subtitle.class,
+        StoItemsData_Doc.class},
+        version = 4, exportSchema = false)
 @TypeConverters({
         StringArraysConverter.class,
         ListJsonConverter.class})
@@ -62,5 +69,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract EventFullDao eventFullDao();
     public abstract NewsItemsDao newsItemsDao();
     public abstract CountersDao countersDao();
+    public abstract StoItemsDao stoItemsDao();
 
 }

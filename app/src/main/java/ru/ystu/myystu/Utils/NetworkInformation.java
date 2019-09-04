@@ -1,20 +1,17 @@
 package ru.ystu.myystu.Utils;
 
-import android.os.AsyncTask;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
 public class NetworkInformation {
 
     public static boolean hasConnection() {
         try {
             return new ConnectWebsite().execute().get();
-        } catch (ExecutionException e) {
-            return false;
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             return false;
         }
     }

@@ -23,7 +23,9 @@ import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
 
 public class GetListDocFromURL {
 
-    public Single<ArrayList<Parcelable>> getSingleDocList (String url, ArrayList<Parcelable> mList) {
+    public Single<ArrayList<Parcelable>> getSingleDocList (String url) {
+
+        final ArrayList<Parcelable> mList = new ArrayList<>();
 
         return Single.create(emitter -> {
 

@@ -10,8 +10,9 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "sto_subtitle")
 public class StoItemsData_Subtitle implements Parcelable {
 
-    @PrimaryKey (autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    @ColumnInfo(name = "pos")
+    private int position;
 
     @ColumnInfo (name = "subtitle")
     private final String subtitle;
@@ -47,10 +48,14 @@ public class StoItemsData_Subtitle implements Parcelable {
         parcel.writeString(subtitle);
     }
 
-    public int getId() {
-        return id;
-    }
     public String getSubtitle() {
         return subtitle;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

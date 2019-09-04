@@ -34,30 +34,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_document" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/itemJob_menu"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="13dp"
-            android:scaleType="fitStart"
-            android:tint="@color/colorMenuIcon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_expand" />
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemJob_organization"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:alpha="0.75"
             android:textColor="@color/colorTextBlack"
             android:textSize="20sp"
-            android:alpha="0.75"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/itemJob_menu"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/itemJob_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Название организации" />

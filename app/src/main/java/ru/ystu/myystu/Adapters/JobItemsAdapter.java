@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,7 +61,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private AppCompatTextView organization;
         private AppCompatTextView fileType;
         private AppCompatImageView icon;
-        private AppCompatImageView menu;
+        private ConstraintLayout item;
 
         JobItemViewHolder(View itemView) {
             super(itemView);
@@ -68,7 +69,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             organization = itemView.findViewById(R.id.itemJob_organization);
             fileType = itemView.findViewById(R.id.itemJob_fileType);
             icon  = itemView.findViewById(R.id.itemJob_icon);
-            menu = itemView.findViewById(R.id.itemJob_menu);
+            item = itemView.findViewById(R.id.itemJob);
 
         }
 
@@ -84,7 +85,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 fileType.setText("");
             }
 
-            menu.setOnClickListener(view -> showMenu(mContext, jobItem, organization.getText().toString()));
+            item.setOnClickListener(view -> showMenu(mContext, jobItem, organization.getText().toString()));
         }
     }
 
