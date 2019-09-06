@@ -23,6 +23,7 @@ import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 import android.content.Context;
@@ -79,7 +80,7 @@ public class UserFullActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_full);
 
         mContext = this;
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
 
         mainLayout = findViewById(R.id.main_layout_userFull);
         mSwipeRefreshLayout = findViewById(R.id.refresh_userFull);
@@ -100,6 +101,9 @@ public class UserFullActivity extends AppCompatActivity {
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getUserInfo);
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, this));
+
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, scroll, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_userFull);
         setSupportActionBar(mToolbar);

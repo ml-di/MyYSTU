@@ -4,6 +4,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Adapters.ScheduleMenuItemsAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleMenuItemsData;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.Converter;
+import ru.ystu.myystu.Utils.PaddingHelper;
 
 public class ScheduleTabOneFragment extends Fragment {
 
@@ -37,6 +41,7 @@ public class ScheduleTabOneFragment extends Fragment {
         RecyclerView.Adapter mRecyclerViewAdapter = new ScheduleMenuItemsAdapter(mList, getContext());
         mRecyclerViewAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
     }
 
     @Override

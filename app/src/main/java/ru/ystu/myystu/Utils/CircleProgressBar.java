@@ -1,4 +1,4 @@
-package ru.ystu.myystu.Network;
+package ru.ystu.myystu.Utils;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -8,7 +8,7 @@ import android.graphics.RectF;
 
 import com.facebook.drawee.drawable.ProgressBarDrawable;
 
-public class FrescoLoadProgressBar extends ProgressBarDrawable {
+public class CircleProgressBar extends ProgressBarDrawable {
 
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private int mBackgroundColor;
@@ -18,7 +18,7 @@ public class FrescoLoadProgressBar extends ProgressBarDrawable {
     private boolean mHideWhenZero = false;
     private int radius = 60;
 
-    public FrescoLoadProgressBar() {
+    public CircleProgressBar() {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(12f);
     }

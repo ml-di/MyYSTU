@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -34,7 +32,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Network.LoadScheduleFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
@@ -44,22 +41,10 @@ import ru.ystu.myystu.Utils.SettingsController;
 
 public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
     private static final int ITEM_SCHEDULE = 1;
 
     private ArrayList<Parcelable> mList;
     private Context mContext;
-
-    static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
-
-        PlaceholderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        void setPlaceholder (ToolbarPlaceholderData placeholderItem) {
-
-        }
-    }
 
     static class ScheduleItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -158,10 +143,6 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         RecyclerView.ViewHolder mViewHolder;
 
         switch (viewType) {
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final View viewPlaceholder = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_toolbar_placeholder, parent, false);
-                mViewHolder = new PlaceholderViewHolder(viewPlaceholder);
-                break;
 
             case ITEM_SCHEDULE:
                 final View viewSchedule = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item, parent, false);
@@ -181,10 +162,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         int viewType = holder.getItemViewType();
         switch (viewType) {
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mList.get(position);
-                ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
-                break;
+
             case ITEM_SCHEDULE:
                 final ScheduleListItemData schedule = (ScheduleListItemData) mList.get(position);
                 ((ScheduleItemViewHolder) holder).setSchedule(schedule, mContext);
@@ -207,9 +185,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         int viewType;
 
-        if (mList.get(position) instanceof ToolbarPlaceholderData) {
-            viewType = ITEM_TOOLBAR_PLACEHOLDER;
-        } else if (mList.get(position) instanceof ScheduleListItemData) {
+        if (mList.get(position) instanceof ScheduleListItemData) {
             viewType = ITEM_SCHEDULE;
         } else {
             viewType = -1;

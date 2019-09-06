@@ -31,7 +31,7 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
 
         final ConstraintLayout mainLayout = findViewById(R.id.main_layout_map);
         mSwipeRefreshLayout = findViewById(R.id.refresh_map);

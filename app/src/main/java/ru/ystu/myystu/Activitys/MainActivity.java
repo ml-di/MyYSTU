@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
 
-            LightStatusBar.setLight(true, true, this);
+            LightStatusBar.setLight(true, true, this, false);
             checkUpdate();
         } else {
             updateList = savedInstanceState.getParcelableArrayList("updateList");
@@ -88,9 +88,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
                 || mBottomBar.getSelectedItemId() == R.id.tab_bell){
-            LightStatusBar.setLight(true, true, this);
+            LightStatusBar.setLight(true, true, this, false);
         } else if (mBottomBar.getSelectedItemId() == R.id.tab_menu){
-            LightStatusBar.setLight(false, true, this);
+            LightStatusBar.setLight(false, true, this, false);
         }
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(true, true, this);
+                    LightStatusBar.setLight(true, true, this, false);
 
                     break;
                 // Уведомления
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mBellFragment, "BELL_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(true, true, this);
+                    LightStatusBar.setLight(true, true, this, false);
 
                     break;
                 // Меню
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mMenuFragment, "MENU_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(false, true, this);
+                    LightStatusBar.setLight(false, true, this, false);
                     break;
             }
 

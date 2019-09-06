@@ -24,6 +24,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 import android.content.Context;
@@ -64,7 +65,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_list);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_schedule_list);
 
@@ -91,6 +92,9 @@ public class ScheduleListActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recycler_schedule_items);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
         mDisposables = new CompositeDisposable();
         getSchedule = new GetSchedule();
@@ -140,7 +144,6 @@ public class ScheduleListActivity extends AppCompatActivity {
             changeList.clear();
         }
 
-        mList.add(new ToolbarPlaceholderData(0));
         mSwipeRefreshLayout.setRefreshing(true);
 
         if(NetworkInformation.hasConnection()){

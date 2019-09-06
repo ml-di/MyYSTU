@@ -14,7 +14,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.UsersItemsAdapter;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
@@ -24,6 +23,7 @@ import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 import android.content.Context;
@@ -66,7 +66,7 @@ public class UsersActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_users);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_users);
         setSupportActionBar(mToolbar);
@@ -97,8 +97,10 @@ public class UsersActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mDisposables = new CompositeDisposable();
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
+        mDisposables = new CompositeDisposable();
         getListUsersFromURL = new GetListUsersFromURL();
 
         if (db == null || !db.isOpen())
@@ -253,7 +255,6 @@ public class UsersActivity extends AppCompatActivity {
                         if (mList.size() > 0)
                             mList.clear();
 
-                        mList.add(new ToolbarPlaceholderData(0));
                         mList.addAll(db.usersItemsDao().getAllUsersItems());
 
                         mRecyclerViewAdapter = new UsersItemsAdapter(mList, this);

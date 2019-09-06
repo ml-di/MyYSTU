@@ -10,6 +10,7 @@ import ru.ystu.myystu.AdaptersData.ScheduleChangeData;
 import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 import android.os.Bundle;
@@ -30,7 +31,7 @@ public class ScheduleChangeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_change);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_schedule_change);
         setSupportActionBar(mToolbar);
@@ -53,6 +54,7 @@ public class ScheduleChangeActivity extends AppCompatActivity {
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        PaddingHelper.setPaddingStatusBarAndToolBar(this, mRecyclerView, true);
 
         if(getIntent().getExtras() != null){
             final ArrayList<String> tempList = getIntent().getExtras().getStringArrayList("mList");
@@ -79,7 +81,6 @@ public class ScheduleChangeActivity extends AppCompatActivity {
                 }
             }
 
-            mList.add(new ToolbarPlaceholderData(0));
             Collections.reverse(mList);
 
             RecyclerView.Adapter mRecyclerViewAdapter = new ScheduleChangeAdapter(mList);

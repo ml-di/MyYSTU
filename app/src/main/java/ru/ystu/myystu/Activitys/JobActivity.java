@@ -66,7 +66,7 @@ public class JobActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_job);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_job);
         setSupportActionBar(mToolbar);

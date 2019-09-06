@@ -24,6 +24,7 @@
     <color name="colorTransparent">#00000000</color>
 
     <color name="colorToolBar">#F2FFFFFF</color>
+    <color name="colorNavBar">#CCFFFFFF</color>
     <color name="colorToolbarPhotoView">#66000000</color>
     <color name="colorPlaceHolderImage">#EEEEEE</color>
     <color name="colorBackground">#FFFFFF</color>

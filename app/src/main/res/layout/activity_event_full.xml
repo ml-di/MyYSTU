@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    android:fitsSystemWindows="true"
     tools:context=".Activitys.EventFullActivity">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -24,31 +23,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="vertical"
+                android:clipToPadding="false"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <androidx.appcompat.widget.ContentFrameLayout
-                        android:id="@+id/eventFull_toolbarPlaceholder"
-                        android:layout_width="match_parent"
-                        android:layout_height="?actionBarSize"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/eventFull_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:gravity="fill_horizontal"
                         android:textAllCaps="true"
                         android:textColor="@color/colorTextBlack"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        app:layout_constraintTop_toBottomOf="@id/eventFull_toolbarPlaceholder"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:text="Конференция Лингводидактика в неязыковом вузе" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
@@ -169,17 +163,25 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/eventFull_appBar"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:fitsSystemWindows="true">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolBar_eventFull"
-            style="@style/Toolbar"
-            android:theme="@style/Toolbar"
-            app:popupTheme="@style/ToolBar_Popup"/>
-    </com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/eventFull_appBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:elevation="0dp">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolBar_eventFull"
+                style="@style/Toolbar"
+                android:theme="@style/Toolbar"
+                app:popupTheme="@style/ToolBar_Popup"/>
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

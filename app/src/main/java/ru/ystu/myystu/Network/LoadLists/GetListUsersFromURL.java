@@ -17,7 +17,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 
 public class GetListUsersFromURL {
@@ -63,8 +62,6 @@ public class GetListUsersFromURL {
 
                                 if(mList.size() > 0)
                                     mList.clear();
-
-                                mList.add(new ToolbarPlaceholderData(0));
 
                                 String url;
                                 String image;

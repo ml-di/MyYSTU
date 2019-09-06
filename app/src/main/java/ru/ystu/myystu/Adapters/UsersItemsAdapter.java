@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.UserFullActivity;
 import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.FrescoHelper;
@@ -30,7 +29,6 @@ import ru.ystu.myystu.Utils.SettingsController;
 
 public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-    private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
     private static final int ITEM_HEADER = 1;
     private static final int ITEM_USER = 2;
     private static final int ITEM_DIVIDER = 3;
@@ -38,16 +36,6 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private List<Parcelable> mList;
     private List<Parcelable> mListFiltered;
     private Context mContext;
-
-    static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
-        PlaceholderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        void setPlaceholder (ToolbarPlaceholderData placeholderItem) {
-
-        }
-    }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         HeaderViewHolder(@NonNull View itemView) {
@@ -140,11 +128,6 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         switch (viewType) {
 
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final View viewPlaceholder = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_toolbar_placeholder, parent, false);
-                mViewHolder = new PlaceholderViewHolder(viewPlaceholder);
-                break;
-
             case ITEM_HEADER:
                 final View viewHeader = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_event_item_header, parent, false);
                 mViewHolder = new HeaderViewHolder(viewHeader);
@@ -175,10 +158,6 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         int viewType = holder.getItemViewType();
         switch (viewType) {
 
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mListFiltered.get(position);
-                ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
-                break;
             case ITEM_HEADER:
                 final EventItemsData_Header header = (EventItemsData_Header)mListFiltered.get(position);
                 ((HeaderViewHolder) holder).setHeader(header, mContext);
@@ -199,9 +178,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         int viewType;
 
-        if (mListFiltered.get(position) instanceof ToolbarPlaceholderData) {
-            viewType = ITEM_TOOLBAR_PLACEHOLDER;
-        } else if (mListFiltered.get(position) instanceof EventItemsData_Header) {
+        if (mListFiltered.get(position) instanceof EventItemsData_Header) {
             viewType = ITEM_HEADER;
         } else if (mListFiltered.get(position) instanceof UsersItemsData) {
             viewType = ITEM_USER;
@@ -254,7 +231,6 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         }
                     }
                     mListFiltered = resultList;
-                    mListFiltered.add(0, new ToolbarPlaceholderData(0));
                     mListFiltered.add(1, new StringData(-1, mContext.getResources().getString(R.string.other_search_results)));
                 }
 

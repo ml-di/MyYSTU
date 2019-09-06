@@ -35,7 +35,7 @@ public class ScheduleActivity extends AppCompatActivity implements ActivityCompa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
 
         final Toolbar mToolBar = findViewById(R.id.toolBar_schedule);
         setSupportActionBar(mToolBar);

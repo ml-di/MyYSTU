@@ -19,7 +19,6 @@ import ru.ystu.myystu.Activitys.EventFullActivity;
 import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -29,7 +28,6 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int ITEM_HEADER = 0;
     private static final int ITEM_DIVIDER = 1;
     private static final int ITEM_EVENT = 2;
-    private static final int ITEM_TOOLBAR_PLACEHOLDER = 3;
 
     private List<Parcelable> mList;
     private Context mContext;
@@ -157,16 +155,6 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
-        PlaceholderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        void setPlaceholder (ToolbarPlaceholderData placeholderItem) {
-
-        }
-    }
-
     public EventItemsAdapter(List<Parcelable> mList, Context mContext) {
         this.mList = mList;
         this.mContext = mContext;
@@ -201,11 +189,6 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 mViewHolder = new EventItemViewHolder(viewEvent);
                 break;
 
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final View viewPlaceholder = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_toolbar_placeholder, parent, false);
-                mViewHolder = new PlaceholderViewHolder(viewPlaceholder);
-                break;
-
             default:
                 mViewHolder = null;
                 break;
@@ -231,10 +214,6 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 final EventItemsData_Event viewItem = (EventItemsData_Event) mList.get(position);
                 ((EventItemViewHolder) holder).setViewItem(viewItem, mContext);
                 break;
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mList.get(position);
-                ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
-                break;
         }
     }
 
@@ -248,8 +227,6 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewType = ITEM_DIVIDER;
         } else if (mList.get(position) instanceof EventItemsData_Event) {
             viewType = ITEM_EVENT;
-        } else if (mList.get(position) instanceof ToolbarPlaceholderData) {
-            viewType = ITEM_TOOLBAR_PLACEHOLDER;
         } else {
             viewType = -1;
         }

@@ -11,27 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.AdaptersData.ScheduleChangeData;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.StringFormatter;
 
 public class ScheduleChangeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
     private static final int ITEM_CHANGE = 1;
 
     private ArrayList<Parcelable> mList;
-
-    static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
-
-        PlaceholderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        void setPlaceholder (ToolbarPlaceholderData placeholderItem) {
-
-        }
-    }
 
     static class ScheduleChangeViewHolder extends RecyclerView.ViewHolder{
 
@@ -62,10 +49,6 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         RecyclerView.ViewHolder mViewHolder;
 
         switch (viewType) {
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final View viewPlaceholder = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_toolbar_placeholder, parent, false);
-                mViewHolder = new PlaceholderViewHolder(viewPlaceholder);
-                break;
 
             case ITEM_CHANGE:
                 final View viewChange = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item_change, parent, false);
@@ -85,10 +68,6 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         int viewType = holder.getItemViewType();
         switch (viewType) {
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mList.get(position);
-                ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
-                break;
             case ITEM_CHANGE:
                 final ScheduleChangeData change = (ScheduleChangeData) mList.get(position);
                 ((ScheduleChangeViewHolder) holder).setScheduleChange(change);
@@ -110,9 +89,7 @@ public class ScheduleChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public int getItemViewType(int position) {
         int viewType;
 
-        if (mList.get(position) instanceof ToolbarPlaceholderData) {
-            viewType = ITEM_TOOLBAR_PLACEHOLDER;
-        } else if (mList.get(position) instanceof ScheduleChangeData) {
+        if (mList.get(position) instanceof ScheduleChangeData) {
             viewType = ITEM_CHANGE;
         } else {
             viewType = -1;

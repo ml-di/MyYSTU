@@ -28,7 +28,6 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.StringData;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Database.Data.CountersData;
@@ -40,6 +39,7 @@ import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class EventActivity extends AppCompatActivity {
@@ -62,7 +62,7 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_event);
 
@@ -89,6 +89,9 @@ public class EventActivity extends AppCompatActivity {
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(() -> getEvent(url));
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
+
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
         mDisposables = new CompositeDisposable();
         getListEventFromURL = new GetListEventFromURL();
@@ -256,8 +259,6 @@ public class EventActivity extends AppCompatActivity {
                     if (db.getOpenHelper().getReadableDatabase().isOpen() && db.eventsItemsDao().getCountEventItems() > 0) {
                         if (mList.size() > 0)
                             mList.clear();
-
-                        mList.add(new ToolbarPlaceholderData(0));
 
                         final int countListItems = db.eventsItemsDao().getCountDividers() + db.eventsItemsDao().getCountEventItems() + 2;
 

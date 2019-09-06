@@ -14,8 +14,11 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
@@ -43,6 +46,7 @@ import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class StoActivity extends AppCompatActivity {
@@ -70,7 +74,7 @@ public class StoActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_sto);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
 
         final Toolbar mToolbar = findViewById(R.id.toolBar_sto);
         setSupportActionBar(mToolbar);
@@ -95,7 +99,10 @@ public class StoActivity extends AppCompatActivity {
                 R.color.colorPrimary);
 
         mSwipeRefreshLayout.setOnRefreshListener(this::getSto);
-        mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
+
+        // Отступы сверху
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -172,7 +179,6 @@ public class StoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_sto_openInBrowser) {
 
-            // TODO Выбрать URL
             final String[] url_titles = new String[]{getString(R.string.menu_url_titles_sto), getString(R.string.menu_url_titles_doc)};
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.menu_openInBrowser));

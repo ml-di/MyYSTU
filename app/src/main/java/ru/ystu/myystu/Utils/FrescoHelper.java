@@ -10,15 +10,18 @@ public class FrescoHelper {
 
     public static ImageRequest getImageRequest (Context mContext, String url) {
 
-        if (SettingsController.isImageRAMCache(mContext)) {
-            return ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
-                    .setProgressiveRenderingEnabled(true)
-                    .build();
-        } else {
-            return ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
-                    .disableMemoryCache()
-                    .setProgressiveRenderingEnabled(true)
-                    .build();
-        }
+        if (url != null) {
+            if (SettingsController.isImageRAMCache(mContext)) {
+                return ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
+                        .setProgressiveRenderingEnabled(true)
+                        .build();
+            } else {
+                return ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
+                        .disableMemoryCache()
+                        .setProgressiveRenderingEnabled(true)
+                        .build();
+            }
+        } else
+            return null;
     }
 }

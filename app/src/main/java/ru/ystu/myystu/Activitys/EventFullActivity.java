@@ -29,6 +29,7 @@ import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 
@@ -89,7 +90,7 @@ public class EventFullActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_full);
 
-        LightStatusBar.setLight(true, true, this);
+        LightStatusBar.setLight(true, true, this, true);
         mContext = this;
         stringFormatter = new StringFormatter();
 
@@ -118,6 +119,9 @@ public class EventFullActivity extends AppCompatActivity {
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getEvent);
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
+
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, scroll, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
         if(getIntent().getExtras() != null) {
             id = getIntent().getExtras().getInt("id");

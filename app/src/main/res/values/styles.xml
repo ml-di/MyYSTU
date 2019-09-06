@@ -29,6 +29,7 @@
         <item name="preferenceTheme">@style/PreferenceTheme</item>
         <item name="android:colorControlHighlight">@color/colorRipple</item>
         <item name="android:fontFamily" tools:targetApi="o">@font/opensans</item>
+
     </style>
 
     <!-- Тема для toolbar -->

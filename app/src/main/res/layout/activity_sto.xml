@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    android:fitsSystemWindows="true"
     tools:context=".Activitys.StoActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,22 +22,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorBackground"
-                android:clipToPadding="false"
-                android:paddingTop="?android:actionBarSize" />
+                android:clipToPadding="false"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:fitsSystemWindows="true">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolBar_sto"
-            style="@style/Toolbar"
-            android:theme="@style/Toolbar"
-            app:popupTheme="@style/ToolBar_Popup"
-            app:title="@string/menu_text_documents" />
-    </com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolBar_sto"
+                style="@style/Toolbar"
+                android:theme="@style/Toolbar"
+                app:popupTheme="@style/ToolBar_Popup"
+                app:title="@string/menu_text_documents" />
+        </com.google.android.material.appbar.AppBarLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

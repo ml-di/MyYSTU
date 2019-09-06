@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import me.relex.photodraweeview.PhotoDraweeView;
 import ru.ystu.myystu.R;
-import ru.ystu.myystu.Network.FrescoLoadProgressBar;
+import ru.ystu.myystu.Utils.CircleProgressBar;
 
 public class NewsPhotoViewPagerAdapter extends PagerAdapter {
 
@@ -49,7 +49,7 @@ public class NewsPhotoViewPagerAdapter extends PagerAdapter {
         mPhotoDraweeView.setController(controller.build());
 
         // Ставим progressbar
-        final FrescoLoadProgressBar progressBar = new FrescoLoadProgressBar();
+        final CircleProgressBar progressBar = new CircleProgressBar();
         progressBar.setColor(mContext.getResources().getColor(R.color.colorAccent));
         progressBar.setBackgroundColor(mContext.getResources().getColor(R.color.colorTextPrimary));
         mPhotoDraweeView.getHierarchy().setProgressBarImage(progressBar);

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    android:fitsSystemWindows="true"
     tools:context=".Activitys.UserFullActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,6 +21,7 @@
                 android:id="@+id/userFull_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clipToPadding="false"
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,13 +57,6 @@
                         android:textSize="16sp"
                         app:layout_constraintTop_toBottomOf="@id/userFull_name"
                         tools:text="Профессор кафедры Общая и физическая химия, д.х.н." />
-
-                    <androidx.appcompat.widget.ContentFrameLayout
-                        android:id="@+id/userFull_toolbarPlaceholder"
-                        android:layout_width="match_parent"
-                        android:layout_height="?actionBarSize"
-                        app:layout_constraintTop_toTopOf="parent" />
-
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/userFull_location"
@@ -256,7 +249,7 @@
                         android:translationZ="15dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/userFull_toolbarPlaceholder"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:placeholderImage="@color/colorPlaceHolderImage"
                         app:roundAsCircle="true" />
 
@@ -267,18 +260,26 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:fitsSystemWindows="true">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolBar_userFull"
-            style="@style/Toolbar"
-            android:theme="@style/Toolbar"
-            app:popupTheme="@style/ToolBar_Popup"
-            app:title="@string/activity_userFull_title" />
-    </com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:elevation="0dp">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolBar_userFull"
+                style="@style/Toolbar"
+                android:theme="@style/Toolbar"
+                app:popupTheme="@style/ToolBar_Popup"
+                app:title="@string/activity_userFull_title" />
+        </com.google.android.material.appbar.AppBarLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
