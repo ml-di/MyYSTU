@@ -19,7 +19,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 
 public class GetListJobFromURL {
 
@@ -66,8 +65,6 @@ public class GetListJobFromURL {
 
                                 if(mList.size() > 0)
                                     mList.clear();
-
-                                mList.add(new ToolbarPlaceholderData(0));
 
                                 String organization;
                                 String post;

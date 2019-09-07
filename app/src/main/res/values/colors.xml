@@ -13,7 +13,7 @@
     <color name="colorMf">#820061</color>
     <color name="colorHtf">#007579</color>
 
-    <color name="design_snackbar_background_color" tools:override="true">@color/colorToolBar</color>
+    <color name="design_snackbar_background_color" tools:override="true">@color/colorBackground</color>
 
     <!-- StatusBar -->
     <color name="colorLightStatusBar">#C8C8C8</color>
@@ -23,7 +23,7 @@
     <color name="colorTextSecondaryOpacity">#BF616161</color>
     <color name="colorTransparent">#00000000</color>
 
-    <color name="colorToolBar">#F2FFFFFF</color>
+    <color name="colorToolBar">#CCFFFFFF</color>
     <color name="colorNavBar">#CCFFFFFF</color>
     <color name="colorToolbarPhotoView">#66000000</color>
     <color name="colorPlaceHolderImage">#EEEEEE</color>

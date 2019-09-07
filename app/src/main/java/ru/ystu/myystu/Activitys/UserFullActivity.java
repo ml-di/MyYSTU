@@ -209,7 +209,7 @@ public class UserFullActivity extends AppCompatActivity {
 
         getUserInformationFromURL = new GetUserInformationFromURL();
         mDisposable = new CompositeDisposable();
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
         if(NetworkInformation.hasConnection()) {
 
@@ -306,6 +306,7 @@ public class UserFullActivity extends AppCompatActivity {
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
                                     .setTextColor(Color.BLACK);
 
+                            PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
 
                             mSwipeRefreshLayout.setRefreshing(false);

@@ -29,7 +29,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Database.Data.CountersData;
@@ -41,6 +40,7 @@ import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class JobActivity extends AppCompatActivity {
@@ -96,6 +96,9 @@ public class JobActivity extends AppCompatActivity {
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
         mDisposables = new CompositeDisposable();
         getListJobFromURL = new GetListJobFromURL();
@@ -172,7 +175,7 @@ public class JobActivity extends AppCompatActivity {
     private void getJob(){
 
         mList = new ArrayList<>();
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
         if (NetworkInformation.hasConnection()) {
             final Single<List<Parcelable>> mSingleJobList = getListJobFromURL.getSingleJobList(url, mList);
@@ -248,7 +251,6 @@ public class JobActivity extends AppCompatActivity {
                         if (mList.size() > 0)
                             mList.clear();
 
-                        mList.add(new ToolbarPlaceholderData(0));
                         mList.addAll(db.jobItemsDao().getAllJobItems());
 
                         mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
@@ -273,6 +275,7 @@ public class JobActivity extends AppCompatActivity {
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
                                     .setTextColor(Color.BLACK);
 
+                            PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
 
                             mSwipeRefreshLayout.setRefreshing(false);

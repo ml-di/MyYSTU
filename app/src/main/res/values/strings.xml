@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">Мой ЯГТУ</string>
-    <string name="app_version">Версия 1.4.0</string>
+    <string name="app_version">Версия 1.4.1</string>
 
     <!-- Другие -->
     <string name="other_search_results">Результаты поиска</string>
     <string name="other_of">из</string>
+    <string name="other_dont_find">Ничего не найдено 🤔</string>
 
     <!-- Time -->
     <string name="time_jan">января</string>

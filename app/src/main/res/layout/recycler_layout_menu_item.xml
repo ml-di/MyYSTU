@@ -5,9 +5,9 @@
     android:layout_width="170dp"
     android:layout_height="170dp"
     android:clipToPadding="false"
-    android:paddingStart="4dp"
+    android:paddingStart="6dp"
     android:paddingTop="2dp"
-    android:paddingEnd="4dp"
+    android:paddingEnd="6dp"
     android:paddingBottom="10dp">
 
     <androidx.cardview.widget.CardView
@@ -18,7 +18,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:translationZ="2dp"
         app:cardCornerRadius="26dp"
-        app:cardElevation="4dp">
+        app:cardElevation="3dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"

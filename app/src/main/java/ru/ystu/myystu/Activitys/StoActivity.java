@@ -7,24 +7,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
 import java.util.List;
 import io.reactivex.Single;
@@ -41,7 +36,6 @@ import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Network.LoadLists.GetListDocFromURL;
 import ru.ystu.myystu.Network.LoadLists.GetListStoFromURL;
 import ru.ystu.myystu.R;
-import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
@@ -199,7 +193,7 @@ public class StoActivity extends AppCompatActivity {
     private void getSto() {
 
         mList = new ArrayList<>();
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
         if (NetworkInformation.hasConnection()) {
             final Single<ArrayList<Parcelable>> mSingleStoList = getListStoFromURL.getSingleStoList(url_sto_doc);
@@ -320,6 +314,7 @@ public class StoActivity extends AppCompatActivity {
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
                                     .setTextColor(Color.BLACK);
 
+                            PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
 
                             mSwipeRefreshLayout.setRefreshing(false);

@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import java.util.List;
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,20 +62,20 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
 
         private AppCompatTextView name;
         private AppCompatTextView ext;
-        private AppCompatImageView menu;
+        private ConstraintLayout item;
 
         DocumentViewHolder (View itemView) {
             super(itemView);
 
             name = itemView.findViewById(R.id.itemEventDocument_name);
             ext = itemView.findViewById(R.id.itemEventDocument_fileType);
-            menu = itemView.findViewById(R.id.itemEventDocument_menu);
+            item = itemView.findViewById(R.id.itemEventDocument);
         }
 
         void setDocument (EventAdditionalData_Documents documentItem, Context mContext) {
             name.setText(documentItem.getTitle());
             ext.setText(documentItem.getExt());
-            menu.setOnClickListener(View -> showMenu(mContext, documentItem.getLink(), documentItem.getTitle(), documentItem.getExt()));
+            item.setOnClickListener(View -> showMenu(mContext, documentItem.getLink(), documentItem.getTitle(), documentItem.getExt()));
         }
     }
 

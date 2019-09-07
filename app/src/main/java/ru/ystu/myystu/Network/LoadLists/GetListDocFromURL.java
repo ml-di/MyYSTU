@@ -99,8 +99,6 @@ public class GetListDocFromURL {
                                                 }
 
                                                 mList.add(new StoItemsData_Doc(fileName, fileExt, summary, url));
-
-                                                int test = 0;
                                             }
                                         }
                                     }

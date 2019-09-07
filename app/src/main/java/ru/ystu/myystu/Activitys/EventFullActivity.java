@@ -261,7 +261,7 @@ public class EventFullActivity extends AppCompatActivity {
 
         getFullEventFromURL = new GetFullEventFromURL();
         mDisposable = new CompositeDisposable();
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
         if(additionalsList == null)
             additionalsList = new ArrayList<>();
@@ -432,6 +432,7 @@ public class EventFullActivity extends AppCompatActivity {
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
                                     .setTextColor(Color.BLACK);
 
+                            PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
 
                             mSwipeRefreshLayout.setRefreshing(false);

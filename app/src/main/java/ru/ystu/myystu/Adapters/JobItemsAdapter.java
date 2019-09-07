@@ -29,7 +29,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobReaderActivity;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
@@ -39,22 +38,10 @@ import ru.ystu.myystu.Utils.SettingsController;
 
 public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
-    private static final int ITEM_TOOLBAR_PLACEHOLDER = 0;
     private static final int ITEM_JOB = 1;
 
     private List<Parcelable> mList;
     private Context mContext;
-
-    static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
-
-        PlaceholderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        void setPlaceholder (ToolbarPlaceholderData placeholderItem) {
-
-        }
-    }
 
     static class JobItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -108,10 +95,6 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final RecyclerView.ViewHolder mViewHolder;
 
         switch (viewType) {
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final View viewPlaceholder = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_toolbar_placeholder, parent, false);
-                mViewHolder = new PlaceholderViewHolder(viewPlaceholder);
-                break;
 
             case ITEM_JOB:
                 final View viewJob = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_job_item, parent, false);
@@ -131,10 +114,6 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         int viewType = holder.getItemViewType();
         switch (viewType) {
-            case ITEM_TOOLBAR_PLACEHOLDER:
-                final ToolbarPlaceholderData placeholder = (ToolbarPlaceholderData) mList.get(position);
-                ((PlaceholderViewHolder) holder).setPlaceholder(placeholder);
-                break;
             case ITEM_JOB:
                 final JobItemsData job = (JobItemsData) mList.get(position);
                 ((JobItemViewHolder) holder).setJob(job, mContext);
@@ -152,9 +131,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         int viewType;
 
-        if (mList.get(position) instanceof ToolbarPlaceholderData) {
-            viewType = ITEM_TOOLBAR_PLACEHOLDER;
-        } else if (mList.get(position) instanceof JobItemsData) {
+        if (mList.get(position) instanceof JobItemsData) {
             viewType = ITEM_JOB;
         } else {
             viewType = -1;

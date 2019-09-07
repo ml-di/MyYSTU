@@ -20,6 +20,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.UserFullActivity;
+import ru.ystu.myystu.Activitys.UsersActivity;
 import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
@@ -231,7 +232,9 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         }
                     }
                     mListFiltered = resultList;
-                    mListFiltered.add(1, new StringData(-1, mContext.getResources().getString(R.string.other_search_results)));
+                    if (resultList.size() > 0) {
+                        mListFiltered.add(0, new StringData(-1, mContext.getResources().getString(R.string.other_search_results)));
+                    }
                 }
 
                 mFilterResults.values = mListFiltered;
@@ -244,6 +247,11 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 mListFiltered = (ArrayList<Parcelable>) results.values;
                 notifyDataSetChanged();
+                if (mListFiltered.size() > 0) {
+                    ((UsersActivity) mContext).setPlaceholder(false);
+                } else {
+                    ((UsersActivity) mContext).setPlaceholder(true);
+                }
             }
         };
     }

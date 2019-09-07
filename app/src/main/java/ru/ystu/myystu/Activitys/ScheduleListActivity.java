@@ -14,7 +14,6 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.ScheduleItemAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
-import ru.ystu.myystu.AdaptersData.ToolbarPlaceholderData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Database.Data.ScheduleChangeBDData;
@@ -35,6 +34,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
@@ -144,7 +144,7 @@ public class ScheduleListActivity extends AppCompatActivity {
             changeList.clear();
         }
 
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
         if(NetworkInformation.hasConnection()){
 
@@ -233,7 +233,6 @@ public class ScheduleListActivity extends AppCompatActivity {
                         if (mList.size() > 0)
                             mList.clear();
 
-                        mList.add(new ToolbarPlaceholderData(0));
                         mList.addAll(db.scheduleItemDao().getScheduleList(id));
 
                         mRecyclerViewAdapter = new ScheduleItemAdapter(mList, this);
@@ -258,6 +257,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
                                     .setTextColor(Color.BLACK);
 
+                            PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
 
                             mSwipeRefreshLayout.setRefreshing(false);

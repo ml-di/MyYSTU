@@ -7,6 +7,7 @@ import androidx.core.widget.NestedScrollView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 import android.content.ClipData;
@@ -51,8 +52,10 @@ public class JobReaderActivity extends AppCompatActivity {
         mToolbar.setOnClickListener(e -> scroll.smoothScrollTo(0, 0));
         mToolbar.setTitle(title);
 
+        PaddingHelper.setPaddingStatusBarAndToolBar(this, scroll, true);
+
         final StringFormatter stringFormatter = new StringFormatter();
-        Spanned spanText = Html.fromHtml("<br><br>" + content);
+        Spanned spanText = Html.fromHtml(content);
         spanText = stringFormatter.getFormattedString(spanText.toString());
         text.setText(spanText);
         text.setMovementMethod(LinkMovementMethod.getInstance());

@@ -2,6 +2,7 @@ package ru.ystu.myystu.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -25,7 +26,6 @@ import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
@@ -33,13 +33,12 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +46,7 @@ public class UsersActivity extends AppCompatActivity {
 
     private Context mContext;
     private ConstraintLayout mainLayout;
+    private AppCompatTextView dontFindText;
     private final String url = "https://www.ystu.ru/users/";                                        // Url страницы сотрудников и преподавателей ЯГТУ
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
@@ -84,7 +84,7 @@ public class UsersActivity extends AppCompatActivity {
         });
 
         mLayoutManager = new LinearLayoutManager(this);
-
+        dontFindText = findViewById(R.id.users_dontfind);
         mRecyclerView = findViewById(R.id.recycler_users_items);
         mSwipeRefreshLayout = findViewById(R.id.refresh_users);
 
@@ -98,6 +98,7 @@ public class UsersActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, dontFindText, true);
         PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
 
         mDisposables = new CompositeDisposable();
@@ -185,7 +186,7 @@ public class UsersActivity extends AppCompatActivity {
     private void getUsers() {
 
         mList = new ArrayList<>();
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
         if (NetworkInformation.hasConnection()) {
 
@@ -279,6 +280,7 @@ public class UsersActivity extends AppCompatActivity {
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
                                     .setTextColor(Color.BLACK);
 
+                            PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
 
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -308,6 +310,14 @@ public class UsersActivity extends AppCompatActivity {
             recyclerView.setLayoutAnimation(controller);
         } else {
             recyclerView.clearAnimation();
+        }
+    }
+
+    public void setPlaceholder (boolean isVisible) {
+        if (isVisible) {
+            dontFindText.setVisibility(View.VISIBLE);
+        } else {
+            dontFindText.setVisibility(View.GONE);
         }
     }
 }
