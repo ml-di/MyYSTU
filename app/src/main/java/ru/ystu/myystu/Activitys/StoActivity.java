@@ -19,6 +19,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,7 @@ public class StoActivity extends AppCompatActivity {
 
         LightStatusBar.setLight(true, true, this, true);
 
+        final AppBarLayout appBarLayout = findViewById(R.id.appBar_sto);
         final Toolbar mToolbar = findViewById(R.id.toolBar_sto);
         setSupportActionBar(mToolbar);
 
@@ -97,6 +100,7 @@ public class StoActivity extends AppCompatActivity {
         // Отступы сверху
         PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
         PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);

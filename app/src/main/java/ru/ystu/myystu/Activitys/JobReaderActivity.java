@@ -21,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
+
 public class JobReaderActivity extends AppCompatActivity {
 
     private String content;
@@ -45,6 +47,7 @@ public class JobReaderActivity extends AppCompatActivity {
         text = findViewById(R.id.jobReader_text);
         scroll = findViewById(R.id.jobReader_scroll);
 
+        final AppBarLayout appBarLayout = findViewById(R.id.appBar_job_reader);
         final Toolbar mToolbar = findViewById(R.id.toolBar_jobReader);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
@@ -53,6 +56,7 @@ public class JobReaderActivity extends AppCompatActivity {
         mToolbar.setTitle(title);
 
         PaddingHelper.setPaddingStatusBarAndToolBar(this, scroll, true);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         final StringFormatter stringFormatter = new StringFormatter();
         Spanned spanText = Html.fromHtml(content);

@@ -6,7 +6,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Observable;
@@ -99,18 +100,36 @@ public class GetSchedule {
                                                 }
                                             }
 
+
+                                            String tempChange = "";
+
                                             // Изменения
                                             for (Element change : changes) {
-                                                if (change.text().length() > 9
-                                                        && change.text().contains(".")
+                                                if (change.text().length() > 4
                                                         && change.attr("href").isEmpty()) {
 
-                                                    if (!emitter.isDisposed()) {
-                                                        emitter.onNext("change:" + change.select("span").text());
+                                                    final Pattern mPattern = Pattern.compile("([0-9]{2}\\.){2}[0-9]{4}");
+                                                    final Matcher mMatcher = mPattern.matcher(change.text());
+
+                                                    // Отдельная дата
+                                                    if (mMatcher.lookingAt() && change.text().length() < 13) {
+                                                        tempChange = change.text();
+                                                    } else {
+                                                        // Отдельный текст
+                                                        if (!mMatcher.lookingAt() && tempChange.length() > 0) {
+                                                            if (!emitter.isDisposed()) {
+                                                                emitter.onNext("change:" + tempChange + change.select("span").text());
+                                                                tempChange = "";
+                                                            }
+                                                            // Все вместе
+                                                        } else if (mMatcher.lookingAt()) {
+                                                            if (!emitter.isDisposed()) {
+                                                                emitter.onNext("change:" + change.select("span").text());
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
-
                                             break;
                                         }
                                     }

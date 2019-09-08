@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 public class UserFullActivity extends AppCompatActivity {
@@ -102,14 +103,16 @@ public class UserFullActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(this::getUserInfo);
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, this));
 
-        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, scroll, true);
-        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
-
+        final AppBarLayout appBarLayout = findViewById(R.id.appBar_user_full);
         final Toolbar mToolbar = findViewById(R.id.toolBar_userFull);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         mToolbar.setNavigationOnClickListener(view -> onBackPressed());
         mToolbar.setOnClickListener(e -> scroll.smoothScrollTo(0, 0));
+
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, scroll, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         if(getIntent().getExtras() != null) {
             id = getIntent().getExtras().getInt("id");

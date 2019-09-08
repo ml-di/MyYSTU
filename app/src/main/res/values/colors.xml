@@ -23,7 +23,7 @@
     <color name="colorTextSecondaryOpacity">#BF616161</color>
     <color name="colorTransparent">#00000000</color>
 
-    <color name="colorToolBar">#CCFFFFFF</color>
+    <color name="colorToolBar">#F2FFFFFF</color>
     <color name="colorNavBar">#CCFFFFFF</color>
     <color name="colorToolbarPhotoView">#66000000</color>
     <color name="colorPlaceHolderImage">#EEEEEE</color>

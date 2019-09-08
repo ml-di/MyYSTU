@@ -19,6 +19,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -66,6 +68,7 @@ public class EventActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_event);
 
+        final AppBarLayout appBarLayout = findViewById(R.id.appBar_event);
         final Toolbar mToolbar = findViewById(R.id.toolBar_event);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
@@ -92,6 +95,7 @@ public class EventActivity extends AppCompatActivity {
 
         PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
         PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         mDisposables = new CompositeDisposable();
         getListEventFromURL = new GetListEventFromURL();

@@ -34,12 +34,12 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -69,6 +69,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_schedule_list);
 
+        final AppBarLayout appBarLayout = findViewById(R.id.appBar_schedule_list);
         final Toolbar mToolBar = findViewById(R.id.toolBar_scheduleList);
         setSupportActionBar(mToolBar);
         mToolBar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
@@ -95,6 +96,7 @@ public class ScheduleListActivity extends AppCompatActivity {
 
         PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
         PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         mDisposables = new CompositeDisposable();
         getSchedule = new GetSchedule();

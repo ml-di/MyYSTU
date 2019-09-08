@@ -38,6 +38,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,7 @@ public class UsersActivity extends AppCompatActivity {
 
         LightStatusBar.setLight(true, true, this, true);
 
+        final AppBarLayout appBarLayout = findViewById(R.id.appBar_users);
         final Toolbar mToolbar = findViewById(R.id.toolBar_users);
         setSupportActionBar(mToolbar);
 
@@ -98,8 +101,8 @@ public class UsersActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
-        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, dontFindText, true);
         PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         mDisposables = new CompositeDisposable();
         getListUsersFromURL = new GetListUsersFromURL();

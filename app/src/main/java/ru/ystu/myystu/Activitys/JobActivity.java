@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 import io.reactivex.Single;
@@ -68,6 +69,7 @@ public class JobActivity extends AppCompatActivity {
 
         LightStatusBar.setLight(true, true, this, true);
 
+        final AppBarLayout appBarLayout = findViewById(R.id.appBar_job);
         final Toolbar mToolbar = findViewById(R.id.toolBar_job);
         setSupportActionBar(mToolbar);
 
@@ -99,6 +101,7 @@ public class JobActivity extends AppCompatActivity {
 
         PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);
         PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         mDisposables = new CompositeDisposable();
         getListJobFromURL = new GetListJobFromURL();

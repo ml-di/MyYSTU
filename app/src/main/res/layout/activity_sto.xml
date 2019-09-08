@@ -26,17 +26,12 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
-
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar_sto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:layout_constraintTop_toTopOf="parent">
+            app:elevation="0dp">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolBar_sto"
@@ -45,5 +40,4 @@
                 app:popupTheme="@style/ToolBar_Popup"
                 app:title="@string/menu_text_documents" />
         </com.google.android.material.appbar.AppBarLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

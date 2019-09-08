@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 import ru.ystu.myystu.R;
@@ -49,5 +50,12 @@ public class PaddingHelper {
                 params.bottomMargin + (int) Converter.convertDpToPixel(70, mContext));
         snackbar.getView().setLayoutParams(params);
 
+    }
+
+    public static void setMarginsAppBar (AppBarLayout appBarLayout) {
+        appBarLayout.setOnApplyWindowInsetsListener((v, insets) -> {
+            v.setPadding(0, insets.getSystemWindowInsetTop(),0, 0);
+            return insets;
+        });
     }
 }

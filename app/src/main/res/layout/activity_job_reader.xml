@@ -28,16 +28,11 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
-
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar_job_reader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            app:layout_constraintTop_toTopOf="parent"
             app:elevation="0dp">
 
             <androidx.appcompat.widget.Toolbar
@@ -47,6 +42,4 @@
                 app:popupTheme="@style/ToolBar_Popup"
                 app:title="@string/activity_job_title" />
         </com.google.android.material.appbar.AppBarLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

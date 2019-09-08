@@ -50,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -120,9 +121,6 @@ public class EventFullActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(this::getEvent);
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
-        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, scroll, true);
-        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
-
         if(getIntent().getExtras() != null) {
             id = getIntent().getExtras().getInt("id");
             titleStr = getIntent().getExtras().getString("title");
@@ -132,12 +130,17 @@ public class EventFullActivity extends AppCompatActivity {
             locationStr = getIntent().getExtras().getString("location");
         }
 
+        final AppBarLayout appBarLayout = findViewById(R.id.eventFull_appBar);
         final Toolbar mToolbar = findViewById(R.id.toolBar_eventFull);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         mToolbar.setNavigationOnClickListener(view -> onBackPressed());
         mToolbar.setOnClickListener(e -> scroll.smoothScrollTo(0, 0));
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.activity_event_title);
+
+        PaddingHelper.setPaddingStatusBarAndToolBar(mContext, scroll, true);
+        PaddingHelper.setOffsetRefreshLayout(mContext, mSwipeRefreshLayout);
+        PaddingHelper.setMarginsAppBar(appBarLayout);
 
         if (SettingsController.isImageDownload(mContext)) {
             image.setImageRequest(FrescoHelper.getImageRequest(mContext, urlPhoto));

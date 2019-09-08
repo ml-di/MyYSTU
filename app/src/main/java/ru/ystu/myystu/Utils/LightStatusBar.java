@@ -66,6 +66,9 @@ public class LightStatusBar {
             } else {
                 view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
             }
+        } else if (isToolBar) {
+            view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
+
     }
 }

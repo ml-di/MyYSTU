@@ -20,25 +20,18 @@
             android:clipToPadding="false" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar_schedule_change"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolBar_schedule_change"
-                style="@style/Toolbar"
-                android:theme="@style/Toolbar"
-                app:popupTheme="@style/ToolBar_Popup"
-                app:title="@string/menu_change" />
-        </com.google.android.material.appbar.AppBarLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolBar_schedule_change"
+            style="@style/Toolbar"
+            android:theme="@style/Toolbar"
+            app:popupTheme="@style/ToolBar_Popup"
+            app:title="@string/menu_change" />
+    </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
