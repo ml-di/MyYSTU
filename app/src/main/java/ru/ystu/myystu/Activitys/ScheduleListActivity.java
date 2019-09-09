@@ -65,7 +65,11 @@ public class ScheduleListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_list);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_schedule_list);
 
@@ -84,6 +88,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         });
 
         mSwipeRefreshLayout = findViewById(R.id.refresh_schedule);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getSchedule);
@@ -257,7 +262,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                             ((TextView)snackbar
                                     .getView()
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
+                                    .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
                             PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
@@ -319,6 +324,7 @@ public class ScheduleListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_schedule_open, menu);
+        LightStatusBar.setToolBarIconColor(mContext, menu);
         return true;
     }
 

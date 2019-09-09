@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -79,8 +80,11 @@ public class MainActivity extends AppCompatActivity {
                     .setTransition(fragmentAnimation)
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
-
-            LightStatusBar.setLight(true, true, this, false);
+            if (SettingsController.isDarkTheme(this)) {
+                LightStatusBar.setLight(false, false, this, false);
+            } else {
+                LightStatusBar.setLight(true, true, this, false);
+            }
             checkUpdate();
         } else {
             updateList = savedInstanceState.getParcelableArrayList("updateList");
@@ -88,9 +92,18 @@ public class MainActivity extends AppCompatActivity {
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
                 || mBottomBar.getSelectedItemId() == R.id.tab_bell){
-            LightStatusBar.setLight(true, true, this, false);
+            if (SettingsController.isDarkTheme(this)) {
+                LightStatusBar.setLight(false, false, this, false);
+            } else {
+                LightStatusBar.setLight(true, true, this, false);
+            }
         } else if (mBottomBar.getSelectedItemId() == R.id.tab_menu){
-            LightStatusBar.setLight(false, true, this, false);
+
+            if (SettingsController.isDarkTheme(this)) {
+                LightStatusBar.setLight(true, false, this, false);
+            } else {
+                LightStatusBar.setLight(false, true, this, false);
+            }
         }
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
@@ -105,7 +118,11 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(true, true, this, false);
+                    if (SettingsController.isDarkTheme(this)) {
+                        LightStatusBar.setLight(false, false, this, false);
+                    } else {
+                        LightStatusBar.setLight(true, true, this, false);
+                    }
 
                     break;
                 // Уведомления
@@ -116,7 +133,11 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mBellFragment, "BELL_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(true, true, this, false);
+                    if (SettingsController.isDarkTheme(this)) {
+                        LightStatusBar.setLight(false, false, this, false);
+                    } else {
+                        LightStatusBar.setLight(true, true, this, false);
+                    }
 
                     break;
                 // Меню
@@ -128,7 +149,11 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mMenuFragment, "MENU_FRAGMENT")
                             .commit();
 
-                    LightStatusBar.setLight(false, true, this, false);
+                    if (SettingsController.isDarkTheme(this)) {
+                        LightStatusBar.setLight(false, false, this, false);
+                    } else {
+                        LightStatusBar.setLight(false, true, this, false);
+                    }
                     break;
             }
 

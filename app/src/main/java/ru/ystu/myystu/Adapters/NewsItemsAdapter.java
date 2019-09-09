@@ -476,7 +476,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         bottomSheetMenu.setTitle(R.string.news_bottomsheetmenu_title);
         bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setLightNavigationBar(!SettingsController.isDarkTheme(mContext));
             bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
         }
 

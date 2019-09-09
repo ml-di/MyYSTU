@@ -197,7 +197,7 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
         bottomSheetMenu.setTitle(name);
         bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setLightNavigationBar(!SettingsController.isDarkTheme(mContext));
             bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
         }
         bottomSheetMenu.setOnItemClickListener(itemId -> {

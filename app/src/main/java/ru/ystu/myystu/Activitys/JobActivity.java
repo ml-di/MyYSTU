@@ -67,7 +67,11 @@ public class JobActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_job);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         final AppBarLayout appBarLayout = findViewById(R.id.appBar_job);
         final Toolbar mToolbar = findViewById(R.id.toolBar_job);
@@ -89,7 +93,7 @@ public class JobActivity extends AppCompatActivity {
 
         mRecyclerView = findViewById(R.id.recycler_job_items);
         mSwipeRefreshLayout = findViewById(R.id.refresh_job);
-
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
 
@@ -145,6 +149,7 @@ public class JobActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_job, menu);
+        LightStatusBar.setToolBarIconColor(mContext, menu);
         return true;
     }
 
@@ -276,7 +281,7 @@ public class JobActivity extends AppCompatActivity {
                             ((TextView)snackbar
                                     .getView()
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
+                                    .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
                             PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();

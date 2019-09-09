@@ -31,10 +31,15 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         final ConstraintLayout mainLayout = findViewById(R.id.main_layout_map);
         mSwipeRefreshLayout = findViewById(R.id.refresh_map);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setEnabled(false);

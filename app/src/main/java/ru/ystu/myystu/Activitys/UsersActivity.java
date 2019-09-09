@@ -68,7 +68,11 @@ public class UsersActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_users);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         final AppBarLayout appBarLayout = findViewById(R.id.appBar_users);
         final Toolbar mToolbar = findViewById(R.id.toolBar_users);
@@ -90,7 +94,7 @@ public class UsersActivity extends AppCompatActivity {
         dontFindText = findViewById(R.id.users_dontfind);
         mRecyclerView = findViewById(R.id.recycler_users_items);
         mSwipeRefreshLayout = findViewById(R.id.refresh_users);
-
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
 
@@ -163,6 +167,7 @@ public class UsersActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_user, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_user_search).getActionView();
+        LightStatusBar.setToolBarIconColor(mContext, menu);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -281,7 +286,7 @@ public class UsersActivity extends AppCompatActivity {
                             ((TextView)snackbar
                                     .getView()
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
+                                    .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
                             PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();

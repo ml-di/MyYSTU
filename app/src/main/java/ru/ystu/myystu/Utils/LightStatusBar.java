@@ -1,13 +1,20 @@
 package ru.ystu.myystu.Utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
 import ru.ystu.myystu.R;
 
 public class LightStatusBar {
@@ -52,23 +59,40 @@ public class LightStatusBar {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if(isLightNavigationBar){
                 view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-                if (isToolBar) {
-                    if (mActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-                    } else {
-                        view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-                    }
-
-                    win.setNavigationBarColor(ContextCompat.getColor(mActivity, R.color.colorNavBar));
-                } else {
-                    win.setNavigationBarColor(ContextCompat.getColor(mActivity, R.color.colorBackground));
-                }
             } else {
                 view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
             }
+
+            if (isToolBar) {
+                if (mActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                } else {
+                    view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                }
+
+                win.setNavigationBarColor(ContextCompat.getColor(mActivity, R.color.colorNavBar));
+            } else {
+                win.setNavigationBarColor(ContextCompat.getColor(mActivity, R.color.colorBackground));
+            }
+
         } else if (isToolBar) {
             view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
+    }
+
+    public static void setToolBarIconColor(Context mContext, Menu mMenu) {
+        MenuItem item;
+        int color;
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+        for(int i = 0; i < mMenu.size(); i++)
+        {
+            item  = mMenu.getItem(i);
+            color = mContext.getResources().getColor(R.color.colorToolBarIcons);
+
+            DrawableCompat.setTint(item.getIcon(), color);
+        }
     }
 }

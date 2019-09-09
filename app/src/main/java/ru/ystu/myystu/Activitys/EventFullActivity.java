@@ -91,7 +91,11 @@ public class EventFullActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_full);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
         mContext = this;
         stringFormatter = new StringFormatter();
 
@@ -115,7 +119,7 @@ public class EventFullActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recycler_eventAdditional_items);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getEvent);
@@ -433,7 +437,7 @@ public class EventFullActivity extends AppCompatActivity {
                             ((TextView)snackbar
                                     .getView()
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
+                                    .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
                             PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();

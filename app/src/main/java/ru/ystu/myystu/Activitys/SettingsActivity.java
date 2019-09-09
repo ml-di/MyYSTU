@@ -11,7 +11,6 @@ import ru.ystu.myystu.Fragments.SettingsFragment;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.SettingsController;
-
 import android.os.Bundle;
 
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
@@ -23,7 +22,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         mToolbar = findViewById(R.id.toolBar_settings);
         setSupportActionBar(mToolbar);

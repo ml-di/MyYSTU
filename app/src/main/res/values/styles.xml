@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Базовая тема -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorLightStatusBar</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -11,7 +11,7 @@
     </style>
 
     <!-- Тема для photoView -->
-    <style name="PhotoViewTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="PhotoViewTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -21,7 +21,7 @@
     </style>
 
     <!-- Тема для activity с toolbar -->
-    <style name="AppTheme.ToolBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.ToolBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorLightStatusBar</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -33,14 +33,14 @@
     </style>
 
     <!-- Тема для toolbar -->
-    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light">
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.DayNight">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:background">@color/colorToolBar</item>
         <item name="android:fontFamily" tools:targetApi="o">@font/opensans_bold</item>
     </style>
 
-    <style name="ToolBar_Popup" parent="ThemeOverlay.AppCompat.Light">
+    <style name="ToolBar_Popup" parent="ThemeOverlay.AppCompat.DayNight">
         <item name="android:fontFamily" tools:targetApi="o">@font/opensans_regular</item>
     </style>
 

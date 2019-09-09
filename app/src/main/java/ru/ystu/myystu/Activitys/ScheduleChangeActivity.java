@@ -34,7 +34,11 @@ public class ScheduleChangeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_change);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         final AppBarLayout appBarLayout = findViewById(R.id.appBar_schedule_change);
         final Toolbar mToolbar = findViewById(R.id.toolBar_schedule_change);

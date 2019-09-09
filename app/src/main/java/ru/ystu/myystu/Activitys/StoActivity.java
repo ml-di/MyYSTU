@@ -70,7 +70,11 @@ public class StoActivity extends AppCompatActivity {
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_sto);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         final AppBarLayout appBarLayout = findViewById(R.id.appBar_sto);
         final Toolbar mToolbar = findViewById(R.id.toolBar_sto);
@@ -91,7 +95,7 @@ public class StoActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView = findViewById(R.id.recycler_sto_items);
         mSwipeRefreshLayout = findViewById(R.id.refresh_sto);
-
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
 
@@ -170,6 +174,7 @@ public class StoActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_sto, menu);
+        LightStatusBar.setToolBarIconColor(mContext, menu);
         return true;
     }
 
@@ -316,7 +321,7 @@ public class StoActivity extends AppCompatActivity {
                             ((TextView)snackbar
                                     .getView()
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
+                                    .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
                             PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();

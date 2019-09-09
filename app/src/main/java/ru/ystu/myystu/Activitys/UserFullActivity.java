@@ -81,7 +81,11 @@ public class UserFullActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_full);
 
         mContext = this;
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         mainLayout = findViewById(R.id.main_layout_userFull);
         mSwipeRefreshLayout = findViewById(R.id.refresh_userFull);
@@ -97,7 +101,7 @@ public class UserFullActivity extends AppCompatActivity {
         emailText = findViewById(R.id.userFull_email_text);
         detail = findViewById(R.id.userFull_detail);
         detailText = findViewById(R.id.userFull_detail_text);
-
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(this::getUserInfo);
@@ -307,7 +311,7 @@ public class UserFullActivity extends AppCompatActivity {
                             ((TextView)snackbar
                                     .getView()
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
+                                    .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
                             PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();

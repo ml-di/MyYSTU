@@ -225,7 +225,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         bottomSheetMenu.setTitle(docData.getFileName());
         bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            bottomSheetMenu.setLightNavigationBar(true);
+            bottomSheetMenu.setLightNavigationBar(!SettingsController.isDarkTheme(mContext));
             bottomSheetMenu.setColorNavigationBar(R.color.colorBackground);
         }
         bottomSheetMenu.setOnItemClickListener(itemId -> {

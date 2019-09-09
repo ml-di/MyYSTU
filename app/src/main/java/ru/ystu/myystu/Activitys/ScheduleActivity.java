@@ -35,7 +35,11 @@ public class ScheduleActivity extends AppCompatActivity implements ActivityCompa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
 
         final Toolbar mToolBar = findViewById(R.id.toolBar_schedule);
         setSupportActionBar(mToolBar);
@@ -68,6 +72,7 @@ public class ScheduleActivity extends AppCompatActivity implements ActivityCompa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_schedule, menu);
+        LightStatusBar.setToolBarIconColor(this, menu);
         return true;
     }
 

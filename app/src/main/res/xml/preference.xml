@@ -10,6 +10,12 @@
             android:title="@string/settings_general_ui">
 
             <SwitchPreferenceCompat
+                android:defaultValue="false"
+                android:key="preference_ui_darktheme_enable"
+                android:title="@string/settings_general_ui_darktheme"
+                app:iconSpaceReserved="false"/>
+
+            <SwitchPreferenceCompat
                 android:defaultValue="true"
                 android:key="preference_ui_animation_enable"
                 android:title="@string/settings_general_ui_animation"

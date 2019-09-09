@@ -14,10 +14,10 @@
         android:id="@+id/itemMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackgroundTwo"
         android:foreground="?android:attr/selectableItemBackground"
-        android:translationZ="2dp"
+        app:cardBackgroundColor="@color/colorBackgroundTwo"
         app:cardCornerRadius="26dp"
+        android:translationZ="2dp"
         app:cardElevation="3dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout

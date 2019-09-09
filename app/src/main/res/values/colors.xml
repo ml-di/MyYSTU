@@ -48,6 +48,8 @@
     <color name="colorMenuIcon">#DCDCDC</color>
     <color name="colorBackgroundOpacityText">#E6FFFFFF</color>
     <color name="colorSettingsIcon">#BBBBBB</color>
+    <color name="colorToolBarIcons">#000000</color>
+    <color name="colorBottomSheetIcon">#646464</color>
     <color name="colorBottomNavigationNonActiveIcon">#DCDCDC</color>
     <color name="colorBottomNavigationNonActiveText">#a5a5a5</color>
     <color name="colorRipple">#F0F0F0</color>

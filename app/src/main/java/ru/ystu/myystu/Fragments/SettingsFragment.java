@@ -6,20 +6,18 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.Toast;
-
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipeline;
-
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
 import ru.ystu.myystu.Activitys.SettingsActivity;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
@@ -37,6 +35,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
         if (db == null || !db.isOpen()) {
             db = Application.getInstance().getDatabase();
+        }
+
+        // Темная тема
+        final SwitchPreferenceCompat darkTheme = findPreference("preference_ui_darktheme_enable");
+        if(darkTheme != null) {
+            darkTheme.setOnPreferenceChangeListener((preference, newValue) -> {
+                Application.setTheme((boolean) newValue);
+                return true;
+            });
         }
 
         // Размер загружаемых изображений

@@ -64,7 +64,11 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        LightStatusBar.setLight(true, true, this, true);
+        if (SettingsController.isDarkTheme(this)) {
+            LightStatusBar.setLight(false, false, this, true);
+        } else {
+            LightStatusBar.setLight(true, true, this, true);
+        }
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_event);
 
@@ -88,6 +92,7 @@ public class EventActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mSwipeRefreshLayout = findViewById(R.id.refresh_event);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(() -> getEvent(url));
@@ -132,6 +137,7 @@ public class EventActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_event, menu);
+        LightStatusBar.setToolBarIconColor(mContext, menu);
         return true;
     }
 
@@ -296,7 +302,7 @@ public class EventActivity extends AppCompatActivity {
                             ((TextView)snackbar
                                     .getView()
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
-                                    .setTextColor(Color.BLACK);
+                                    .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
                             PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheetMenu_item"
     android:layout_width="match_parent"
@@ -14,7 +13,7 @@
         android:id="@+id/bottomSheetMenu_item_icon"
         android:layout_width="24dp"
         android:layout_height="56dp"
-        android:alpha="0.60"
+        android:tint="@color/colorBottomSheetIcon"
         tools:srcCompat="@drawable/ic_share" />
 
     <androidx.appcompat.widget.AppCompatTextView
