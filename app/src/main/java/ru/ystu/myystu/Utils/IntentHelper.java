@@ -1,6 +1,8 @@
 package ru.ystu.myystu.Utils;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +17,7 @@ import androidx.core.content.FileProvider;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import ru.ystu.myystu.Activitys.MainActivity;
 import ru.ystu.myystu.R;
 
 public class IntentHelper {
@@ -91,5 +94,14 @@ public class IntentHelper {
         } else {
             Toast.makeText(mContext, mContext.getString(R.string.error_message_file_not_found), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public static void restartApp (Context mContext) {
+        final Intent mStartActivity = new Intent(mContext, MainActivity.class);
+        int mPendingIntentId = 123456;
+        final PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        final AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
     }
 }

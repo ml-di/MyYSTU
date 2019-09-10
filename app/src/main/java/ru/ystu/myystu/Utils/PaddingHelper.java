@@ -41,17 +41,6 @@ public class PaddingHelper {
         });
     }
 
-    public static void setMarginsSnackbar (Context mContext, Snackbar snackbar) {
-
-        final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) snackbar.getView().getLayoutParams();
-        params.setMargins(params.leftMargin + (int) Converter.convertDpToPixel(16, mContext),
-                params.topMargin,
-                params.rightMargin + (int) Converter.convertDpToPixel(16, mContext),
-                params.bottomMargin + (int) Converter.convertDpToPixel(70, mContext));
-        snackbar.getView().setLayoutParams(params);
-
-    }
-
     public static void setMarginsAppBar (AppBarLayout appBarLayout) {
         appBarLayout.setOnApplyWindowInsetsListener((v, insets) -> {
             v.setPadding(0, insets.getSystemWindowInsetTop(),0, 0);

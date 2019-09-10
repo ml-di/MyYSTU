@@ -1,6 +1,8 @@
 package ru.ystu.myystu;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Build;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.room.Room;
@@ -16,6 +18,7 @@ import ru.ystu.myystu.Utils.SettingsController;
 public class Application extends android.app.Application {
 
     public static Application instance;
+    public static boolean isDarkSystemTheme;
 
     @Override
     public void onCreate() {
@@ -23,7 +26,9 @@ public class Application extends android.app.Application {
         instance = this;
 
         final Context context = Application.this;
+        setSystemTheme(context);
         setTheme(context);
+
         final OkHttpClient okHttpClient = new OkHttpClient();
         final ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
                 .newBuilder(context, okHttpClient)
@@ -40,6 +45,9 @@ public class Application extends android.app.Application {
                 .fallbackToDestructiveMigration()
                 .build();
     }
+    public boolean isDarkSystemTheme () {
+        return this.isDarkSystemTheme();
+    }
     public static void setTheme(Context mContext) {
         setTheme(SettingsController.isDarkTheme(mContext));
     }
@@ -49,5 +57,9 @@ public class Application extends android.app.Application {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
+    }
+    private static void setSystemTheme (Context mContext) {
+        final int config = mContext.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        isDarkSystemTheme = config == Configuration.UI_MODE_NIGHT_YES && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
     }
 }

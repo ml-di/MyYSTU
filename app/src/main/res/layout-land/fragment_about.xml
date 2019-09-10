@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/shape_rectangle_rounded_15dp"
-                android:backgroundTint="@color/colorBackground"
+                android:backgroundTint="@color/colorBackgroundTwo"
                 android:elevation="4dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"

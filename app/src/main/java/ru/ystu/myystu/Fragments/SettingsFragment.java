@@ -3,6 +3,7 @@ package ru.ystu.myystu.Fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.Toast;
@@ -22,11 +23,13 @@ import ru.ystu.myystu.Activitys.SettingsActivity;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.IntentHelper;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private String key;
     private AppDatabase db;
+    private boolean isChangeTheme = false;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -40,8 +43,23 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         // Темная тема
         final SwitchPreferenceCompat darkTheme = findPreference("preference_ui_darktheme_enable");
         if(darkTheme != null) {
+
+            if (Application.isDarkSystemTheme) {
+                darkTheme.setEnabled(false);
+                darkTheme.setSummary(getResources().getString(R.string.settings_general_ui_darktheme_summary));
+            } else {
+                darkTheme.setEnabled(true);
+                darkTheme.setSummary(null);
+            }
+
             darkTheme.setOnPreferenceChangeListener((preference, newValue) -> {
-                Application.setTheme((boolean) newValue);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Application.setTheme((boolean) newValue);
+                } else {
+                    Application.setTheme((boolean) newValue );
+                    isChangeTheme = true;
+                }
+
                 return true;
             });
         }
@@ -144,6 +162,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         }
         if (db != null && db.isOpen()) {
             db.close();
+        }
+
+        if (isChangeTheme) {
+            IntentHelper.restartApp(getActivity());
         }
     }
 

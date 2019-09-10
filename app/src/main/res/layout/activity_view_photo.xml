@@ -23,7 +23,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorToolbarPhotoView"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="1 | 10" />
+            app:popupTheme="@style/ToolBar_Popup"
+            app:title="1 из 10"/>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

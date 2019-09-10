@@ -13,7 +13,7 @@
     <color name="colorMf">#A03293</color>
     <color name="colorHtf">#148996</color>
 
-    <color name="design_snackbar_background_color" tools:override="true">@color/colorBackground</color>
+    <color name="design_snackbar_background_color" tools:override="true">@color/colorBackgroundTwo</color>
 
     <!-- StatusBar -->
     <color name="colorLightStatusBar">#121212</color>
@@ -29,7 +29,7 @@
     <color name="colorPlaceHolderImage">#1D1D1D</color>
     <color name="colorBackground">#121212</color>
     <color name="colorBackgroundTwo">#1D1D1D</color>
-    <color name="colorBackgroundBell">#121212</color>
+    <color name="colorBackgroundBell">#1D1D1D</color>
 
     <color name="menuGradientStart">#000000</color>
     <color name="menuGradientEnd">#BF121212</color>
@@ -44,7 +44,7 @@
 
     <color name="colorButtonBackgroundError">#FFFFFF</color>
     <color name="colorButtonTextError">#121212</color>
-    <color name="colorDivider">#222222</color>
+    <color name="colorDivider">#323232</color>
     <color name="colorMenuIcon">#FFFFFF</color>
     <color name="colorBackgroundOpacityText">#E6000000</color>
     <color name="colorSettingsIcon">#FFFFFF</color>

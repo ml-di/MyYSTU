@@ -1,4 +1,5 @@
 package ru.ystu.myystu.Activitys;
+
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -10,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;

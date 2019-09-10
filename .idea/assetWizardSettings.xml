@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_sto" />
-                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\about.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_animation" />
+                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\ic_animation.svg" />
                           </map>
                         </option>
                       </PersistentState>

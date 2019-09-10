@@ -232,13 +232,15 @@ public class EventActivity extends AppCompatActivity {
 
                                         // Обновляем счетчики
                                         // Если нет счетчика, создаем
-                                        if (!db.countersDao().isExistsCounter("EVENT")) {
-                                            final CountersData countersData = new CountersData();
-                                            countersData.setType("EVENT");
-                                            countersData.setCount(count);
-                                            db.countersDao().insertCounter(countersData);
-                                        } else {
-                                            db.countersDao().setCount("EVENT", count);
+                                        if ( ((EventItemsData_Header) eventItemsData.get(0)).getSelected_id() == 0) {
+                                            if (!db.countersDao().isExistsCounter("EVENT")) {
+                                                final CountersData countersData = new CountersData();
+                                                countersData.setType("EVENT");
+                                                countersData.setCount(count);
+                                                db.countersDao().insertCounter(countersData);
+                                            } else {
+                                                db.countersDao().setCount("EVENT", count);
+                                            }
                                         }
                                     }
                                 } catch (SQLiteException e) {
@@ -304,7 +306,6 @@ public class EventActivity extends AppCompatActivity {
                                     .findViewById(com.google.android.material.R.id.snackbar_text))
                                     .setTextColor(getResources().getColor(R.color.colorTextBlack));
 
-                            PaddingHelper.setMarginsSnackbar(mContext, snackbar);
                             snackbar.show();
 
                             mSwipeRefreshLayout.setRefreshing(false);
