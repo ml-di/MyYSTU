@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import ru.ystu.myystu.Application;
 import ru.ystu.myystu.R;
 
 public class LightStatusBar {
@@ -48,8 +49,13 @@ public class LightStatusBar {
         } else {
             if(isLightStatusBar)
                 mActivity.getWindow().setStatusBarColor(mActivity.getResources().getColor(R.color.colorLightStatusBar));
-            else
-                mActivity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+            else {
+                if (SettingsController.isDarkTheme(mActivity) && isToolBar) {
+                        mActivity.getWindow().setStatusBarColor(mActivity.getResources().getColor(R.color.colorToolBar));
+                } else {
+                    mActivity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+                }
+            }
         }
 
         /*

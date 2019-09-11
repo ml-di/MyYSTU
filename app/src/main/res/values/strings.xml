@@ -5,7 +5,7 @@
     <!-- Другие -->
     <string name="other_search_results">Результаты поиска</string>
     <string name="other_of">из</string>
-    <string name="other_dont_find">Ничего не найдено 🤔</string>
+    <string name="other_dont_find">Ничего не найдено   🔎️</string>
 
     <!-- Time -->
     <string name="time_jan">января</string>
@@ -51,6 +51,7 @@
 
     <!-- Activity photoView -->
     <string name="photo_view_image_successfully_save">Изображение сохранено</string>
+    <string name="photo_view_image_title">Изображение</string>
 
     <!-- Activity профиль -->
     <string name="activity_userFull_title">Профиль</string>
@@ -58,7 +59,7 @@
     <!-- Activity расписание -->
     <string name="tab_schedule_one">Очное</string>
     <string name="tab_schedule_two">Заочное</string>
-    <string name="schedule_file_not_open">Нет приложения для открытия doc/docx</string>
+    <string name="schedule_file_not_open">Нет приложения для открытия документа</string>
     <string name="intent_schedule_share_doc">Отправить документ</string>
     <string name="schedule_item_asf_one">Институт инженеров\nстроительства\nи транспорта</string>
     <string name="schedule_item_asf_two">Институт\nархитектуры\nи дизайна</string>

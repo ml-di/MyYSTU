@@ -97,11 +97,11 @@ public class IntentHelper {
     }
 
     public static void restartApp (Context mContext) {
-        final Intent mStartActivity = new Intent(mContext, MainActivity.class);
+        /*final Intent mStartActivity = new Intent(mContext, MainActivity.class);
         int mPendingIntentId = 123456;
         final PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
         final AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);*/
         System.exit(0);
     }
 }

@@ -49,6 +49,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private AppCompatTextView fileType;
         private AppCompatImageView icon;
         private ConstraintLayout item;
+        private ConstraintLayout divider;
 
         JobItemViewHolder(View itemView) {
             super(itemView);
@@ -57,10 +58,17 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileType = itemView.findViewById(R.id.itemJob_fileType);
             icon  = itemView.findViewById(R.id.itemJob_icon);
             item = itemView.findViewById(R.id.itemJob);
+            divider = itemView.findViewById(R.id.itemJob_divider);
 
         }
 
-        void setJob (JobItemsData jobItem, Context mContext) {
+        void setJob (JobItemsData jobItem, Context mContext, int size) {
+
+            if (getAdapterPosition() == size - 1) {
+                divider.setVisibility(View.GONE);
+            } else {
+                divider.setVisibility(View.VISIBLE);
+            }
 
             organization.setText(jobItem.getOrganization());
 
@@ -116,7 +124,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (viewType) {
             case ITEM_JOB:
                 final JobItemsData job = (JobItemsData) mList.get(position);
-                ((JobItemViewHolder) holder).setJob(job, mContext);
+                ((JobItemViewHolder) holder).setJob(job, mContext, getItemCount());
                 break;
         }
     }

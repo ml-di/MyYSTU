@@ -51,6 +51,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     static class UserViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout mainLayout;
+        private ConstraintLayout divider;
         private SimpleDraweeView image;
         private AppCompatTextView name;
         private AppCompatTextView information;
@@ -59,12 +60,19 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
 
             mainLayout = itemView.findViewById(R.id.itemUser);
+            divider = itemView.findViewById(R.id.itemUser_item_divider);
             image = itemView.findViewById(R.id.itemUser_image);
             name = itemView.findViewById(R.id.itemUser_name);
             information = itemView.findViewById(R.id.itemUser_information);
         }
 
-        void setUser (UsersItemsData user, Context mContext) {
+        void setUser (UsersItemsData user, Context mContext, int size) {
+
+            if (getAdapterPosition() == size - 1) {
+                divider.setVisibility(View.GONE);
+            } else {
+                divider.setVisibility(View.VISIBLE);
+            }
 
             if (SettingsController.isImageDownload(mContext)) {
                 image.setImageRequest(FrescoHelper.getImageRequest(mContext, user.getImage()));
@@ -165,7 +173,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
             case ITEM_USER:
                 final UsersItemsData user = (UsersItemsData) mListFiltered.get(position);
-                ((UserViewHolder) holder).setUser(user, mContext);
+                ((UserViewHolder) holder).setUser(user, mContext, getItemCount());
                 break;
             case ITEM_DIVIDER:
                 final StringData divider = (StringData) mListFiltered.get(position);

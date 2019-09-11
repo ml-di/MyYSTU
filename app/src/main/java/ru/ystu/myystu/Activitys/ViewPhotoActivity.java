@@ -60,7 +60,8 @@ public class ViewPhotoActivity extends AppCompatActivity {
                 for(int i = 0; i < mList.size(); i++)
                     imageUrls[i] = ((NewsItemsPhotoData)mList.get(i)).getUrlFull();
 
-                mToolBar.setTitle(position + 1 + " " + getResources().getString(R.string.other_of) + " " + imageUrls.length);
+                if (imageUrls.length > 1)
+                    mToolBar.setTitle(position + 1 + " " + getResources().getString(R.string.other_of) + " " + imageUrls.length);
 
                 mViewPager = (MultiTouchViewPager) findViewById(R.id.view_pager_news_photo);
                 final NewsPhotoViewPagerAdapter adapter = new NewsPhotoViewPagerAdapter(this, imageUrls);

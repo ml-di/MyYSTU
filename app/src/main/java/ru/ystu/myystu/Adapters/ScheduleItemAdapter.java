@@ -56,6 +56,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         private AppCompatTextView text;
         private ConstraintLayout item;
+        private ConstraintLayout divider;
         private AppCompatImageView menu;
         private AppCompatImageView downloadIcon;
 
@@ -64,17 +65,23 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             text = itemView.findViewById(R.id.schedule_item_text);
             item = itemView.findViewById(R.id.schedule_item);
+            divider = itemView.findViewById(R.id.schedule_item_divider);
             menu = itemView.findViewById(R.id.menu_schedule_item);
             downloadIcon = itemView.findViewById(R.id.schedule_item_download_icon);
-
         }
 
-        void setSchedule (ScheduleListItemData scheduleItem, Context mContext) {
+        void setSchedule (ScheduleListItemData scheduleItem, Context mContext, int size) {
 
             text.setText(scheduleItem.getName());
             id = scheduleItem.getId();
             fileName = scheduleItem.getName();
             link = scheduleItem.getLink();
+
+            if (getAdapterPosition() == size - 1) {
+                divider.setVisibility(View.GONE);
+            } else {
+                divider.setVisibility(View.VISIBLE);
+            }
 
             File dir;
             File file;
@@ -165,7 +172,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             case ITEM_SCHEDULE:
                 final ScheduleListItemData schedule = (ScheduleListItemData) mList.get(position);
-                ((ScheduleItemViewHolder) holder).setSchedule(schedule, mContext);
+                ((ScheduleItemViewHolder) holder).setSchedule(schedule, mContext, getItemCount());
                 break;
         }
     }

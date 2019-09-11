@@ -24,6 +24,6 @@
             android:background="@color/colorToolbarPhotoView"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ToolBar_Popup"
-            app:title="1 из 10"/>
+            app:title="@string/photo_view_image_title"/>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

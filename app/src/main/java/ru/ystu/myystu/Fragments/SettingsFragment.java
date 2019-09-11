@@ -59,7 +59,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                     Application.setTheme((boolean) newValue );
                     isChangeTheme = true;
                 }
-
                 return true;
             });
         }

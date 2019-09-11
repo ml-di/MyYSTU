@@ -16,7 +16,7 @@
     <color name="design_snackbar_background_color" tools:override="true">@color/colorBackground</color>
 
     <!-- StatusBar -->
-    <color name="colorLightStatusBar">#C8C8C8</color>
+    <color name="colorLightStatusBar">#F2C8C8C8</color>
 
     <color name="colorOverleyImage">#A6000000</color>
     <color name="colorPhotoViewBackground">#000000</color>
