@@ -2,6 +2,8 @@ package ru.ystu.myystu.Activitys;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,11 +12,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
@@ -61,6 +64,7 @@ public class StoActivity extends AppCompatActivity {
     private GetListStoFromURL getListStoFromURL;
     private GetListDocFromURL getListDocFromURL;
     private AppDatabase db;
+    private AppCompatTextView dontFindText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,7 @@ public class StoActivity extends AppCompatActivity {
 
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_sto);
+        dontFindText = findViewById(R.id.sto_dontfind);
 
         if (SettingsController.isDarkTheme(this)) {
             LightStatusBar.setLight(false, false, this, true);
@@ -175,6 +180,25 @@ public class StoActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_sto, menu);
         LightStatusBar.setToolBarIconColor(mContext, menu);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_sto_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText) && mRecyclerViewAdapter != null) {
+                    ((StoItemsAdapter) mRecyclerViewAdapter).getFilter().filter("");
+                } else {
+                    if (mRecyclerViewAdapter != null && mRecyclerViewAdapter.getItemCount() > 1)
+                        ((StoItemsAdapter) mRecyclerViewAdapter).getFilter().filter(newText);
+                }
+                return true;
+            }
+        });
         return true;
     }
 
@@ -357,5 +381,13 @@ public class StoActivity extends AppCompatActivity {
 
     public void updateItem (int pos) {
         mRecyclerViewAdapter.notifyItemChanged(pos);
+    }
+
+    public void setPlaceholder (boolean isVisible) {
+        if (isVisible) {
+            dontFindText.setVisibility(View.VISIBLE);
+        } else {
+            dontFindText.setVisibility(View.GONE);
+        }
     }
 }

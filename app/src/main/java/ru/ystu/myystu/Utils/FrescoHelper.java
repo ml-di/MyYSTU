@@ -10,7 +10,7 @@ public class FrescoHelper {
 
     public static ImageRequest getImageRequest (Context mContext, String url) {
 
-        if (url != null) {
+        if (url != null && Uri.parse(url) != null) {
             if (SettingsController.isImageRAMCache(mContext)) {
                 return ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
                         .setProgressiveRenderingEnabled(true)

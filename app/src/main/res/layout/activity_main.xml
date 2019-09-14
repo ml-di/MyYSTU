@@ -16,7 +16,7 @@
             android:id="@+id/contentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottomBar" />
+            android:layout_above="@+id/bottomBar"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomBar"
@@ -28,5 +28,4 @@
             app:menu="@menu/navigation_view_item" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

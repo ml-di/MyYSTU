@@ -337,4 +337,8 @@ public class EventActivity extends AppCompatActivity {
             recyclerView.clearAnimation();
         }
     }
+
+    public boolean isRefresh() {
+        return mSwipeRefreshLayout.isRefreshing();
+    }
 }

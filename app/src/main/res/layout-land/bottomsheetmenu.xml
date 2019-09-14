@@ -52,6 +52,7 @@
             android:id="@+id/bottomSheetMenu_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/bottomSheetMenu_title"/>
+            app:layout_constraintTop_toBottomOf="@id/bottomSheetMenu_title"
+            android:splitMotionEvents="false"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

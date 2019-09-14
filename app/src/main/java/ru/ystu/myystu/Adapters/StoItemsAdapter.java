@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -28,25 +30,29 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.ystu.myystu.Activitys.StoActivity;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
+import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
 
-public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback, Filterable {
 
     private static final int ITEM_TITLE = 0;
     private static final int ITEM_SUBTITLE = 1;
     private static final int ITEM_DOC = 2;
+    private static final int ITEM_DIVIDER = 3;
 
     private List<Parcelable> mList;
+    private List<Parcelable> mListFiltered;
     private Context mContext;
 
     static class TitleViewHolder extends RecyclerView.ViewHolder {
@@ -82,6 +88,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     static class DocViewHolder extends RecyclerView.ViewHolder {
 
         ConstraintLayout item;
+        ConstraintLayout divider;
         AppCompatTextView fileName;
         AppCompatTextView fileExt;
         AppCompatTextView summary;
@@ -91,13 +98,14 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             super(itemView);
 
             item = itemView.findViewById(R.id.itemStoDoc_item);
+            divider = itemView.findViewById(R.id.itemStoDoc_divider);
             fileName = itemView.findViewById(R.id.itemStoDoc_name);
             fileExt = itemView.findViewById(R.id.itemStoDoc_fileType);
             summary = itemView.findViewById(R.id.itemStoDoc_summary);
             downloadIcon = itemView.findViewById(R.id.itemStoDoc_download_icon);
         }
 
-        void setDoc (StoItemsData_Doc docItem, Context mContext) {
+        void setDoc (StoItemsData_Doc docItem, Context mContext, List<Parcelable> mList) {
 
             final String fileNamePath = docItem.getFileName().replaceAll(" ", "_") + "." + docItem.getFileExt();
             final File file = new File(Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS, fileNamePath);
@@ -117,12 +125,36 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 summary.setVisibility(View.GONE);
             }
 
+            // Видимость Divider
+            if (getAdapterPosition() == mList.size() - 1
+                    || (getAdapterPosition() + 1 <= mList.size() - 1 && !(mList.get(getAdapterPosition() + 1) instanceof StoItemsData_Doc))) {
+                divider.setVisibility(View.GONE);
+            } else {
+                divider.setVisibility(View.VISIBLE);
+            }
+
             item.setOnClickListener(v -> showMenu(mContext, docItem, fileNamePath, file, getAdapterPosition()));
+        }
+    }
+
+    static class DividerViewHolder extends RecyclerView.ViewHolder {
+
+        AppCompatTextView title;
+
+        DividerViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            title = itemView.findViewById(R.id.itemUser_divider);
+        }
+
+        void setDivider (StringData stringData) {
+            title.setText(stringData.getTitle());
         }
     }
 
     public StoItemsAdapter(List<Parcelable> mList) {
         this.mList = mList;
+        this.mListFiltered = mList;
     }
 
     @Override
@@ -146,6 +178,9 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case ITEM_DOC:
                 final View viewDoc = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_sto_doc, parent, false);
                 return new DocViewHolder(viewDoc);
+            case ITEM_DIVIDER:
+                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_users_divider, parent, false);
+                return new DividerViewHolder(viewDivider);
             default:
                 return null;
         }
@@ -158,36 +193,43 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final int viewType = holder.getItemViewType();
         switch (viewType) {
             case ITEM_TITLE:
-                final StoItemsData_Title title = (StoItemsData_Title) mList.get(position);
+                final StoItemsData_Title title = (StoItemsData_Title) mListFiltered.get(position);
                 ((TitleViewHolder) holder).setTitle(title);
                 break;
 
             case ITEM_SUBTITLE:
-                final StoItemsData_Subtitle subtitle = (StoItemsData_Subtitle) mList.get(position);
+                final StoItemsData_Subtitle subtitle = (StoItemsData_Subtitle) mListFiltered.get(position);
                 ((SubtitleViewHolder) holder).setSubtitle(subtitle);
                 break;
 
             case ITEM_DOC:
-                final StoItemsData_Doc doc = (StoItemsData_Doc) mList.get(position);
-                ((DocViewHolder) holder).setDoc(doc, mContext);
+                final StoItemsData_Doc doc = (StoItemsData_Doc) mListFiltered.get(position);
+                ((DocViewHolder) holder).setDoc(doc, mContext, mListFiltered);
+                break;
+
+            case ITEM_DIVIDER:
+                final StringData divider = (StringData) mListFiltered.get(position);
+                ((DividerViewHolder) holder).setDivider(divider);
                 break;
         }
     }
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return mListFiltered.size();
     }
 
     @Override
     public int getItemViewType(int position) {
 
-        if (mList.get(position) instanceof StoItemsData_Title) {
+        if (mListFiltered.get(position) instanceof StoItemsData_Title) {
             return ITEM_TITLE;
-        } else if (mList.get(position) instanceof StoItemsData_Subtitle) {
+        } else if (mListFiltered.get(position) instanceof StoItemsData_Subtitle) {
             return ITEM_SUBTITLE;
-        } else if (mList.get(position) instanceof StoItemsData_Doc) {
+        } else if (mListFiltered.get(position) instanceof StoItemsData_Doc) {
             return ITEM_DOC;
+        } if (mListFiltered.get(position) instanceof StringData) {
+            return ITEM_DIVIDER;
         } else {
             return -1;
         }
@@ -195,7 +237,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public long getItemId(int position) {
-        return mList.get(position).hashCode();
+        return mListFiltered.get(position).hashCode();
     }
 
     @Override
@@ -336,5 +378,60 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }).start();
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+
+                final FilterResults mFilterResults = new FilterResults();
+                final List<Parcelable> resultList = new ArrayList<>();
+
+                if (constraint.equals("")) {
+                    mListFiltered = mList;
+                } else {
+                    final String filter = constraint.toString().toLowerCase().trim();
+                    for (Parcelable p : mList) {
+                        if (p instanceof StoItemsData_Doc) {
+                            String summaryTemp = "";
+                            final String nameTemp = ((StoItemsData_Doc) p).getFileName().toLowerCase();
+                            if (((StoItemsData_Doc) p).getSummary() != null) {
+                                summaryTemp = ((StoItemsData_Doc) p).getSummary().toLowerCase();
+                            }
+                            if (nameTemp.contains(filter) || summaryTemp.contains(filter)) {
+                                final String fileName = ((StoItemsData_Doc) p).getFileName();
+                                final String fileExt = ((StoItemsData_Doc) p).getFileExt();
+                                final String summary = ((StoItemsData_Doc) p).getSummary();
+                                final String url = ((StoItemsData_Doc) p).getUrl();
+
+                                resultList.add(new StoItemsData_Doc(fileName, fileExt, summary, url));
+                            }
+                        }
+                    }
+                    mListFiltered = resultList;
+                    if (resultList.size() > 0) {
+                        mListFiltered.add(0, new StringData(-1, mContext.getResources().getString(R.string.other_search_results)));
+                    }
+                }
+
+                mFilterResults.values = mListFiltered;
+                mFilterResults.count = mListFiltered.size();
+
+                return mFilterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mListFiltered = (List<Parcelable>) results.values;
+                notifyDataSetChanged();
+                if (mListFiltered.size() > 0) {
+                    ((StoActivity) mContext).setPlaceholder(false);
+                } else {
+                    ((StoActivity) mContext).setPlaceholder(true);
+                }
+            }
+        };
     }
 }

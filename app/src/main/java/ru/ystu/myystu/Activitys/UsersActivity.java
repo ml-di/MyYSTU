@@ -28,7 +28,6 @@ import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -166,7 +165,7 @@ public class UsersActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_user_search).getActionView();
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_user_search).getActionView();
         LightStatusBar.setToolBarIconColor(mContext, menu);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -180,7 +179,7 @@ public class UsersActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(newText) && mRecyclerViewAdapter != null) {
                     ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter("");
                 } else {
-                    if (mRecyclerViewAdapter != null)
+                    if (mRecyclerViewAdapter != null  && mRecyclerViewAdapter.getItemCount() > 1)
                         ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter(newText);
                 }
                 return true;

@@ -211,6 +211,7 @@ public class BellFragment extends Fragment {
             params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRecyclerView = new RecyclerView(mainLayout.getContext());
             mRecyclerView.setBackgroundColor(getResources().getColor(R.color.colorBackgroundBell));
+            mRecyclerView.setMotionEventSplittingEnabled(false);
             mainLayout.addView(mRecyclerView, 0 , params);
 
             mLayoutManager = new LinearLayoutManager(mContext);

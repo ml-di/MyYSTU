@@ -9,6 +9,7 @@
         android:id="@+id/recycler_schedule_one"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        android:splitMotionEvents="false"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

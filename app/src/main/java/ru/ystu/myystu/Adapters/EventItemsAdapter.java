@@ -58,7 +58,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 int finalI = i;
                 chips[i].setOnClickListener(v -> {
-                    if(headerItem.getSelected_id() != finalI){
+                    if(headerItem.getSelected_id() != finalI && !((EventActivity) mContext).isRefresh()){
                         ((EventActivity) mContext).getEvent(headerItem.getUrl()[finalI]);
                         ((EventActivity) mContext).setUrl(headerItem.getUrl()[finalI]);
                         resetChip(chips, mContext);
