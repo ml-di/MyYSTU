@@ -268,6 +268,8 @@ public class MainActivity extends AppCompatActivity {
                                         final String type = s.substring(0, s.indexOf(":"));
                                         final int count = Integer.valueOf(s.substring(s.indexOf(":") + 1));
 
+                                        // TODO отрисовка bandage
+
                                         // Если нет счетчика, создаем
                                         if (!db.countersDao().isExistsCounter(type)) {
                                             final CountersData countersData = new CountersData();
@@ -275,10 +277,8 @@ public class MainActivity extends AppCompatActivity {
                                             countersData.setCount(count);
                                             db.countersDao().insertCounter(countersData);
                                         } else {
-                                            final int oldCount = db.countersDao().getCountCounter(type);
-                                            if (count != oldCount) {
-                                                final int countUpdates = Math.abs(count - oldCount);
-                                                updateList.add(new UpdateData(type, countUpdates, count));
+                                            if (count > 0) {
+                                                updateList.add(new UpdateData(type, count));
                                                 countUpdate.getAndIncrement();
                                             }
                                         }

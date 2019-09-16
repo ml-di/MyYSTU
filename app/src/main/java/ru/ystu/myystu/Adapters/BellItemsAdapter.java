@@ -56,6 +56,7 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
                         break;
                 }
                 if (mIntent != null) {
+                    mIntent.putExtra("isUpdate", true);
                     mContext.startActivity(mIntent);
                     ((BellFragment) ((MainActivity) mContext).getmBellFragment()).removeItem(position);
                 }

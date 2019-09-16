@@ -3,7 +3,7 @@ package ru.ystu.myystu.Database.Dao;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-
+import java.util.List;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.StringData;
@@ -26,6 +26,9 @@ public interface EventsItemsDao {
     @Query("DELETE FROM event_items")
     void deleteAllEventItems();
 
+    @Query("DELETE FROM event_items WHERE link = :link")
+    void deleteEventItemByLink(String link);
+
     @Query("DELETE FROM event_header")
     void deleteEventHeader();
 
@@ -47,6 +50,9 @@ public interface EventsItemsDao {
     @Query("SELECT * FROM event_header WHERE id = :id")
     EventItemsData_Header getEventHeader (int id);
 
+    @Query("SELECT * FROM event_items")
+    List<EventItemsData_Event> getAllEvent();
+
     @Query("SELECT EXISTS(SELECT id FROM divider WHERE id = :id)")
     boolean isExistsDivider (int id);
 
@@ -55,4 +61,7 @@ public interface EventsItemsDao {
 
     @Query("SELECT EXISTS(SELECT id FROM event_header WHERE id = :id)")
     boolean isExistsEventHeader (int id);
+
+    @Query("SELECT EXISTS (SELECT link FROM event_items WHERE link = :link)")
+    boolean isExistsEventByLink (String link);
 }

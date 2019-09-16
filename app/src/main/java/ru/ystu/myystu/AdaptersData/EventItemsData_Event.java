@@ -30,6 +30,9 @@ public class EventItemsData_Event implements Parcelable {
     @ColumnInfo(name = "photoUrl")
     private final String photoUrl;
 
+    @Ignore
+    private boolean isNew = false;
+
     public EventItemsData_Event(final int id,
                                 final String link,
                                 final String title,
@@ -98,5 +101,11 @@ public class EventItemsData_Event implements Parcelable {
     }
     public String getPhotoUrl() {
         return photoUrl;
+    }
+    public boolean isNew() {
+        return isNew;
+    }
+    public void setNew(boolean aNew) {
+        isNew = aNew;
     }
 }

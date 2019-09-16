@@ -229,7 +229,9 @@ public class BellFragment extends Fragment {
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             final int pos = viewHolder.getAdapterPosition();
-            new Thread(() -> {
+
+            // TODO переделать систему свайпнутого activity
+            /*new Thread(() -> {
                 try {
                     AppDatabase db = Application.getInstance().getDatabase();
                     if (db.getOpenHelper().getWritableDatabase().isOpen()) {
@@ -241,7 +243,7 @@ public class BellFragment extends Fragment {
                     Objects.requireNonNull(getActivity()).runOnUiThread(() -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show());
                 }
                 Objects.requireNonNull(getActivity()).runOnUiThread(() -> removeItem(pos));
-            }).start();
+            }).start();*/
         }
     };
 

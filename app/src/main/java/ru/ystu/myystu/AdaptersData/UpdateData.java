@@ -7,20 +7,16 @@ public class UpdateData implements Parcelable {
 
     private final String type;
     private final int count;
-    private final int countItem;
 
     public UpdateData(final String type,
-                      final int count,
-                      final int countItem) {
+                      final int count) {
         this.type = type;
         this.count = count;
-        this.countItem = countItem;
     }
 
     private UpdateData (Parcel in) {
         type = in.readString();
         count = in.readInt();
-        countItem = in.readInt();
     }
 
     public static final Creator<UpdateData> CREATOR = new Creator<UpdateData>() {
@@ -44,7 +40,6 @@ public class UpdateData implements Parcelable {
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(type);
         parcel.writeInt(count);
-        parcel.writeInt(countItem);
     }
 
     public String getType() {
@@ -52,8 +47,5 @@ public class UpdateData implements Parcelable {
     }
     public int getCount() {
         return count;
-    }
-    public int getCountItem() {
-        return countItem;
     }
 }

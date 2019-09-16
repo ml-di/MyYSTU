@@ -1,8 +1,11 @@
 package ru.ystu.myystu.Network.UpdateCount;
 
+import android.database.sqlite.SQLiteException;
+
 import androidx.annotation.NonNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import io.reactivex.Single;
@@ -11,6 +14,8 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
 
 public class GetCountJob {
 
@@ -39,11 +44,23 @@ public class GetCountJob {
 
                             try {
 
+                                int index = 0;
+
                                 final Document doc = Jsoup.connect(url).get();
-                                final Elements jobs = doc.select(".page-main-content__spoiler.js-spoiler");
+                                final Elements jobs = doc.getElementsByClass("single-page-description").select("h3,h5");
+                                try {
+                                    final AppDatabase db = Application.getInstance().getDatabase();
+                                    for (Element e : jobs) {
+                                        if(!e.text().equals("")) {
+                                            if (!db.jobItemsDao().isExistsJobByName(e.text()) && e.text().length() > 1) {
+                                                index++;
+                                            }
+                                        }
+                                    }
+                                } catch (SQLiteException ignored) { }
 
                                 if(!emitter.isDisposed()){
-                                    emitter.onSuccess("JOB:" + jobs.size());
+                                    emitter.onSuccess("JOB:" + index);
                                 }
 
                             } catch (Exception e){

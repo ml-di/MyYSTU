@@ -2,7 +2,6 @@ package ru.ystu.myystu.Activitys;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Color;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,6 +11,8 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
 import ru.ystu.myystu.AdaptersData.StringData;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Database.Data.CountersData;
@@ -54,15 +56,21 @@ public class EventActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ArrayList<Parcelable> mList;
+    private ArrayList<Parcelable> updateList;
     private Parcelable mRecyclerState;
     private CompositeDisposable mDisposables;
     private GetListEventFromURL getListEventFromURL;
     private AppDatabase db;
+    private boolean isUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+
+        if (getIntent().getExtras() != null){
+            isUpdate = getIntent().getExtras().getBoolean("isUpdate", false);
+        }
 
         if (SettingsController.isDarkTheme(this)) {
             LightStatusBar.setLight(false, false, this, true);
@@ -168,17 +176,20 @@ public class EventActivity extends AppCompatActivity {
         url = savedInstanceState.getString("url");
     }
 
-    public void setUrl (String url) {
+    public void setUrl (String url)  {
         this.url = url;
     }
 
     // Загрузка html страницы и ее парсинг
     public void getEvent(String link){
 
-        if(mList == null)
+        if(mList == null) {
             mList = new ArrayList<>();
-        else
+            updateList = new ArrayList<>();
+        } else {
             mList.clear();
+            updateList.clear();
+        }
 
         mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
@@ -194,18 +205,41 @@ public class EventActivity extends AppCompatActivity {
 
                         @Override
                         public void onSuccess(ArrayList<Parcelable> eventItemsData) {
+
                             mList = eventItemsData;
 
                             if(mRecyclerViewAdapter == null) {
-                                mRecyclerViewAdapter = new EventItemsAdapter(mList, getApplicationContext());
-                                mRecyclerViewAdapter.setHasStableIds(true);
-                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                setRecyclerViewAnim(mRecyclerView);
+                                if (isUpdate) {
+                                    new Thread(() -> {
+                                        updateList = getUpdateList(eventItemsData);
+                                        mRecyclerViewAdapter = new EventItemsAdapter(updateList, mContext);
+                                        mRecyclerViewAdapter.setHasStableIds(true);
+                                        mRecyclerView.post(() -> {
+                                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                            setRecyclerViewAnim(mRecyclerView);
+                                        });
+                                    }).start();
+                                } else {
+                                    mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
+                                    mRecyclerViewAdapter.setHasStableIds(true);
+                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                    setRecyclerViewAnim(mRecyclerView);
+                                }
                             } else {
-                                mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
+                                if (!isUpdate) {
+                                    mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
+                                } else {
+                                    mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
+                                    mRecyclerViewAdapter.setHasStableIds(true);
+                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                    setRecyclerViewAnim(mRecyclerView);
+                                    isUpdate = false;
+                                }
                             }
 
-                            new Thread(() -> {
+                            // TODO Сохранить в кеш события
+
+                            /*new Thread(() -> {
                                 try {
                                     if (db.getOpenHelper().getWritableDatabase().isOpen()) {
                                         // Удаляем все записи, если они есть
@@ -246,7 +280,7 @@ public class EventActivity extends AppCompatActivity {
                                 } catch (SQLiteException e) {
                                     runOnUiThread(() -> Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show());
                                 }
-                            }).start();
+                            }).start();*/
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -336,6 +370,32 @@ public class EventActivity extends AppCompatActivity {
         } else {
             recyclerView.clearAnimation();
         }
+    }
+
+    private ArrayList<Parcelable> getUpdateList (ArrayList<Parcelable> mList) {
+
+        final ArrayList<Parcelable> tempList = new ArrayList<>();
+        tempList.add(new UpdateItemsTitle(getResources().getString(R.string.other_updateFindTitle)));
+
+        try {
+            if (db.getOpenHelper().getReadableDatabase().isOpen() && db.eventsItemsDao().getCountEventItems() > 0) {
+
+                for (int i = 0; i < mList.size(); i++) {
+                    if (mList.get(i) instanceof EventItemsData_Event) {
+                        final String link = ((EventItemsData_Event) mList.get(i)).getLink();
+                        if (link != null && !db.eventsItemsDao().isExistsEventByLink(link)) {
+                            EventItemsData_Event eventItem = (EventItemsData_Event) mList.get(i);
+                            eventItem.setNew(true);
+                            tempList.add(eventItem);
+                        }
+                    }
+                }
+            }
+        } catch (SQLiteException e) {
+            runOnUiThread(() -> mSwipeRefreshLayout.setRefreshing(false));
+        }
+
+        return tempList;
     }
 
     public boolean isRefresh() {

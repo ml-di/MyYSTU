@@ -19,6 +19,7 @@ import ru.ystu.myystu.Activitys.EventFullActivity;
 import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -28,6 +29,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int ITEM_HEADER = 0;
     private static final int ITEM_DIVIDER = 1;
     private static final int ITEM_EVENT = 2;
+    private static final int ITEM_TITLE = 3;
 
     private List<Parcelable> mList;
     private Context mContext;
@@ -106,6 +108,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private AppCompatTextView date;
         private AppCompatTextView location;
         private AppCompatTextView title;
+        private ConstraintLayout newView;
 
         EventItemViewHolder(View itemView) {
             super(itemView);
@@ -115,6 +118,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             date = itemView.findViewById(R.id.eventItem_date);
             location = itemView.findViewById(R.id.eventItem_location);
             title = itemView.findViewById(R.id.eventItem_title);
+            newView = itemView.findViewById(R.id.eventItem_isNewTag);
         }
 
         void setViewItem(EventItemsData_Event eventItem, Context mContext){
@@ -131,6 +135,12 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 location.setVisibility(View.GONE);
             } else {
                 location.setVisibility(View.VISIBLE);
+            }
+
+            if (eventItem.isNew()) {
+                newView.setVisibility(View.VISIBLE);
+            } else {
+                newView.setVisibility(View.GONE);
             }
 
             mainLayout.setOnClickListener(view -> {
@@ -152,6 +162,21 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
 
             });
+        }
+    }
+
+    static class TitleViewHolder extends RecyclerView.ViewHolder {
+
+        AppCompatTextView title;
+
+        TitleViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            title = itemView.findViewById(R.id.itemUser_divider);
+        }
+
+        void setTitle (UpdateItemsTitle updateItemsTitle) {
+            title.setText(updateItemsTitle.getTitle());
         }
     }
 
@@ -189,6 +214,11 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 mViewHolder = new EventItemViewHolder(viewEvent);
                 break;
 
+            case ITEM_TITLE:
+                final View viewTitle = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_users_divider, parent, false);
+                mViewHolder = new TitleViewHolder(viewTitle);
+                break;
+
             default:
                 mViewHolder = null;
                 break;
@@ -214,6 +244,10 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 final EventItemsData_Event viewItem = (EventItemsData_Event) mList.get(position);
                 ((EventItemViewHolder) holder).setViewItem(viewItem, mContext);
                 break;
+            case ITEM_TITLE:
+                final UpdateItemsTitle viewTitle = (UpdateItemsTitle) mList.get(position);
+                ((TitleViewHolder) holder).setTitle(viewTitle);
+                break;
         }
     }
 
@@ -227,6 +261,8 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewType = ITEM_DIVIDER;
         } else if (mList.get(position) instanceof EventItemsData_Event) {
             viewType = ITEM_EVENT;
+        } else if (mList.get(position) instanceof UpdateItemsTitle) {
+            viewType = ITEM_TITLE;
         } else {
             viewType = -1;
         }

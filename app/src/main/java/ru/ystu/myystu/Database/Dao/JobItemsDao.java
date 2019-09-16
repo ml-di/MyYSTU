@@ -25,4 +25,7 @@ public interface JobItemsDao {
     @Query("SELECT COUNT(*) FROM job_items")
     int getCount();
 
+    @Query("SELECT EXISTS (SELECT organization FROM job_items WHERE organization = :name)")
+    boolean isExistsJobByName (String name);
+
 }

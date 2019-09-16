@@ -1,8 +1,10 @@
 package ru.ystu.myystu.Network.UpdateCount;
 
+import android.database.sqlite.SQLiteException;
 import androidx.annotation.NonNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import io.reactivex.Single;
@@ -11,6 +13,8 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import ru.ystu.myystu.Application;
+import ru.ystu.myystu.Database.AppDatabase;
 
 public class GetCountEvent {
 
@@ -39,11 +43,23 @@ public class GetCountEvent {
 
                             try {
 
+                                int index = 0;
+
                                 final Document doc = Jsoup.connect(url).get();
                                 final Elements events = doc.getElementsByClass("doing-item doing-item--page");
 
+                                try {
+                                    final AppDatabase db = Application.getInstance().getDatabase();
+                                     for (Element e : events) {
+                                         final String link = "https://www.ystu.ru" + e.select("a").attr("href");
+                                         if (!db.eventsItemsDao().isExistsEventByLink(link) && link.contains("events")) {
+                                             index++;
+                                         }
+                                     }
+                                } catch (SQLiteException ignored) { }
+
                                 if(!emitter.isDisposed()){
-                                    emitter.onSuccess("EVENT:" + events.size());
+                                    emitter.onSuccess("EVENT:" + index);
                                 }
 
                             } catch (Exception e){

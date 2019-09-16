@@ -58,11 +58,16 @@ public class JobActivity extends AppCompatActivity {
     private CompositeDisposable mDisposables;
     private GetListJobFromURL getListJobFromURL;
     private AppDatabase db;
+    private boolean isUpdate =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job);
+
+        if (getIntent().getExtras() != null){
+            isUpdate = getIntent().getExtras().getBoolean("isUpdate", false);
+        }
 
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_job);
@@ -200,6 +205,8 @@ public class JobActivity extends AppCompatActivity {
                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                             setRecyclerViewAnim(mRecyclerView);
 
+                            // TODO Сохранить в кеш трудоустройство
+                            /*
                             new Thread(() -> {
                                 try {
                                     if (db.getOpenHelper().getWritableDatabase().isOpen()) {
@@ -232,7 +239,7 @@ public class JobActivity extends AppCompatActivity {
                                 } catch (SQLiteException e) {
                                     runOnUiThread(() -> Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show());
                                 }
-                            }).start();
+                            }).start();*/
 
 
                             mSwipeRefreshLayout.setRefreshing(false);
