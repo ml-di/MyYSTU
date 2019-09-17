@@ -26,9 +26,6 @@ public interface EventsItemsDao {
     @Query("DELETE FROM event_items")
     void deleteAllEventItems();
 
-    @Query("DELETE FROM event_items WHERE link = :link")
-    void deleteEventItemByLink(String link);
-
     @Query("DELETE FROM event_header")
     void deleteEventHeader();
 

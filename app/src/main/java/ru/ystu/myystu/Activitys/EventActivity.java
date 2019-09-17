@@ -9,9 +9,7 @@ import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,15 +27,13 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
-import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
-import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
-import ru.ystu.myystu.Database.Data.CountersData;
 import ru.ystu.myystu.Network.LoadLists.GetListEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
+import ru.ystu.myystu.Utils.BottomFloatingButton.BottomFloatingButton;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
@@ -217,6 +213,8 @@ public class EventActivity extends AppCompatActivity {
                                         mRecyclerView.post(() -> {
                                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                                             setRecyclerViewAnim(mRecyclerView);
+                                            final BottomFloatingButton bfb = new BottomFloatingButton(mContext, mainLayout, "Открыть все события");
+                                            bfb.show();
                                         });
                                     }).start();
                                 } else {
