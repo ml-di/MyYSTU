@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ import ru.ystu.myystu.Network.LoadLists.GetListEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
 import ru.ystu.myystu.Utils.BottomFloatingButton.BottomFloatingButton;
+import ru.ystu.myystu.Utils.BottomFloatingButton.Interface.OnClickListener;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
@@ -117,7 +120,14 @@ public class EventActivity extends AppCompatActivity {
         }
         else{
             mList = savedInstanceState.getParcelableArrayList("mList");
-            mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
+            updateList = savedInstanceState.getParcelableArrayList("updateList");
+
+            if (isUpdate) {
+                mRecyclerViewAdapter = new EventItemsAdapter(updateList, this);
+            } else {
+                mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
+            }
+
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
     }
@@ -161,6 +171,7 @@ public class EventActivity extends AppCompatActivity {
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
         outState.putParcelableArrayList("mList", mList);
+        outState.putParcelableArrayList("updateList", updateList);
         outState.putString("url", url);
     }
 
@@ -182,7 +193,7 @@ public class EventActivity extends AppCompatActivity {
         if(mList == null) {
             mList = new ArrayList<>();
             updateList = new ArrayList<>();
-        } else {
+        } else if (!isUpdate) {
             mList.clear();
             updateList.clear();
         }
@@ -213,8 +224,17 @@ public class EventActivity extends AppCompatActivity {
                                         mRecyclerView.post(() -> {
                                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                                             setRecyclerViewAnim(mRecyclerView);
-                                            final BottomFloatingButton bfb = new BottomFloatingButton(mContext, mainLayout, "Открыть все события");
-                                            bfb.show();
+                                            final BottomFloatingButton bfb = new BottomFloatingButton(mContext, mainLayout, mContext.getString(R.string.bfb_all_event));
+                                            bfb.setIcon(R.drawable.ic_level_back);
+                                            bfb.setShowDelay(2000);
+                                            bfb.setAnimation(SettingsController.isEnabledAnim(mContext));
+                                            bfb.setOnClickListener(() -> {
+                                                isUpdate = false;
+                                                mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
+                                                mRecyclerViewAdapter.setHasStableIds(true);
+                                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                                setRecyclerViewAnim(mRecyclerView);
+                                            });
                                         });
                                     }).start();
                                 } else {
@@ -226,12 +246,6 @@ public class EventActivity extends AppCompatActivity {
                             } else {
                                 if (!isUpdate) {
                                     mRecyclerViewAdapter.notifyItemRangeChanged(2, mList.size());
-                                } else {
-                                    mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
-                                    mRecyclerViewAdapter.setHasStableIds(true);
-                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                    setRecyclerViewAnim(mRecyclerView);
-                                    isUpdate = false;
                                 }
                             }
 
