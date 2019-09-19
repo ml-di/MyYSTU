@@ -61,15 +61,12 @@ public class EventActivity extends AppCompatActivity {
     private GetListEventFromURL getListEventFromURL;
     private AppDatabase db;
     private boolean isUpdate = false;
+    private BottomFloatingButton bfb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
-
-        if (getIntent().getExtras() != null){
-            isUpdate = getIntent().getExtras().getBoolean("isUpdate", false);
-        }
 
         if (SettingsController.isDarkTheme(this)) {
             LightStatusBar.setLight(false, false, this, true);
@@ -115,15 +112,29 @@ public class EventActivity extends AppCompatActivity {
         if (db == null || !db.isOpen())
             db = Application.getInstance().getDatabase();
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null){
+            if (getIntent().getExtras() != null){
+                isUpdate = getIntent().getExtras().getBoolean("isUpdate", false);
+            }
             getEvent(url);
         }
-        else{
+        else {
+            isUpdate = savedInstanceState.getBoolean("isUpdate", false);
             mList = savedInstanceState.getParcelableArrayList("mList");
             updateList = savedInstanceState.getParcelableArrayList("updateList");
 
             if (isUpdate) {
                 mRecyclerViewAdapter = new EventItemsAdapter(updateList, this);
+
+                bfb = BottomFloatingButton.onSaveInstance.getBottomFloatingButton();
+                bfb.updateFragmentManager(getSupportFragmentManager());
+                bfb.setOnClickListener(() -> {
+                    isUpdate = false;
+                    mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
+                    mRecyclerViewAdapter.setHasStableIds(true);
+                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                    setRecyclerViewAnim(mRecyclerView);
+                });
             } else {
                 mRecyclerViewAdapter = new EventItemsAdapter(mList, this);
             }
@@ -173,6 +184,11 @@ public class EventActivity extends AppCompatActivity {
         outState.putParcelableArrayList("mList", mList);
         outState.putParcelableArrayList("updateList", updateList);
         outState.putString("url", url);
+        outState.putBoolean("isUpdate", isUpdate);
+
+        if (bfb != null) {
+            BottomFloatingButton.onSaveInstance.setBottomFloatingButton(bfb);
+        }
     }
 
     @Override
@@ -224,7 +240,7 @@ public class EventActivity extends AppCompatActivity {
                                         mRecyclerView.post(() -> {
                                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                                             setRecyclerViewAnim(mRecyclerView);
-                                            final BottomFloatingButton bfb = new BottomFloatingButton(mContext, mainLayout, mContext.getString(R.string.bfb_all_event));
+                                            bfb = new BottomFloatingButton(mContext, mainLayout, mContext.getString(R.string.bfb_all_event));
                                             bfb.setIcon(R.drawable.ic_level_back);
                                             bfb.setShowDelay(2000);
                                             bfb.setAnimation(SettingsController.isEnabledAnim(mContext));
@@ -235,6 +251,7 @@ public class EventActivity extends AppCompatActivity {
                                                 mRecyclerView.setAdapter(mRecyclerViewAdapter);
                                                 setRecyclerViewAnim(mRecyclerView);
                                             });
+                                            bfb.show();
                                         });
                                     }).start();
                                 } else {
@@ -413,4 +430,5 @@ public class EventActivity extends AppCompatActivity {
     public boolean isRefresh() {
         return mSwipeRefreshLayout.isRefreshing();
     }
+
 }

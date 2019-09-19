@@ -19,6 +19,9 @@ import ru.ystu.myystu.Utils.BottomFloatingButton.Interface.OnClickListener;
 
 public class BottomFloatingButton implements BottomFloatingButtonInterface {
 
+    private FragmentManager fragmentManager;
+    private BottomFloatingButtonFragment bottomFloatingButtonFragment;
+
     private Context mContext;
     private ViewGroup viewGroup;
     private OnClickListener onClickListener;
@@ -44,7 +47,6 @@ public class BottomFloatingButton implements BottomFloatingButtonInterface {
     @Override
     public void setOnClickListener(OnClickListener listener) {
         onClickListener = listener;
-        new Handler().postDelayed(this::show, delay);
     }
 
     @Override
@@ -67,69 +69,98 @@ public class BottomFloatingButton implements BottomFloatingButtonInterface {
         this.isClosable = closable;
     }
 
-    private void show() {
+    @Override
+    public void show() {
 
-        if (text.length() > 0) {
-            final FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
-            final BottomFloatingButtonFragment bottomFloatingButtonFragment = new BottomFloatingButtonFragment();
-            final Bundle bundle = new Bundle();
-            bundle.putString("BFB_TEXT", text);
-            bundle.putInt("BFB_ICON", icon);
-            bottomFloatingButtonFragment.setArguments(bundle);
+        new Handler().postDelayed(() -> {
+            if (text.length() > 0) {
 
-            if(fragmentManager.getFragments().size() > 0){
-                for(Fragment fragment : fragmentManager.getFragments()){
-                    if (fragment != null)
-                        fragmentManager.beginTransaction().remove(fragment).commit();
-                }
-                fragmentManager.getFragments().clear();
-            }
+                fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+                bottomFloatingButtonFragment = new BottomFloatingButtonFragment();
 
-            if (viewGroup != null) {
+                final Bundle bundle = new Bundle();
+                bundle.putString("BFB_TEXT", text);
+                bundle.putInt("BFB_ICON", icon);
+                bottomFloatingButtonFragment.setArguments(bundle);
 
-                @AnimRes final int show;
-                @AnimRes final int hide;
-
-                if (!isAnimation) {
-                    show = 0;
-                    hide = 0;
-                } else {
-                    show = R.anim.bfb_show;
-                    hide = R.anim.bfb_hide;
-                }
-
-                fragmentManager
-                        .beginTransaction()
-                        .setCustomAnimations(show, hide)
-                        .add(viewGroup.getId(), bottomFloatingButtonFragment, "BFB_FRAGMENT")
-                        .commit();
-
-                bottomFloatingButtonFragment.setOnClickListener(() -> {
-                    onClickListener.OnClick();
-                    if (isClosable) {
-                        fragmentManager
-                                .beginTransaction()
-                                .setCustomAnimations(show, hide)
-                                .remove(bottomFloatingButtonFragment)
-                                .commit();
+                if(fragmentManager.getFragments().size() > 0){
+                    for(Fragment fragment : fragmentManager.getFragments()){
+                        if (fragment != null)
+                            fragmentManager.beginTransaction().remove(fragment).commit();
                     }
-                });
+                    fragmentManager.getFragments().clear();
+                }
+
+                if (viewGroup != null) {
+
+                    fragmentManager
+                            .beginTransaction()
+                            .setCustomAnimations(getShowAnim(), getHideAnim())
+                            .add(viewGroup.getId(), bottomFloatingButtonFragment, "BFB_FRAGMENT")
+                            .commit();
+
+                    bottomFloatingButtonFragment.setOnClickListener(() -> {
+                        if (onClickListener != null) {
+                            onClickListener.OnClick();
+                            if (isClosable) {
+                                closeFragment(bottomFloatingButtonFragment, getShowAnim(), getHideAnim());
+                            }
+                        }
+                    });
+                }
             }
+        }, delay);
+    }
+
+    @Override
+    public void hide() {
+        if (bottomFloatingButtonFragment != null) {
+            closeFragment(bottomFloatingButtonFragment, getShowAnim(), getHideAnim());
         }
     }
 
+    private void closeFragment(Fragment fragment, @AnimRes int showAnim, @AnimRes int hideAnim) {
 
-    static class SaveListener {
+        if (fragmentManager != null) {
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(showAnim, hideAnim)
+                    .remove(fragment)
+                    .commit();
+        }
+    }
 
-        private static OnClickListener onClickListener;
+    @Override
+    public void updateFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
 
-        static OnClickListener onRequestListener() {
-            return onClickListener;
+    private @AnimRes int getShowAnim () {
+        if (isAnimation) {
+            return R.anim.bfb_show;
+        } else {
+            return 0;
+        }
+    }
+
+    private @AnimRes int getHideAnim () {
+        if (isAnimation) {
+            return R.anim.bfb_hide;
+        } else {
+            return 0;
+        }
+    }
+
+    public static class onSaveInstance {
+
+        static private BottomFloatingButton bottomFloatingButton;
+
+        public static void setBottomFloatingButton (BottomFloatingButton bfb) {
+            bottomFloatingButton = bfb;
         }
 
-        static void onSaveListener (OnClickListener listener) {
-            onClickListener = listener;
+        public static BottomFloatingButton getBottomFloatingButton () {
+            return bottomFloatingButton;
         }
-
     }
 }

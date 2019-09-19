@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Utils.BottomFloatingButton.Interface;
 
 import androidx.annotation.DrawableRes;
+import androidx.fragment.app.FragmentManager;
 
 public interface BottomFloatingButtonInterface {
 
@@ -11,4 +12,9 @@ public interface BottomFloatingButtonInterface {
     void setShowDelay (int ms);
     void setAnimation(boolean animation);
     void setClosable(boolean closable);
+
+    void updateFragmentManager(FragmentManager fragmentManager);
+
+    void show();
+    void hide();
 }

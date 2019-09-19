@@ -1,18 +1,18 @@
 package ru.ystu.myystu.Utils.BottomFloatingButton;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +35,7 @@ public class BottomFloatingButtonFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             text = getArguments().getString("BFB_TEXT");
             if (getArguments().getInt("BFB_ICON") != -1) {
@@ -61,8 +62,11 @@ public class BottomFloatingButtonFragment extends Fragment {
             return insets;
         });
 
-        int test = 0;
-        item.setOnClickListener(v -> onClickListener.OnClick());
+        item.setOnClickListener(v -> {
+            if (onClickListener != null) {
+                onClickListener.OnClick();
+            }
+        });
     }
 
     @Override
@@ -81,19 +85,5 @@ public class BottomFloatingButtonFragment extends Fragment {
 
     public void setOnClickListener (OnClickListener listener) {
         onClickListener = listener;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        onClickListener = BottomFloatingButton.SaveListener.onRequestListener();
-        int test = 0;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        BottomFloatingButton.SaveListener.onSaveListener(onClickListener);
-        int test = 0;
     }
 }
