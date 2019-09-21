@@ -29,6 +29,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobReaderActivity;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
@@ -39,6 +40,7 @@ import ru.ystu.myystu.Utils.SettingsController;
 public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     private static final int ITEM_JOB = 1;
+    private static final int ITEM_TITLE = 2;
 
     private List<Parcelable> mList;
     private Context mContext;
@@ -50,6 +52,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private AppCompatImageView icon;
         private ConstraintLayout item;
         private ConstraintLayout divider;
+        private ConstraintLayout newView;
 
         JobItemViewHolder(View itemView) {
             super(itemView);
@@ -59,6 +62,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             icon  = itemView.findViewById(R.id.itemJob_icon);
             item = itemView.findViewById(R.id.itemJob);
             divider = itemView.findViewById(R.id.itemJob_divider);
+            newView = itemView.findViewById(R.id.jobItem_isNewTag);
 
         }
 
@@ -80,7 +84,36 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 fileType.setText("");
             }
 
+            if (jobItem.isNew()) {
+                newView.setVisibility(View.VISIBLE);
+            } else {
+                newView.setVisibility(View.GONE);
+            }
+
             item.setOnClickListener(view -> showMenu(mContext, jobItem, organization.getText().toString()));
+        }
+    }
+
+    static class TitleViewHolder extends RecyclerView.ViewHolder {
+
+        AppCompatTextView title;
+        AppCompatImageView icon;
+
+        TitleViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            title = itemView.findViewById(R.id.itemUpdate_title);
+            icon = itemView.findViewById(R.id.itemUpdate_icon);
+        }
+
+        void setTitle (UpdateItemsTitle updateItemsTitle) {
+            title.setText(updateItemsTitle.getTitle());
+            if (updateItemsTitle.getIconRes() == -1) {
+                icon.setVisibility(View.GONE);
+            } else {
+                icon.setVisibility(View.VISIBLE);
+                icon.setImageResource(updateItemsTitle.getIconRes());
+            }
         }
     }
 
@@ -109,6 +142,11 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mViewHolder = new JobItemViewHolder(viewJob);
                 break;
 
+            case ITEM_TITLE:
+                final View viewTitle = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_update_title, parent, false);
+                mViewHolder = new TitleViewHolder(viewTitle);
+                break;
+
             default:
                 mViewHolder = null;
                 break;
@@ -126,6 +164,10 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 final JobItemsData job = (JobItemsData) mList.get(position);
                 ((JobItemViewHolder) holder).setJob(job, mContext, getItemCount());
                 break;
+            case ITEM_TITLE:
+                final UpdateItemsTitle viewTitle = (UpdateItemsTitle) mList.get(position);
+                ((TitleViewHolder) holder).setTitle(viewTitle);
+                break;
         }
     }
 
@@ -141,6 +183,8 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (mList.get(position) instanceof JobItemsData) {
             viewType = ITEM_JOB;
+        } else if (mList.get(position) instanceof UpdateItemsTitle) {
+            viewType = ITEM_TITLE;
         } else {
             viewType = -1;
         }

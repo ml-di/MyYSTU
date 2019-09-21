@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.List;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -168,15 +169,23 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     static class TitleViewHolder extends RecyclerView.ViewHolder {
 
         AppCompatTextView title;
+        AppCompatImageView icon;
 
         TitleViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.itemUser_divider);
+            title = itemView.findViewById(R.id.itemUpdate_title);
+            icon = itemView.findViewById(R.id.itemUpdate_icon);
         }
 
         void setTitle (UpdateItemsTitle updateItemsTitle) {
             title.setText(updateItemsTitle.getTitle());
+            if (updateItemsTitle.getIconRes() == -1) {
+                icon.setVisibility(View.GONE);
+            } else {
+                icon.setVisibility(View.VISIBLE);
+                icon.setImageResource(updateItemsTitle.getIconRes());
+            }
         }
     }
 
@@ -215,7 +224,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
 
             case ITEM_TITLE:
-                final View viewTitle = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_users_divider, parent, false);
+                final View viewTitle = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_update_title, parent, false);
                 mViewHolder = new TitleViewHolder(viewTitle);
                 break;
 

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,14 +30,17 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
+import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
+import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
+import ru.ystu.myystu.Database.Data.CountersData;
 import ru.ystu.myystu.Network.LoadLists.GetListEventFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.EventItemsAdapter;
+import ru.ystu.myystu.Utils.BellHelper;
 import ru.ystu.myystu.Utils.BottomFloatingButton.BottomFloatingButton;
-import ru.ystu.myystu.Utils.BottomFloatingButton.Interface.OnClickListener;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
@@ -233,32 +237,46 @@ public class EventActivity extends AppCompatActivity {
 
                             if(mRecyclerViewAdapter == null) {
                                 if (isUpdate) {
-                                    new Thread(() -> {
-                                        updateList = getUpdateList(eventItemsData);
-                                        mRecyclerViewAdapter = new EventItemsAdapter(updateList, mContext);
+
+                                    AtomicReference<ArrayList<Parcelable>> temp = new AtomicReference<>();
+                                    final Thread thread = new Thread(() -> temp.set(getUpdateList(eventItemsData)));
+                                    thread.start();
+
+                                    try {
+                                        thread.join();
+                                        updateList = temp.get();
+
+                                        if (updateList.size() > 1) {
+                                            mRecyclerViewAdapter = new EventItemsAdapter(updateList, mContext);
+                                        } else {
+                                            mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
+                                            isUpdate = false;
+                                        }
+
                                         mRecyclerViewAdapter.setHasStableIds(true);
                                         mRecyclerView.post(() -> {
                                             mRecyclerView.setAdapter(mRecyclerViewAdapter);
                                             setRecyclerViewAnim(mRecyclerView);
-                                            bfb = new BottomFloatingButton(mContext, mainLayout, mContext.getString(R.string.bfb_all_event));
-                                            bfb.setIcon(R.drawable.ic_level_back);
-                                            bfb.setShowDelay(2000);
-                                            bfb.setAnimation(SettingsController.isEnabledAnim(mContext));
-                                            bfb.setOnClickListener(() -> {
-                                                isUpdate = false;
-                                                mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
-                                                mRecyclerViewAdapter.setHasStableIds(true);
-                                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                                setRecyclerViewAnim(mRecyclerView);
-                                            });
-                                            bfb.show();
+                                            if (updateList.size() > 1) {
+                                                bfb = new BottomFloatingButton(mContext, mainLayout, mContext.getString(R.string.bfb_all_event));
+                                                bfb.setIcon(R.drawable.ic_level_back);
+                                                bfb.setShowDelay(2000);
+                                                bfb.setAnimation(SettingsController.isEnabledAnim(mContext));
+                                                bfb.setOnClickListener(() -> {
+                                                    isUpdate = false;
+                                                    mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
+                                                    mRecyclerViewAdapter.setHasStableIds(true);
+                                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                                    setRecyclerViewAnim(mRecyclerView);
+                                                });
+                                                bfb.show();
+                                            }
                                         });
-                                    }).start();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 } else {
-                                    mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
-                                    mRecyclerViewAdapter.setHasStableIds(true);
-                                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                                    setRecyclerViewAnim(mRecyclerView);
+                                    setUpdateTag(mList);
                                 }
                             } else {
                                 if (!isUpdate) {
@@ -266,9 +284,7 @@ public class EventActivity extends AppCompatActivity {
                                 }
                             }
 
-                            // TODO Сохранить в кеш события
-
-                            /*new Thread(() -> {
+                            new Thread(() -> {
                                 try {
                                     if (db.getOpenHelper().getWritableDatabase().isOpen()) {
                                         // Удаляем все записи, если они есть
@@ -279,15 +295,12 @@ public class EventActivity extends AppCompatActivity {
                                         if (db.eventsItemsDao().getCountEventItems() > 0)
                                             db.eventsItemsDao().deleteAllEventItems();
 
-                                        int count = 0;
-
                                         // Добавляем новые записи
                                         for (Parcelable parcelable : eventItemsData) {
                                             if (parcelable instanceof StringData) {
                                                 db.eventsItemsDao().insertDividers((StringData) parcelable);
                                             } else if (parcelable instanceof EventItemsData_Event) {
                                                 db.eventsItemsDao().insertEventItems((EventItemsData_Event) parcelable);
-                                                count++;
                                             } else if (parcelable instanceof EventItemsData_Header) {
                                                 db.eventsItemsDao().insertEventHeader((EventItemsData_Header) parcelable);
                                             }
@@ -299,17 +312,18 @@ public class EventActivity extends AppCompatActivity {
                                             if (!db.countersDao().isExistsCounter("EVENT")) {
                                                 final CountersData countersData = new CountersData();
                                                 countersData.setType("EVENT");
-                                                countersData.setCount(count);
+                                                countersData.setCount(0);
                                                 db.countersDao().insertCounter(countersData);
                                             } else {
-                                                db.countersDao().setCount("EVENT", count);
+                                                db.countersDao().setCount("EVENT", 0);
                                             }
                                         }
+                                        runOnUiThread(BellHelper.UpdateListController::updateItems);
                                     }
                                 } catch (SQLiteException e) {
                                     runOnUiThread(() -> Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show());
                                 }
-                            }).start();*/
+                            }).start();
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -404,7 +418,7 @@ public class EventActivity extends AppCompatActivity {
     private ArrayList<Parcelable> getUpdateList (ArrayList<Parcelable> mList) {
 
         final ArrayList<Parcelable> tempList = new ArrayList<>();
-        tempList.add(new UpdateItemsTitle(getResources().getString(R.string.other_updateFindTitle)));
+        tempList.add(new UpdateItemsTitle(getResources().getString(R.string.other_updateFindTitle), R.drawable.ic_update));
 
         try {
             if (db.getOpenHelper().getReadableDatabase().isOpen() && db.eventsItemsDao().getCountEventItems() > 0) {
@@ -413,7 +427,7 @@ public class EventActivity extends AppCompatActivity {
                     if (mList.get(i) instanceof EventItemsData_Event) {
                         final String link = ((EventItemsData_Event) mList.get(i)).getLink();
                         if (link != null && !db.eventsItemsDao().isExistsEventByLink(link)) {
-                            EventItemsData_Event eventItem = (EventItemsData_Event) mList.get(i);
+                            final EventItemsData_Event eventItem = (EventItemsData_Event) mList.get(i);
                             eventItem.setNew(true);
                             tempList.add(eventItem);
                         }
@@ -425,6 +439,39 @@ public class EventActivity extends AppCompatActivity {
         }
 
         return tempList;
+    }
+
+    private void setUpdateTag (ArrayList<Parcelable> mList) {
+
+        final Thread thread = new Thread(() -> {
+            try {
+                if (db.getOpenHelper().getReadableDatabase().isOpen() && db.eventsItemsDao().getCountEventItems() > 0) {
+
+                    for (int i = 0; i < mList.size(); i++) {
+                        if (mList.get(i) instanceof EventItemsData_Event) {
+                            final String link = ((EventItemsData_Event) mList.get(i)).getLink();
+                            if (link != null && !db.eventsItemsDao().isExistsEventByLink(link)) {
+                                ((EventItemsData_Event) mList.get(i)).setNew(true);
+                            }
+                        }
+                    }
+                }
+            } catch (SQLiteException ignored) { }
+        });
+        thread.start();
+
+        try {
+            thread.join();
+            mRecyclerViewAdapter = new EventItemsAdapter(mList, mContext);
+            mRecyclerViewAdapter.setHasStableIds(true);
+            mRecyclerView.post(() -> {
+                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                setRecyclerViewAnim(mRecyclerView);
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public boolean isRefresh() {

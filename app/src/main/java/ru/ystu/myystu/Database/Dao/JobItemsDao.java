@@ -19,6 +19,10 @@ public interface JobItemsDao {
     @Query("DELETE FROM job_items")
     void deleteAll();
 
+    // TODO для тестов
+    @Query("DELETE FROM job_items WHERE organization = :organization")
+    void deletejob(String organization);
+
     @Query("SELECT * FROM job_items")
     List<JobItemsData> getAllJobItems();
 

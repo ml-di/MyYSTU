@@ -29,6 +29,10 @@ public interface EventsItemsDao {
     @Query("DELETE FROM event_header")
     void deleteEventHeader();
 
+    // TODO для тестов
+    @Query("DELETE FROM event_items WHERE link = :url")
+    void deleteEvent(String url);
+
     @Query("SELECT COUNT(*) FROM divider")
     int getCountDividers();
 
@@ -46,9 +50,6 @@ public interface EventsItemsDao {
 
     @Query("SELECT * FROM event_header WHERE id = :id")
     EventItemsData_Header getEventHeader (int id);
-
-    @Query("SELECT * FROM event_items")
-    List<EventItemsData_Event> getAllEvent();
 
     @Query("SELECT EXISTS(SELECT id FROM divider WHERE id = :id)")
     boolean isExistsDivider (int id);

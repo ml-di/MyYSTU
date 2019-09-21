@@ -41,7 +41,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/FBF_text"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@drawable/ic_level_next" />
+                tools:srcCompat="@drawable/ic_level_back" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/FBF_text"

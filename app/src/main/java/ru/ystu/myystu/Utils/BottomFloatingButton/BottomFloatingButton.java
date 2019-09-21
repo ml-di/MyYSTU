@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.view.ViewGroup;
 
 import androidx.annotation.AnimRes;
-import androidx.annotation.AnimatorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;

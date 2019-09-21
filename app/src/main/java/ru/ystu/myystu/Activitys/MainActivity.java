@@ -30,6 +30,7 @@ import ru.ystu.myystu.Fragments.NewsFragment;
 import ru.ystu.myystu.Network.UpdateCount.GetCountEvent;
 import ru.ystu.myystu.Network.UpdateCount.GetCountJob;
 import ru.ystu.myystu.R;
+import ru.ystu.myystu.Utils.BellHelper;
 import ru.ystu.myystu.Utils.BottomBarHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
@@ -71,6 +72,17 @@ public class MainActivity extends AppCompatActivity {
 
         if (db == null || !db.isOpen())
             db = Application.getInstance().getDatabase();
+
+        // TODO это временно
+        new Thread(() -> {
+            db.jobItemsDao().deletejob("Центр управления в кризисных ситуациях ГУ МЧС России по ЯО. Инженер отдела мониторинга и прогнозирования.");
+            db.jobItemsDao().deletejob("Сеть образовательных центров \"Гарантия знаний\". Преподаватели.");
+
+            db.eventsItemsDao().deleteEvent("https://www.ystu.ru/events/student/mezhdunarodnaya-nauchno-prakticheskaya-konferentsiya-sotsialno-ekonomicheskie-i-tekhnologicheskie-pr/");
+            db.eventsItemsDao().deleteEvent("https://www.ystu.ru/events/student/ekonomicheskiy-diktant-v-yagtu/");
+        }).start();
+
+        BellHelper.UpdateListController.setContext(this);
 
         countUpdate = new AtomicInteger();
 
@@ -237,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkUpdate(){
+    public void checkUpdate(){
 
         if (NetworkInformation.hasConnection()) {
 

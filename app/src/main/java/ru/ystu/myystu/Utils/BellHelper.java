@@ -3,6 +3,8 @@ package ru.ystu.myystu.Utils;
 import android.content.Context;
 import java.util.Calendar;
 
+import ru.ystu.myystu.Activitys.MainActivity;
+import ru.ystu.myystu.Fragments.BellFragment;
 import ru.ystu.myystu.R;
 
 public class BellHelper {
@@ -190,6 +192,19 @@ public class BellHelper {
                     return "-";
             } else
                 return "-";
+        }
+    }
+
+    public static class UpdateListController {
+
+        static Context mainActivityContext;
+
+        public static void setContext(Context context) {
+            mainActivityContext = context;
+        }
+
+        public static void updateItems () {
+            ((MainActivity) mainActivityContext).checkUpdate();
         }
     }
 }

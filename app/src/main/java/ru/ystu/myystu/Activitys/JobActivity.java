@@ -2,7 +2,6 @@ package ru.ystu.myystu.Activitys;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Color;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,12 +31,15 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Database.Data.CountersData;
 import ru.ystu.myystu.Network.LoadLists.GetListJobFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.JobItemsAdapter;
+import ru.ystu.myystu.Utils.BellHelper;
+import ru.ystu.myystu.Utils.BottomFloatingButton.BottomFloatingButton;
 import ru.ystu.myystu.Utils.Converter;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.IntentHelper;
@@ -53,21 +57,19 @@ public class JobActivity extends AppCompatActivity {
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<Parcelable> mList;
+    private ArrayList<Parcelable> updateList;
     private Parcelable mRecyclerState;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CompositeDisposable mDisposables;
     private GetListJobFromURL getListJobFromURL;
     private AppDatabase db;
     private boolean isUpdate =false;
+    private BottomFloatingButton bfb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job);
-
-        if (getIntent().getExtras() != null){
-            isUpdate = getIntent().getExtras().getBoolean("isUpdate", false);
-        }
 
         mContext = this;
         mainLayout = findViewById(R.id.main_layout_job);
@@ -119,10 +121,31 @@ public class JobActivity extends AppCompatActivity {
             db = Application.getInstance().getDatabase();
 
         if(savedInstanceState == null){
+            if (getIntent().getExtras() != null){
+                isUpdate = getIntent().getExtras().getBoolean("isUpdate", false);
+            }
             getJob();
         } else{
+            isUpdate = savedInstanceState.getBoolean("isUpdate", false);
             mList = savedInstanceState.getParcelableArrayList("mList");
-            mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
+            updateList = savedInstanceState.getParcelableArrayList("updateList");
+
+            if (isUpdate) {
+                mRecyclerViewAdapter = new JobItemsAdapter(updateList, this);
+
+                bfb = BottomFloatingButton.onSaveInstance.getBottomFloatingButton();
+                bfb.updateFragmentManager(getSupportFragmentManager());
+                bfb.setOnClickListener(() -> {
+                    isUpdate = false;
+                    mRecyclerViewAdapter = new JobItemsAdapter(mList, mContext);
+                    mRecyclerViewAdapter.setHasStableIds(true);
+                    mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                    setRecyclerViewAnim(mRecyclerView);
+                });
+            } else {
+                mRecyclerViewAdapter = new JobItemsAdapter(mList, this);
+            }
+
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         }
     }
@@ -175,6 +198,11 @@ public class JobActivity extends AppCompatActivity {
         mRecyclerState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable("recyclerViewState", mRecyclerState);
         outState.putParcelableArrayList("mList", (ArrayList<? extends Parcelable>) mList);
+        outState.putParcelableArrayList("updateList", updateList);
+        outState.putBoolean("isUpdate", isUpdate);
+        if (bfb != null) {
+            BottomFloatingButton.onSaveInstance.setBottomFloatingButton(bfb);
+        }
     }
 
     @Override
@@ -187,7 +215,14 @@ public class JobActivity extends AppCompatActivity {
     // Загрузка html страницы и ее парсинг
     private void getJob(){
 
-        mList = new ArrayList<>();
+        if(mList == null) {
+            mList = new ArrayList<>();
+            updateList = new ArrayList<>();
+        } else if (!isUpdate) {
+            mList.clear();
+            updateList.clear();
+        }
+
         mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
 
         if (NetworkInformation.hasConnection()) {
@@ -200,13 +235,49 @@ public class JobActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(List<Parcelable> jobItemsData) {
                             mList = jobItemsData;
-                            mRecyclerViewAdapter = new JobItemsAdapter(mList, getApplicationContext());
-                            mRecyclerViewAdapter.setHasStableIds(true);
-                            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-                            setRecyclerViewAnim(mRecyclerView);
 
-                            // TODO Сохранить в кеш трудоустройство
-                            /*
+                            if (isUpdate) {
+
+                                AtomicReference<ArrayList<Parcelable>> temp = new AtomicReference<>();
+                                final Thread thread = new Thread(() -> temp.set(getUpdateList(jobItemsData)));
+                                thread.start();
+
+                                try {
+                                    thread.join();
+                                    updateList = temp.get();
+                                    if (updateList.size() > 1) {
+                                        mRecyclerViewAdapter = new JobItemsAdapter(updateList, mContext);
+                                    } else {
+                                        mRecyclerViewAdapter = new JobItemsAdapter(mList, mContext);
+                                        isUpdate = false;
+                                    }
+
+                                    mRecyclerViewAdapter.setHasStableIds(true);
+                                    mRecyclerView.post(() -> {
+                                        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                        setRecyclerViewAnim(mRecyclerView);
+                                        if (updateList.size() > 1) {
+                                            bfb = new BottomFloatingButton(mContext, mainLayout, mContext.getString(R.string.bfb_all_job));
+                                            bfb.setIcon(R.drawable.ic_level_back);
+                                            bfb.setShowDelay(2000);
+                                            bfb.setAnimation(SettingsController.isEnabledAnim(mContext));
+                                            bfb.setOnClickListener(() -> {
+                                                isUpdate = false;
+                                                mRecyclerViewAdapter = new JobItemsAdapter(mList, mContext);
+                                                mRecyclerViewAdapter.setHasStableIds(true);
+                                                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                                                setRecyclerViewAnim(mRecyclerView);
+                                            });
+                                            bfb.show();
+                                        }
+                                    });
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                setUpdateTag(mList);
+                            }
+
                             new Thread(() -> {
                                 try {
                                     if (db.getOpenHelper().getWritableDatabase().isOpen()) {
@@ -215,13 +286,10 @@ public class JobActivity extends AppCompatActivity {
                                             db.jobItemsDao().deleteAll();
                                         }
 
-                                        int count = 0;
-
                                         // Добавляем новые записи
                                         for (Parcelable parcelable : jobItemsData) {
                                             if (parcelable instanceof JobItemsData) {
                                                 db.jobItemsDao().insert((JobItemsData) parcelable);
-                                                count++;
                                             }
                                         }
 
@@ -230,17 +298,17 @@ public class JobActivity extends AppCompatActivity {
                                         if (!db.countersDao().isExistsCounter("JOB")) {
                                             final CountersData countersData = new CountersData();
                                             countersData.setType("JOB");
-                                            countersData.setCount(count);
+                                            countersData.setCount(0);
                                             db.countersDao().insertCounter(countersData);
                                         } else {
-                                            db.countersDao().setCount("JOB", count);
+                                            db.countersDao().setCount("JOB", 0);
                                         }
+                                        runOnUiThread(BellHelper.UpdateListController::updateItems);
                                     }
                                 } catch (SQLiteException e) {
                                     runOnUiThread(() -> Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show());
                                 }
-                            }).start();*/
-
+                            }).start();
 
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -319,6 +387,66 @@ public class JobActivity extends AppCompatActivity {
             recyclerView.setLayoutAnimation(controller);
         } else {
             recyclerView.clearAnimation();
+        }
+    }
+
+    private ArrayList<Parcelable> getUpdateList (List<Parcelable> mList) {
+
+        final ArrayList<Parcelable> tempList = new ArrayList<>();
+        tempList.add(new UpdateItemsTitle(getResources().getString(R.string.other_updateFindTitle), R.drawable.ic_update));
+
+        try {
+            if (db.getOpenHelper().getReadableDatabase().isOpen() && db.jobItemsDao().getCount() > 0) {
+
+                for (int i = 0; i < mList.size(); i++) {
+                    if (mList.get(i) instanceof JobItemsData) {
+                        final String organization = ((JobItemsData) mList.get(i)).getOrganization();
+                        if (organization != null && !db.jobItemsDao().isExistsJobByName(organization)) {
+                            final JobItemsData eventItem = (JobItemsData) mList.get(i);
+                            eventItem.setNew(true);
+                            tempList.add(eventItem);
+                        }
+                    }
+                }
+            }
+        } catch (SQLiteException e) {
+            runOnUiThread(() -> mSwipeRefreshLayout.setRefreshing(false));
+        }
+
+        return tempList;
+    }
+
+    private void setUpdateTag (List<Parcelable> mList) {
+        final Thread thread = new Thread(() -> {
+            try {
+                if (db.getOpenHelper().getReadableDatabase().isOpen() && db.jobItemsDao().getCount() > 0) {
+
+                    for (int i = 0; i < mList.size(); i++) {
+                        if (mList.get(i) instanceof JobItemsData) {
+                            final String organization = ((JobItemsData) mList.get(i)).getOrganization();
+                            if (organization != null && !db.jobItemsDao().isExistsJobByName(organization)) {
+                                ((JobItemsData) mList.get(i)).setNew(true);
+                            } else {
+                                ((JobItemsData) mList.get(i)).setNew(false);
+                            }
+                        }
+                    }
+                }
+            } catch (SQLiteException ignored) { }
+
+        });
+        thread.start();
+
+        try {
+            thread.join();
+            mRecyclerViewAdapter = new JobItemsAdapter(mList, mContext);
+            mRecyclerViewAdapter.setHasStableIds(true);
+            mRecyclerView.post(() -> {
+                mRecyclerView.setAdapter(mRecyclerViewAdapter);
+                setRecyclerViewAnim(mRecyclerView);
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

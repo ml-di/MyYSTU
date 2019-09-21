@@ -45,10 +45,49 @@
             android:textColor="@color/colorTextBlack"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/jobItem_isNewTag"
             app:layout_constraintStart_toEndOf="@id/itemJob_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Название организации" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/jobItem_isNewTag"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/jobItem_isNewTag_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:textSize="10sp"
+                android:paddingBottom="4dp"
+                android:textColor="@color/colorPrimaryLight"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/other_new" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:alpha="0.15"
+                android:background="@drawable/shape_rectangle_rounded_8dp"
+                android:backgroundTint="@color/colorPrimaryLight"
+                app:layout_constraintBottom_toBottomOf="@id/jobItem_isNewTag"
+                app:layout_constraintEnd_toEndOf="@id/jobItem_isNewTag_text"
+                app:layout_constraintStart_toStartOf="@id/jobItem_isNewTag_text"
+                app:layout_constraintTop_toTopOf="@id/jobItem_isNewTag_text" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemJob_fileType"

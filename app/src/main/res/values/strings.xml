@@ -11,7 +11,7 @@
 
     <!-- Bottom Floating Button -->
     <string name="bfb_all_event">Все события</string>
-    <string name="bfb_show_update">Показать 2 новых обновления</string>
+    <string name="bfb_all_job">Все вакансии</string>
 
     <!-- Time -->
     <string name="time_jan">января</string>

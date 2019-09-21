@@ -2,8 +2,6 @@ package ru.ystu.myystu.AdaptersData;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -27,6 +25,9 @@ public class JobItemsData implements Parcelable {
 
     @ColumnInfo(name = "fileType")
     private final String fileType;
+
+    @Ignore
+    private boolean isNew;
 
     public JobItemsData(final int id,
                         final String organization,
@@ -89,5 +90,11 @@ public class JobItemsData implements Parcelable {
     }
     public String getFileType() {
         return fileType;
+    }
+    public boolean isNew() {
+        return isNew;
+    }
+    public void setNew(boolean aNew) {
+        isNew = aNew;
     }
 }
