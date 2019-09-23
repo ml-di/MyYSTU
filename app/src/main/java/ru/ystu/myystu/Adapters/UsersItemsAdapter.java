@@ -16,13 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.UserFullActivity;
 import ru.ystu.myystu.Activitys.UsersActivity;
-import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.FrescoHelper;
@@ -104,15 +105,23 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     static class DividerViewHolder extends RecyclerView.ViewHolder {
 
         private AppCompatTextView title;
+        private AppCompatImageView icon;
 
         DividerViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.itemUser_divider);
+            title = itemView.findViewById(R.id.itemUpdate_title);
+            icon = itemView.findViewById(R.id.itemUpdate_icon);
         }
 
-        void setDivider (StringData divider) {
-            title.setText(divider.getTitle());
+        void setDivider (UpdateItemsTitle updateItemsTitle) {
+            title.setText(updateItemsTitle.getTitle());
+            if (updateItemsTitle.getIconRes() == -1) {
+                icon.setVisibility(View.GONE);
+            } else {
+                icon.setVisibility(View.VISIBLE);
+                icon.setImageResource(updateItemsTitle.getIconRes());
+            }
         }
     }
 
@@ -148,7 +157,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
 
             case ITEM_DIVIDER:
-                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_users_divider, parent, false);
+                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_update_title, parent, false);
                 mViewHolder = new DividerViewHolder(viewDivider);
                 break;
 
@@ -176,7 +185,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ((UserViewHolder) holder).setUser(user, mContext, getItemCount());
                 break;
             case ITEM_DIVIDER:
-                final StringData divider = (StringData) mListFiltered.get(position);
+                final UpdateItemsTitle divider = (UpdateItemsTitle) mListFiltered.get(position);
                 ((DividerViewHolder) holder).setDivider(divider);
                 break;
         }
@@ -191,7 +200,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewType = ITEM_HEADER;
         } else if (mListFiltered.get(position) instanceof UsersItemsData) {
             viewType = ITEM_USER;
-        } else if (mListFiltered.get(position) instanceof StringData) {
+        } else if (mListFiltered.get(position) instanceof UpdateItemsTitle) {
             viewType = ITEM_DIVIDER;
         } else {
             viewType = -1;
@@ -241,7 +250,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     mListFiltered = resultList;
                     if (resultList.size() > 0) {
-                        mListFiltered.add(0, new StringData(-1, mContext.getResources().getString(R.string.other_search_results)));
+                        mListFiltered.add(0, new UpdateItemsTitle(mContext.getResources().getString(R.string.other_search_results), R.drawable.ic_search));
                     }
                 }
 

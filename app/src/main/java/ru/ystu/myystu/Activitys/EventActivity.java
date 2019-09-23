@@ -103,7 +103,13 @@ public class EventActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.colorBackgroundTwo));
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> getEvent(url));
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            if (!isUpdate) {
+                getEvent(url);
+            } else {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
         PaddingHelper.setPaddingStatusBarAndToolBar(mContext, mRecyclerView, true);

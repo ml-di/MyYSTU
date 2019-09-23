@@ -37,7 +37,7 @@ import ru.ystu.myystu.Activitys.StoActivity;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
-import ru.ystu.myystu.AdaptersData.StringData;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
 import ru.ystu.myystu.Utils.IntentHelper;
@@ -140,15 +140,23 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     static class DividerViewHolder extends RecyclerView.ViewHolder {
 
         AppCompatTextView title;
+        AppCompatImageView icon;
 
         DividerViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.itemUser_divider);
+            title = itemView.findViewById(R.id.itemUpdate_title);
+            icon = itemView.findViewById(R.id.itemUpdate_icon);
         }
 
-        void setDivider (StringData stringData) {
-            title.setText(stringData.getTitle());
+        void setDivider (UpdateItemsTitle updateItemsTitle) {
+            title.setText(updateItemsTitle.getTitle());
+            if (updateItemsTitle.getIconRes() == -1) {
+                icon.setVisibility(View.GONE);
+            } else {
+                icon.setVisibility(View.VISIBLE);
+                icon.setImageResource(updateItemsTitle.getIconRes());
+            }
         }
     }
 
@@ -179,7 +187,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 final View viewDoc = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_sto_doc, parent, false);
                 return new DocViewHolder(viewDoc);
             case ITEM_DIVIDER:
-                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_users_divider, parent, false);
+                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_update_title, parent, false);
                 return new DividerViewHolder(viewDivider);
             default:
                 return null;
@@ -208,7 +216,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 break;
 
             case ITEM_DIVIDER:
-                final StringData divider = (StringData) mListFiltered.get(position);
+                final UpdateItemsTitle divider = (UpdateItemsTitle) mListFiltered.get(position);
                 ((DividerViewHolder) holder).setDivider(divider);
                 break;
         }
@@ -228,7 +236,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return ITEM_SUBTITLE;
         } else if (mListFiltered.get(position) instanceof StoItemsData_Doc) {
             return ITEM_DOC;
-        } if (mListFiltered.get(position) instanceof StringData) {
+        } if (mListFiltered.get(position) instanceof UpdateItemsTitle) {
             return ITEM_DIVIDER;
         } else {
             return -1;
@@ -412,7 +420,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
                     mListFiltered = resultList;
                     if (resultList.size() > 0) {
-                        mListFiltered.add(0, new StringData(-1, mContext.getResources().getString(R.string.other_search_results)));
+                        mListFiltered.add(0, new UpdateItemsTitle(mContext.getResources().getString(R.string.other_search_results), R.drawable.ic_search));
                     }
                 }
 

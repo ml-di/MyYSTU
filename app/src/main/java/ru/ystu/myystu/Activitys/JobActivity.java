@@ -104,7 +104,13 @@ public class JobActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary);
 
-        mSwipeRefreshLayout.setOnRefreshListener(this::getJob);
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            if (!isUpdate) {
+                getJob();
+            } else {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         mSwipeRefreshLayout.setProgressViewOffset(true, 0, (int) Converter.convertDpToPixel(70, mContext));
 
         mRecyclerView.setHasFixedSize(true);

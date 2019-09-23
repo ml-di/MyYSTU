@@ -74,13 +74,13 @@ public class MainActivity extends AppCompatActivity {
             db = Application.getInstance().getDatabase();
 
         // TODO это временно
-        new Thread(() -> {
+        /*new Thread(() -> {
             db.jobItemsDao().deletejob("Центр управления в кризисных ситуациях ГУ МЧС России по ЯО. Инженер отдела мониторинга и прогнозирования.");
             db.jobItemsDao().deletejob("Сеть образовательных центров \"Гарантия знаний\". Преподаватели.");
 
             db.eventsItemsDao().deleteEvent("https://www.ystu.ru/events/student/mezhdunarodnaya-nauchno-prakticheskaya-konferentsiya-sotsialno-ekonomicheskie-i-tekhnologicheskie-pr/");
             db.eventsItemsDao().deleteEvent("https://www.ystu.ru/events/student/ekonomicheskiy-diktant-v-yagtu/");
-        }).start();
+        }).start();*/
 
         BellHelper.UpdateListController.setContext(this);
 
@@ -281,17 +281,18 @@ public class MainActivity extends AppCompatActivity {
                                         final int count = Integer.valueOf(s.substring(s.indexOf(":") + 1));
 
                                         // TODO отрисовка bandage
-
                                         // Если нет счетчика, создаем
-                                        if (!db.countersDao().isExistsCounter(type)) {
-                                            final CountersData countersData = new CountersData();
-                                            countersData.setType(type);
-                                            countersData.setCount(count);
-                                            db.countersDao().insertCounter(countersData);
-                                        } else {
-                                            if (count > 0) {
-                                                updateList.add(new UpdateData(type, count));
-                                                countUpdate.getAndIncrement();
+                                        if (db.eventsItemsDao().getCountEventItems() > 0 && db.jobItemsDao().getCount() > 0) {
+                                            if (!db.countersDao().isExistsCounter(type)) {
+                                                final CountersData countersData = new CountersData();
+                                                countersData.setType(type);
+                                                countersData.setCount(count);
+                                                db.countersDao().insertCounter(countersData);
+                                            } else {
+                                                if (count > 0) {
+                                                    updateList.add(new UpdateData(type, count));
+                                                    countUpdate.getAndIncrement();
+                                                }
                                             }
                                         }
                                     }

@@ -90,13 +90,13 @@ public class BottomFloatingButton implements BottomFloatingButtonInterface {
                     fragmentManager.getFragments().clear();
                 }
 
-                if (viewGroup != null) {
+                if (viewGroup != null && fragmentManager != null) {
 
                     fragmentManager
                             .beginTransaction()
                             .setCustomAnimations(getShowAnim(), getHideAnim())
                             .add(viewGroup.getId(), bottomFloatingButtonFragment, "BFB_FRAGMENT")
-                            .commit();
+                            .commitAllowingStateLoss();
 
                     bottomFloatingButtonFragment.setOnClickListener(() -> {
                         if (onClickListener != null) {
