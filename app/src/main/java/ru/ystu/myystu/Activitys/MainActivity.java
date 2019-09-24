@@ -73,15 +73,6 @@ public class MainActivity extends AppCompatActivity {
         if (db == null || !db.isOpen())
             db = Application.getInstance().getDatabase();
 
-        // TODO это временно
-        /*new Thread(() -> {
-            db.jobItemsDao().deletejob("Центр управления в кризисных ситуациях ГУ МЧС России по ЯО. Инженер отдела мониторинга и прогнозирования.");
-            db.jobItemsDao().deletejob("Сеть образовательных центров \"Гарантия знаний\". Преподаватели.");
-
-            db.eventsItemsDao().deleteEvent("https://www.ystu.ru/events/student/mezhdunarodnaya-nauchno-prakticheskaya-konferentsiya-sotsialno-ekonomicheskie-i-tekhnologicheskie-pr/");
-            db.eventsItemsDao().deleteEvent("https://www.ystu.ru/events/student/ekonomicheskiy-diktant-v-yagtu/");
-        }).start();*/
-
         BellHelper.UpdateListController.setContext(this);
 
         countUpdate = new AtomicInteger();

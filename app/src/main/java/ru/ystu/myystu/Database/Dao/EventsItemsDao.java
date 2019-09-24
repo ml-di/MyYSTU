@@ -29,10 +29,6 @@ public interface EventsItemsDao {
     @Query("DELETE FROM event_header")
     void deleteEventHeader();
 
-    // TODO для тестов
-    @Query("DELETE FROM event_items WHERE link = :url")
-    void deleteEvent(String url);
-
     @Query("SELECT COUNT(*) FROM divider")
     int getCountDividers();
 

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -35,6 +36,7 @@ import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
 import ru.ystu.myystu.Network.LoadScheduleFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
+import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -59,6 +61,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private ConstraintLayout divider;
         private AppCompatImageView menu;
         private AppCompatImageView downloadIcon;
+        private AppCompatImageView updateIcon;
 
         ScheduleItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +71,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             divider = itemView.findViewById(R.id.schedule_item_divider);
             menu = itemView.findViewById(R.id.menu_schedule_item);
             downloadIcon = itemView.findViewById(R.id.schedule_item_download_icon);
+            updateIcon = itemView.findViewById(R.id.schedule_item_update_item);
         }
 
         void setSchedule (ScheduleListItemData scheduleItem, Context mContext, int size) {
@@ -87,6 +91,8 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             File file;
             String ext;
 
+            final AtomicBoolean updateSchedule = new AtomicBoolean(false);
+
             dir = new File(Environment.getExternalStorageDirectory(),
                     "/.MyYSTU/" + prefix[scheduleItem.getId()]);
             ext = scheduleItem.getLink().substring(scheduleItem.getLink().lastIndexOf("."));
@@ -94,8 +100,22 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             if(file.exists()){
                 downloadIcon.setVisibility(View.VISIBLE);
+                new Thread(() -> {
+
+                    final long urlSize = FileInformation.getSizeFile(scheduleItem.getLink());
+                    final long fileSize = file.length();
+                    if (urlSize != fileSize && urlSize != 0) {
+                        ((ScheduleListActivity) mContext).runOnUiThread(() -> updateIcon.setVisibility(View.VISIBLE));
+                        updateSchedule.set(true);
+                    } else {
+                        ((ScheduleListActivity) mContext).runOnUiThread(() -> updateIcon.setVisibility(View.GONE));
+                        updateSchedule.set(false);
+                    }
+
+                }).start();
             } else {
                 downloadIcon.setVisibility(View.GONE);
+                updateIcon.setVisibility(View.GONE);
             }
 
             // Открыть расписание
@@ -126,7 +146,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 final String ext_menu = link.substring(link.lastIndexOf("."));
                 final File file_menu = new File(dir_menu, fileName + ext_menu);
 
-                showMenu(fileName, getAdapterPosition(), mContext, file_menu, link);
+                showMenu(fileName, getAdapterPosition(), mContext, file_menu, link, updateSchedule.get());
             });
         }
     }
@@ -277,17 +297,21 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private static void showMenu (String title, int pos, Context mContext, File file, String link) {
+    private static void showMenu (String title, int pos, Context mContext, File file, String link, boolean updateSchedule) {
 
         final Menu mMenu = new MenuBuilder(mContext);
         new MenuInflater(mContext).inflate(R.menu.menu_schedule_item, mMenu);
 
+        if (!updateSchedule) {
+            mMenu.getItem(0).setVisible(false);
+        }
+
         if(file.exists()){
-            mMenu.getItem(0).setTitle(R.string.menu_delete);
-            mMenu.getItem(0).setIcon(R.drawable.ic_delete);
+            mMenu.getItem(1).setTitle(R.string.menu_delete);
+            mMenu.getItem(1).setIcon(R.drawable.ic_delete);
         } else {
-            mMenu.getItem(0).setTitle(R.string.menu_download);
-            mMenu.getItem(0).setIcon(R.drawable.ic_download);
+            mMenu.getItem(1).setTitle(R.string.menu_download);
+            mMenu.getItem(1).setIcon(R.drawable.ic_download);
         }
 
         final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
@@ -299,6 +323,23 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         bottomSheetMenu.setOnItemClickListener(itemId -> {
             switch (itemId) {
+                case R.id.menu_schedule_item_update:
+                    if (file.exists()) {
+                        // Обновить
+                        if (file.delete()) {
+                            downloadFile(file, link, mContext, pos, -1);
+                        } else {
+                            Toast.makeText(mContext, mContext
+                                    .getResources()
+                                    .getString(R.string.toast_errorDeleteFile), Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    } else {
+                        // Скачать
+                        downloadFile(file, link, mContext, pos, -1);
+                    }
+                    break;
+
                 case R.id.menu_schedule_item_download:
 
                     if (file.exists()) {

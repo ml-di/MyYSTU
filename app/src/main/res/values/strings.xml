@@ -118,6 +118,7 @@
     <string name="menu_shareLink">Поделиться ссылкой</string>
     <string name="menu_shareFile">Поделиться файлом</string>
     <string name="menu_download">Скачать</string>
+    <string name="menu_update">Обновить</string>
     <string name="menu_delete">Удалить</string>
     <string name="menu_change">Изменения</string>
     <string name="menu_detail">Подробнее</string>

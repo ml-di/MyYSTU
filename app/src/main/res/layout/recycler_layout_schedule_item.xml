@@ -52,6 +52,18 @@
             app:srcCompat="@drawable/ic_file_download" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/schedule_item_update_item"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:tint="@color/colorPrimaryLight"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@id/menu_schedule_item"
+            app:layout_constraintStart_toEndOf="@id/schedule_item_text"
+            app:layout_constraintTop_toTopOf="@id/menu_schedule_item"
+            app:layout_constraintBottom_toBottomOf="@id/menu_schedule_item"
+            app:srcCompat="@drawable/ic_update" />
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/menu_schedule_item"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -74,7 +86,7 @@
             android:textColor="@color/colorTextBlack"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/menu_schedule_item"
+            app:layout_constraintEnd_toStartOf="@id/schedule_item_update_item"
             app:layout_constraintStart_toEndOf="@id/schedule_item_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Расписание" />

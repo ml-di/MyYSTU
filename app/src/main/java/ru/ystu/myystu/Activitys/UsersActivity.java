@@ -179,7 +179,7 @@ public class UsersActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(newText) && mRecyclerViewAdapter != null) {
                     ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter("");
                 } else {
-                    if (mRecyclerViewAdapter != null  && mRecyclerViewAdapter.getItemCount() > 1)
+                    if (mRecyclerViewAdapter != null)
                         ((UsersItemsAdapter) mRecyclerViewAdapter).getFilter().filter(newText);
                 }
                 return true;

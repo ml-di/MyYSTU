@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.AdaptersData.AboutLicensesData;
 import ru.ystu.myystu.R;
@@ -23,12 +24,14 @@ public class AboutLicensesAdapter extends RecyclerView.Adapter<AboutLicensesAdap
 
         private final AppCompatTextView title;
         private final AppCompatTextView text;
+        private final ConstraintLayout divider;
 
         AboutLicensesViewHolder(@NonNull View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.itemLic_title);
             text = itemView.findViewById(R.id.itemLic_text);
+            divider = itemView.findViewById(R.id.itemLic_divider);
         }
     }
 
@@ -52,6 +55,12 @@ public class AboutLicensesAdapter extends RecyclerView.Adapter<AboutLicensesAdap
         spannableStringBuilder = new StringFormatter().getEmail(spannableStringBuilder);
         holder.text.setText(spannableStringBuilder);
         holder.text.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (position == getItemCount() - 1) {
+            holder.divider.setVisibility(View.GONE);
+        } else {
+            holder.divider.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

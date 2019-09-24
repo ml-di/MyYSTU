@@ -193,7 +193,7 @@ public class StoActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(newText) && mRecyclerViewAdapter != null) {
                     ((StoItemsAdapter) mRecyclerViewAdapter).getFilter().filter("");
                 } else {
-                    if (mRecyclerViewAdapter != null && mRecyclerViewAdapter.getItemCount() > 1)
+                    if (mRecyclerViewAdapter != null)
                         ((StoItemsAdapter) mRecyclerViewAdapter).getFilter().filter(newText);
                 }
                 return true;

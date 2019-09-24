@@ -1,6 +1,7 @@
 package ru.ystu.myystu.Utils;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,6 +55,16 @@ public class FileInformation {
             response = (size / 1024 / 1024 / 1024) + " ГБ";
 
         return response;
+    }
+
+    public static long getSizeFile (String url) {
+        try {
+            final URL link = new URL(url);
+            return link.openConnection().getContentLength();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     private static String parseType(String fileType, int id){
