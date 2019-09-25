@@ -40,6 +40,7 @@ import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
 import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
+import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -90,7 +91,6 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ConstraintLayout item;
         ConstraintLayout divider;
         AppCompatTextView fileName;
-        AppCompatTextView fileExt;
         AppCompatTextView summary;
         AppCompatImageView downloadIcon;
 
@@ -100,7 +100,6 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             item = itemView.findViewById(R.id.itemStoDoc_item);
             divider = itemView.findViewById(R.id.itemStoDoc_divider);
             fileName = itemView.findViewById(R.id.itemStoDoc_name);
-            fileExt = itemView.findViewById(R.id.itemStoDoc_fileType);
             summary = itemView.findViewById(R.id.itemStoDoc_summary);
             downloadIcon = itemView.findViewById(R.id.itemStoDoc_download_icon);
         }
@@ -117,7 +116,6 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
             fileName.setText(docItem.getFileName());
-            fileExt.setText(docItem.getFileExt());
             if (docItem.getSummary() != null) {
                 summary.setVisibility(View.VISIBLE);
                 summary.setText(docItem.getSummary());
@@ -273,6 +271,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
         bottomSheetMenu.setTitle(docData.getFileName());
+        bottomSheetMenu.setSubtitleFirst(mContext.getString(R.string.other_doc) + " ." + docData.getFileExt());
         bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             bottomSheetMenu.setLightNavigationBar(!SettingsController.isDarkTheme(mContext));
@@ -342,6 +341,12 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     break;
             }
         });
+        new Thread(() -> {
+            final long size = FileInformation.getSizeFile(docData.getUrl());
+            if (size > 0) {
+                ((StoActivity) mContext).runOnUiThread(() -> bottomSheetMenu.updateSubtitleSecond(FileInformation.getFileSize(size)));
+            }
+        }).start();
     }
 
     private static void downloadFile(Context mContext, String fileName, String url, int pos, boolean isShare, File file, StoItemsData_Doc docData) {
@@ -413,7 +418,6 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 final String fileExt = ((StoItemsData_Doc) p).getFileExt();
                                 final String summary = ((StoItemsData_Doc) p).getSummary();
                                 final String url = ((StoItemsData_Doc) p).getUrl();
-
                                 resultList.add(new StoItemsData_Doc(fileName, fileExt, summary, url));
                             }
                         }

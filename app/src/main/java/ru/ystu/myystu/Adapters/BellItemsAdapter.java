@@ -89,11 +89,11 @@ public class BellItemsAdapter extends RecyclerView.Adapter<BellItemsAdapter.Bell
         if (mList.get(position).getType().equals("EVENT")) {
             holder.type.setText(mContext.getResources().getString(R.string.activity_event_title));
             holder.text.setText(mContext.getResources().getString(R.string.bell_update_event_text));
-            holder.icon.setImageResource(R.drawable.ic_event_outline);
+            holder.icon.setImageResource(R.drawable.ic_event);
         } else if (mList.get(position).getType().equals("JOB")) {
             holder.type.setText(mContext.getResources().getString(R.string.activity_job_title));
             holder.text.setText(mContext.getResources().getString(R.string.bell_update_job_text));
-            holder.icon.setImageResource(R.drawable.ic_job_outline);
+            holder.icon.setImageResource(R.drawable.ic_job);
         }
 
         holder.bandage.setText(String.valueOf(mList.get(position).getCount()));

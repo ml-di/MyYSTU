@@ -18,6 +18,7 @@ import okhttp3.Response;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
+import ru.ystu.myystu.Utils.FileInformation;
 
 public class GetListStoFromURL {
 

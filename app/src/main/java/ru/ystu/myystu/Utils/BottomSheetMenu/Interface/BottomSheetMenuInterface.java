@@ -11,6 +11,17 @@ public interface BottomSheetMenuInterface {
     void setTitle(CharSequence title);
     void setTitle(@StringRes int titleRes);
 
+    void setSubtitleFirst(CharSequence subtitle);
+    void setSubtitleFirst(@StringRes int subtitleRes);
+    void setSubtitleFirst(CharSequence subtitle, @ColorRes int colorRes);
+    void setSubtitleFirst(@StringRes int subtitleRes, @ColorRes int colorRes);
+
+    void setSubtitleSecond(CharSequence subtitleSecond);
+    void setSubtitleSecond(@StringRes int subtitleSecondRes);
+
+    void updateSubtitleSecond(CharSequence subtitleSecond);
+    void updateSubtitleSecond(@StringRes int subtitleSecondRes);
+
     void setAnimation(boolean animation);
     void setAnimation(boolean animation, @AnimRes int animationRes);
 

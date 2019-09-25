@@ -323,7 +323,7 @@ public class EventFullActivity extends AppCompatActivity {
                                 final String name = s.substring(s.indexOf(": ") + 2, s.indexOf("*"));
                                 final String link = s.substring(s.indexOf("*") + 1, s.indexOf("`"));
                                 final String info = s.substring(s.indexOf("`") + 1);
-                                final String ext = info.substring(0, info.indexOf(", "));
+                                final String ext = link.substring(link.lastIndexOf("."));
                                 final String size = info.substring(info.indexOf(", ") + 2);
 
                                 additionalsList.add(new EventAdditionalData_Documents(index[0], id, name, link, ext, size));

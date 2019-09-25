@@ -41,7 +41,7 @@ public class FileInformation {
         return parseType(fileType, 1);
     }
 
-    public String getFileSize(long size){
+    public static String getFileSize(long size){
 
         String response;
 

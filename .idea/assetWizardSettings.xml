@@ -34,8 +34,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_update" />
-                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\ic_update.svg" />
+                            <entry key="outputName" value="ic_map" />
+                            <entry key="sourceFile" value="C:\Users\Dmitry\Desktop\map-24px.svg" />
                           </map>
                         </option>
                       </PersistentState>

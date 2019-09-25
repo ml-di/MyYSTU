@@ -20,6 +20,8 @@ import android.widget.Toast;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -33,6 +35,7 @@ import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
+import ru.ystu.myystu.Utils.FileInformation;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -68,6 +71,8 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         void setJob (JobItemsData jobItem, Context mContext, int size) {
 
+            final AtomicLong fileSize = new AtomicLong(0);
+
             if (getAdapterPosition() == size - 1) {
                 divider.setVisibility(View.GONE);
             } else {
@@ -79,6 +84,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if(jobItem.getFileType().equals("FILE")){
                 icon.setImageResource(R.drawable.ic_document);
                 fileType.setText(jobItem.getUrl().substring(jobItem.getUrl().lastIndexOf(".") + 1));
+                new Thread(() -> fileSize.set(FileInformation.getSizeFile(jobItem.getUrl()))).start();
             } else {
                 icon.setImageResource(R.drawable.ic_document_text);
                 fileType.setText("");
@@ -90,7 +96,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 newView.setVisibility(View.GONE);
             }
 
-            item.setOnClickListener(view -> showMenu(mContext, jobItem, organization.getText().toString()));
+            item.setOnClickListener(view -> showMenu(mContext, jobItem, organization.getText().toString(), fileSize.get()));
         }
     }
 
@@ -206,12 +212,12 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private static void showMenu (Context mContext, JobItemsData jobItem, String title) {
+    private static void showMenu (Context mContext, JobItemsData jobItem, String title, long fileSize) {
 
         final Menu mMenu = new MenuBuilder(mContext);
         new MenuInflater(mContext).inflate(R.menu.menu_job_item, mMenu);
 
-        if(jobItem.getFileType().equals("FILE")){
+        if (jobItem.getFileType().equals("FILE")){
             mMenu.getItem(0).setTitle(R.string.menu_download);
             mMenu.getItem(1).setVisible(true);
             mMenu.getItem(0).setIcon(R.drawable.ic_download);
@@ -223,6 +229,12 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, mMenu);
         bottomSheetMenu.setTitle(title);
+        if (jobItem.getFileType().equals("FILE") && jobItem.getUrl() != null) {
+            bottomSheetMenu.setSubtitleFirst(mContext.getString(R.string.other_doc) + " " + jobItem.getUrl().substring(jobItem.getUrl().lastIndexOf(".")));
+            if (fileSize > 0) {
+                bottomSheetMenu.setSubtitleSecond(FileInformation.getFileSize(fileSize));
+            }
+        }
         bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             bottomSheetMenu.setLightNavigationBar(!SettingsController.isDarkTheme(mContext));

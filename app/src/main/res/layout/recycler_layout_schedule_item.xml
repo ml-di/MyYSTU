@@ -40,16 +40,15 @@
             android:id="@+id/schedule_item_download_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@drawable/shape_circle"
-            android:backgroundTint="@color/colorBackgroundTwo"
+            android:layout_marginTop="5dp"
             android:padding="3dp"
-            android:tint="@color/colorPrimaryLight"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/schedule_item_icon"
-            app:layout_constraintEnd_toEndOf="@id/schedule_item_icon"
-            app:srcCompat="@drawable/ic_file_download" />
+            android:tint="@color/colorPrimaryLight"
+            app:layout_constraintStart_toStartOf="@+id/schedule_item_icon"
+            app:layout_constraintEnd_toEndOf="@+id/schedule_item_icon"
+            app:layout_constraintTop_toTopOf="@+id/schedule_item_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/schedule_item_icon"
+            app:srcCompat="@drawable/ic_download" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/schedule_item_update_item"
@@ -57,6 +56,7 @@
             android:layout_height="20dp"
             android:tint="@color/colorPrimaryLight"
             android:layout_marginEnd="8dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/menu_schedule_item"
             app:layout_constraintStart_toEndOf="@id/schedule_item_text"
             app:layout_constraintTop_toTopOf="@id/menu_schedule_item"

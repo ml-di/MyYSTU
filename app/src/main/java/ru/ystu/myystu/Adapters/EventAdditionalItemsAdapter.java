@@ -61,21 +61,18 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
     static class DocumentViewHolder extends RecyclerView.ViewHolder {
 
         private AppCompatTextView name;
-        private AppCompatTextView ext;
         private ConstraintLayout item;
 
         DocumentViewHolder (View itemView) {
             super(itemView);
 
             name = itemView.findViewById(R.id.itemEventDocument_name);
-            ext = itemView.findViewById(R.id.itemEventDocument_fileType);
             item = itemView.findViewById(R.id.itemEventDocument);
         }
 
         void setDocument (EventAdditionalData_Documents documentItem, Context mContext) {
             name.setText(documentItem.getTitle());
-            ext.setText(documentItem.getExt());
-            item.setOnClickListener(View -> showMenu(mContext, documentItem.getLink(), documentItem.getTitle(), documentItem.getExt()));
+            item.setOnClickListener(View -> showMenu(mContext, documentItem.getLink(), documentItem.getTitle(), documentItem.getExt(), documentItem.getSize()));
         }
     }
 
@@ -192,9 +189,11 @@ public class EventAdditionalItemsAdapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
-    private static void showMenu (Context mContext, String url, String name, String ext) {
+    private static void showMenu (Context mContext, String url, String name, String ext, String size) {
         final BottomSheetMenu bottomSheetMenu = new BottomSheetMenu(mContext, R.menu.menu_event_full_document);
         bottomSheetMenu.setTitle(name);
+        bottomSheetMenu.setSubtitleFirst(mContext.getString(R.string.other_doc) + " " + ext);
+        bottomSheetMenu.setSubtitleSecond(size);
         bottomSheetMenu.setAnimation(SettingsController.isEnabledAnim(mContext));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             bottomSheetMenu.setLightNavigationBar(!SettingsController.isDarkTheme(mContext));

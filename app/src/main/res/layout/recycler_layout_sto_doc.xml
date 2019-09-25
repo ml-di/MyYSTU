@@ -38,16 +38,15 @@
             android:id="@+id/itemStoDoc_download_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@drawable/shape_circle"
-            android:backgroundTint="@color/colorBackground"
+            android:layout_marginTop="5dp"
             android:padding="3dp"
             android:tint="@color/colorPrimaryLight"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/itemStoDoc_icon"
-            app:layout_constraintEnd_toEndOf="@id/itemStoDoc_icon"
-            app:srcCompat="@drawable/ic_file_download" />
+            app:layout_constraintBottom_toBottomOf="@+id/itemStoDoc_icon"
+            app:layout_constraintEnd_toEndOf="@+id/itemStoDoc_icon"
+            app:layout_constraintStart_toStartOf="@+id/itemStoDoc_icon"
+            app:layout_constraintTop_toTopOf="@+id/itemStoDoc_icon"
+            app:srcCompat="@drawable/ic_download" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemStoDoc_name"
@@ -77,21 +76,6 @@
             app:layout_constraintStart_toEndOf="@id/itemStoDoc_icon"
             app:layout_constraintTop_toBottomOf="@id/itemStoDoc_name"
             tools:text="Проекты курсовые и дипломные. Требования к оформлению графической части дипломных и курсовых проектов химико-технологических специальностей" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/itemStoDoc_fileType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textAllCaps="true"
-            android:textColor="@color/colorTextIcon"
-            android:textSize="7sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/itemStoDoc_icon"
-            app:layout_constraintEnd_toEndOf="@id/itemStoDoc_icon"
-            app:layout_constraintStart_toStartOf="@id/itemStoDoc_icon"
-            app:layout_constraintTop_toTopOf="@id/itemStoDoc_icon"
-            tools:text="DOC" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="50dp"

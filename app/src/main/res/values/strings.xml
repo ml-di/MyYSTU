@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Мой ЯГТУ</string>
-    <string name="app_version">Версия 1.5.1</string>
+    <string name="app_version">Версия 1.6.0</string>
 
     <!-- Другие -->
     <string name="other_search_results">Результаты поиска</string>
@@ -8,6 +8,8 @@
     <string name="other_dont_find">Ничего не найдено   🔎️</string>
     <string name="other_new">Новое️</string>
     <string name="other_updateFindTitle">Последние обновления</string>
+    <string name="other_updateIsAvailable">Доступно обновление</string>
+    <string name="other_doc">Документ</string>
 
     <!-- Bottom Floating Button -->
     <string name="bfb_all_event">Все события</string>

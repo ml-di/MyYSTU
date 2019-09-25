@@ -20,6 +20,7 @@ import okhttp3.Response;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
+import ru.ystu.myystu.Utils.FileInformation;
 
 public class GetListDocFromURL {
 
@@ -97,7 +98,6 @@ public class GetListDocFromURL {
                                                         summary = doc_e.text();
                                                     }
                                                 }
-
                                                 mList.add(new StoItemsData_Doc(fileName, fileExt, summary, url));
                                             }
                                         }

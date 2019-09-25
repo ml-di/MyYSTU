@@ -29,7 +29,7 @@
             android:tint="@color/colorToolBarIcons"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/ic_event_outline" />
+            tools:srcCompat="@drawable/ic_event" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemBell_type"

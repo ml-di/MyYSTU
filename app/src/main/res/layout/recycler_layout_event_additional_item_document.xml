@@ -35,22 +35,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Название файла" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemEventDocument_fileType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:alpha="0.98"
-        android:textAllCaps="true"
-        android:textColor="@color/colorTextIcon"
-        android:textSize="7sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/itemEventDocument_icon"
-        app:layout_constraintEnd_toEndOf="@id/itemEventDocument_icon"
-        app:layout_constraintStart_toStartOf="@id/itemEventDocument_icon"
-        app:layout_constraintTop_toTopOf="@id/itemEventDocument_icon"
-        tools:text="DOC" />
-
     <androidx.appcompat.widget.ContentFrameLayout
         android:layout_width="50dp"
         android:layout_height="50dp"

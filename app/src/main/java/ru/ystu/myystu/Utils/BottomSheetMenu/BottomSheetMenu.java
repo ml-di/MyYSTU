@@ -19,6 +19,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.MenuRes;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,14 +42,19 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
     private Context mContext;
     private Menu menu;
     private CharSequence title;
+    private CharSequence subtitleFirst;
+    private CharSequence subtitleSecond;
     private @AnimRes int animationRes;
     private @ColorRes int navigationBarColorRes;
+    private @ColorRes int subtitleFirstColorRes = -1;
 
     private boolean isClosable = true;
     private boolean isIcons = true;
     private boolean isAnimation = false;
     private boolean isDividers = true;
     private boolean isLight = false;
+
+    private AppCompatTextView subtitleSecondTextView;
 
     public BottomSheetMenu(Context mContext, @MenuRes int resId) {
         this.mContext = mContext;
@@ -65,6 +71,9 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
         final LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = layoutInflater.inflate(R.layout.bottomsheetmenu, null);
         final AppCompatTextView titleTextView = view.findViewById(R.id.bottomSheetMenu_title);
+        final AppCompatTextView subtitleFirstTextView = view.findViewById(R.id.bottomSheetMenu_subtitleFirst);
+        subtitleSecondTextView = view.findViewById(R.id.bottomSheetMenu_subtitleSecond);
+        final ConstraintLayout subtitleLayout = view.findViewById(R.id.bottomSheetMenu_subtitle);
         final RecyclerView recyclerView = view.findViewById(R.id.bottomSheetMenu_recyclerView);
         final BottomSheetDialog dialog = new BottomSheetDialog(mContext, R.style.SheetDialog);
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
@@ -75,11 +84,39 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
         recyclerView.setAdapter(mRecyclerViewAdapter);
         setRecyclerViewAnim(recyclerView);
 
+        // Заголовок
         if (title != null) {
             titleTextView.setVisibility(View.VISIBLE);
             titleTextView.setText(title);
         } else {
             titleTextView.setVisibility(View.GONE);
+        }
+
+        if (subtitleFirst == null && subtitleSecond == null) {
+            subtitleLayout.setVisibility(View.GONE);
+        } else {
+            subtitleLayout.setVisibility(View.VISIBLE);
+
+            // Главный подтекст
+            if (subtitleFirst != null) {
+                subtitleFirstTextView.setVisibility(View.VISIBLE);
+                subtitleFirstTextView.setText(subtitleFirst);
+                if (subtitleFirstColorRes != -1) {
+                    subtitleFirstTextView.setTextColor(mContext.getResources().getColor(subtitleFirstColorRes));
+                } else {
+                    subtitleFirstTextView.setTextColor(mContext.getResources().getColor(R.color.colorTextBlack));
+                }
+            } else {
+                subtitleFirstTextView.setVisibility(View.GONE);
+            }
+
+            // Второстепенный подтекст
+            if (subtitleSecond != null) {
+                subtitleSecondTextView.setVisibility(View.VISIBLE);
+                subtitleSecondTextView.setText(subtitleSecond);
+            } else {
+                subtitleSecondTextView.setVisibility(View.GONE);
+            }
         }
 
         dialog.setContentView(view);
@@ -240,5 +277,59 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
     @Override
     public void setDividers(boolean dividers) {
         this.isDividers = dividers;
+    }
+
+    @Override
+    public void setSubtitleFirst(CharSequence subtitle) {
+        this.subtitleFirst = subtitle;
+    }
+
+    @Override
+    public void setSubtitleFirst(int subtitleRes) {
+        this.subtitleFirst = mContext.getResources().getString(subtitleRes);
+    }
+
+    @Override
+    public void setSubtitleFirst(CharSequence subtitle, int colorRes) {
+        this.subtitleFirst = subtitle;
+        this.subtitleFirstColorRes = colorRes;
+    }
+
+    @Override
+    public void setSubtitleFirst(int subtitleRes, int colorRes) {
+        this.subtitleFirst = mContext.getResources().getString(subtitleRes);
+        this.subtitleFirstColorRes = colorRes;
+    }
+
+    @Override
+    public void setSubtitleSecond(CharSequence subtitleSecond) {
+        this.subtitleSecond = subtitleSecond;
+    }
+
+    @Override
+    public void setSubtitleSecond(int subtitleSecondRes) {
+        this.subtitleSecond = mContext.getResources().getString(subtitleSecondRes);
+    }
+
+    @Override
+    public void updateSubtitleSecond(CharSequence subtitleSecond) {
+        updateSubtitleSecondText(subtitleSecond);
+    }
+
+    @Override
+    public void updateSubtitleSecond(int subtitleSecondRes) {
+        updateSubtitleSecondText(mContext.getResources().getString(subtitleSecondRes));
+    }
+
+    private void updateSubtitleSecondText(CharSequence text) {
+        if (subtitleSecondTextView != null) {
+            if (text.length() > 0 && subtitleSecondTextView.getVisibility() == View.GONE) {
+                subtitleSecondTextView.setVisibility(View.VISIBLE);
+            } else {
+                subtitleSecondTextView.setVisibility(View.GONE);
+            }
+
+            subtitleSecondTextView.setText(text);
+        }
     }
 }
