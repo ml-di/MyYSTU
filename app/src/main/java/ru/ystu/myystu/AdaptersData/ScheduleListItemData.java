@@ -24,6 +24,9 @@ public class ScheduleListItemData implements Parcelable {
     @ColumnInfo(name = "link")
     private final String link;
 
+    @Ignore
+    private boolean isDownload = false;
+
     public ScheduleListItemData(final int uid,
                                 final int id,
                                 final String name,
@@ -41,6 +44,7 @@ public class ScheduleListItemData implements Parcelable {
         id = in.readInt();
         name = in.readString();
         link = in.readString();
+        isDownload = in.readByte() != 0;
     }
 
     public static final Creator<ScheduleListItemData> CREATOR = new Creator<ScheduleListItemData>() {
@@ -66,6 +70,7 @@ public class ScheduleListItemData implements Parcelable {
         parcel.writeInt(id);
         parcel.writeString(name);
         parcel.writeString(link);
+        parcel.writeByte((byte) (isDownload ? 1 : 0));
     }
 
     public int getUid() {
@@ -79,5 +84,12 @@ public class ScheduleListItemData implements Parcelable {
     }
     public String getLink() {
         return link;
+    }
+
+    public boolean isDownload() {
+        return isDownload;
+    }
+    public void setDownload(boolean download) {
+        isDownload = download;
     }
 }

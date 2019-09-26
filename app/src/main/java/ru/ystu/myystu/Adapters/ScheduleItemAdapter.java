@@ -46,12 +46,11 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static final int ITEM_SCHEDULE = 1;
 
-    private ArrayList<Parcelable> mList;
+    private static ArrayList<Parcelable> mList;
     private Context mContext;
+    private final String[] prefix = new String[]{"asf_ist", "asf_ad", "ief", "af", "mf", "htf", "zf", "ozf"};
 
     static class ScheduleItemViewHolder extends RecyclerView.ViewHolder {
-
-        final String[] prefix = new String[]{"asf_ist", "asf_ad", "ief", "af", "mf", "htf", "zf", "ozf"};
 
         private int id;
         private String fileName;
@@ -75,7 +74,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             updateIcon = itemView.findViewById(R.id.schedule_item_update_item);
         }
 
-        void setSchedule (ScheduleListItemData scheduleItem, Context mContext, int size) {
+        void setSchedule (ScheduleListItemData scheduleItem, Context mContext, int size, String[] prefix) {
 
             text.setText(scheduleItem.getName());
             id = scheduleItem.getId();
@@ -88,19 +87,16 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 divider.setVisibility(View.VISIBLE);
             }
 
-            File dir;
-            File file;
-            String ext;
-
             final AtomicBoolean updateSchedule = new AtomicBoolean(false);
             final AtomicLong fileSizeByte = new AtomicLong(0);
 
-            dir = new File(Environment.getExternalStorageDirectory(),
+            final File dir = new File(Environment.getExternalStorageDirectory(),
                     "/.MyYSTU/" + prefix[scheduleItem.getId()]);
-            ext = scheduleItem.getLink().substring(scheduleItem.getLink().lastIndexOf("."));
-            file = new File(dir, scheduleItem.getName() + ext);
+            final String ext = scheduleItem.getLink().substring(scheduleItem.getLink().lastIndexOf("."));
+            final File file = new File(dir, scheduleItem.getName() + ext);
 
-            if(file.exists()){
+            //if(file.exists()){
+            if (scheduleItem.isDownload()) {
                 downloadIcon.setVisibility(View.VISIBLE);
                 new Thread(() -> {
 
@@ -206,7 +202,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             case ITEM_SCHEDULE:
                 final ScheduleListItemData schedule = (ScheduleListItemData) mList.get(position);
-                ((ScheduleItemViewHolder) holder).setSchedule(schedule, mContext, getItemCount());
+                ((ScheduleItemViewHolder) holder).setSchedule(schedule, mContext, getItemCount(), prefix);
                 break;
         }
     }
@@ -218,7 +214,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public long getItemId(int position) {
-        return mList.get(position).hashCode();
+        return super.getItemId(position);
     }
 
     @Override
@@ -242,6 +238,18 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 Toast.makeText(mContext, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public Parcelable getItem (int position) {
+        return mList.get(position);
+    }
+
+    public void updateItem (int position) {
+
+        final Parcelable parcelable = getItem(position);
+        mList.remove(position);
+        mList.add(position, parcelable);
+
     }
 
     private static void downloadFile(File file, String link, Context mContext, int position, int id) {
@@ -288,6 +296,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 break;
                         }
 
+                        ((ScheduleListItemData) mList.get(position)).setDownload(true);
                         ((ScheduleListActivity) mContext).updateItem(position);
                     }
 
@@ -311,7 +320,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private static void showMenu (String title, int pos, Context mContext, File file, String link, boolean updateSchedule, long fileSize) {
+    private static void showMenu(String title, int pos, Context mContext, File file, String link, boolean updateSchedule, long fileSize) {
 
         final Menu mMenu = new MenuBuilder(mContext);
         new MenuInflater(mContext).inflate(R.menu.menu_schedule_item, mMenu);
@@ -370,6 +379,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (file.exists()) {
                         // Удалить
                         if (file.delete()) {
+                            ((ScheduleListItemData) mList.get(pos)).setDownload(false);
                             ((ScheduleListActivity) mContext).updateItem(pos);
                         } else {
                             Toast.makeText(mContext, mContext

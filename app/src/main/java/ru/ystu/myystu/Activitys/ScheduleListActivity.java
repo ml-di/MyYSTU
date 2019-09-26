@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +43,7 @@ import android.widget.Toast;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class ScheduleListActivity extends AppCompatActivity {
@@ -156,6 +158,8 @@ public class ScheduleListActivity extends AppCompatActivity {
         if(NetworkInformation.hasConnection()){
 
             final int[] index = {id * 100};
+            final String[] prefix = new String[]{"asf_ist", "asf_ad", "ief", "af", "mf", "htf", "zf", "ozf"};
+
             final Observable<String> mObservable = getSchedule.getLink(id);
             mDisposables.add(mObservable
                     .subscribeOn(Schedulers.io())
@@ -169,7 +173,16 @@ public class ScheduleListActivity extends AppCompatActivity {
                             } else if (s.startsWith("links")) {
                                 final String link = s.substring(s.indexOf(":") + 1, s.lastIndexOf("*"));
                                 final String name = s.substring(s.lastIndexOf("*") + 1);
-                                mList.add(new ScheduleListItemData(index[0], id, name, link));
+                                final ScheduleListItemData scheduleListItemData = new ScheduleListItemData(index[0], id, name, link);
+
+                                final File dir = new File(Environment.getExternalStorageDirectory(),
+                                        "/.MyYSTU/" + prefix[id]);
+                                final File file = new File(dir, name + link.substring(link.lastIndexOf(".")));
+                                if (file.exists()) {
+                                    scheduleListItemData.setDownload(true);
+                                }
+
+                                mList.add(scheduleListItemData);
                                 index[0]++;
                             }
                         }
@@ -178,6 +191,9 @@ public class ScheduleListActivity extends AppCompatActivity {
                         public void onComplete() {
 
                             if (mList.size() > 1) {
+
+                                mList = sortList(mList);
+
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 mRecyclerViewAdapter = new ScheduleItemAdapter(mList, getApplicationContext());
                                 mRecyclerView.setAdapter(mRecyclerViewAdapter);
@@ -345,7 +361,20 @@ public class ScheduleListActivity extends AppCompatActivity {
     }
 
     public void updateItem (int position) {
-        mRecyclerViewAdapter.notifyItemChanged(position);
+
+        final boolean isDelete = ((ScheduleListItemData) ((ScheduleItemAdapter) mRecyclerViewAdapter).getItem(position)).isDownload();
+        int to = 1;
+
+        // Удаление
+        if (isDelete && mRecyclerViewAdapter.getItemCount() > 1) {
+            to = mRecyclerViewAdapter.getItemCount() - 1;
+        }
+
+        //mRecyclerViewAdapter.notifyItemChanged(position);
+        // TODO ДУблируте эллемент из-за первой строки
+        ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItem(position);
+        mRecyclerViewAdapter.notifyItemMoved(position, 0);
+
     }
 
     private void setRecyclerViewAnim (final RecyclerView recyclerView) {
@@ -357,5 +386,24 @@ public class ScheduleListActivity extends AppCompatActivity {
         } else {
             recyclerView.clearAnimation();
         }
+    }
+
+    private ArrayList<Parcelable> sortList (ArrayList<Parcelable> list) {
+
+        final ArrayList<Parcelable> downloadList = new ArrayList<>();
+        final ArrayList<Parcelable> otherList = new ArrayList<>();
+
+        for (Parcelable p : list) {
+            if ((p instanceof ScheduleListItemData)) {
+                if (((ScheduleListItemData) p).isDownload()) {
+                    downloadList.add(p);
+                } else {
+                    otherList.add(p);
+                }
+            }
+        }
+
+        downloadList.addAll(otherList);
+        return downloadList;
     }
 }
