@@ -371,8 +371,8 @@ public class ScheduleListActivity extends AppCompatActivity {
         }
 
         //mRecyclerViewAdapter.notifyItemChanged(position);
-        // TODO ДУблируте эллемент из-за первой строки
-        ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItem(position);
+        // TODO Нет значка скачивания у элемента из-за первой строки
+        ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItem(position, to);
         mRecyclerViewAdapter.notifyItemMoved(position, 0);
 
     }

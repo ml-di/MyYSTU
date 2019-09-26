@@ -244,11 +244,11 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mList.get(position);
     }
 
-    public void updateItem (int position) {
+    public void updateItem (int position, int newpos) {
 
         final Parcelable parcelable = getItem(position);
         mList.remove(position);
-        mList.add(position, parcelable);
+        mList.add(newpos, parcelable);
 
     }
 
