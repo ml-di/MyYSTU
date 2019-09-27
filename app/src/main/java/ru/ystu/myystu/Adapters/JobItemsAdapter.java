@@ -31,7 +31,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.JobReaderActivity;
-import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitleData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
@@ -112,7 +112,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             icon = itemView.findViewById(R.id.itemUpdate_icon);
         }
 
-        void setTitle (UpdateItemsTitle updateItemsTitle) {
+        void setTitle (UpdateItemsTitleData updateItemsTitle) {
             title.setText(updateItemsTitle.getTitle());
             if (updateItemsTitle.getIconRes() == -1) {
                 icon.setVisibility(View.GONE);
@@ -171,7 +171,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((JobItemViewHolder) holder).setJob(job, mContext, getItemCount());
                 break;
             case ITEM_TITLE:
-                final UpdateItemsTitle viewTitle = (UpdateItemsTitle) mList.get(position);
+                final UpdateItemsTitleData viewTitle = (UpdateItemsTitleData) mList.get(position);
                 ((TitleViewHolder) holder).setTitle(viewTitle);
                 break;
         }
@@ -189,7 +189,7 @@ public class JobItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (mList.get(position) instanceof JobItemsData) {
             viewType = ITEM_JOB;
-        } else if (mList.get(position) instanceof UpdateItemsTitle) {
+        } else if (mList.get(position) instanceof UpdateItemsTitleData) {
             viewType = ITEM_TITLE;
         } else {
             viewType = -1;

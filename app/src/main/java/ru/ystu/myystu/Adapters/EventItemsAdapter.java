@@ -20,7 +20,7 @@ import ru.ystu.myystu.Activitys.EventFullActivity;
 import ru.ystu.myystu.AdaptersData.StringData;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Event;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
-import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitleData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.SettingsController;
@@ -178,7 +178,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             icon = itemView.findViewById(R.id.itemUpdate_icon);
         }
 
-        void setTitle (UpdateItemsTitle updateItemsTitle) {
+        void setTitle (UpdateItemsTitleData updateItemsTitle) {
             title.setText(updateItemsTitle.getTitle());
             if (updateItemsTitle.getIconRes() == -1) {
                 icon.setVisibility(View.GONE);
@@ -254,7 +254,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ((EventItemViewHolder) holder).setViewItem(viewItem, mContext);
                 break;
             case ITEM_TITLE:
-                final UpdateItemsTitle viewTitle = (UpdateItemsTitle) mList.get(position);
+                final UpdateItemsTitleData viewTitle = (UpdateItemsTitleData) mList.get(position);
                 ((TitleViewHolder) holder).setTitle(viewTitle);
                 break;
         }
@@ -270,7 +270,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewType = ITEM_DIVIDER;
         } else if (mList.get(position) instanceof EventItemsData_Event) {
             viewType = ITEM_EVENT;
-        } else if (mList.get(position) instanceof UpdateItemsTitle) {
+        } else if (mList.get(position) instanceof UpdateItemsTitleData) {
             viewType = ITEM_TITLE;
         } else {
             viewType = -1;

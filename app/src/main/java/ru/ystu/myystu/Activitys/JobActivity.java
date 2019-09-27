@@ -31,7 +31,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.JobItemsData;
-import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitleData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Database.Data.CountersData;
@@ -399,7 +399,7 @@ public class JobActivity extends AppCompatActivity {
     private ArrayList<Parcelable> getUpdateList (List<Parcelable> mList) {
 
         final ArrayList<Parcelable> tempList = new ArrayList<>();
-        tempList.add(new UpdateItemsTitle(getResources().getString(R.string.other_updateFindTitle), R.drawable.ic_update));
+        tempList.add(new UpdateItemsTitleData(getResources().getString(R.string.other_updateFindTitle), R.drawable.ic_update));
 
         try {
             if (db.getOpenHelper().getReadableDatabase().isOpen() && db.jobItemsDao().getCount() > 0) {

@@ -37,7 +37,7 @@ import ru.ystu.myystu.Activitys.StoActivity;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Doc;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Subtitle;
 import ru.ystu.myystu.AdaptersData.StoItemsData_Title;
-import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitleData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
 import ru.ystu.myystu.Utils.FileInformation;
@@ -147,7 +147,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             icon = itemView.findViewById(R.id.itemUpdate_icon);
         }
 
-        void setDivider (UpdateItemsTitle updateItemsTitle) {
+        void setDivider (UpdateItemsTitleData updateItemsTitle) {
             title.setText(updateItemsTitle.getTitle());
             if (updateItemsTitle.getIconRes() == -1) {
                 icon.setVisibility(View.GONE);
@@ -214,7 +214,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 break;
 
             case ITEM_DIVIDER:
-                final UpdateItemsTitle divider = (UpdateItemsTitle) mListFiltered.get(position);
+                final UpdateItemsTitleData divider = (UpdateItemsTitleData) mListFiltered.get(position);
                 ((DividerViewHolder) holder).setDivider(divider);
                 break;
         }
@@ -234,7 +234,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return ITEM_SUBTITLE;
         } else if (mListFiltered.get(position) instanceof StoItemsData_Doc) {
             return ITEM_DOC;
-        } if (mListFiltered.get(position) instanceof UpdateItemsTitle) {
+        } if (mListFiltered.get(position) instanceof UpdateItemsTitleData) {
             return ITEM_DIVIDER;
         } else {
             return -1;
@@ -424,7 +424,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
                     mListFiltered = resultList;
                     if (resultList.size() > 0) {
-                        mListFiltered.add(0, new UpdateItemsTitle(mContext.getResources().getString(R.string.other_search_results), R.drawable.ic_search));
+                        mListFiltered.add(0, new UpdateItemsTitleData(mContext.getResources().getString(R.string.other_search_results), R.drawable.ic_search));
                     }
                 }
 

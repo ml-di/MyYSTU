@@ -14,6 +14,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Adapters.ScheduleItemAdapter;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitleData;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.Database.AppDatabase;
 import ru.ystu.myystu.Database.Data.ScheduleChangeBDData;
@@ -362,19 +363,71 @@ public class ScheduleListActivity extends AppCompatActivity {
 
     public void updateItem (int position) {
 
-        final boolean isDelete = ((ScheduleListItemData) ((ScheduleItemAdapter) mRecyclerViewAdapter).getItem(position)).isDownload();
-        int to = 1;
+        final ArrayList<Parcelable> tempList = ((ScheduleItemAdapter) mRecyclerViewAdapter).getList();
+        final boolean isDelete = !((ScheduleListItemData) ((ScheduleItemAdapter) mRecyclerViewAdapter).getItem(position)).isDownload();
+        int newPosition = 1;
 
-        // Удаление
-        if (isDelete && mRecyclerViewAdapter.getItemCount() > 1) {
-            to = mRecyclerViewAdapter.getItemCount() - 1;
+
+        boolean isDeleteDividers = isDelete;
+        boolean isCreateDividers = !isDelete;
+
+        for (int i = 0; i < tempList.size(); i++) {
+            // Проверка есть ли еще скаченные файлы
+            if (tempList.get(i) instanceof ScheduleListItemData
+                    && ((ScheduleListItemData)tempList.get(i)).isDownload()
+                    && i != position) {
+
+                if (isDelete) {
+                    isDeleteDividers = false;
+                } else {
+                    isCreateDividers = false;
+                }
+
+                break;
+            }
         }
 
-        //mRecyclerViewAdapter.notifyItemChanged(position);
-        // TODO Нет значка скачивания у элемента из-за первой строки
-        ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItem(position, to);
-        mRecyclerViewAdapter.notifyItemMoved(position, 0);
+        // Создать разделители
+        if (isCreateDividers || isDeleteDividers) {
+            mList = sortList(mList);
+            ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItems(mList);
+            mRecyclerViewAdapter.notifyDataSetChanged();
+        } else {
+            int test = 0;
+            // Удаление
+            if (isDelete && mRecyclerViewAdapter.getItemCount() > 1) {
+                newPosition = mRecyclerViewAdapter.getItemCount() - 1;
+            } else {
+                for (int i = 0; i < tempList.size(); i++) {
+                    // Первый итем который не скачен
+                    if (tempList.get(i) instanceof ScheduleListItemData && !((ScheduleListItemData) tempList.get(i)).isDownload() && i > 0) {
+                        newPosition = i - 1;
+                        break;
+                    } else if (tempList.get(i) instanceof UpdateItemsTitleData) {
+                        if (i > 0) {
+                            newPosition = i;
+                            break;
+                        }
+                    }
+                }
+            }
 
+            // TODO Нет значка скачивания у элемента из-за первой строки
+            ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItem(position, newPosition);
+            mRecyclerViewAdapter.notifyItemChanged(position);
+            if (isDelete && position > 0) {
+                mRecyclerViewAdapter.notifyItemChanged(position - 1);
+                if (mList.get(newPosition) != null) {
+                    mRecyclerViewAdapter.notifyItemChanged(newPosition);
+                }
+            } else if (!isDelete && newPosition > 0) {
+                mRecyclerViewAdapter.notifyItemChanged(newPosition - 1);
+            }
+            if (!isDelete && mList.size() - 1 == position) {
+                mRecyclerViewAdapter.notifyItemChanged(position - 1);
+            }
+            mRecyclerViewAdapter.notifyItemMoved(position, newPosition);
+        }
     }
 
     private void setRecyclerViewAnim (final RecyclerView recyclerView) {
@@ -400,6 +453,14 @@ public class ScheduleListActivity extends AppCompatActivity {
                 } else {
                     otherList.add(p);
                 }
+            }
+        }
+
+        if (downloadList.size() > 0) {
+            downloadList.add(0, new UpdateItemsTitleData(getString(R.string.other_downloads), -1));
+
+            if (otherList.size() > 0) {
+                otherList.add(0, new UpdateItemsTitleData(getString(R.string.other_not_downloads), -1));
             }
         }
 

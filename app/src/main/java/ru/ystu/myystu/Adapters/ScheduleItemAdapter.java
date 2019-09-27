@@ -34,6 +34,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Activitys.ScheduleListActivity;
 import ru.ystu.myystu.AdaptersData.ScheduleListItemData;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitleData;
 import ru.ystu.myystu.Network.LoadScheduleFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
@@ -44,6 +45,7 @@ import ru.ystu.myystu.Utils.SettingsController;
 
 public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private static final int ITEM_DIVIDER = 0;
     private static final int ITEM_SCHEDULE = 1;
 
     private static ArrayList<Parcelable> mList;
@@ -81,7 +83,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             fileName = scheduleItem.getName();
             link = scheduleItem.getLink();
 
-            if (getAdapterPosition() == size - 1) {
+            if (getAdapterPosition() == size - 1 || mList.get(getAdapterPosition() + 1) instanceof UpdateItemsTitleData) {
                 divider.setVisibility(View.GONE);
             } else {
                 divider.setVisibility(View.VISIBLE);
@@ -161,6 +163,20 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    static class ScheduleDividerItemViewHodler extends RecyclerView.ViewHolder {
+
+        private AppCompatTextView title;
+
+        ScheduleDividerItemViewHodler(@NonNull View itemView) {
+            super(itemView);
+            title = itemView.findViewById(R.id.schedule_item_divider_title);
+        }
+
+        void setDivider (UpdateItemsTitleData updateItemsTitleData) {
+            title.setText(updateItemsTitleData.getTitle());
+        }
+    }
+
     public ScheduleItemAdapter(ArrayList<Parcelable> mList, Context mContext) {
         this.mList = mList;
         this.mContext = mContext;
@@ -181,6 +197,11 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         switch (viewType) {
 
+            case ITEM_DIVIDER:
+                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item_divider, parent, false);
+                mViewHolder = new ScheduleDividerItemViewHodler(viewDivider);
+                break;
+
             case ITEM_SCHEDULE:
                 final View viewSchedule = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item, parent, false);
                 mViewHolder = new ScheduleItemViewHolder(viewSchedule);
@@ -199,6 +220,11 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         int viewType = holder.getItemViewType();
         switch (viewType) {
+
+            case ITEM_DIVIDER:
+                final UpdateItemsTitleData divider = (UpdateItemsTitleData) mList.get(position);
+                ((ScheduleDividerItemViewHodler) holder).setDivider(divider);
+                break;
 
             case ITEM_SCHEDULE:
                 final ScheduleListItemData schedule = (ScheduleListItemData) mList.get(position);
@@ -222,7 +248,9 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         int viewType;
 
-        if (mList.get(position) instanceof ScheduleListItemData) {
+        if (mList.get(position) instanceof UpdateItemsTitleData) {
+            viewType = ITEM_DIVIDER;
+        } else if (mList.get(position) instanceof ScheduleListItemData) {
             viewType = ITEM_SCHEDULE;
         } else {
             viewType = -1;
@@ -242,6 +270,14 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public Parcelable getItem (int position) {
         return mList.get(position);
+    }
+
+    public ArrayList<Parcelable> getList () {
+        return mList;
+    }
+
+    public void updateItems (ArrayList<Parcelable> list) {
+        mList = list;
     }
 
     public void updateItem (int position, int newpos) {

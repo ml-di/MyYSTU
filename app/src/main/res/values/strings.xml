@@ -10,6 +10,8 @@
     <string name="other_updateFindTitle">Последние обновления</string>
     <string name="other_updateIsAvailable">Доступно обновление</string>
     <string name="other_doc">Документ</string>
+    <string name="other_downloads">Загруженные</string>
+    <string name="other_not_downloads">Доступные</string>
 
     <!-- Bottom Floating Button -->
     <string name="bfb_all_event">Все события</string>

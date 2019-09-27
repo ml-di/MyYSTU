@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ystu.myystu.Activitys.UserFullActivity;
 import ru.ystu.myystu.Activitys.UsersActivity;
 import ru.ystu.myystu.AdaptersData.EventItemsData_Header;
-import ru.ystu.myystu.AdaptersData.UpdateItemsTitle;
+import ru.ystu.myystu.AdaptersData.UpdateItemsTitleData;
 import ru.ystu.myystu.AdaptersData.UsersItemsData;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.FrescoHelper;
@@ -114,7 +114,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             icon = itemView.findViewById(R.id.itemUpdate_icon);
         }
 
-        void setDivider (UpdateItemsTitle updateItemsTitle) {
+        void setDivider (UpdateItemsTitleData updateItemsTitle) {
             title.setText(updateItemsTitle.getTitle());
             if (updateItemsTitle.getIconRes() == -1) {
                 icon.setVisibility(View.GONE);
@@ -185,7 +185,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ((UserViewHolder) holder).setUser(user, mContext, getItemCount());
                 break;
             case ITEM_DIVIDER:
-                final UpdateItemsTitle divider = (UpdateItemsTitle) mListFiltered.get(position);
+                final UpdateItemsTitleData divider = (UpdateItemsTitleData) mListFiltered.get(position);
                 ((DividerViewHolder) holder).setDivider(divider);
                 break;
         }
@@ -200,7 +200,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewType = ITEM_HEADER;
         } else if (mListFiltered.get(position) instanceof UsersItemsData) {
             viewType = ITEM_USER;
-        } else if (mListFiltered.get(position) instanceof UpdateItemsTitle) {
+        } else if (mListFiltered.get(position) instanceof UpdateItemsTitleData) {
             viewType = ITEM_DIVIDER;
         } else {
             viewType = -1;
@@ -250,7 +250,7 @@ public class UsersItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     mListFiltered = resultList;
                     if (resultList.size() > 0) {
-                        mListFiltered.add(0, new UpdateItemsTitle(mContext.getResources().getString(R.string.other_search_results), R.drawable.ic_search));
+                        mListFiltered.add(0, new UpdateItemsTitleData(mContext.getResources().getString(R.string.other_search_results), R.drawable.ic_search));
                     }
                 }
 

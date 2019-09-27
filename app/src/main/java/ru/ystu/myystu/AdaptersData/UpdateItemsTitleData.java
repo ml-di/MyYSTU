@@ -4,31 +4,31 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.DrawableRes;
 
-public class UpdateItemsTitle implements Parcelable {
+public class UpdateItemsTitleData implements Parcelable {
 
     private final String title;
     private final @DrawableRes int iconRes;
 
-    public UpdateItemsTitle(final String title,
-                            final @DrawableRes int iconRes) {
+    public UpdateItemsTitleData(final String title,
+                                final @DrawableRes int iconRes) {
         this.title = title;
         this.iconRes = iconRes;
     }
 
-    private UpdateItemsTitle(Parcel in){
+    private UpdateItemsTitleData(Parcel in){
         title = in.readString();
         iconRes = in.readInt();
     }
 
-    public static final Creator<UpdateItemsTitle> CREATOR = new Creator<UpdateItemsTitle>() {
+    public static final Creator<UpdateItemsTitleData> CREATOR = new Creator<UpdateItemsTitleData>() {
         @Override
-        public UpdateItemsTitle createFromParcel(Parcel in) {
-            return new UpdateItemsTitle(in);
+        public UpdateItemsTitleData createFromParcel(Parcel in) {
+            return new UpdateItemsTitleData(in);
         }
 
         @Override
-        public UpdateItemsTitle[] newArray(int size) {
-            return new UpdateItemsTitle[size];
+        public UpdateItemsTitleData[] newArray(int size) {
+            return new UpdateItemsTitleData[size];
         }
     };
 
