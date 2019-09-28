@@ -74,6 +74,7 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
         final AppCompatTextView subtitleFirstTextView = view.findViewById(R.id.bottomSheetMenu_subtitleFirst);
         subtitleSecondTextView = view.findViewById(R.id.bottomSheetMenu_subtitleSecond);
         final ConstraintLayout subtitleLayout = view.findViewById(R.id.bottomSheetMenu_subtitle);
+        final ConstraintLayout subtitleFirstTextViewBackground = view.findViewById(R.id.bottomSheetMenu_subtitleFirstBackground);
         final RecyclerView recyclerView = view.findViewById(R.id.bottomSheetMenu_recyclerView);
         final BottomSheetDialog dialog = new BottomSheetDialog(mContext, R.style.SheetDialog);
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
@@ -92,22 +93,20 @@ public class BottomSheetMenu implements BottomSheetMenuInterface {
             titleTextView.setVisibility(View.GONE);
         }
 
-        if (subtitleFirst == null && subtitleSecond == null) {
+        if (subtitleFirst == null) {
             subtitleLayout.setVisibility(View.GONE);
         } else {
             subtitleLayout.setVisibility(View.VISIBLE);
 
             // Главный подтекст
-            if (subtitleFirst != null) {
-                subtitleFirstTextView.setVisibility(View.VISIBLE);
-                subtitleFirstTextView.setText(subtitleFirst);
-                if (subtitleFirstColorRes != -1) {
-                    subtitleFirstTextView.setTextColor(mContext.getResources().getColor(subtitleFirstColorRes));
-                } else {
-                    subtitleFirstTextView.setTextColor(mContext.getResources().getColor(R.color.colorTextBlack));
-                }
+            subtitleFirstTextView.setVisibility(View.VISIBLE);
+            subtitleFirstTextView.setText(subtitleFirst);
+            if (subtitleFirstColorRes != -1) {
+                subtitleFirstTextView.setTextColor(mContext.getResources().getColor(subtitleFirstColorRes));
+                subtitleFirstTextViewBackground.setBackgroundTintList(mContext.getResources().getColorStateList(subtitleFirstColorRes));
             } else {
-                subtitleFirstTextView.setVisibility(View.GONE);
+                subtitleFirstTextView.setTextColor(mContext.getResources().getColor(R.color.colorTextBlack));
+                subtitleFirstTextViewBackground.setBackgroundTintList(mContext.getResources().getColorStateList(R.color.colorTextBlack));
             }
 
             // Второстепенный подтекст

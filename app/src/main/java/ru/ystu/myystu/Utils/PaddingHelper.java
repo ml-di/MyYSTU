@@ -3,13 +3,8 @@ package ru.ystu.myystu.Utils;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
-
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.snackbar.Snackbar;
-
 import ru.ystu.myystu.R;
 
 public class PaddingHelper {
@@ -21,9 +16,9 @@ public class PaddingHelper {
             if (mContext.getTheme().resolveAttribute(R.attr.actionBarSize, tv, true))
                 actionBarHeight[0] = TypedValue.complexToDimensionPixelSize(tv.data, mContext.getResources().getDisplayMetrics());
             if (isBottomPadding) {
-                v.setPadding(0, insets.getSystemWindowInsetTop() + actionBarHeight[0],0, insets.getSystemWindowInsetBottom());
+                v.setPadding(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop() + actionBarHeight[0], insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom());
             } else {
-                v.setPadding(0, insets.getSystemWindowInsetTop() + actionBarHeight[0],0, 0);
+                v.setPadding(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop() + actionBarHeight[0], insets.getSystemWindowInsetRight(), 0);
             }
             return insets;
         });
@@ -43,7 +38,9 @@ public class PaddingHelper {
 
     public static void setMarginsAppBar (AppBarLayout appBarLayout) {
         appBarLayout.setOnApplyWindowInsetsListener((v, insets) -> {
-            v.setPadding(0, insets.getSystemWindowInsetTop(),0, 0);
+
+            v.setPadding(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), 0);
+
             return insets;
         });
     }

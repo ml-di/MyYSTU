@@ -143,8 +143,8 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         DividerViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.itemUpdate_title);
-            icon = itemView.findViewById(R.id.itemUpdate_icon);
+            title = itemView.findViewById(R.id.itemDivider_title);
+            icon = itemView.findViewById(R.id.itemDivider_icon);
         }
 
         void setDivider (UpdateItemsTitleData updateItemsTitle) {
@@ -185,7 +185,7 @@ public class StoItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 final View viewDoc = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_sto_doc, parent, false);
                 return new DocViewHolder(viewDoc);
             case ITEM_DIVIDER:
-                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_update_title, parent, false);
+                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_divider, parent, false);
                 return new DividerViewHolder(viewDivider);
             default:
                 return null;

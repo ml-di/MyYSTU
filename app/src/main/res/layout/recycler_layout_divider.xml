@@ -5,62 +5,50 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="8dp"
-    android:paddingTop="16dp"
     android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingTop="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:alpha="0.05"
-            app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/shape_rectangle_rounded_24dp"
-            android:backgroundTint="@color/colorTextBlack"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="16dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/itemUpdate_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:id="@+id/itemDivider_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="1dp"
                 android:tint="@color/colorTextBlack"
-                tools:srcCompat="@drawable/ic_update"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/itemDivider_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/itemUpdate_title" />
+                tools:srcCompat="@drawable/ic_update" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/itemUpdate_title"
+                android:id="@+id/itemDivider_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:alpha="1"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/colorTextBlack"
                 android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@id/itemUpdate_icon"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/itemDivider_icon"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Последние обновления" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

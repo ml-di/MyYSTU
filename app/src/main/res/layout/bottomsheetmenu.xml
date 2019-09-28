@@ -29,12 +29,12 @@
             android:gravity="center"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
+            android:singleLine="true"
             android:textColor="@color/colorTextBlack"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Title"
-            android:singleLine="true" />
+            tools:text="Title" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="30dp"
@@ -56,47 +56,59 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/bottomSheetMenu_subtitleFirst"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:paddingBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:ellipsize="middle"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="4dp"
+                android:singleLine="true"
                 android:textAllCaps="true"
                 android:textColor="@color/colorTextBlack"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/bottomSheetMenu_subtitleSecond"
-                app:layout_constraintHorizontal_weight="2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Документ .doc" />
 
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/bottomSheetMenu_subtitleSecond"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginEnd="24dp"
-                android:paddingBottom="8dp"
                 android:alpha="0.5"
-                android:ellipsize="start"
-                android:gravity="end"
                 android:singleLine="true"
                 android:textAllCaps="true"
                 android:textColor="@color/colorTextBlack"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toEndOf="@id/bottomSheetMenu_subtitleFirst"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="200 КБ" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bottomSheetMenu_subtitleFirstBackground"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:alpha="0.05"
+                android:background="@drawable/shape_rectangle_rounded_50dp"
+                app:layout_constraintBottom_toBottomOf="@+id/bottomSheetMenu_subtitleFirst"
+                app:layout_constraintEnd_toEndOf="@+id/bottomSheetMenu_subtitleFirst"
+                app:layout_constraintStart_toStartOf="@+id/bottomSheetMenu_subtitleFirst"
+                app:layout_constraintTop_toTopOf="@+id/bottomSheetMenu_subtitleFirst"
+                tools:backgroundTint="@color/colorTextBlack" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="8dp"
+                android:alpha="0.5"
                 android:background="@color/colorDivider"
-                android:alpha="0.5" />
+                app:layout_constraintTop_toBottomOf="@id/bottomSheetMenu_subtitleFirst" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

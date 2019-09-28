@@ -84,7 +84,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             link = scheduleItem.getLink();
 
             if (getAdapterPosition() == size - 1 || mList.get(getAdapterPosition() + 1) instanceof UpdateItemsTitleData) {
-                divider.setVisibility(View.GONE);
+                divider.setVisibility(View.INVISIBLE);
             } else {
                 divider.setVisibility(View.VISIBLE);
             }
@@ -97,12 +97,12 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final String ext = scheduleItem.getLink().substring(scheduleItem.getLink().lastIndexOf("."));
             final File file = new File(dir, scheduleItem.getName() + ext);
 
-            //if(file.exists()){
             if (scheduleItem.isDownload()) {
                 downloadIcon.setVisibility(View.VISIBLE);
                 new Thread(() -> {
 
                     final long urlSize = FileInformation.getSizeFile(scheduleItem.getLink());
+                    // TODO Тест обновлений расписания
                     final long fileSize = file.length();
                     if (urlSize != fileSize && urlSize != 0) {
                         ((ScheduleListActivity) mContext).runOnUiThread(() -> updateIcon.setVisibility(View.VISIBLE));
@@ -165,15 +165,22 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class ScheduleDividerItemViewHodler extends RecyclerView.ViewHolder {
 
+        private AppCompatImageView icon;
         private AppCompatTextView title;
 
         ScheduleDividerItemViewHodler(@NonNull View itemView) {
             super(itemView);
-            title = itemView.findViewById(R.id.schedule_item_divider_title);
+            icon = itemView.findViewById(R.id.itemDivider_icon);
+            title = itemView.findViewById(R.id.itemDivider_title);
         }
 
         void setDivider (UpdateItemsTitleData updateItemsTitleData) {
             title.setText(updateItemsTitleData.getTitle());
+            if (updateItemsTitleData.getIconRes() == -1) {
+                icon.setVisibility(View.GONE);
+            } else {
+                icon.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -198,7 +205,7 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         switch (viewType) {
 
             case ITEM_DIVIDER:
-                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_schedule_item_divider, parent, false);
+                final View viewDivider = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_divider, parent, false);
                 mViewHolder = new ScheduleDividerItemViewHodler(viewDivider);
                 break;
 

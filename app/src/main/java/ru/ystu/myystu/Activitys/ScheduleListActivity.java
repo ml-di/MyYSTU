@@ -30,7 +30,6 @@ import ru.ystu.myystu.Utils.SettingsController;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -374,7 +373,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         for (int i = 0; i < tempList.size(); i++) {
             // Проверка есть ли еще скаченные файлы
             if (tempList.get(i) instanceof ScheduleListItemData
-                    && ((ScheduleListItemData)tempList.get(i)).isDownload()
+                    && ((ScheduleListItemData) tempList.get(i)).isDownload()
                     && i != position) {
 
                 if (isDelete) {
@@ -387,19 +386,17 @@ public class ScheduleListActivity extends AppCompatActivity {
             }
         }
 
-        // Создать разделители
+        // Обновить весь список (Создание/Удаление разделителей)
         if (isCreateDividers || isDeleteDividers) {
             mList = sortList(mList);
             ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItems(mList);
             mRecyclerViewAdapter.notifyDataSetChanged();
         } else {
-            int test = 0;
-            // Удаление
+            // Обновление задействованных итемов
             if (isDelete && mRecyclerViewAdapter.getItemCount() > 1) {
                 newPosition = mRecyclerViewAdapter.getItemCount() - 1;
             } else {
                 for (int i = 0; i < tempList.size(); i++) {
-                    // Первый итем который не скачен
                     if (tempList.get(i) instanceof ScheduleListItemData && !((ScheduleListItemData) tempList.get(i)).isDownload() && i > 0) {
                         newPosition = i - 1;
                         break;
@@ -412,7 +409,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                 }
             }
 
-            // TODO Нет значка скачивания у элемента из-за первой строки
+            // Обновление итемов
             ((ScheduleItemAdapter) mRecyclerViewAdapter).updateItem(position, newPosition);
             mRecyclerViewAdapter.notifyItemChanged(position);
             if (isDelete && position > 0) {

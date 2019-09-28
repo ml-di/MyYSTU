@@ -174,8 +174,8 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TitleViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.itemUpdate_title);
-            icon = itemView.findViewById(R.id.itemUpdate_icon);
+            title = itemView.findViewById(R.id.itemDivider_title);
+            icon = itemView.findViewById(R.id.itemDivider_icon);
         }
 
         void setTitle (UpdateItemsTitleData updateItemsTitle) {
@@ -224,7 +224,7 @@ public class EventItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
 
             case ITEM_TITLE:
-                final View viewTitle = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_update_title, parent, false);
+                final View viewTitle = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_divider, parent, false);
                 mViewHolder = new TitleViewHolder(viewTitle);
                 break;
 

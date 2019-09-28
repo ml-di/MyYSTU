@@ -2,7 +2,6 @@ package ru.ystu.myystu.Utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.Menu;
@@ -10,12 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-
-import ru.ystu.myystu.Application;
 import ru.ystu.myystu.R;
 
 public class LightStatusBar {
@@ -70,12 +66,7 @@ public class LightStatusBar {
             }
 
             if (isToolBar) {
-                if (mActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-                } else {
-                    view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-                }
-
+                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
                 win.setNavigationBarColor(ContextCompat.getColor(mActivity, R.color.colorNavBar));
             } else {
                 win.setNavigationBarColor(ContextCompat.getColor(mActivity, R.color.colorBackground));
