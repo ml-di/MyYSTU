@@ -18,6 +18,7 @@ import ru.ystu.myystu.Activitys.JobActivity;
 import ru.ystu.myystu.Activitys.MapActivity;
 import ru.ystu.myystu.Activitys.EventActivity;
 import ru.ystu.myystu.Activitys.StoActivity;
+import ru.ystu.myystu.Activitys.TestActivity;
 import ru.ystu.myystu.Activitys.UsersActivity;
 import ru.ystu.myystu.Activitys.ScheduleActivity;
 import ru.ystu.myystu.R;
@@ -72,6 +73,10 @@ public class MenuItemsAdapter extends RecyclerView.Adapter<MenuItemsAdapter.Menu
                     // Стандарты оформления работ
                     case 5:
                         mContext.startActivity(new Intent(mContext, StoActivity.class));
+                        break;
+                    //TODO Активити для тестов
+                    case 6:
+                        mContext.startActivity(new Intent(mContext, TestActivity.class));
                         break;
                 }
                 if (!SettingsController.isEnabledAnim(mContext)) {

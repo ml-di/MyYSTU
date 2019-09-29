@@ -49,6 +49,9 @@ public class MenuFragment extends Fragment {
         mList.add(new MenuItemsData(3, R.drawable.ic_job, getString(R.string.menu_text_job)));
         mList.add(new MenuItemsData(5, R.drawable.ic_document_text, getString(R.string.menu_text_documents)));
         mList.add(new MenuItemsData(1, R.drawable.ic_map, getString(R.string.menu_text_map)));
+        // TODO пункт для запуска тестового активити
+        mList.add(new MenuItemsData(6, R.drawable.ic_about_app, "Для разработчиков"));
+
 
         final RecyclerView.Adapter mRecyclerViewAdapter = new MenuItemsAdapter(mList, getContext());
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
