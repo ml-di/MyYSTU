@@ -1,46 +1,37 @@
 package ru.ystu.myystu.Adapters;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
 import android.text.method.LinkMovementMethod;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-
+import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import ru.ystu.myystu.R;
-import ru.ystu.myystu.Activitys.ViewPhotoActivity;
 import ru.ystu.myystu.AdaptersData.NewsItemsData;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
-import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
-import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 import ru.ystu.myystu.Utils.BottomSheetMenu.BottomSheetMenu;
 import ru.ystu.myystu.Utils.FrescoHelper;
 import ru.ystu.myystu.Utils.IntentHelper;
+import ru.ystu.myystu.Utils.NewsPhotoPagerTransformer;
+import ru.ystu.myystu.Utils.PhotoViewSetter;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 import ru.ystu.myystu.Utils.UnixToString;
@@ -49,29 +40,13 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int ITEM_HEADER = 0;
-    private static final int ITEM_DONT_ATTACH = 1;
-    private static final int ITEM_1_PHOTO = 2;
-    private static final int ITEM_2_PHOTO = 3;
-    private static final int ITEM_MORE_PHOTO = 4;
+    private static final int ITEM_DONT_ATTACH = 0;
+    private static final int ITEM_ONE_PHOTO = 1;
+    private static final int ITEM_MORE_PHOTO = 2;
 
     private ArrayList<Parcelable> mList;
     private Context mContext;
     private StringFormatter stringFormatter = new StringFormatter();
-
-    static class HeaderViewHolder extends RecyclerView.ViewHolder{
-
-        private int id;
-
-        HeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-        }
-
-        void setHeader(NewsItemsData_Header header){
-
-        }
-    }
 
     static class DontAttachViewHolder extends RecyclerView.ViewHolder{
 
@@ -144,7 +119,7 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             postPhoto.setAspectRatio(aspectRatio);
             if (SettingsController.isImageDownload(mContext)) {
                 postPhoto.setImageRequest(FrescoHelper.getImageRequest(mContext, onePhoto.getListPhoto().get(0).getUrlPreview()));
-                postPhoto.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, onePhoto.getListPhoto(), 0));
+                postPhoto.setOnClickListener(e -> PhotoViewSetter.setPhoto(mContext, onePhoto.getListPhoto().get(0).getUrlFull()));
             }
 
             menuNewsItem.setOnClickListener(e -> showMenu(mContext, onePhoto.getSigner(), onePhoto.getUrlPost(), postText.getText().toString()));
@@ -152,102 +127,14 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    static class TwoPhotoViewHodler extends RecyclerView.ViewHolder{
-
-        private AppCompatTextView postDate;
-        private AppCompatTextView postText;
-        private SimpleDraweeView postPhoto_1;
-        private SimpleDraweeView postPhoto_2;
-        private ConstraintLayout postPin;
-        private AppCompatImageView menuNewsItem;
-
-        private UnixToString unixToString = new UnixToString();
-
-        TwoPhotoViewHodler(@NonNull View itemView) {
-            super(itemView);
-
-            postDate = itemView.findViewById(R.id.post_date);
-            postText = itemView.findViewById(R.id.post_text);
-            postPhoto_1 = itemView.findViewById(R.id.post_photo_1);
-            postPhoto_2 = itemView.findViewById(R.id.post_photo_2);
-            postPin = itemView.findViewById(R.id.post_pin);
-            menuNewsItem = itemView.findViewById(R.id.menu_news_item);
-        }
-
-        void setTwoPhoto(NewsItemsData twoPhoto, StringFormatter stringFormatter, Context mContext){
-
-            final int margin = Math.round(TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 2,mContext.getResources().getDisplayMetrics()));
-
-            postText.setText(stringFormatter.getFormattedString(twoPhoto.getText()));
-            postText.setMovementMethod(LinkMovementMethod.getInstance());
-            postDate.setText(unixToString.setUnixToString(twoPhoto.getDate(), mContext));
-
-            if(Objects.equals(twoPhoto.getIsPinned(), 1))
-                postPin.setVisibility(View.VISIBLE);
-            else
-                postPin.setVisibility(View.GONE);
-
-            float generalAspectRatio = 0;
-            float[] aspectRatios = new float[2];
-
-            for (int we = 0; we < 2; we++){
-                final float w = (float)twoPhoto.getListPhoto().get(we).getWidth();
-                final float h = (float)twoPhoto.getListPhoto().get(we).getHeight();
-                final float aspectRatio = w / h;
-
-                generalAspectRatio += aspectRatio;
-                aspectRatios[we] = aspectRatio;
-            }
-
-            for(int i = 0; i < 2; i++){
-                final float aspectRatio = aspectRatios[i];
-
-                final float coef = 100 / generalAspectRatio;
-                final float layout_weight = 1 - ((aspectRatio * coef) / 100);
-
-                final LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(
-                        LinearLayoutCompat.LayoutParams.MATCH_PARENT, LinearLayoutCompat.LayoutParams.WRAP_CONTENT);
-
-                params.weight = layout_weight;
-
-                switch (i){
-                    case 0:
-                        params.setMarginEnd(margin);
-                        postPhoto_1.setAspectRatio(aspectRatio);
-                        if (SettingsController.isImageDownload(mContext)) {
-                            postPhoto_1.setImageRequest(FrescoHelper.getImageRequest(mContext, twoPhoto.getListPhoto().get(i).getUrlPreview()));
-                            postPhoto_1.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 0));
-                        }
-                        postPhoto_1.setLayoutParams(params);
-                        break;
-                    case 1:
-                        params.setMarginStart(margin);
-                        postPhoto_2.setAspectRatio(aspectRatio);
-                        if (SettingsController.isImageDownload(mContext)) {
-                            postPhoto_2.setImageRequest(FrescoHelper.getImageRequest(mContext, twoPhoto.getListPhoto().get(i).getUrlPreview()));
-                            postPhoto_2.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, twoPhoto.getListPhoto(), 1));
-                        }
-                        postPhoto_2.setLayoutParams(params);
-                        break;
-                }
-            }
-
-            menuNewsItem.setOnClickListener(e -> showMenu(mContext, twoPhoto.getSigner(), twoPhoto.getUrlPost(), postText.getText().toString()));
-        }
-    }
-
     static class MorePhotoViewHodler extends RecyclerView.ViewHolder{
 
         private AppCompatTextView postDate;
         private AppCompatTextView postText;
-        private SimpleDraweeView postPhoto_1;
-        private SimpleDraweeView postPhoto_2;
-        private SimpleDraweeView postPhoto_3;
-        private LinearLayoutCompat photoCountFrame;
-        private AppCompatTextView photoCountText;
         private ConstraintLayout postPin;
         private AppCompatImageView menuNewsItem;
+        private ViewPager pager;
+        private TabLayout pagerIndicator;
 
         private UnixToString unixToString = new UnixToString();
 
@@ -256,13 +143,10 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             postDate = itemView.findViewById(R.id.post_date);
             postText = itemView.findViewById(R.id.post_text);
-            postPhoto_1 = itemView.findViewById(R.id.post_photo_1);
-            postPhoto_2 = itemView.findViewById(R.id.post_photo_2);
-            postPhoto_3 = itemView.findViewById(R.id.post_photo_3);
-            photoCountFrame = itemView.findViewById(R.id.photoCountFrame);
-            photoCountText = itemView.findViewById(R.id.photoCountText);
             postPin = itemView.findViewById(R.id.post_pin);
             menuNewsItem = itemView.findViewById(R.id.menu_news_item);
+            pager = itemView.findViewById(R.id.post_viewPager);
+            pagerIndicator = itemView.findViewById(R.id.post_viewPagerIndicator);
 
         }
 
@@ -277,49 +161,32 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             else
                 postPin.setVisibility(View.GONE);
 
-            for(int i = 0; i < 3; i++){
 
-                final float w = (float)morePhoto.getListPhoto().get(i).getWidth();
-                final float h = (float)morePhoto.getListPhoto().get(i).getHeight();
-                final float aspectRatio = w / h;
+            final NewsItemPhotoPagerAdapter adapter = new NewsItemPhotoPagerAdapter(morePhoto.getListPhoto(), mContext);
+            pager.setAdapter(adapter);
+            pager.setPageTransformer(true, new NewsPhotoPagerTransformer());
+            pagerIndicator.setupWithViewPager(pager);
 
-                switch (i){
-                    case 0:
-                        postPhoto_1.setAspectRatio(aspectRatio);
-                        if (SettingsController.isImageDownload(mContext)) {
-                            postPhoto_1.setImageRequest(FrescoHelper.getImageRequest(mContext, morePhoto.getListPhoto().get(i).getUrlPreview()));
-                            postPhoto_1.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 0));
-                        }
-                        break;
-                    case 1:
-                        postPhoto_2.setAspectRatio(aspectRatio);
-                        if (SettingsController.isImageDownload(mContext)) {
-                            postPhoto_2.setImageRequest(FrescoHelper.getImageRequest(mContext, morePhoto.getListPhoto().get(i).getUrlPreview()));
-                            postPhoto_2.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 1));
-                        }
-                        break;
-                    case 2:
-                        postPhoto_3.setAspectRatio(aspectRatio);
-                        if (SettingsController.isImageDownload(mContext)) {
-                            postPhoto_3.setImageRequest(FrescoHelper.getImageRequest(mContext, morePhoto.getListPhoto().get(i).getUrlPreview()));
-                            postPhoto_3.setOnClickListener(e -> new PhotoViewSetter().setPhoto(mContext, morePhoto.getListPhoto(), 2));
-                        }
-                        break;
-                }
-
-                if(morePhoto.getListPhoto().size() > 3){
-
-                    final String count = String.valueOf(morePhoto.getListPhoto().size() - 2);
-
-                    postPhoto_3.getHierarchy().setOverlayImage(mContext.getResources().getDrawable(R.color.colorOverleyImage));
-                    photoCountFrame.setVisibility(View.VISIBLE);
-                    photoCountText.setText(count);
-                } else {
-                    postPhoto_3.getHierarchy().setOverlayImage(null);
-                    photoCountFrame.setVisibility(View.GONE);
-                    photoCountText.setText("");
-                }
+            for (int i = 0; i < pagerIndicator.getTabCount(); i++) {
+                pagerIndicator.getTabAt(i).setCustomView(adapter.getTabView(i ,pagerIndicator.getTabAt(i).isSelected()));
             }
+
+            pagerIndicator.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    adapter.tabSelected(tab);
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                    adapter.tabUnselected(tab);
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
 
             menuNewsItem.setOnClickListener(e -> showMenu(mContext, morePhoto.getSigner(), morePhoto.getUrlPost(), postText.getText().toString()));
         }
@@ -344,24 +211,15 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         RecyclerView.ViewHolder mViewHolder;
 
         switch (viewType) {
-            case ITEM_HEADER:
-                final View viewHeader = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_header, parent, false);
-                mViewHolder = new HeaderViewHolder(viewHeader);
-            break;
 
             case ITEM_DONT_ATTACH:
                 final View viewDontAttach = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_dont_attach, parent, false);
                 mViewHolder = new DontAttachViewHolder(viewDontAttach);
             break;
 
-            case ITEM_1_PHOTO:
+            case ITEM_ONE_PHOTO:
                 final View viewOnePhoto = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_one_photo, parent, false);
                 mViewHolder = new OnePhotoViewHodler(viewOnePhoto);
-            break;
-
-            case ITEM_2_PHOTO:
-                final View viewTwoPhoto = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_layout_news_item_two_photo, parent, false);
-                mViewHolder = new TwoPhotoViewHodler(viewTwoPhoto);
             break;
 
             case ITEM_MORE_PHOTO:
@@ -382,21 +240,13 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         int viewType = holder.getItemViewType();
         switch (viewType) {
-            case ITEM_HEADER:
-                final NewsItemsData_Header header = (NewsItemsData_Header)mList.get(position);
-                ((HeaderViewHolder) holder).setHeader(header);
-                break;
             case ITEM_DONT_ATTACH:
                 final NewsItemsData_DontAttach dontAttach = (NewsItemsData_DontAttach) mList.get(position);
                 ((DontAttachViewHolder) holder).setDontAttach(dontAttach, stringFormatter, mContext);
                 break;
-            case ITEM_1_PHOTO:
+            case ITEM_ONE_PHOTO:
                 final NewsItemsData onePhoto = (NewsItemsData) mList.get(position);
                 ((OnePhotoViewHodler) holder).setOnePhoto(onePhoto, stringFormatter, mContext);
-                break;
-            case ITEM_2_PHOTO:
-                final NewsItemsData twoPhoto = (NewsItemsData) mList.get(position);
-                ((TwoPhotoViewHodler) holder).setTwoPhoto(twoPhoto, stringFormatter, mContext);
                 break;
             case ITEM_MORE_PHOTO:
                 final NewsItemsData morePhoto = (NewsItemsData) mList.get(position);
@@ -410,18 +260,13 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         int viewType;
 
-        if (mList.get(position) instanceof NewsItemsData_Header) {
-            viewType = ITEM_HEADER;
-        } else if (mList.get(position) instanceof NewsItemsData_DontAttach) {
+        if (mList.get(position) instanceof NewsItemsData_DontAttach) {
             viewType = ITEM_DONT_ATTACH;
         } else if(mList.get(position) instanceof NewsItemsData
                 && ((NewsItemsData) mList.get(position)).getListPhoto().size() == 1){
-            viewType = ITEM_1_PHOTO;
+            viewType = ITEM_ONE_PHOTO;
         } else if(mList.get(position) instanceof NewsItemsData
-                && ((NewsItemsData) mList.get(position)).getListPhoto().size() == 2){
-            viewType = ITEM_2_PHOTO;
-        } else if(mList.get(position) instanceof NewsItemsData
-                && ((NewsItemsData) mList.get(position)).getListPhoto().size() > 2){
+                && ((NewsItemsData) mList.get(position)).getListPhoto().size() > 1){
             viewType = ITEM_MORE_PHOTO;
         } else{
             viewType = -1;
@@ -438,25 +283,6 @@ public class NewsItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         return mList.size();
-    }
-
-    // Установить фото в ViewPager
-    private static class PhotoViewSetter{
-
-        void setPhoto(Context mContext, ArrayList<NewsItemsPhotoData> mList, int position){
-            final Intent mIntent = new Intent(mContext, ViewPhotoActivity.class);
-
-            if(mList.size() > 3 && position == 2)
-                mIntent.putExtra("position", 0);
-            else
-                mIntent.putExtra("position", position);
-
-            mIntent.putExtra("list", mList);
-            mContext.startActivity(mIntent);
-            if (!SettingsController.isEnabledAnim(mContext)) {
-                ((Activity) mContext).overridePendingTransition(0, 0);
-            }
-        }
     }
 
     private static void showMenu (Context mContext,

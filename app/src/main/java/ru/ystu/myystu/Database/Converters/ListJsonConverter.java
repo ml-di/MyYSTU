@@ -25,6 +25,7 @@ public class ListJsonConverter {
             final int uid = parcel.getUid();
             final int width = parcel.getWidth();
             final int height = parcel.getHeight();
+            final String urlSmall = parcel.getUrlSmall();
             final String urlPreview = parcel.getUrlPreview();
             final String urlFull = parcel.getUrlFull();
 
@@ -33,6 +34,7 @@ public class ListJsonConverter {
             photoObject.put("uid", uid);
             photoObject.put("width", width);
             photoObject.put("height", height);
+            photoObject.put("urlSmall", urlSmall);
             photoObject.put("urlPreview", urlPreview);
             photoObject.put("urlFull", urlFull);
 
@@ -61,16 +63,17 @@ public class ListJsonConverter {
         ArrayList<NewsItemsPhotoData> tempList = new ArrayList<>();
 
         if (jsonArray != null) {
-            for (Object asd : jsonArray) {
+            for (Object o : jsonArray) {
 
-                final int id = ((Long) Objects.requireNonNull(((JSONObject) asd).get("id"))).intValue();
-                final int uid = ((Long) Objects.requireNonNull(((JSONObject) asd).get("uid"))).intValue();
-                final int height = ((Long) Objects.requireNonNull(((JSONObject) asd).get("height"))).intValue();
-                final int width = ((Long) Objects.requireNonNull(((JSONObject) asd).get("width"))).intValue();
-                final String urlPreview = (String) ((JSONObject) asd).get("urlPreview");
-                final String urlFull = (String) ((JSONObject) asd).get("urlFull");
+                final int id = ((Long) Objects.requireNonNull(((JSONObject) o).get("id"))).intValue();
+                final int uid = ((Long) Objects.requireNonNull(((JSONObject) o).get("uid"))).intValue();
+                final int height = ((Long) Objects.requireNonNull(((JSONObject) o).get("height"))).intValue();
+                final int width = ((Long) Objects.requireNonNull(((JSONObject) o).get("width"))).intValue();
+                final String urlSmall = (String) ((JSONObject) o).get("urlSmall");
+                final String urlPreview = (String) ((JSONObject) o).get("urlPreview");
+                final String urlFull = (String) ((JSONObject) o).get("urlFull");
 
-                tempList.add(new NewsItemsPhotoData(id, uid, height, width, urlPreview, urlFull));
+                tempList.add(new NewsItemsPhotoData(id, uid, height, width, urlSmall, urlPreview, urlFull));
             }
         }
 

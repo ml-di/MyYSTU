@@ -5,14 +5,13 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.imagepipeline.image.ImageInfo;
-
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
+import java.util.ArrayList;
 import me.relex.photodraweeview.PhotoDraweeView;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Utils.CircleProgressBar;
@@ -20,11 +19,11 @@ import ru.ystu.myystu.Utils.CircleProgressBar;
 public class NewsPhotoViewPagerAdapter extends PagerAdapter {
 
     private Context mContext;
-    private String[] imageUrls;
+    private ArrayList<String> photoUrlList;
 
-    public NewsPhotoViewPagerAdapter(Context mContext, String[] imageUrls) {
+    public NewsPhotoViewPagerAdapter(Context mContext, ArrayList<String> photoUrlList) {
         this.mContext = mContext;
-        this.imageUrls = imageUrls;
+        this.photoUrlList = photoUrlList;
     }
 
     @NonNull
@@ -34,7 +33,7 @@ public class NewsPhotoViewPagerAdapter extends PagerAdapter {
         // Загрузка фото
         final PhotoDraweeView mPhotoDraweeView = new PhotoDraweeView(mContext);
         PipelineDraweeControllerBuilder controller = Fresco.newDraweeControllerBuilder();
-        controller.setUri(Uri.parse(imageUrls[position]));
+        controller.setUri(Uri.parse(photoUrlList.get(position)));
         controller.setOldController(mPhotoDraweeView.getController());
         controller.setControllerListener(new BaseControllerListener<ImageInfo>() {
             @Override
@@ -66,7 +65,7 @@ public class NewsPhotoViewPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return imageUrls.length;
+        return photoUrlList.size();
     }
 
     @Override

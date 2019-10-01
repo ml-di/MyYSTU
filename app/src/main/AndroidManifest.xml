@@ -10,7 +10,6 @@
         android:roundIcon="@mipmap/ic_launcher_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ToolBar">
-        <activity android:name=".Activitys.TestActivity"></activity>
         <activity android:name=".Activitys.StoActivity" />
         <activity android:name=".Activitys.UserFullActivity" />
         <activity android:name=".Activitys.UsersActivity" />

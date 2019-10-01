@@ -6,11 +6,11 @@
     android:orientation="horizontal">
 
     <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/test_viewPagerIndicator_item_icon"
+        android:id="@+id/post_viewPagerIndicator_item_icon"
         android:layout_width="30dp"
         android:layout_height="20dp"
+        android:scaleType="centerCrop"
         app:placeholderImage="@color/colorPlaceHolderImage"
-        app:roundedCornerRadius="6dp"
-        android:scaleType="centerCrop"/>
+        app:roundedCornerRadius="6dp" />
 
 </RelativeLayout>

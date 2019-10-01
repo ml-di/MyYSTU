@@ -14,7 +14,6 @@ import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.Network.LoadImageFromURL;
 import ru.ystu.myystu.R;
 import ru.ystu.myystu.Adapters.NewsPhotoViewPagerAdapter;
-import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.MultiTouchViewPager;
 import ru.ystu.myystu.Utils.NetworkInformation;
@@ -22,19 +21,16 @@ import ru.ystu.myystu.Utils.SettingsController;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class ViewPhotoActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
-    private ArrayList<Parcelable> mList;
+    private ArrayList<String> photoUrlList;
     private int position;
-    private String[] imageUrls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,21 +46,17 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
         if(bundle != null){
             if(bundle.getParcelableArrayList("list") != null)
-                mList = bundle.getParcelableArrayList("list");
+                photoUrlList = bundle.getStringArrayList("list");
             if(bundle.getInt("position") != -1)
                 position = bundle.getInt("position");
 
-            if(mList != null){
-                imageUrls = new String[mList.size()];
+            if(photoUrlList != null){
 
-                for(int i = 0; i < mList.size(); i++)
-                    imageUrls[i] = ((NewsItemsPhotoData)mList.get(i)).getUrlFull();
-
-                if (imageUrls.length > 1)
-                    mToolBar.setTitle(position + 1 + " " + getResources().getString(R.string.other_of) + " " + imageUrls.length);
+                if (photoUrlList.size() > 1)
+                    mToolBar.setTitle(position + 1 + " " + getResources().getString(R.string.other_of) + " " + photoUrlList.size());
 
                 mViewPager = (MultiTouchViewPager) findViewById(R.id.view_pager_news_photo);
-                final NewsPhotoViewPagerAdapter adapter = new NewsPhotoViewPagerAdapter(this, imageUrls);
+                final NewsPhotoViewPagerAdapter adapter = new NewsPhotoViewPagerAdapter(this, photoUrlList);
                 mViewPager.setAdapter(adapter);
 
                 mViewPager.setCurrentItem(position);
@@ -76,7 +68,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
                     @Override
                     public void onPageSelected(int position) {
-                        mToolBar.setTitle(position + 1 + " " + getResources().getString(R.string.other_of) + " " + imageUrls.length);
+                        mToolBar.setTitle(position + 1 + " " + getResources().getString(R.string.other_of) + " " + photoUrlList.size());
                     }
 
                     @Override
@@ -105,7 +97,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        String url = imageUrls[mViewPager.getCurrentItem()];
+        String url = photoUrlList.get(mViewPager.getCurrentItem());
 
         switch (item.getItemId()){
             // Сохранить изображение на устройство

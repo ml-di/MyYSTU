@@ -95,88 +95,30 @@
         app:layout_constraintTop_toBottomOf="@id/contentFrameLayout"
         tools:text="Текст записи" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/post_photos_layout"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/post_viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_height="250dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/post_text">
+        app:layout_constraintTop_toBottomOf="@id/post_text"/>
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/post_photo_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:layout_weight="1"
-            app:placeholderImage="@color/colorPlaceHolderImage"
-            app:roundBottomRight="false"
-            app:roundTopRight="false"
-            app:roundedCornerRadius="15dp" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/post_viewPagerIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/post_viewPager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tabIndicatorHeight="0dp"
+        app:tabIndicatorFullWidth="false"
+        app:tabMode="scrollable"
+        app:tabMinWidth="8dp"
+        app:tabGravity="center"
+        app:tabPaddingStart="2dp"
+        app:tabIndicatorColor="@color/colorPrimaryLight"
+        app:tabPaddingEnd="2dp"
+        app:tabPaddingTop="0dp"
+        app:tabPaddingBottom="0dp"/>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:orientation="vertical">
-
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/post_photo_2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_weight="1"
-                app:placeholderImage="@color/colorPlaceHolderImage"
-                app:roundBottomLeft="false"
-                app:roundBottomRight="false"
-                app:roundTopLeft="false"
-                app:roundedCornerRadius="15dp" />
-
-            <androidx.appcompat.widget.ContentFrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_weight="1">
-
-                <com.facebook.drawee.view.SimpleDraweeView
-                    android:id="@+id/post_photo_3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:placeholderImage="@color/colorPlaceHolderImage"
-                    app:roundBottomLeft="false"
-                    app:roundTopLeft="false"
-                    app:roundTopRight="false"
-                    app:roundedCornerRadius="15dp" />
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/photoCountFrame"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="4dp"
-                        android:tint="@android:color/white"
-                        app:srcCompat="@drawable/ic_image_black_24dp" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/photoCountText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        tools:text="8" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.appcompat.widget.ContentFrameLayout>
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

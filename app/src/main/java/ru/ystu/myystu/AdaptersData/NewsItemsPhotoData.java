@@ -2,17 +2,11 @@ package ru.ystu.myystu.AdaptersData;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Ignore;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
-
 import io.reactivex.annotations.NonNull;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "news_photos")
 public class NewsItemsPhotoData implements Parcelable {
@@ -31,6 +25,9 @@ public class NewsItemsPhotoData implements Parcelable {
     @ColumnInfo(name = "width")
     private final int width;
 
+    @ColumnInfo(name = "urlSmall")
+    private final String urlSmall;
+
     @ColumnInfo(name = "urlPreview")
     private final String urlPreview;
 
@@ -41,12 +38,14 @@ public class NewsItemsPhotoData implements Parcelable {
                               final int uid,
                               final int height,
                               final int width,
+                              final String urlSmall,
                               final String urlPreview,
                               final String urlFull) {
         this.id = id;
         this.uid = uid;
         this.height = height;
         this.width = width;
+        this.urlSmall = urlSmall;
         this.urlPreview = urlPreview;
         this.urlFull = urlFull;
     }
@@ -57,6 +56,7 @@ public class NewsItemsPhotoData implements Parcelable {
         uid = in.readInt();
         height = in.readInt();
         width = in.readInt();
+        urlSmall = in.readString();
         urlPreview = in.readString();
         urlFull = in.readString();
     }
@@ -84,6 +84,7 @@ public class NewsItemsPhotoData implements Parcelable {
         parcel.writeInt(uid);
         parcel.writeInt(height);
         parcel.writeInt(width);
+        parcel.writeString(urlSmall);
         parcel.writeString(urlPreview);
         parcel.writeString(urlFull);
     }
@@ -99,6 +100,9 @@ public class NewsItemsPhotoData implements Parcelable {
     }
     public int getWidth() {
         return width;
+    }
+    public String getUrlSmall() {
+        return urlSmall;
     }
     public String getUrlPreview() {
         return urlPreview;

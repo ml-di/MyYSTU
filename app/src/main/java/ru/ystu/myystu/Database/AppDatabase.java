@@ -55,7 +55,7 @@ import ru.ystu.myystu.Database.Data.UserFullData;
         StoItemsData_Title.class,
         StoItemsData_Subtitle.class,
         StoItemsData_Doc.class},
-        version = 5, exportSchema = false)
+        version = 6, exportSchema = false)
 @TypeConverters({
         StringArraysConverter.class,
         ListJsonConverter.class})

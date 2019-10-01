@@ -31,7 +31,6 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import ru.ystu.myystu.AdaptersData.NewsItemsData;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
-import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.Application;
 import ru.ystu.myystu.DataFragments.DataFragment_News_List;
 import ru.ystu.myystu.Database.AppDatabase;
@@ -314,8 +313,6 @@ public class NewsFragment extends Fragment {
                             if (count > 0) {
                                 if (mList.size() > 0)
                                     mList.clear();
-
-                                mList.add(new NewsItemsData_Header(-1, "Тестирую header"));
 
                                 for (int i = 0; i < count; i++) {
 

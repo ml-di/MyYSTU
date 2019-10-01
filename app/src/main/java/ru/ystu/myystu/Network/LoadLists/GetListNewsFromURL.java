@@ -23,7 +23,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import ru.ystu.myystu.AdaptersData.NewsItemsData;
 import ru.ystu.myystu.AdaptersData.NewsItemsData_DontAttach;
-import ru.ystu.myystu.AdaptersData.NewsItemsData_Header;
 import ru.ystu.myystu.AdaptersData.NewsItemsPhotoData;
 
 public class GetListNewsFromURL {
@@ -84,10 +83,8 @@ public class GetListNewsFromURL {
                                     if(!isOffset){
                                         mList.clear();
                                         id = 0;
-                                        mList.add(new NewsItemsData_Header(0, "Тестирую header"));
                                     }
-                                } else
-                                    mList.add(new NewsItemsData_Header(0, "Тестирую header"));
+                                }
 
                                 if(response_json.size() < 1 && !isOffset && !emitter.isDisposed()){
                                     emitter.onError(new IllegalArgumentException("Not found"));
@@ -145,6 +142,7 @@ public class GetListNewsFromURL {
 
                                                             final JSONObject photo = (JSONObject) attachment.get("photo");
 
+                                                            String urlSmall = null;
                                                             String urlFull = null;
                                                             String urlPreview = null;
                                                             int width = 0;
@@ -207,6 +205,11 @@ public class GetListNewsFromURL {
                                                             for (int p = 0; p < 2; p++) {
                                                                 for (Object sizeImage : photoSizes) {
                                                                     final String sizeType = ((JSONObject) sizeImage).get("type").toString();
+
+                                                                    if (sizeType.equals("m")) {
+                                                                        urlSmall = ((JSONObject) sizeImage).get("url").toString();
+                                                                    }
+
                                                                     if (p == 0) {
                                                                         if (sizeType.equals(sizePhotoType)) {
                                                                             width = ((Long) ((JSONObject) sizeImage).get("width")).intValue();
@@ -223,7 +226,7 @@ public class GetListNewsFromURL {
                                                                 }
                                                             }
 
-                                                            photoList.add(new NewsItemsPhotoData(indexPhoto, id, height, width, urlPreview, urlFull));
+                                                            photoList.add(new NewsItemsPhotoData(indexPhoto, id, height, width, urlSmall, urlPreview, urlFull));
                                                             indexPhoto++;
                                                         }
                                                     }
