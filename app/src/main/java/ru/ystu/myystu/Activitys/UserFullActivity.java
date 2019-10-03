@@ -24,6 +24,7 @@ import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.PaddingHelper;
+import ru.ystu.myystu.Utils.PhotoViewSetter;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 import android.content.Context;
@@ -128,6 +129,7 @@ public class UserFullActivity extends AppCompatActivity {
 
         if (SettingsController.isImageDownload(mContext)) {
             imageView.setImageRequest(FrescoHelper.getImageRequest(mContext, image));
+            imageView.setOnClickListener(v -> PhotoViewSetter.setPhoto(this, image));
         }
 
         nameView.setText(name);

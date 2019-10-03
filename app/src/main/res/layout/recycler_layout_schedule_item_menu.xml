@@ -10,23 +10,24 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
 
-        <androidx.appcompat.widget.ContentFrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/schedule_itemMenu_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:alpha="0.05"
-            android:background="@drawable/shape_rectangle_right_rounded_200dp"
+            android:background="@drawable/shape_rectangle_rounded_24dp"
             tools:backgroundTint="@color/colorAsf" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/schedule_itemMenu_icon"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             android:alpha="0.8"
             android:padding="16dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,10 +36,9 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/schedule_itemMenu_fab"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginEnd="24dp"
-            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -55,7 +55,7 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@id/schedule_itemMenu_fab"
             app:layout_constraintStart_toEndOf="@id/schedule_itemMenu_icon"
-            tools:text="@string/schedule_item_asf"
+            tools:text="@string/schedule_item_asf_one"
             tools:textColor="@color/colorAsf" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

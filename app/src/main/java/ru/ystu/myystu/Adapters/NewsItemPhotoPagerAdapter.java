@@ -36,7 +36,7 @@ public class NewsItemPhotoPagerAdapter extends PagerAdapter {
 
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.viewpager_news_photo_item, container, false);
-        final SimpleDraweeView image = view.findViewById(R.id.test_photo);
+        final SimpleDraweeView image = view.findViewById(R.id.viewPager_photo);
 
         if (SettingsController.isImageDownload(mContext)) {
             image.setImageRequest(FrescoHelper.getImageRequest(mContext, photoUrls.get(position).getUrlPreview()));

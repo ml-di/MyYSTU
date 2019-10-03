@@ -1,7 +1,12 @@
 package ru.ystu.myystu.Activitys;
 
 import android.database.sqlite.SQLiteException;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
@@ -83,11 +88,7 @@ public class MainActivity extends AppCompatActivity {
                     .setTransition(fragmentAnimation)
                     .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                     .commit();
-            if (SettingsController.isDarkTheme(this)) {
-                LightStatusBar.setLight(false, false, this, false);
-            } else {
-                LightStatusBar.setLight(true, true, this, false);
-            }
+
             checkUpdate();
         } else {
             updateList = savedInstanceState.getParcelableArrayList("updateList");
@@ -95,18 +96,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(mBottomBar.getSelectedItemId() == R.id.tab_news
                 || mBottomBar.getSelectedItemId() == R.id.tab_bell){
-            if (SettingsController.isDarkTheme(this)) {
-                LightStatusBar.setLight(false, false, this, false);
-            } else {
-                LightStatusBar.setLight(true, true, this, false);
-            }
+            LightStatusBar.setLight(!SettingsController.isDarkTheme(this), !SettingsController.isDarkTheme(this), this, false);
         } else if (mBottomBar.getSelectedItemId() == R.id.tab_menu){
-
-            if (SettingsController.isDarkTheme(this)) {
-                LightStatusBar.setLight(true, false, this, false);
-            } else {
-                LightStatusBar.setLight(false, true, this, false);
-            }
+            LightStatusBar.setLight(SettingsController.isDarkTheme(this), !SettingsController.isDarkTheme(this), this, false);
         }
 
         mBottomBar.setOnNavigationItemSelectedListener(menuItem -> {
@@ -114,19 +106,13 @@ public class MainActivity extends AppCompatActivity {
             switch (menuItem.getItemId()){
                 // Новости
                 case R.id.tab_news:
-
                     mContentContainer.setFitsSystemWindows(true);
                     mFragmentManager.beginTransaction()
                             .setTransition(fragmentAnimation)
                             .replace(R.id.contentContainer, mNewsFragment, "NEWS_FRAGMENT")
                             .commit();
 
-                    if (SettingsController.isDarkTheme(this)) {
-                        LightStatusBar.setLight(false, false, this, false);
-                    } else {
-                        LightStatusBar.setLight(true, true, this, false);
-                    }
-
+                    LightStatusBar.setLight(!SettingsController.isDarkTheme(this), !SettingsController.isDarkTheme(this), this, false);
                     break;
                 // Уведомления
                 case R.id.tab_bell:
@@ -136,12 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mBellFragment, "BELL_FRAGMENT")
                             .commit();
 
-                    if (SettingsController.isDarkTheme(this)) {
-                        LightStatusBar.setLight(false, false, this, false);
-                    } else {
-                        LightStatusBar.setLight(true, true, this, false);
-                    }
-
+                    LightStatusBar.setLight(!SettingsController.isDarkTheme(this), !SettingsController.isDarkTheme(this), this, false);
                     break;
                 // Меню
                 case R.id.tab_menu:
@@ -152,11 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.contentContainer, mMenuFragment, "MENU_FRAGMENT")
                             .commit();
 
-                    if (SettingsController.isDarkTheme(this)) {
-                        LightStatusBar.setLight(false, false, this, false);
-                    } else {
-                        LightStatusBar.setLight(false, true, this, false);
-                    }
+                    LightStatusBar.setLight(false, !SettingsController.isDarkTheme(this), this, false);
                     break;
             }
 

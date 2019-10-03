@@ -39,6 +39,7 @@ import ru.ystu.myystu.Adapters.NewsItemsAdapter;
 import ru.ystu.myystu.Network.LoadLists.GetListNewsFromURL;
 import ru.ystu.myystu.Utils.ErrorMessage;
 import ru.ystu.myystu.Utils.NetworkInformation;
+import ru.ystu.myystu.Utils.PaddingHelper;
 import ru.ystu.myystu.Utils.SettingsController;
 
 public class NewsFragment extends Fragment {

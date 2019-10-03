@@ -4,6 +4,7 @@
     android:id="@+id/main_layout_news"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     android:background="@color/colorBackground"
     tools:context=".Fragments.NewsFragment">
 
@@ -12,16 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.ContentFrameLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_news_items"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_news_items"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </androidx.appcompat.widget.ContentFrameLayout>
+            android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

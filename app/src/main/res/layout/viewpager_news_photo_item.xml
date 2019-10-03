@@ -6,7 +6,7 @@
     android:orientation="horizontal">
 
     <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/test_photo"
+        android:id="@+id/viewPager_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
@@ -15,5 +15,4 @@
         app:placeholderImage="@color/colorPlaceHolderImage"
         app:roundedCornerRadius="15dp"
         android:scaleType="centerCrop"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

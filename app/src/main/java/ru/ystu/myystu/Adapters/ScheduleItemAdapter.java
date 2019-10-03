@@ -102,7 +102,6 @@ public class ScheduleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 new Thread(() -> {
 
                     final long urlSize = FileInformation.getSizeFile(scheduleItem.getLink());
-                    // TODO Тест обновлений расписания
                     final long fileSize = file.length();
                     if (urlSize != fileSize && urlSize != 0) {
                         ((ScheduleListActivity) mContext).runOnUiThread(() -> updateIcon.setVisibility(View.VISIBLE));

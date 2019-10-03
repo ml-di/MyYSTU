@@ -38,6 +38,8 @@ dependencies {
     def frescoVersion = '1.12.1'
     implementation "com.facebook.fresco:fresco:$frescoVersion"
     implementation "com.facebook.fresco:imagepipeline-okhttp3:$frescoVersion"
+    // fresco image viewer
+    implementation 'com.github.stfalcon:frescoimageviewer:0.5.0'
     // photoView
     implementation 'me.relex:photodraweeview:2.0.0'
     // jsoup
@@ -47,7 +49,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     // android
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference:1.1.0'

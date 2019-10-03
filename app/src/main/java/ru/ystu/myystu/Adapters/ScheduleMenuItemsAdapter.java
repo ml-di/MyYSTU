@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +32,7 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
         private AppCompatTextView text;
         private AppCompatImageView fab;
         private ConstraintLayout item;
-        private ContentFrameLayout background;
+        private ConstraintLayout background;
 
         ScheduleMenuItemsViewHolder(@NonNull View itemView, final Context mContext) {
             super(itemView);
@@ -90,6 +89,7 @@ public class ScheduleMenuItemsAdapter extends RecyclerView.Adapter<ScheduleMenuI
         holder.icon.setColorFilter(color);
         holder.text.setTextColor(color);
         holder.background.setBackgroundTintList(ContextCompat.getColorStateList(mContext, mList.get(position).getColor()));
+
     }
 
     @Override

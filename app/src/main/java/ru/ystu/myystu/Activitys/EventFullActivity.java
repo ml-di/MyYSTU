@@ -30,6 +30,7 @@ import ru.ystu.myystu.Utils.IntentHelper;
 import ru.ystu.myystu.Utils.LightStatusBar;
 import ru.ystu.myystu.Utils.NetworkInformation;
 import ru.ystu.myystu.Utils.PaddingHelper;
+import ru.ystu.myystu.Utils.PhotoViewSetter;
 import ru.ystu.myystu.Utils.SettingsController;
 import ru.ystu.myystu.Utils.StringFormatter;
 
@@ -148,6 +149,7 @@ public class EventFullActivity extends AppCompatActivity {
 
         if (SettingsController.isImageDownload(mContext)) {
             image.setImageRequest(FrescoHelper.getImageRequest(mContext, urlPhoto));
+            image.setOnClickListener(v -> PhotoViewSetter.setPhoto(this, urlPhoto));
         }
         date.setText(dateStr);
         title.setText(titleStr);

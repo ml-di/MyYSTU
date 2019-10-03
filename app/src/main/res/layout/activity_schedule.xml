@@ -32,6 +32,9 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout_schedule"
             style="@style/TabLayout"
+            app:tabIndicator="@drawable/indicator_tablayout"
+            app:tabIndicatorColor="@color/colorTextBlack"
+            app:tabIndicatorHeight="3dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
