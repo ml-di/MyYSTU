@@ -31,9 +31,6 @@
         <activity android:name=".Activitys.JobActivity" />
         <activity android:name=".Activitys.EventActivity" />
         <activity android:name=".Activitys.ScheduleActivity" />
-        <activity
-            android:name=".Activitys.ViewPhotoActivity"
-            android:theme="@style/PhotoViewTheme" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

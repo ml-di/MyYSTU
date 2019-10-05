@@ -1,31 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Activitys.ViewPhotoActivity">
+    android:layout_height="match_parent">
 
-    <ru.ystu.myystu.Utils.MultiTouchViewPager
-        android:id="@+id/view_pager_news_photo"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBar_photoView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolBar_photoView"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorToolbarPhotoView"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:popupTheme="@style/ToolBar_Popup"
-            app:title="@string/photo_view_image_title" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorToolbarPhotoView"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ToolBar_Popup"
+        app:title="@string/photo_view_image_title"
+        app:menu="@menu/menu_photo_view"/>
+</merge>

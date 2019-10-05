@@ -1,5 +1,6 @@
 package ru.ystu.myystu.Activitys;
 
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Build;
@@ -273,6 +274,15 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }).start();
                     }));
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(this, "Разрешение успешно получено, повторите действие", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
