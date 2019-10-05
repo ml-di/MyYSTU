@@ -14,7 +14,7 @@ This project uses libraries and tools like:
 - [OkHttp](https://github.com/square/okhttp/)
 - [Json-simple](https://github.com/fangyidong/json-simple)
 - [Fresco](https://github.com/facebook/fresco)
-- [PhotoDraweeView](https://github.com/ongakuer/PhotoDraweeView)
+- [FrescoImageViewer](https://github.com/stfalcon-studio/FrescoImageViewer)
 - [Jsoup](https://github.com/jhy/jsoup/)
 - [Room Persistence Library](https://developer.android.com/topic/libraries/architecture/room)
 - [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics)
